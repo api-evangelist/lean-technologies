@@ -1,0 +1,63 @@
+generated: '2026-07-19'
+method: derived
+source: openapi/lean-technologies-account-on-file-openapi.yml, openapi/lean-technologies-bank-data-openapi.yml,
+  openapi/lean-technologies-banks-openapi.yml, openapi/lean-technologies-consents-openapi.yml,
+  openapi/lean-technologies-core-resources-openapi.yml, openapi/lean-technologies-customers-openapi.yml,
+  openapi/lean-technologies-data-openapi.yml, openapi/lean-technologies-enrichment-openapi.yml,
+  openapi/lean-technologies-entities-openapi.yml, openapi/lean-technologies-files-openapi.yml,
+  openapi/lean-technologies-insights-openapi.yml, openapi/lean-technologies-ksa-accounts-access-consents-openapi.yml
+  ...
+summary:
+  types:
+  - http
+  - oauth2
+  oauth2_flows:
+  - clientCredentials
+schemes:
+- name: bearerAuth
+  type: http
+  scheme: bearer
+  sources:
+  - openapi/lean-technologies-account-on-file-openapi.yml
+  - openapi/lean-technologies-bank-data-openapi.yml
+  - openapi/lean-technologies-banks-openapi.yml
+  - openapi/lean-technologies-consents-openapi.yml
+  - openapi/lean-technologies-core-resources-openapi.yml
+  - openapi/lean-technologies-customers-openapi.yml
+  - openapi/lean-technologies-data-openapi.yml
+  - openapi/lean-technologies-enrichment-openapi.yml
+  - openapi/lean-technologies-entities-openapi.yml
+  - openapi/lean-technologies-files-openapi.yml
+  - openapi/lean-technologies-insights-openapi.yml
+  - openapi/lean-technologies-ksa-accounts-access-consents-openapi.yml
+  - openapi/lean-technologies-ksa-bank-data-openapi.yml
+  - openapi/lean-technologies-ksa-core-resources-openapi.yml
+  - openapi/lean-technologies-ksa-customers-openapi.yml
+  - openapi/lean-technologies-ksa-enrichment-openapi.yml
+  - openapi/lean-technologies-ksa-insights-openapi.yml
+  - openapi/lean-technologies-ksa-open-banking-openapi.yml
+  - openapi/lean-technologies-ksa-payouts-openapi.yml
+  - openapi/lean-technologies-ksa-reports-openapi.yml
+  - openapi/lean-technologies-ksa-verifications-openapi.yml
+  - openapi/lean-technologies-payment-links-openapi.yml
+  - openapi/lean-technologies-payments-core-openapi.yml
+  - openapi/lean-technologies-payments-customers-openapi.yml
+  - openapi/lean-technologies-payments-openapi.yml
+  - openapi/lean-technologies-payouts-extended-openapi.yml
+  - openapi/lean-technologies-payouts-openapi.yml
+  - openapi/lean-technologies-reconciliation-extended-openapi.yml
+  - openapi/lean-technologies-reconciliation-openapi.yml
+  - openapi/lean-technologies-refunds-openapi.yml
+  - openapi/lean-technologies-schedules-openapi.yml
+  - openapi/lean-technologies-sessions-openapi.yml
+  - openapi/lean-technologies-verifications-openapi.yml
+- name: OAuth2
+  type: oauth2
+  flows:
+  - flow: clientCredentials
+    tokenUrl: /auth/token
+    scopes: 1
+  sources:
+  - openapi/lean-technologies-payment-links-openapi.yml
+  - openapi/lean-technologies-schedules-openapi.yml
+  - openapi/lean-technologies-sessions-openapi.yml
