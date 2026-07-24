@@ -1,0 +1,489 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Payment Intents API
+  version: v0.2.3
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Payment Intents
+  x-displayName: Payment Intents
+paths:
+  /payments/v1/intents:
+    post:
+      operationId: createPaymentIntent
+      summary: Create Payment Intent
+      description: The Payment intent is the contract between your backend and Lean to certify that you will request a payment from your customer of a specified amount and currency. In order to initiate a payment, the `payment_intent_id` must be provided into the `pay()` method of the LinkSDK.
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                customer_id:
+                  description: The Customer you want to make a payment.
+                  type: string
+                  format: uuid
+                amount:
+                  description: The amount that should be charged to the customer.
+                  type: number
+                  format: float
+                currency:
+                  description: The currency that the customer will make the payment in.
+                  type: string
+                  maxLength: 3
+                  minLength: 3
+                description:
+                  description: The description submitted to the bank as a reference when initiating a payment. Can be used for reconciliation. By default this value is a the Payment Intent UUID without hyphens but you can also specify the description upon creation of a payment intent.
+                  type: string
+                payment_destination_id:
+                  description: Payment destination for where funds are settled into.
+                  type: string
+              required:
+              - customer_id
+              - amount
+              - currency
+      responses:
+        '200':
+          description: ''
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentIntent'
+              example:
+                payment_intent_id: 77f0c07e-7b7b-4677-bb05-6261f9eead0c
+                customer_id: 89bf7bf8-89cb-42e5-8332-eeef869a2524
+                amount: 61.4
+                currency: AED
+                description: 77f0c07e7b7b4677bb056261f9eead0c
+                payments: []
+                payment_destination:
+                  id: 95c29647-c568-40d7-8710-3e330de1b5f2
+                  bank_identifier: HSBC_UAE
+                  name: Acme Corp.
+                  iban: AE870200000XXXXXXXXXXXX
+                  display_name: Acme Corp.
+                  account_number: XXXXXXXXXXXX
+                  swift_code: BBMEAEAD
+                  status: ACTIVE
+                  address: Acme Towers, 51st Floor
+                  country: ARE
+                  city: Dubai
+                  default: true
+                  owner_type: APPLICATION
+      deprecated: false
+      tags:
+      - Payment Intents
+    get:
+      operationId: listPaymentIntents
+      summary: List Payment Intents
+      description: List all Payment Intents
+      parameters:
+      - name: page
+        in: query
+        description: Set which page to fetch (indexed to 0)
+        required: true
+        schema:
+          type: integer
+        example: 0
+      - name: size
+        in: query
+        description: Set the page size to be returned
+        required: true
+        schema:
+          type: integer
+        example: 50
+      - name: customer_id
+        in: query
+        description: Filter Payment Intents by Customer
+        required: false
+        schema:
+          type: string
+          format: uuid
+      - name: from
+        in: query
+        description: Fetch Payment Intents created after this date-time
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: to
+        in: query
+        description: Fetch Payment Intents created before this date-time
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: status
+        in: query
+        description: Filter the results to a specific status
+        required: false
+        schema:
+          type: string
+          enum:
+          - CREDENTIALS_UPDATE_REQUIRED
+          - AWAITING_END_USER_AUTHORIZATION
+          - AWAITING_LOGIN_MFA_TOKEN
+          - AWAITING_APP_AUTH
+          - AWAITING_PAYMENT_MFA_TOKEN
+          - AWAITING_PAYMENT_SECURITY_QUESTIONS
+          - INVALID_CREDENTIALS
+          - INVALID_LOGIN_MFA
+          - INVALID_PAYMENT_MFA
+          - BENEFICIARY_NOT_FOUND
+          - MFA_ATTEMPTS_EXHAUSTED
+          - SECURITY_QUESTION_ANSWER_ATTEMPTS_EXHAUSTED
+          - PENDING_WITH_BANK
+          - AWAITING_AUTHORIZATION
+          - FAILED
+          - AWAITING_AUTHORIZATION_LOGIN_MFA
+          - INVALID_AUTHORIZATION_LOGIN_MFA
+          - AWAITING_AUTHORIZATION_LOGIN_SECURITY_QUESTION
+          - AWAITING_AUTHORIZATION_LOGIN_SECURITY_QUESTION_ANSWER
+          - INVALID_AUTHORIZATION_LOGIN_SECURITY_QUESTION_ANSWER
+          - AUTHORIZATION_LOGIN_SECURITY_QUESTION_ANSWER_ATTEMPTS_EXHAUSTED
+          - AUTHORIZATION_FAILED
+          - AWAITING_AUTHORIZATION_PAYMENT_MFA
+          - INVALID_AUTHORIZATION_PAYMENT_MFA
+          - PARTIAL_ACCEPTED_BY_BANK
+          - AUTHORIZATION_MFA_ATTEMPTS_EXHAUSTED
+      responses:
+        '200':
+          description: ''
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PaymentIntent'
+                  page:
+                    $ref: '#/components/schemas/Pagination'
+                required:
+                - data
+                - page
+              example:
+                data:
+                - payment_intent_id: 77f0c07e-7b7b-4677-bb05-6261f9eead0c
+                  customer_id: 89bf7bf8-89cb-42e5-8332-eeef869a2524
+                  amount: 61.4
+                  currency: AED
+                  description: 77f0c07e7b7b4677bb056261f9eead0c
+                  payments:
+                  - id: 25c90cc6-67dc-4193-a6e9-a7c875fcc0af
+                    payment_intent_id: 77f0c07e-7b7b-4677-bb05-6261f9eead0c
+                    payment_source_id: b6fba7da-1054-5e82-8a9a-afd3ab4d1710
+                    sender_details:
+                      account_number: XXXXXXXXXXXX
+                      iban: AE940030011XXXXXXXXXXXX
+                      name: John Doe
+                    recipient_details:
+                      account_number: XXXXXXXXXXXX
+                      iban: AE870200000XXXXXXXXXXXX
+                      name: Al Fulani
+                    amount: 61.4
+                    currency: AED
+                    description: 77f0c07e7b7b4677bb056261f9eead0c
+                    submission_timestamp: '2021-05-18T13:58:03.427045Z'
+                    initiation_timestamp: '2021-05-18T13:58:42.445103Z'
+                    status: ACCEPTED_BY_BANK
+                    bank_transaction_reference: 0492981211381081
+                  payment_destination:
+                    id: 95c29647-c568-40d7-8710-3e330de1b5f2
+                    bank_identifier: HSBC_UAE
+                    name: Acme Corp.
+                    iban: AE870200000XXXXXXXXXXXX
+                    display_name: Acme Corp.
+                    account_number: XXXXXXXXXXXX
+                    swift_code: BBMEAEAD
+                    status: ACTIVE
+                    address: Acme Towers, 51st Floor
+                    country: ARE
+                    city: Dubai
+                    default: true
+                    owner_type: APPLICATION
+                page:
+                  number: 0
+                  size: 50
+                  total_elements: 1
+                  total_pages: 1
+      deprecated: false
+      tags:
+      - Payment Intents
+  /payments/v1/intents/{payment_intent_id}:
+    get:
+      operationId: getPaymentIntentById
+      summary: Get Payment Intent
+      description: The Payment intent is the contract between your backend and Lean to certify that you will request a payment from your customer of a specified amount and currency. In order to initiate a payment, the `payment_intent_id` must be provided into the `pay()` method of the LinkSDK.
+      parameters:
+      - name: payment_intent_id
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentIntent'
+              example:
+                payment_intent_id: 77f0c07e-7b7b-4677-bb05-6261f9eead0c
+                customer_id: 89bf7bf8-89cb-42e5-8332-eeef869a2524
+                amount: 61.4
+                currency: AED
+                description: 77f0c07e7b7b4677bb056261f9eead0c
+                payments:
+                - id: 25c90cc6-67dc-4193-a6e9-a7c875fcc0af
+                  payment_intent_id: 77f0c07e-7b7b-4677-bb05-6261f9eead0c
+                  payment_source_id: b6fba7da-1054-5e82-8a9a-afd3ab4d1710
+                  sender_details:
+                    account_number: XXXXXXXXXXXX
+                    iban: AE940030011XXXXXXXXXXXX
+                    name: John Doe
+                  recipient_details:
+                    account_number: XXXXXXXXXXXX
+                    iban: AE870200000XXXXXXXXXXXX
+                    name: Al Fulani
+                  amount: 61.4
+                  currency: AED
+                  description: 77f0c07e7b7b4677bb056261f9eead0c
+                  submission_timestamp: '2021-05-18T13:58:03.427045Z'
+                  initiation_timestamp: '2021-05-18T13:58:42.445103Z'
+                  status: ACCEPTED_BY_BANK
+                  bank_transaction_reference: 0492981211381081
+                payment_destination:
+                  id: 95c29647-c568-40d7-8710-3e330de1b5f2
+                  bank_identifier: HSBC_UAE
+                  name: Acme Corp.
+                  iban: AE870200000XXXXXXXXXXXX
+                  display_name: Acme Corp.
+                  account_number: XXXXXXXXXXXX
+                  swift_code: BBMEAEAD
+                  status: ACTIVE
+                  address: Acme Towers, 51st Floor
+                  country: ARE
+                  city: Dubai
+                  default: true
+                  owner_type: APPLICATION
+      deprecated: false
+      tags:
+      - Payment Intents
+components:
+  schemas:
+    PaymentIntent:
+      type: object
+      properties:
+        payment_intent_id:
+          description: The unique identifier for the Payment Intent.
+          type: string
+          format: uuid
+        customer_id:
+          description: The Customer object associated with the Payment Intent.
+          type: string
+        amount:
+          description: The amount that should be charged to the customer.
+          type: number
+          format: float
+        currency:
+          description: The currency that the customer will make the payment in.
+          type: string
+          maxLength: 3
+          minLength: 3
+        description:
+          description: The description submitted to the bank as a reference when initiating a payment. Can be used for reconciliation. By default this value is a the Payment Intent UUID without hyphens but you can also specify the description upon creation of a payment intent.
+          type: string
+        payments:
+          description: An array of Payment Initiation(s) - currently there will only ever be one Payment object within the array once a user has started to complete a payment.
+          type: array
+          items:
+            $ref: '#/components/schemas/Payment'
+        payment_destination:
+          type: object
+          properties:
+            id:
+              description: The unique identifier for the Payment Destination object.
+              type: string
+              format: uuid
+            status:
+              description: The status of the Destination
+              type: string
+              const: ACTIVE
+            default:
+              description: When `true` this Destination is automatically populated into Payment Intents where an alternative `payment_destination_id` is not provided.
+              type: boolean
+            name:
+              description: The name of the legal entity that owns the account.
+              type: string
+            iban:
+              description: 'The IBAN of the account.
+
+                This is required for all countries except for the US.'
+              type: string
+            display_name:
+              description: The friendly display name for the account. This is rendered in the LinkSDK when referencing the Destination.
+              type: string
+            address:
+              description: The address of the owner of the destination bank account has registered with the bank.
+              type: string
+            city:
+              description: The city that the holding financial institution is located in.
+              type: string
+            country:
+              description: The three letter ISO code for the holding financial institution's country.
+              type: string
+            swift_code:
+              description: The SWIFT Code for the bank account - required for most international destinations
+              type: string
+            account_number:
+              description: The account number for the account.
+              type: string
+            customer_id:
+              description: The Customer object associated with this account. This field is optional, and will designate the Destination as owned by the application if not provided.
+              type: string
+            owner_type:
+              description: Establishes the ownership of the Destination
+              type: string
+              enum:
+              - APPLICATION
+              - CUSTOMER
+          required:
+          - id
+          - status
+          - default
+          - name
+          - display_name
+          - address
+          - city
+          - country
+          - account_number
+      required:
+      - payment_intent_id
+      - customer_id
+      - amount
+      - currency
+      - description
+      - payments
+      - payment_destination
+    Pagination:
+      type: object
+      properties:
+        number:
+          description: The current page being returned by the API
+          type: integer
+        size:
+          description: The page size requested
+          type: integer
+        total_elements:
+          description: The total number of elements in all pages
+          type: integer
+        total_pages:
+          description: The total number of pages retrievable
+          type: integer
+      required:
+      - number
+      - size
+      - total_elements
+      - total_pages
+    Payment:
+      type: object
+      properties:
+        id:
+          description: The unique identifier for this payment.
+          type: string
+          format: uuid
+        payment_intent_id:
+          description: The Payment Intent identifier responsible for generating the Payment.
+          type: string
+          format: uuid
+        payment_source_id:
+          description: The identifier for the payment source object from which the payment was initiatied.
+          type: string
+          format: uuid
+        sender_details:
+          description: The account details for the customer sending the payment. Includes account number, name of the account holder and IBAN.
+          type: object
+          properties:
+            account_number:
+              type: string
+            iban:
+              type: string
+            name:
+              type: string
+          required:
+          - account_number
+          - iban
+          - name
+        recipient_details:
+          description: Details for the recipient of the Payment, generated from the details available in the payment_destination.
+          type: object
+          properties:
+            account_number:
+              type: string
+            iban:
+              type: string
+            name:
+              type: string
+          required:
+          - account_number
+          - iban
+          - name
+        amount:
+          description: The amount the charge was initiated for.
+          type: number
+        currency:
+          description: The currency the payment was initiated with.
+          type: string
+        description:
+          description: The description submitted to the bank as a reference when initiating a payment. Can be used for reconciliation. By default this value is a the Payment Intent UUID without hyphens but you can also specify the description upon creation of a payment intent.
+          type: string
+        submission_timestamp:
+          description: The time the Payment Initiation was submitted.
+          type: string
+          format: date-time
+        initiation_timestamp:
+          description: The time the Payment Initiation was started.
+          type: string
+          format: date-time
+        status:
+          description: 'The current status of the payment - see Payments Errors for a list of available MFAs. '
+          type: string
+          enum:
+          - AWAITING_LOGIN_MFA
+          - AWAITING_PAYMENT_MFA
+          - AWAITING_APP_AUTH
+          - FAILED
+          - PENDING_WITH_BANK
+          - ACCEPTED_BY_BANK
+        bank_transaction_reference:
+          description: The transaction reference number supplied by the initiating bank on successful initiation of a transfer. Can be used for reconciliation.
+          type: string
+      required:
+      - id
+      - payment_intent_id
+      - payment_source_id
+      - sender_details
+      - recipient_details
+      - amount
+      - currency
+      - description
+      - submission_timestamp
+      - initiation_timestamp
+      - status
+      - bank_transaction_reference
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

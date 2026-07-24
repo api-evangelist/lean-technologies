@@ -1,0 +1,618 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Standing Orders Raw Data API
+  version: v0.2.3
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Standing Orders Raw Data
+  x-displayName: Standing Orders Raw Data
+paths:
+  /data/v2/accounts/{account_id}/standing-orders:
+    servers: []
+    get:
+      operationId: getStandingOrders
+      summary: Get Standing Orders
+      description: "Get the standing orders for a specific account given an accountId. \nThe accountId can be found by making a call to the /accounts endpoint. \nRequires the following permissions: `standing_orders`\n"
+      parameters:
+      - $ref: '#/components/parameters/AccountIdParameter'
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/PageParameter'
+      - $ref: '#/components/parameters/SizeParameter'
+      - $ref: '#/components/parameters/EntityIdParameter'
+      - $ref: '#/components/parameters/MetaParameter'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandingOrdersResponse'
+              examples:
+                GetStandingOrders_KSA_Example:
+                  summary: Successful get standing orders -KSA
+                  value:
+                    status: OK
+                    results_id: 206340f7-37e8-4166-a98d-fb351bddc6b6
+                    message: Data successfully retrieved
+                    meta: null
+                    timestamp: '2025-02-15T00:00:00Z'
+                    status_detail: null
+                    data:
+                      standing_orders:
+                      - account_id: 53fd3763-8089-4a85-ac26-b66c8d0a950a
+                        standing_order_id: SO-KSA-001-2024
+                        standing_order_status_code: ACTIVE
+                        standing_order_type: LOCAL_BANK_TRANSFER
+                        purpose: Monthly utility payment
+                        first_payment_date_time: '2024-01-15T10:00:00Z'
+                        last_payment_date_time: '2025-01-15T10:00:00Z'
+                        next_payment_date_time: '2025-02-15T10:00:00Z'
+                        final_payment_date_time: null
+                        frequency:
+                          frequency_type: MONTHLY
+                          interval: null
+                        number_of_payments: null
+                        reference: UTILITY-PAYMENT-001
+                        first_payment_amount:
+                          currency: SAR
+                          amount: 500
+                        last_payment_amount:
+                          currency: SAR
+                          amount: 500
+                        next_payment_amount:
+                          currency: SAR
+                          amount: 500
+                        final_payment_amount:
+                          currency: SAR
+                          amount: 500
+                        creditor_agent:
+                          identification_type: BICFI
+                          identification: NCBKSAJE
+                          name: The National Commercial Bank
+                        creditor_account:
+                          scheme_name: IBAN
+                          identification: SA0380000000608010167519
+                          name: Saudi Electricity Company
+                      - account_id: 53fd3763-8089-4a85-ac26-b66c8d0a950a
+                        standing_order_id: SO-KSA-002-2024
+                        standing_order_status_code: ACTIVE
+                        standing_order_type: LOCAL_BANK_TRANSFER
+                        purpose: Monthly mobile service payment
+                        first_payment_date_time: '2024-01-20T14:30:00Z'
+                        last_payment_date_time: '2025-01-20T14:30:00Z'
+                        next_payment_date_time: '2025-02-20T14:30:00Z'
+                        final_payment_date_time: null
+                        frequency:
+                          frequency_type: MONTHLY
+                          interval: null
+                        number_of_payments: null
+                        reference: MOBILE-SERVICE-002
+                        first_payment_amount:
+                          currency: SAR
+                          amount: 199.75
+                        last_payment_amount:
+                          currency: SAR
+                          amount: 199.75
+                        next_payment_amount:
+                          currency: SAR
+                          amount: 199.75
+                        final_payment_amount: null
+                        creditor_agent:
+                          identification_type: BICFI
+                          identification: RJHISARI
+                          name: Riyad Bank
+                        creditor_account:
+                          scheme_name: IBAN
+                          identification: SA0615000000000001234567
+                          name: stc
+                      page:
+                        number: 0
+                        size: 50
+                        total_elements: 2
+                        total_pages: 1
+                    type: standing-orders
+                    refreshed_at: '2025-02-15T00:00:03Z'
+                BankIssueExample:
+                  summary: Example response for bank issue
+                  value:
+                    status: FAILED
+                    results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+                    message: Your bank is currently experiencing technological problems. Please try again later.
+                    meta: null
+                    timestamp: '2025-09-12T05:13:49.739987382Z'
+                    status_detail:
+                      granular_status_code: BANK_ISSUE
+                      status_additional_info: Your bank is currently experiencing technological problems. Please try again later.
+                    data: null
+                    type: null
+                    refreshed_at: null
+        '202':
+          description: Accepted (Asynchronous request)
+          content:
+            application/json:
+              examples:
+                GetStandingOrdersV2AsyncExample:
+                  $ref: '#/components/examples/AsyncProcessingV2Example'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                InvalidParametersExample:
+                  $ref: '#/components/examples/InvalidParametersExample'
+        '404':
+          description: Account not found
+          content:
+            application/json:
+              examples:
+                UnknownAccountExample:
+                  $ref: '#/components/examples/UnknownAccountExample'
+                UnknownEntityExample:
+                  $ref: '#/components/examples/UnknownEntityExample'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                InternalServerErrorExample:
+                  $ref: '#/components/examples/InternalServerErrorExample'
+      security:
+      - bearer: []
+      tags:
+      - Standing Orders Raw Data
+components:
+  schemas:
+    DataResult:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          refreshed_at:
+            description: The datetime of when the data was refreshed
+            type:
+            - string
+            - 'null'
+            format: date-time
+          type:
+            description: The endpoint the original request was made to.
+            type:
+            - string
+            - 'null'
+    Currency:
+      description: The ISO 3 letter currency code
+      type: string
+      examples:
+      - AED
+      pattern: ^[A-Z]{3}$
+    PageMetadata:
+      description: Metadata about the current page of results
+      type: object
+      properties:
+        number:
+          description: The current page being returned by the API
+          type: integer
+          format: int32
+        size:
+          description: The page size requested
+          type: integer
+          format: int32
+        total_elements:
+          description: The total number of elements in all pages
+          type: integer
+          format: int64
+        total_pages:
+          description: The total number of pages retrievable
+          type: integer
+          format: int32
+        sort:
+          description: Sort parameters applied to the results
+          type: array
+          items:
+            type: string
+      required:
+      - number
+      - size
+      - total_elements
+      - total_pages
+    AccountIdentification:
+      type: object
+      properties:
+        scheme_name:
+          $ref: '#/components/schemas/SchemeName'
+        identification:
+          description: The identification value for the account assigned by the Bank based on the Account Scheme Name.
+          type: string
+        name:
+          description: Account name
+          type: string
+    StandingOrder:
+      type: object
+      properties:
+        account_id:
+          description: The unique identifier of the account
+          type: string
+          format: uuid
+        standing_order_id:
+          description: Unique identifier for the standing order
+          type: string
+        standing_order_status_code:
+          description: Current status of the standing order
+          type: string
+        standing_order_type:
+          description: The type of standing order
+          type: string
+          enum:
+          - BETWEEN_MY_ACCOUNTS
+          - SAME_BANK_TRANSFER
+          - LOCAL_BANK_TRANSFER
+          - INTERNATIONAL_TRANSFER
+          - CHARITY
+          - UNSUPPORTED
+        purpose:
+          description: The purpose of the standing order payment.
+          type: string
+        first_payment_date_time:
+          description: Date and time of the first payment
+          type:
+          - string
+          - 'null'
+          format: date-time
+        last_payment_date_time:
+          description: Date and time of the last payment
+          type:
+          - string
+          - 'null'
+          format: date-time
+        next_payment_date_time:
+          description: Date and time of the next scheduled payment
+          type:
+          - string
+          - 'null'
+          format: date-time
+        final_payment_date_time:
+          description: Date and time of the final payment
+          type:
+          - string
+          - 'null'
+          format: date-time
+        frequency:
+          description: Frequency details of the standing order
+          allOf:
+          - $ref: '#/components/schemas/StandingOrderFrequency'
+        number_of_payments:
+          description: Total number of payments
+          type:
+          - integer
+          - 'null'
+        reference:
+          description: Reference for the standing order
+          type:
+          - string
+          - 'null'
+        first_payment_amount:
+          description: Amount of the first payment
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        last_payment_amount:
+          description: Amount of the last payment
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        next_payment_amount:
+          description: Amount of the next payment
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        final_payment_amount:
+          description: Amount of the final payment
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        creditor_agent:
+          $ref: '#/components/schemas/CreditorAgent'
+        creditor_account:
+          $ref: '#/components/schemas/AccountIdentification'
+      required:
+      - account_id
+      - standing_order_id
+    CurrencyAmount:
+      type: object
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          description: The amount of money in the currency specified.
+          type: number
+      required:
+      - currency
+      - amount
+    Result:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ResultStatus'
+        results_id:
+          description: The unique identifier for the request
+          type: string
+          format: uuid
+        message:
+          description: A message describing the status of the request
+          type: string
+        meta:
+          description: Meta information about the request
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: string
+        timestamp:
+          description: The datetime of when the request was made
+          type: string
+          format: date-time
+        status_detail:
+          description: Additional information about the status
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/StatusDetail'
+      required:
+      - status
+      - results_id
+      - message
+      - timestamp
+    CreditorAgent:
+      type: object
+      properties:
+        identification_type:
+          description: identification_type
+          type: string
+        identification:
+          description: Unique identification of the servicing institution.
+          type: string
+        name:
+          description: Name of the agent or institution
+          type: string
+        postal_address:
+          $ref: '#/components/schemas/PostalAddressSau'
+      x-toBuilder: true
+    SchemeName:
+      description: The scheme name of the account identification value
+      type: string
+      enum:
+      - PAN
+      - IBAN
+      - BBAN
+      - COMMERCIAL_REGISTRATION_NUMBER
+      - EMAIL
+      - MOBILE_NUMBER
+      - NATIONAL_ID
+      - IQAMA_NUMBER
+      - PASSPORT_NUMBER
+      - OTHER
+      - UNSUPPORTED
+    ResultStatus:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - RECONNECT_REQUIRED
+      - PROCESSING_STARTED
+    StatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        granular_status_code:
+          description: Granular status code
+          type:
+          - string
+          - 'null'
+        status_additional_info:
+          description: Additional information about the status
+          type:
+          - string
+          - 'null'
+    PostalAddressSau:
+      type: object
+      properties:
+        address_type:
+          description: Identifies the nature of the postal address.
+          type: string
+        short_address:
+          description: Abbreviated form of the address.
+          type: string
+        building_number:
+          description: Number that identifies the position of a building on a street.
+          type: string
+        unit_number:
+          description: Number identifying a specific unit within a building.
+          type: string
+        street_name:
+          description: Name of a street or thoroughfare.
+          type: string
+        secondary_number:
+          description: Additional number used to identify a location.
+          type: string
+        district:
+          description: District or neighborhood name within a city.
+          type: string
+        postal_code:
+          description: Identifier consisting of a group of letters and/or numbers that is added to a postal address.
+          type: string
+        city:
+          description: Name of the city.
+          type: string
+        country:
+          description: Nation with its own government.
+          type: string
+    StandingOrdersData:
+      type: object
+      properties:
+        standing_orders:
+          description: List of standing orders for the account
+          type: array
+          items:
+            $ref: '#/components/schemas/StandingOrder'
+        page:
+          description: Pagination information
+          allOf:
+          - $ref: '#/components/schemas/PageMetadata'
+      required:
+      - standing_orders
+      - page
+    StandingOrdersResponse:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/DataResult'
+      - type: object
+        properties:
+          data:
+            description: The standing orders data
+            allOf:
+            - $ref: '#/components/schemas/StandingOrdersData'
+    StandingOrderFrequency:
+      type: object
+      properties:
+        frequency_type:
+          description: Type of frequency
+          type: string
+          enum:
+          - DAILY
+          - WEEKLY
+          - FORTNIGHTLY
+          - MONTHLY
+          - QUARTERLY
+          - HALF_YEARLY
+          - YEARLY
+          - OTHER
+        interval:
+          description: Interval value when frequency_type is OTHER
+          type:
+          - string
+          - 'null'
+  examples:
+    InternalServerErrorExample:
+      summary: Internal server error response
+      description: Response when an unexpected server error occurs
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-08-07T13:07:38.834977945Z'
+        status: INTERNAL_SERVER_ERROR
+        message: Something has gone wrong. If you continue to see this error, please get in touch with Lean.
+        metadata: null
+    UnknownAccountExample:
+      summary: Account not found error response
+      description: Response when the provided account_id does not match an account for the entity_id
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-11T18:55:42.579432745Z'
+        status: UNKNOWN_ACCOUNT
+        message: The account_id provided does not match an account with the entity_id provided.
+        metadata: null
+    UnknownEntityExample:
+      summary: Entity not found error response
+      description: Response when the provided entity_id is not found
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-10T21:03:05.413806605Z'
+        status: UNKNOWN_ENTITY
+        message: The entity_id provided did not match an account in our records.
+        metadata: null
+    InvalidParametersExample:
+      summary: Invalid parameters error response
+      description: Response when required parameters are missing or invalid
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-10T21:05:59.919233187Z'
+        status: INVALID_PARAMETERS
+        message: 'The request is badly formatted or a parameter of the wrong type has been provided, field: entity_id, value: e34d8e49-9af2-4252-a53e-bd2df855134.'
+        metadata: null
+    AsyncProcessingV2Example:
+      summary: Asynchronous processing response with async=true
+      description: Response to request with async=true
+      value:
+        status: PENDING
+        results_id: df73d596-7138-46df-af96-cbcbe9a8af59
+        message: Please wait for a webhook or try again later.
+        meta: null
+        timestamp: '2025-09-11T19:15:07.829993148Z'
+        status_detail: null
+        data: null
+        type: null
+        refreshed_at: null
+  parameters:
+    MetaParameter:
+      name: meta
+      description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
+      in: query
+      required: false
+      schema:
+        type: string
+    AccountIdParameter:
+      name: account_id
+      description: The account_id used to fetch requested data
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    SizeParameter:
+      name: size
+      description: The number of objects you want to return as a page size.
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 50
+        maximum: 100
+        minimum: 1
+    EntityIdParameter:
+      name: entity_id
+      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
+      in: query
+      required: false
+      schema:
+        type: string
+        format: uuid
+    AsyncParameter:
+      name: async
+      in: query
+      description: 'When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. **Note: it''s recommended to use the sync flow (async=false) for all requests by adapting the [data workflow](https://docs.leantech.me/docs/data-workflow) for connected entities.**'
+      required: false
+      schema:
+        type: boolean
+        default: false
+      deprecated: true
+    PageParameter:
+      name: page
+      in: query
+      description: The page you're requesting - returns page 0 of a response if not specified.
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

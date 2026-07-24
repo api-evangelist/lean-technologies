@@ -1,0 +1,182 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Entity Verification API
+  version: v0.2.3
+  description: Entity ownership verification operations
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Entity Verification
+  description: Entity ownership verification operations
+  x-displayName: Entity Verification
+paths:
+  /verifications/v2/entity:
+    servers: []
+    post:
+      operationId: entityVerification
+      summary: Verify Entity Ownership
+      description: Verifies entity ownership by matching identification against bank records for multiple IBANs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EntityVerificationApiRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerificationResponseEntityVerificationResponsePayload'
+              example:
+                status: OK
+                results_id: a894ede4-dd81-41fb-b52d-fb4fec16c16c
+                message: Data successfully retrieved
+                timestamp: '2023-10-18T13:15:32.251834909Z'
+                verifications:
+                  entity_ownership_verified: true
+                  ibans:
+                  - iban: SA2810000011100000461309
+                    iban_ownership_verified: true
+                  verification_method: OPEN_BANKING
+      tags:
+      - Entity Verification
+components:
+  schemas:
+    EntityIdentificationType:
+      description: "`NATIONAL_ID`: National identification number \n`COMMERCIAL_REGISTRATION`: Commercial registration number \n`UNIFIED_NUMBER`: Unified number \n`FREELANCER_NUMBER`: Freelancer number\n"
+      type: string
+      enum:
+      - NATIONAL_ID
+      - COMMERCIAL_REGISTRATION
+      - UNIFIED_NUMBER
+      - FREELANCER_NUMBER
+    Result:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ResultStatus'
+        results_id:
+          description: The unique identifier for the request
+          type: string
+          format: uuid
+        message:
+          description: A message describing the status of the request
+          type: string
+        meta:
+          description: Meta information about the request
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: string
+        timestamp:
+          description: The datetime of when the request was made
+          type: string
+          format: date-time
+        status_detail:
+          description: Additional information about the status
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/StatusDetail'
+      required:
+      - status
+      - results_id
+      - message
+      - timestamp
+    ResultStatus:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - PROCESSING_STARTED
+    EntityVerificationResponseIban:
+      type: object
+      properties:
+        iban:
+          description: Account IBAN
+          type: string
+        iban_ownership_verified:
+          description: Whether the IBAN is owned by the entity
+          type: boolean
+    EntityVerificationResponsePayload:
+      type: object
+      properties:
+        entity_ownership_verified:
+          description: Whether the entity ownership is verified
+          type: boolean
+        verification_method:
+          description: The verification method used to verify the entity's ownership
+          type: string
+          enum:
+          - CONFIRMATION_OF_PAYEE_SERVICE
+          - OPEN_BANKING
+          - SARIE
+          - SARIE_AND_CONFIRMATION_OF_PAYEE_SERVICE
+        ibans:
+          description: List of verified IBANs for the entity
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityVerificationResponseIban'
+    VerificationResponseEntityVerificationResponsePayload:
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          verifications:
+            $ref: '#/components/schemas/EntityVerificationResponsePayload'
+    EntityVerificationApiRequest:
+      type: object
+      properties:
+        identifications:
+          description: Entity identifications for verification
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityIdentificationDto'
+          x-field-extra-annotation: '@me.leantech.api.validation.ValidEntityIdentifications'
+        entity_id:
+          description: Entity ID as in the Lean's records
+          type: string
+          format: uuid
+      required:
+      - entity_id
+      x-class-extra-annotation: '@me.leantech.api.validation.ValidEntityVerificationRequest'
+    StatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        granular_status_code:
+          description: Granular status code
+          type:
+          - string
+          - 'null'
+        status_additional_info:
+          description: Additional information about the status
+          type:
+          - string
+          - 'null'
+    EntityIdentificationDto:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/EntityIdentificationType'
+        value:
+          description: Identification value
+          type: string
+          minLength: 1
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

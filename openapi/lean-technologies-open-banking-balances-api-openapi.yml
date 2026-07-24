@@ -1,0 +1,488 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Open Banking Balances API
+  version: v0.2.3
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Open Banking Balances
+  x-displayName: Open Banking Balances
+paths:
+  /open-banking/account-information/2022.11.01-final-errata2/accounts/{AccountId}/balances:
+    servers: []
+    get:
+      operationId: GetAccountBalancesV1
+      summary: Get Open Banking Account Balances
+      description: 'Retrieves the balances for a bank account linked by a user via LinkSDK for the KSA Open Banking (SAMA) ecosystem.
+
+        Each balance object contains the credit/debit indicator, balance type, date/time, and monetary amount.
+
+        Requires ReadBalances consent permission.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/FapiInteractionId'
+      - $ref: '#/components/parameters/EntityId'
+      - $ref: '#/components/parameters/CustomerId'
+      - $ref: '#/components/parameters/OBPageParm'
+      - $ref: '#/components/parameters/OBSizeParam'
+      responses:
+        '200':
+          description: Balances Read
+          headers:
+            x-fapi-interaction-id:
+              description: An RFC4122 UID used as a correlation id.
+              required: true
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OBGetBalancesResponse'
+              examples:
+                GetBalancesSuccess:
+                  summary: Successful balances response
+                  value:
+                    Status: OK
+                    Message: Data successfully retrieved
+                    Timestamp: '2026-04-09T10:30:00.000Z'
+                    RefreshedAt: '2026-04-09T10:25:00.000Z'
+                    StatusDetail: null
+                    Meta:
+                      TotalPages: 1
+                    Links:
+                      Self: https://api.leantech.me/open-banking/account-information/2022.11.01-final-errata2/accounts/7c8a9f12-3456-4abc-b123-9876543210ab/balances
+                      First: https://api.leantech.me/open-banking/account-information/2022.11.01-final-errata2/accounts/7c8a9f12-3456-4abc-b123-9876543210ab/balances
+                      Prev: null
+                      Next: null
+                      Last: https://api.leantech.me/open-banking/account-information/2022.11.01-final-errata2/accounts/7c8a9f12-3456-4abc-b123-9876543210ab/balances
+                    Data:
+                      Balance:
+                      - AccountId: 7c8a9f12-3456-4abc-b123-9876543210ab
+                        CreditDebitIndicator: KSAOB.Credit
+                        Type: KSAOB.InterimAvailable
+                        DateTime: '2026-04-09T10:25:00.000Z'
+                        Amount:
+                          Amount: '5000.00'
+                          Currency: SAR
+                        CreditLine: null
+                      - AccountId: 7c8a9f12-3456-4abc-b123-9876543210ab
+                        CreditDebitIndicator: KSAOB.Credit
+                        Type: KSAOB.ClosingBooked
+                        DateTime: '2026-04-08T23:59:59.000Z'
+                        Amount:
+                          Amount: '4800.00'
+                          Currency: SAR
+                        CreditLine:
+                        - Included: true
+                          Type: KSAOB.Available
+                          Amount:
+                            Amount: '10000.00'
+                            Currency: SAR
+                BankIssueExample:
+                  summary: Failed request due to bank technical issues
+                  value:
+                    Status: FAILED
+                    Message: Your bank is currently experiencing technological problems. Please try again later.
+                    Timestamp: '2026-04-09T10:30:00.000Z'
+                    RefreshedAt: null
+                    StatusDetail:
+                      GranularStatusCode: BANK_ISSUE
+                      StatusAdditionalInfo: Your bank is currently experiencing technological problems. Please try again later.
+                    Meta: null
+                    Links: null
+                    Data: null
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                MissingEntityId:
+                  summary: Missing or invalid entity_id
+                  value:
+                    Status: FAILED
+                    Message: entity_id is required and must be a valid UUID
+                    Timestamp: '2026-04-09T10:30:00.000Z'
+                    RefreshedAt: null
+                    StatusDetail:
+                      GranularStatusCode: INVALID_PARAMETERS
+                      StatusAdditionalInfo: The provided entity_id is not a valid UUID format
+                    Meta: null
+                    Links: null
+                    Data: null
+        '404':
+          description: Entity not found
+          content:
+            application/json:
+              examples:
+                EntityNotFound:
+                  summary: Entity not found
+                  value:
+                    Status: FAILED
+                    Message: Entity not found
+                    Timestamp: '2026-04-09T10:30:00.000Z'
+                    RefreshedAt: null
+                    StatusDetail:
+                      GranularStatusCode: ENTITY_NOT_FOUND
+                      StatusAdditionalInfo: No entity found for the provided entity_id
+                    Meta: null
+                    Links: null
+                    Data: null
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                BankIssue:
+                  summary: Bank technical issue
+                  value:
+                    Status: FAILED
+                    Message: Your bank is currently experiencing technological problems. Please try again later.
+                    Timestamp: '2025-09-12T05:13:49.739987382Z'
+                    RefreshedAt: null
+                    StatusDetail:
+                      GranularStatusCode: BANK_ISSUE
+                      StatusAdditionalInfo: Your bank is currently experiencing technological problems. Please try again later.
+                    Meta: null
+                    Links: null
+                    Data: null
+      tags:
+      - Open Banking Balances
+components:
+  parameters:
+    AccountId:
+      name: AccountId
+      in: path
+      description: The Lean account identifier uniquely identifying the account within Lean.
+      required: true
+      schema:
+        type: string
+        format: uuid
+    OBPageParm:
+      name: Page
+      in: query
+      description: The page you're requesting - returns page 0 of a response if not specified.
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+    FapiInteractionId:
+      name: x-fapi-interaction-id
+      in: header
+      description: An RFC4122 UID used as a correlation id.
+      required: false
+      schema:
+        type: string
+    OBSizeParam:
+      name: Size
+      description: The number of objects you want to return as a page size.
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 50
+        maximum: 100
+        minimum: 1
+    CustomerId:
+      name: CustomerId
+      in: query
+      description: The customer_id of the connected customer.
+      required: false
+      schema:
+        type: string
+        format: uuid
+    EntityId:
+      name: EntityId
+      in: query
+      description: The entity_id of the connected customer.
+      required: false
+      schema:
+        type: string
+        format: uuid
+  schemas:
+    OBAmount:
+      description: Active or historic currency and amount.
+      type: object
+      properties:
+        Amount:
+          description: A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.
+          type: string
+          pattern: ^\d{1,13}$|^\d{1,13}\.\d{1,5}$
+        Currency:
+          description: ISO 4217 currency code in which the amount is expressed.
+          type: string
+          examples:
+          - SAR
+          pattern: ^[A-Z]{3,3}$
+      required:
+      - Amount
+      - Currency
+    OBCreditLineTypeCode:
+      description: Limit type, in a coded form.
+      type: string
+      enum:
+      - KSAOB.Available
+      - KSAOB.Credit
+      - KSAOB.Emergency
+      - KSAOB.Pre-Agreed
+      - KSAOB.Temporary
+    OBGetBalancesResponse:
+      description: Response envelope for the Open Banking account balances.
+      type: object
+      properties:
+        Data:
+          description: Container for the list of Open Banking account balances. Null when the request fails.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBBalancesData'
+        Status:
+          description: Status of the request.
+          type: string
+          enum:
+          - OK
+          - PENDING
+          - FAILED
+          - CONSENT_EXPIRED
+        Message:
+          description: Human-readable message describing the status of the request.
+          type: string
+        Timestamp:
+          description: Date and time when the response was generated.
+          type: string
+          format: date-time
+        RefreshedAt:
+          description: Date and time when the data was last refreshed from the bank.
+          type:
+          - string
+          - 'null'
+          format: date-time
+        StatusDetail:
+          description: Additional details about the request status.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBStatusDetail'
+        Meta:
+          description: Metadata relevant to the resource, including pagination information.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBMeta'
+        Links:
+          description: Links relevant to the resource for pagination navigation.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBLinks'
+      required:
+      - Data
+      - Status
+      - Message
+      - Timestamp
+    OBLinks:
+      description: Links relevant to the resource for pagination navigation.
+      type: object
+      properties:
+        Self:
+          description: A link to the current resource.
+          type: string
+          format: uri
+        First:
+          description: A link to the first page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+        Prev:
+          description: A link to the previous page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+        Next:
+          description: A link to the next page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+        Last:
+          description: A link to the last page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+      required:
+      - Self
+    OBMeta:
+      description: Metadata relevant to the resource.
+      type: object
+      properties:
+        TotalPages:
+          description: Total number of pages where a result set is paginated.
+          type:
+          - integer
+          - 'null'
+          format: int32
+          minimum: 0
+    OBBalancesData:
+      description: Container for the list of Open Banking account balances.
+      type: object
+      properties:
+        CustomerId:
+          description: Lean provided customer ID
+          type:
+          - string
+          - 'null'
+          format: uuid
+        Balance:
+          description: List of balances for the account.
+          type: array
+          items:
+            $ref: '#/components/schemas/OBBalance'
+      required:
+      - Balance
+    OBBalance:
+      description: Set of elements used to define the balance details of an account.
+      type: object
+      properties:
+        EntityId:
+          description: Lean entity identifier for the connected customer.
+          type: string
+          format: uuid
+        AccountId:
+          description: Lean account identifier, uniquely identifying the account within Lean.
+          type: string
+          format: uuid
+        CreditDebitIndicator:
+          $ref: '#/components/schemas/OBCreditDebitCode'
+        Type:
+          $ref: '#/components/schemas/OBBalanceTypeCode'
+        DateTime:
+          description: Indicates the date and time of the balance. ISO 8601 format.
+          type: string
+          format: date-time
+        Amount:
+          description: Amount of money of the cash balance.
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/OBAmount'
+        CreditLine:
+          description: Set of elements used to provide details on the credit line.
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/OBCreditLine'
+      required:
+      - AccountId
+      - CreditDebitIndicator
+      - Type
+      - DateTime
+      - Amount
+    OBStatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        GranularStatusCode:
+          description: Granular status code providing additional information on the request status.
+          type:
+          - string
+          - 'null'
+        StatusAdditionalInfo:
+          description: Additional human-readable information about the status.
+          type:
+          - string
+          - 'null'
+    OBCreditDebitCode:
+      description: Indicates whether the transaction is a credit or a debit.
+      type: string
+      enum:
+      - KSAOB.Credit
+      - KSAOB.Debit
+    OBBalanceTypeCode:
+      description: 'Balance type, in a coded form:
+
+        * KSAOB.ClosingAvailable — closing available balance
+
+        * KSAOB.ClosingBooked — closing booked balance
+
+        * KSAOB.ClosingCleared — closing cleared balance
+
+        * KSAOB.Expected — expected balance
+
+        * KSAOB.ForwardAvailable — forward available balance
+
+        * KSAOB.Information — information balance
+
+        * KSAOB.InterimAvailable — interim available balance
+
+        * KSAOB.InterimBooked — interim booked balance
+
+        * KSAOB.InterimCleared — interim cleared balance
+
+        * KSAOB.OpeningAvailable — opening available balance
+
+        * KSAOB.OpeningBooked — opening booked balance
+
+        * KSAOB.OpeningCleared — opening cleared balance
+
+        * KSAOB.PreviouslyClosedBooked — previously closed booked balance
+
+        '
+      type: string
+      enum:
+      - KSAOB.ClosingAvailable
+      - KSAOB.ClosingBooked
+      - KSAOB.ClosingCleared
+      - KSAOB.Expected
+      - KSAOB.ForwardAvailable
+      - KSAOB.Information
+      - KSAOB.InterimAvailable
+      - KSAOB.InterimBooked
+      - KSAOB.InterimCleared
+      - KSAOB.OpeningAvailable
+      - KSAOB.OpeningBooked
+      - KSAOB.OpeningCleared
+      - KSAOB.PreviouslyClosedBooked
+    OBCreditLine:
+      description: Set of elements used to provide details on the credit line.
+      type: object
+      properties:
+        Included:
+          description: Indicates whether or not the credit line is included in the balance of the account.
+          type: boolean
+        Type:
+          description: Limit type, in a coded form.
+          type:
+          - string
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBCreditLineTypeCode'
+        Amount:
+          description: Amount of money of the credit line.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBAmount'
+      required:
+      - Included
+      - Type
+      - Amount
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

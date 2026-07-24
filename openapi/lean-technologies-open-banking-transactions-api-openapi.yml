@@ -1,0 +1,1118 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Open Banking Transactions API
+  version: v0.2.3
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Open Banking Transactions
+  x-displayName: Open Banking Transactions
+paths:
+  /open-banking/account-information/2022.11.01-final-errata2/accounts/{AccountId}/transactions:
+    servers: []
+    get:
+      operationId: GetAccountTransactionsV1
+      summary: Get Open Banking Account Transactions
+      description: 'Retrieves the transactions for a bank account linked by a user via LinkSDK for the KSA Open Banking (SAMA) ecosystem.
+
+        Each transaction object contains the transaction type, credit/debit indicator, booking date, amount, and related payment details.
+
+        Requires ReadTransactionsBasic or ReadTransactionsDetail consent permission.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/FapiInteractionId'
+      - $ref: '#/components/parameters/EntityId'
+      - $ref: '#/components/parameters/CustomerId'
+      - $ref: '#/components/parameters/FromBookingDateTimeParam'
+      - $ref: '#/components/parameters/ToBookingDateTimeParam'
+      - $ref: '#/components/parameters/OBPageParm'
+      - $ref: '#/components/parameters/OBSizeParam'
+      responses:
+        '200':
+          description: Transactions Read
+          headers:
+            x-fapi-interaction-id:
+              description: An RFC4122 UID used as a correlation id.
+              required: true
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OBGetTransactionsResponse'
+              examples:
+                GetTransactionsSuccess:
+                  summary: Successful transactions response
+                  value:
+                    Status: OK
+                    Message: Data successfully retrieved
+                    Timestamp: '2026-04-09T10:30:00.000Z'
+                    RefreshedAt: '2026-04-09T10:25:00.000Z'
+                    StatusDetail: null
+                    Meta:
+                      TotalPages: 1
+                    Links:
+                      Self: https://api.leantech.me/open-banking/account-information/2022.11.01-final-errata2/accounts/7c8a9f12-3456-4abc-b123-9876543210ab/transactions?page=0&size=50
+                      First: https://api.leantech.me/open-banking/account-information/2022.11.01-final-errata2/accounts/7c8a9f12-3456-4abc-b123-9876543210ab/transactions?page=0&size=50
+                      Prev: null
+                      Next: null
+                      Last: https://api.leantech.me/open-banking/account-information/2022.11.01-final-errata2/accounts/7c8a9f12-3456-4abc-b123-9876543210ab/transactions?page=0&size=50
+                    Data:
+                      Transaction:
+                      - TransactionId: TXN-20260409-001234
+                        TransactionDateTime: '2026-04-09T08:45:00.000Z'
+                        LocalTimeZone: UTC+03:00
+                        StatementReference: null
+                        TransactionReference: POS-RIYADH-0409
+                        TransactionType: KSAOB.POS
+                        SubTransactionType: KSAOB.Purchase
+                        TerminalId: null
+                        Flags: null
+                        PaymentModes: KSAOB.Online
+                        CreditDebitIndicator: KSAOB.Debit
+                        Status: KSAOB.Booked
+                        TransactionMutability: KSAOB.Immutable
+                        BookingDateTime: '2026-04-09T08:45:00.000Z'
+                        ValueDateTime: '2026-04-09T08:45:00.000Z'
+                        TransactionInformation: SUPERMARKET PURCHASE
+                        Amount:
+                          Amount: '125.50'
+                          Currency: SAR
+                        ChargeAmount: null
+                        ChargeAmountVat: null
+                        Balance:
+                          CreditDebitIndicator: KSAOB.Credit
+                          Type: KSAOB.InterimBooked
+                          Amount:
+                            Amount: '4674.50'
+                            Currency: SAR
+                        CardInstrument:
+                          CardSchemeName: KSAOB.mada
+                          InstrumentType: KSAOB.Contactless
+                          Name: null
+                          Identification: null
+                        MerchantDetails:
+                          MerchantId: null
+                          MerchantName: RIYADH SUPERMARKET
+                          MerchantCategoryCode: '5411'
+                        CreditorAgent: null
+                        CreditorAccount: null
+                        DebtorAgent: null
+                        DebtorAccount: null
+                        BillDetails: null
+                        CurrencyExchange: null
+                        BankTransactionCode: null
+                        ProprietaryBankTransactionCode: null
+                        SupplementaryData: null
+                BankIssueExample:
+                  summary: Failed request due to bank technical issues
+                  value:
+                    Status: FAILED
+                    Message: Your bank is currently experiencing technological problems. Please try again later.
+                    Timestamp: '2026-04-09T10:30:00.000Z'
+                    RefreshedAt: null
+                    StatusDetail:
+                      GranularStatusCode: BANK_ISSUE
+                      StatusAdditionalInfo: Your bank is currently experiencing technological problems. Please try again later.
+                    Meta: null
+                    Links: null
+                    Data: null
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                MissingEntityId:
+                  summary: Missing or invalid entity_id
+                  value:
+                    Status: FAILED
+                    Message: entity_id is required and must be a valid UUID
+                    Timestamp: '2026-04-09T10:30:00.000Z'
+                    RefreshedAt: null
+                    StatusDetail:
+                      GranularStatusCode: INVALID_PARAMETERS
+                      StatusAdditionalInfo: The provided entity_id is not a valid UUID format
+                    Meta: null
+                    Links: null
+                    Data: null
+        '404':
+          description: Entity not found
+          content:
+            application/json:
+              examples:
+                EntityNotFound:
+                  summary: Entity not found
+                  value:
+                    Status: FAILED
+                    Message: Entity not found
+                    Timestamp: '2026-04-09T10:30:00.000Z'
+                    RefreshedAt: null
+                    StatusDetail:
+                      GranularStatusCode: ENTITY_NOT_FOUND
+                      StatusAdditionalInfo: No entity found for the provided entity_id
+                    Meta: null
+                    Links: null
+                    Data: null
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                BankIssue:
+                  summary: Bank technical issue
+                  value:
+                    Status: FAILED
+                    Message: Your bank is currently experiencing technological problems. Please try again later.
+                    Timestamp: '2025-09-12T05:13:49.739987382Z'
+                    RefreshedAt: null
+                    StatusDetail:
+                      GranularStatusCode: BANK_ISSUE
+                      StatusAdditionalInfo: Your bank is currently experiencing technological problems. Please try again later.
+                    Meta: null
+                    Links: null
+                    Data: null
+      tags:
+      - Open Banking Transactions
+components:
+  parameters:
+    AccountId:
+      name: AccountId
+      in: path
+      description: The Lean account identifier uniquely identifying the account within Lean.
+      required: true
+      schema:
+        type: string
+        format: uuid
+    CustomerId:
+      name: CustomerId
+      in: query
+      description: The customer_id of the connected customer.
+      required: false
+      schema:
+        type: string
+        format: uuid
+    FromBookingDateTimeParam:
+      in: query
+      name: fromBookingDateTime
+      description: 'The UTC ISO 8601 Date Time to filter transactions FROM
+
+        NB Time component is optional - set to 00:00:00 for just Date.
+
+        If the Date Time contains a timezone, the PASP must ignore the timezone component.'
+      schema:
+        type: string
+        format: date-time
+    OBPageParm:
+      name: Page
+      in: query
+      description: The page you're requesting - returns page 0 of a response if not specified.
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+    ToBookingDateTimeParam:
+      in: query
+      name: toBookingDateTime
+      description: 'The UTC ISO 8601 Date Time to filter transactions TO
+
+        NB Time component is optional - set to 00:00:00 for just Date.
+
+        If the Date Time contains a timezone, the PASP must ignore the timezone component.'
+      schema:
+        type: string
+        format: date-time
+    OBSizeParam:
+      name: Size
+      description: The number of objects you want to return as a page size.
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 50
+        maximum: 100
+        minimum: 1
+    FapiInteractionId:
+      name: x-fapi-interaction-id
+      in: header
+      description: An RFC4122 UID used as a correlation id.
+      required: false
+      schema:
+        type: string
+    EntityId:
+      name: EntityId
+      in: query
+      description: The entity_id of the connected customer.
+      required: false
+      schema:
+        type: string
+        format: uuid
+  schemas:
+    OBCardInstrumentTypeCode:
+      description: Specifies the type of card instrument used in the transaction.
+      type: string
+      enum:
+      - KSAOB.ApplePay
+      - KSAOB.madaPay
+      - KSAOB.Contactless
+      - KSAOB.MagStripe
+      - KSAOB.Chip
+      - KSAOB.Other
+    OBTransactionBalance:
+      description: Set of elements used to define the balance of the account at the time of the transaction.
+      type: object
+      properties:
+        CreditDebitIndicator:
+          $ref: '#/components/schemas/OBCreditDebitCode'
+        Type:
+          $ref: '#/components/schemas/OBBalanceTypeCode'
+        Amount:
+          description: Amount of money of the cash balance.
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/OBAmount'
+      required:
+      - CreditDebitIndicator
+      - Type
+      - Amount
+    OBTransactionMutabilityCode:
+      description: Specifies the mutability of the transaction record.
+      type: string
+      enum:
+      - KSAOB.Mutable
+      - KSAOB.Immutable
+    OBMerchantDetails:
+      description: Details of the merchant involved in the transaction.
+      type: object
+      properties:
+        MerchantId:
+          description: MerchantId.
+          type:
+          - integer
+          - 'null'
+        MerchantName:
+          description: Name by which the merchant is known.
+          type:
+          - string
+          - 'null'
+          maxLength: 350
+          minLength: 1
+        MerchantCategoryCode:
+          description: Category code (ISO 18245) conformed to by the merchant.
+          type:
+          - string
+          - 'null'
+          maxLength: 4
+          minLength: 3
+    OBPaymentModeCode:
+      description: Specifies the payment mode used for the transaction.
+      type: string
+      enum:
+      - KSAOB.Online
+      - KSAOB.Offline
+      - KSAOB.Batch
+    OBBalanceTypeCode:
+      description: 'Balance type, in a coded form:
+
+        * KSAOB.ClosingAvailable — closing available balance
+
+        * KSAOB.ClosingBooked — closing booked balance
+
+        * KSAOB.ClosingCleared — closing cleared balance
+
+        * KSAOB.Expected — expected balance
+
+        * KSAOB.ForwardAvailable — forward available balance
+
+        * KSAOB.Information — information balance
+
+        * KSAOB.InterimAvailable — interim available balance
+
+        * KSAOB.InterimBooked — interim booked balance
+
+        * KSAOB.InterimCleared — interim cleared balance
+
+        * KSAOB.OpeningAvailable — opening available balance
+
+        * KSAOB.OpeningBooked — opening booked balance
+
+        * KSAOB.OpeningCleared — opening cleared balance
+
+        * KSAOB.PreviouslyClosedBooked — previously closed booked balance
+
+        '
+      type: string
+      enum:
+      - KSAOB.ClosingAvailable
+      - KSAOB.ClosingBooked
+      - KSAOB.ClosingCleared
+      - KSAOB.Expected
+      - KSAOB.ForwardAvailable
+      - KSAOB.Information
+      - KSAOB.InterimAvailable
+      - KSAOB.InterimBooked
+      - KSAOB.InterimCleared
+      - KSAOB.OpeningAvailable
+      - KSAOB.OpeningBooked
+      - KSAOB.OpeningCleared
+      - KSAOB.PreviouslyClosedBooked
+    OBCardSchemeCode:
+      description: Name of the card scheme.
+      type: string
+      enum:
+      - KSAOB.AmericanExpress
+      - KSAOB.Diners
+      - KSAOB.Discover
+      - KSAOB.GCC
+      - KSAOB.MasterCard
+      - KSAOB.UPI
+      - KSAOB.VISA
+      - KSAOB.mada
+    OBGetTransactionsResponse:
+      description: Response envelope for the Open Banking account transactions.
+      type: object
+      properties:
+        Data:
+          description: Container for the list of Open Banking account transactions. Null when the request fails.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBTransactionsData'
+        Status:
+          description: Status of the request.
+          type: string
+          enum:
+          - OK
+          - PENDING
+          - FAILED
+          - CONSENT_EXPIRED
+        Message:
+          description: Human-readable message describing the status of the request.
+          type: string
+        Timestamp:
+          description: Date and time when the response was generated.
+          type: string
+          format: date-time
+        RefreshedAt:
+          description: Date and time when the data was last refreshed from the bank.
+          type:
+          - string
+          - 'null'
+          format: date-time
+        StatusDetail:
+          description: Additional details about the request status.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBStatusDetail'
+        Meta:
+          description: Metadata relevant to the resource, including pagination information and available date range.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBTransactionsMeta'
+        Links:
+          description: Links relevant to the resource for pagination navigation.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBLinks'
+      required:
+      - Data
+      - Status
+      - Message
+      - Timestamp
+    OBProprietaryBankTransactionCode:
+      description: Set of elements to fully identify a proprietary bank transaction code.
+      type: object
+      properties:
+        Code:
+          description: Proprietary bank transaction code to identify the underlying transaction.
+          type: string
+          maxLength: 35
+          minLength: 1
+        Issuer:
+          description: Identification of the issuer of the proprietary bank transaction code.
+          type:
+          - string
+          - 'null'
+          maxLength: 35
+          minLength: 1
+      required:
+      - Code
+    OBCashAccountIdentificationType:
+      description: Name of the identification scheme for the cash account.
+      type: string
+      enum:
+      - KSAOB.IBAN
+      - KSAOB.MaskedPAN
+      - KSAOB.AccountNumber
+      - KSAOB.CommercialRegistrationNumber
+      - KSAOB.Email
+      - KSAOB.MobileNumber
+      - KSAOB.NationalID
+      - KSAOB.IqamaNumber
+      - KSAOB.PassportNumber
+    OBLinks:
+      description: Links relevant to the resource for pagination navigation.
+      type: object
+      properties:
+        Self:
+          description: A link to the current resource.
+          type: string
+          format: uri
+        First:
+          description: A link to the first page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+        Prev:
+          description: A link to the previous page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+        Next:
+          description: A link to the next page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+        Last:
+          description: A link to the last page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+      required:
+      - Self
+    OBBillPaymentTypeCode:
+      description: Specifies the type of bill payment.
+      type: string
+      enum:
+      - KSAOB.Post-Paid
+      - KSAOB.AdvancePaymentForRoaming
+      - KSAOB.Recharge
+      - KSAOB.Renewal
+      - KSAOB.RoamingDeposit
+      - KSAOB.One-Off
+      - KSAOB.RecurringPayment
+    OBEntryStatusCode:
+      description: Status of a transaction entry on the books of the account servicer.
+      type: string
+      enum:
+      - KSAOB.Booked
+      - KSAOB.Pending
+      - KSAOB.Rejected
+    OBCashAccount:
+      description: Details to identify a cash account for a creditor or debtor.
+      type: object
+      properties:
+        IdentificationType:
+          $ref: '#/components/schemas/OBCashAccountIdentificationType'
+        Identification:
+          description: Identification assigned by an institution to identify an account. This identification is known by the account owner.
+          type: string
+          maxLength: 400
+          minLength: 1
+        Name:
+          description: Name of the account, as assigned by the account servicing institution.
+          type:
+          - string
+          - 'null'
+          maxLength: 350
+          minLength: 1
+      required:
+      - IdentificationType
+      - Identification
+    OBTransactionTypeCode:
+      description: Specifies the transaction type.
+      type: string
+      enum:
+      - KSAOB.POS
+      - KSAOB.ECommerce
+      - KSAOB.ATM
+      - KSAOB.BillPayments
+      - KSAOB.LocalBankTransfer
+      - KSAOB.SameBankTransfer
+      - KSAOB.InternationalTransfer
+      - KSAOB.Teller
+      - KSAOB.Cheque
+      - KSAOB.Other
+    OpenBankingPostalAddress:
+      description: Information that locates and identifies a specific address, as defined by postal services.
+      type: object
+      properties:
+        AddressType:
+          description: Identifies the nature of the postal address.
+          type:
+          - string
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBAddressTypeCode'
+        ShortAddress:
+          description: Short address (National Addressing System) of the location.
+          type:
+          - string
+          - 'null'
+          maxLength: 8
+          minLength: 1
+        BuildingNumber:
+          description: Number that identifies the position of a building on a street.
+          type:
+          - string
+          - 'null'
+          maxLength: 4
+          minLength: 4
+        UnitNumber:
+          description: Unit number within a building.
+          type:
+          - number
+          - 'null'
+        StreetName:
+          description: Name of a street or thoroughfare.
+          type:
+          - string
+          - 'null'
+          maxLength: 70
+          minLength: 1
+        SecondaryNumber:
+          description: Secondary number for the address (National Addressing System).
+          type:
+          - string
+          - 'null'
+          maxLength: 4
+          minLength: 4
+        District:
+          description: Identifies a subdivision of a city, town or country.
+          type:
+          - string
+          - 'null'
+          maxLength: 35
+          minLength: 1
+        PostalCode:
+          description: Identifier of a group of letters or numbers added to a postal address to assist the sorting of mail.
+          type:
+          - string
+          - 'null'
+          maxLength: 16
+          minLength: 1
+        City:
+          description: Name of a built-up area, with defined boundaries, and a local government.
+          type:
+          - string
+          - 'null'
+          maxLength: 35
+          minLength: 1
+        Country:
+          description: Nation with its own government (ISO 3166-1 alpha-2 country code).
+          type:
+          - string
+          - 'null'
+          pattern: ^[A-Z]{2,2}$
+    OBChargeAmount:
+      description: Active or historic currency and amount.
+      type: object
+      properties:
+        Amount:
+          description: A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.
+          type: string
+          pattern: ^\d{1,13}$|^\d{1,13}\.\d{1,5}$
+        Currency:
+          description: ISO 4217 currency code in which the amount is expressed.
+          type: string
+          examples:
+          - SAR
+          pattern: ^[A-Z]{3,3}$
+        ChargeIncluded:
+          description: 'If true then the value in the Amount has the ChargeAmount deducted from it
+
+            '
+          type: boolean
+      required:
+      - Amount
+      - Currency
+    OBTransactionFlag:
+      description: Additional flag providing context about the transaction.
+      type: string
+      enum:
+      - KSAOB.Cashback
+      - KSAOB.Payroll
+      - KSAOB.DirectDebit
+      - KSAOB.StandingOrder
+      - KSAOB.Loan
+      - KSAOB.Dividend
+    OBSupplementaryData:
+      description: Additional information that cannot be captured in the structured fields and/or any other specific block.
+      type: object
+      additionalProperties: true
+    OBCreditorAgent:
+      description: Financial institution servicing an account for the creditor or debtor.
+      type: object
+      properties:
+        IdentificationType:
+          $ref: '#/components/schemas/OBCreditorAgentIdentificationType'
+        Identification:
+          description: Unique and unambiguous identification of the financial institution.
+          type: string
+          maxLength: 35
+          minLength: 1
+        Name:
+          description: Name by which an agent is known and which is usually used to identify that agent.
+          type:
+          - string
+          - 'null'
+          maxLength: 350
+          minLength: 1
+        PostalAddress:
+          description: Information that locates and identifies a specific address, as defined by postal services.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OpenBankingPostalAddress'
+      required:
+      - IdentificationType
+      - Identification
+    OBTransactionsMeta:
+      description: Metadata relevant to the transactions resource.
+      type: object
+      properties:
+        TotalPages:
+          description: Total number of pages where a result set is paginated.
+          type:
+          - integer
+          - 'null'
+          format: int32
+          minimum: 0
+        FirstAvailableDateTime:
+          description: 'All dates in the JSON payloads are represented in ISO 8601 date-time format. All date-time fields in responses must include the timezone. An example is below: 2017-04-05T10:43:07+00:00'
+          type:
+          - string
+          - 'null'
+          format: date-time
+        LastAvailableDateTime:
+          description: 'All dates in the JSON payloads are represented in ISO 8601 date-time format. All date-time fields in responses must include the timezone. An example is below: 2017-04-05T10:43:07+00:00'
+          type:
+          - string
+          - 'null'
+          format: date-time
+    OBBankTransactionCode:
+      description: Set of elements used to fully identify the type of underlying transaction resulting in an entry.
+      type: object
+      properties:
+        Domain:
+          description: Specifies the general family of the underlying transaction.
+          type:
+          - string
+          - 'null'
+        DomainCode:
+          description: Specifies the sub-product family within a specific family.
+          type:
+          - string
+          - 'null'
+        Family:
+          description: Specifies the family within a domain.
+          type:
+          - string
+          - 'null'
+        FamilyCode:
+          description: Specifies the sub-family within a family.
+          type:
+          - string
+          - 'null'
+        SubFamily:
+          description: Specifies the sub-family of a family of bank transactions.
+          type:
+          - string
+          - 'null'
+        SubFamilyCode:
+          description: Specifies the code for a sub-family of a family of bank transactions.
+          type:
+          - string
+          - 'null'
+    OBTransaction:
+      description: Provides further details on an entry in the report.
+      type: object
+      properties:
+        EntityId:
+          description: Lean entity identifier for the connected customer.
+          type: string
+          format: uuid
+        AccountId:
+          description: The Lean account identifier uniquely identifying the account within Lean.
+          type: string
+          format: uuid
+        TransactionId:
+          description: Unique identifier for the transaction within an account instance.
+          type: string
+          maxLength: 210
+          minLength: 1
+        TransactionDateTime:
+          description: Date and time when the transaction was initiated. ISO 8601 format.
+          type: string
+          format: date-time
+        LocalTimeZone:
+          description: 'Local timezone of the transaction. Format: UTC+HH:MM or UTC-HH:MM (e.g. UTC+03:00).'
+          type:
+          - string
+          - 'null'
+        StatementReference:
+          description: Unique reference for the statement, as assigned by the account servicing institution.
+          type:
+          - string
+          - 'null'
+          maxLength: 35
+          minLength: 1
+        TransactionReference:
+          description: Unique reference for the transaction, as assigned by the account servicing institution.
+          type:
+          - string
+          - 'null'
+          maxLength: 210
+          minLength: 1
+        TransactionType:
+          $ref: '#/components/schemas/OBTransactionTypeCode'
+        SubTransactionType:
+          $ref: '#/components/schemas/OBSubTransactionTypeCode'
+        TerminalId:
+          description: Unique identification of the terminal at which the transaction took place.
+          type:
+          - integer
+          - 'null'
+        Flags:
+          description: Additional flags providing context about the transaction.
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/OBTransactionFlag'
+        PaymentModes:
+          $ref: '#/components/schemas/OBPaymentModeCode'
+        CreditDebitIndicator:
+          $ref: '#/components/schemas/OBCreditDebitCode'
+        Status:
+          $ref: '#/components/schemas/OBEntryStatusCode'
+        TransactionMutability:
+          description: Specifies the Mutability of the Transaction record.
+          type:
+          - string
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBTransactionMutabilityCode'
+        BookingDateTime:
+          description: Date and time when an entry is posted to an account on the account servicer's books. ISO 8601 format.
+          type: string
+          format: date-time
+        ValueDateTime:
+          description: Date and time at which assets become available to the account owner. ISO 8601 format.
+          type:
+          - string
+          - 'null'
+          format: date-time
+        TransactionInformation:
+          description: Further details of the transaction.
+          type:
+          - string
+          - 'null'
+          maxLength: 500
+          minLength: 1
+        Amount:
+          description: Amount of money in the cash transaction entry.
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/OBAmount'
+        ChargeAmount:
+          description: Transaction charges to be paid by the charge bearer.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBChargeAmount'
+        ChargeAmountVat:
+          description: VAT amount on the transaction charge.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBAmount'
+        Balance:
+          description: Set of elements used to define the balance as a numerical representation of the net increases and decreases in an account after a transaction entry is applied to the account.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBTransactionBalance'
+        CardInstrument:
+          description: Set of elements to describe the card instrument used in the transaction.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBCardInstrument'
+        MerchantDetails:
+          description: Details of the merchant involved in the transaction.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBMerchantDetails'
+        CreditorAgent:
+          description: Financial institution servicing an account for the creditor.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBCreditorAgent'
+        CreditorAccount:
+          description: Unambiguous identification of the account of the creditor.
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/OBCashAccount'
+        DebtorAgent:
+          description: Financial institution servicing an account for the debtor.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBCreditorAgent'
+        DebtorAccount:
+          description: Unambiguous identification of the account of the debtor.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBCashAccount'
+        BillDetails:
+          description: Details of the bill payment associated with the transaction.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBBillDetails'
+        CurrencyExchange:
+          description: Set of elements used to provide details on the currency exchange.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBCurrencyExchange'
+        BankTransactionCode:
+          description: Set of elements used to fully identify the type of underlying transaction resulting in an entry.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBBankTransactionCode'
+        ProprietaryBankTransactionCode:
+          description: Set of elements to fully identify a proprietary bank transaction code.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBProprietaryBankTransactionCode'
+        SupplementaryData:
+          description: Additional information that cannot be captured in the structured fields.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBSupplementaryData'
+      required:
+      - TransactionId
+      - TransactionDateTime
+      - TransactionType
+      - SubTransactionType
+      - PaymentModes
+      - CreditDebitIndicator
+      - Status
+      - BookingDateTime
+      - Amount
+    OBCreditorAgentIdentificationType:
+      description: Name of the identification scheme for the creditor or debtor agent.
+      type: string
+      enum:
+      - KSAOB.BICFI
+      - KSAOB.OTHER
+    OBAddressTypeCode:
+      description: Postal address type specifying the nature of the postal address.
+      type: string
+      enum:
+      - KSAOB.Business
+      - KSAOB.Correspondence
+      - KSAOB.DeliveryTo
+      - KSAOB.MailTo
+      - KSAOB.POBox
+      - KSAOB.Postal
+      - KSAOB.Residential
+      - KSAOB.Statement
+    OBTransactionsData:
+      description: Container for the list of Open Banking account transactions.
+      type: object
+      properties:
+        CustomerId:
+          description: Lean provided customer ID
+          type:
+          - string
+          - 'null'
+          format: uuid
+        Transaction:
+          description: List of transactions for the account.
+          type: array
+          items:
+            $ref: '#/components/schemas/OBTransaction'
+      required:
+      - Transaction
+    OBBillDetails:
+      description: Details of the bill payment associated with the transaction.
+      type: object
+      properties:
+        BillerId:
+          description: Unique identifier for the biller.
+          type:
+          - integer
+          - 'null'
+        BillNumber:
+          description: Unique identifier for the bill.
+          type:
+          - string
+          - 'null'
+        BillPaymentType:
+          description: Type of bill payment.
+          allOf:
+          - $ref: '#/components/schemas/OBBillPaymentTypeCode'
+    OBSubTransactionTypeCode:
+      description: Specifies the sub-type of the transaction.
+      type: string
+      enum:
+      - KSAOB.Purchase
+      - KSAOB.Reversal
+      - KSAOB.Refund
+      - KSAOB.Withdrawal
+      - KSAOB.WithdrawalReversal
+      - KSAOB.Deposit
+      - KSAOB.DepositReversal
+      - KSAOB.MoneyTransfer
+      - KSAOB.NotApplicable
+    OBCardInstrument:
+      description: Set of elements to describe the card instrument used in the transaction.
+      type: object
+      properties:
+        CardSchemeName:
+          $ref: '#/components/schemas/OBCardSchemeCode'
+        InstrumentType:
+          $ref: '#/components/schemas/OBCardInstrumentTypeCode'
+        Name:
+          description: Name of the card product associated with the card instrument.
+          type:
+          - string
+          - 'null'
+        Identification:
+          description: Identification assigned by an institution to identify the card instrument used in the transaction. This identification is known by the account owner, and may be masked.
+          type:
+          - string
+          - 'null'
+          maxLength: 16
+          minLength: 1
+      required:
+      - CardSchemeName
+      - InstrumentType
+    OBStatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        GranularStatusCode:
+          description: Granular status code providing additional information on the request status.
+          type:
+          - string
+          - 'null'
+        StatusAdditionalInfo:
+          description: Additional human-readable information about the status.
+          type:
+          - string
+          - 'null'
+    OBAmount:
+      description: Active or historic currency and amount.
+      type: object
+      properties:
+        Amount:
+          description: A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.
+          type: string
+          pattern: ^\d{1,13}$|^\d{1,13}\.\d{1,5}$
+        Currency:
+          description: ISO 4217 currency code in which the amount is expressed.
+          type: string
+          examples:
+          - SAR
+          pattern: ^[A-Z]{3,3}$
+      required:
+      - Amount
+      - Currency
+    OBCreditDebitCode:
+      description: Indicates whether the transaction is a credit or a debit.
+      type: string
+      enum:
+      - KSAOB.Credit
+      - KSAOB.Debit
+    OBCurrencyExchange:
+      description: Set of elements used to provide details on the currency exchange.
+      type: object
+      properties:
+        SourceCurrency:
+          description: Currency from which an amount is to be converted in a currency conversion (ISO 4217).
+          type: string
+          pattern: ^[A-Z]{3,3}$
+        TargetCurrency:
+          description: Currency into which an amount is to be converted in a currency conversion (ISO 4217).
+          type: string
+          pattern: ^[A-Z]{3,3}$
+        UnitCurrency:
+          description: Currency in which the rate of exchange is expressed in a currency exchange (ISO 4217).
+          type: string
+          pattern: ^[A-Z]{3,3}$
+        ExchangeRate:
+          description: Factor used to convert an amount from the source currency into the target currency.
+          type: number
+        ContractIdentification:
+          description: Unique identification to unambiguously identify the foreign exchange contract.
+          type:
+          - string
+          - 'null'
+          maxLength: 35
+          minLength: 1
+        QuotationDate:
+          description: Date and time at which an exchange rate is quoted. ISO 8601 format.
+          type:
+          - string
+          - 'null'
+          format: date-time
+        InstructedAmount:
+          description: Amount of money to be moved between the debtor and creditor, before deduction of charges, in the source currency.
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/OBAmount'
+      required:
+      - SourceCurrency
+      - TargetCurrency
+      - UnitCurrency
+      - ExchangeRate
+      - InstructedAmount
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

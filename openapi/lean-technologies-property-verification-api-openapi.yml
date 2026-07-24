@@ -1,0 +1,1320 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Property Verification API
+  version: v0.2.3
+  description: Property ownership and title verification operations
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Property Verification
+  description: Property ownership and title verification operations
+  x-displayName: Property Verification
+paths:
+  /verifications/v1/properties:
+    servers: []
+    post:
+      operationId: propertyVerification
+      summary: Verify Property Information
+      description: 'Verifies property information by Real Estate Number through the Saudi Real Estate Registry (RER).
+
+
+        Provide a `verification_type` (`STATUS_ONLY`, `BASIC`, or `FULL`) and an `identification_method`.
+
+        `STATUS_ONLY` returns only the property record status; all other detail fields are `null`.
+
+        The `identification_method` determines which identifications are required:
+
+        - **REGISTRATION_DATE**: Provide `PROPERTY_NUMBER` and `FIRST_REGISTRATION_DATE` identifications
+
+        - **IDENTITY**: Provide `PROPERTY_NUMBER` and an owner identification (e.g. `NATIONAL_ID`, `COMMERCIAL_NUMBER`)
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PropertyVerificationRequest'
+            examples:
+              '1':
+                summary: STATUS_ONLY - check title status by national ID
+                value:
+                  verification_type: STATUS_ONLY
+                  identification_method: IDENTITY
+                  identifications:
+                  - type: PROPERTY_NUMBER
+                    value: '7660081406600000'
+                  - type: NATIONAL_ID
+                    value: '1106972886'
+              '2':
+                summary: BASIC - verify title by first registration date
+                value:
+                  verification_type: BASIC
+                  identification_method: REGISTRATION_DATE
+                  identifications:
+                  - type: PROPERTY_NUMBER
+                    value: '7660081406600000'
+                  - type: FIRST_REGISTRATION_DATE
+                    value: '1447-07-19'
+              '3':
+                summary: BASIC - verify title by national ID
+                value:
+                  verification_type: BASIC
+                  identification_method: IDENTITY
+                  identifications:
+                  - type: PROPERTY_NUMBER
+                    value: '7660081406600000'
+                  - type: NATIONAL_ID
+                    value: '1106972886'
+              '4':
+                summary: FULL - inquiry by ID
+                value:
+                  verification_type: FULL
+                  identification_method: IDENTITY
+                  identifications:
+                  - type: PROPERTY_NUMBER
+                    value: '7660081406600000'
+                  - type: IQAMA_ID
+                    value: '2350334343'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PropertyVerificationResponse'
+              examples:
+                '1':
+                  summary: STATUS_ONLY - only the record status is returned
+                  value:
+                    status: OK
+                    results_id: d2d95011-f834-4979-83eb-9c35b95f093c
+                    message: Data successfully retrieved
+                    timestamp: '2026-03-25T11:01:04.709087696Z'
+                    verifications:
+                      status: ACTIVE
+                      selling_price: null
+                      general_information: null
+                      spatial: null
+                      unit_details: null
+                      address: null
+                      border_info: null
+                      owner_information: null
+                      rrrs: null
+                      total_share: null
+                      acquired_absolute_ownership: null
+                      is_published: null
+                '2':
+                  summary: BASIC - property details without sensitive owner/price/deed data
+                  value:
+                    status: OK
+                    results_id: d2d95011-f834-4979-83eb-9c35b95f093c
+                    message: Data successfully retrieved
+                    timestamp: '2026-03-25T11:01:04.709087696Z'
+                    verifications:
+                      status: ACTIVE
+                      selling_price: null
+                      general_information:
+                        property_number: '7660081406600000'
+                        version_number: '2'
+                        version_date:
+                          gregorian: '2026-01-25'
+                          hijri: '1447-08-06'
+                        first_registration_date:
+                          gregorian: '2026-01-08'
+                          hijri: '1447-07-19'
+                        parent_property_number: null
+                      spatial:
+                        area_size: 600
+                        property_type: null
+                        property_use: MIXED_USE
+                        property_status: BUILDING
+                        building_availability: null
+                      address:
+                        city_code: null
+                        city_name:
+                          en: Riyadh
+                          ar: الرياض
+                        district_code: '001022163'
+                        district_name:
+                          en: TWAEEQ
+                          ar: طويق
+                        parcel_number: '1135'
+                        block_number: '0'
+                        plan_number: '2996'
+                      unit_details: null
+                      border_info:
+                      - direction: NORTH
+                        type: LAND
+                        length: '30.000082'
+                      - direction: EAST
+                        type: LAND
+                        length: '25.000029'
+                      - direction: WEST
+                        type: ROAD
+                        length: '25.000021'
+                      - direction: SOUTH
+                        type: LAND
+                        length: '29.999983'
+                      owner_information: null
+                      rrrs: null
+                      total_share: null
+                      acquired_absolute_ownership: null
+                      is_published: null
+                '3':
+                  summary: FULL - complete record including owner, price and deed data
+                  value:
+                    status: OK
+                    results_id: a894ede4-dd81-41fb-b52d-fb4fec16c16c
+                    message: Data successfully retrieved
+                    timestamp: '2026-03-25T13:15:32.251834909Z'
+                    verifications:
+                      status: ACTIVE
+                      selling_price:
+                        currency: SAR
+                        amount: 2000
+                      general_information:
+                        property_number: '7660081406600000'
+                        version_number: '2'
+                        version_date:
+                          gregorian: '2026-01-25'
+                          hijri: '1447-08-06'
+                        first_registration_date:
+                          gregorian: '2026-01-08'
+                          hijri: '1447-07-19'
+                        parent_property_number: null
+                      spatial:
+                        area_size: 600
+                        property_type: null
+                        property_use: MIXED_USE
+                        property_status: BUILDING
+                        building_availability: null
+                      address:
+                        city_code: null
+                        city_name:
+                          en: Riyadh
+                          ar: الرياض
+                        district_code: '001022163'
+                        district_name:
+                          en: TWAEEQ
+                          ar: طويق
+                        parcel_number: '1135'
+                        block_number: '0'
+                        plan_number: '2996'
+                      unit_details: null
+                      border_info:
+                      - direction: NORTH
+                        type: LAND
+                        length: '30.000082'
+                      - direction: EAST
+                        type: LAND
+                        length: '25.000029'
+                      - direction: WEST
+                        type: ROAD
+                        length: '25.000021'
+                      - direction: SOUTH
+                        type: LAND
+                        length: '29.999983'
+                      owner_information:
+                      - name:
+                          ar: ناصر خالد محمد الجبر
+                          en: Nasser Khaled Mohamed AlJabr
+                        type: INDIVIDUAL
+                        identity_type: IQAMA_ID
+                        id: 235***4343
+                        owner_share: 4.000 %
+                        owner_share_fraction: 1/25
+                        owning_area: '24.00'
+                      rrrs: []
+                      total_share: 100%
+                      acquired_absolute_ownership: 'false'
+                      is_published: true
+                '4':
+                  summary: Failed - Property not found
+                  value:
+                    status: FAILED
+                    results_id: f894ede4-dd81-41fb-b52d-fb4fec16c16c
+                    message: Property verification failed
+                    timestamp: '2026-03-25T07:54:25.224020260Z'
+                    status_detail:
+                      granular_status_code: DATA_NOT_FOUND
+                      status_additional_info: No property found with the provided real estate number and verification details.
+      tags:
+      - Property Verification
+  /verifications/v1/properties/search:
+    servers: []
+    post:
+      operationId: propertySearch
+      summary: Verify Properties List by ID Number
+      description: 'Returns the list of properties owned by a person, searched by their identification
+
+        through the Saudi Real Estate Registry (RER).
+
+
+        Provide an `identification_method` of `IDENTITY` and an
+
+        `identifications` array containing the owner identification and the owner''s date of birth:
+
+        - When the owner identification is `NATIONAL_ID`, provide `DATE_OF_BIRTH_HIJRI`.
+
+        - For any other owner identification, provide `DATE_OF_BIRTH_GREGORIAN`.
+
+
+        Results are paginated using the standard `page` query parameter. The page size is
+
+        fixed at 20 results per page.
+
+        '
+      parameters:
+      - name: page
+        in: query
+        description: The page you're requesting - returns page 0 of the results if not specified.
+        required: false
+        schema:
+          type: integer
+          default: 0
+          minimum: 0
+      - name: size
+        in: query
+        description: The page size is fixed at 20 results per page.
+        required: false
+        schema:
+          type: integer
+          default: 20
+          maximum: 20
+          minimum: 20
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PropertySearchRequest'
+            examples:
+              '1':
+                summary: Search by National ID (Hijri date of birth)
+                value:
+                  identification_method: IDENTITY
+                  identifications:
+                  - type: NATIONAL_ID
+                    value: '2350334343'
+                  - type: DATE_OF_BIRTH_HIJRI
+                    value: '1446-07-28'
+              '2':
+                summary: Search by Iqama ID (Gregorian date of birth)
+                value:
+                  identification_method: IDENTITY
+                  identifications:
+                  - type: IQAMA_ID
+                    value: '2350334343'
+                  - type: DATE_OF_BIRTH_GREGORIAN
+                    value: '2026-01-25'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PropertySearchResponse'
+              examples:
+                '1':
+                  summary: Success - Two properties found
+                  value:
+                    status: OK
+                    results_id: d2d95011-f834-4979-83eb-9c35b95f093c
+                    message: Data successfully retrieved
+                    timestamp: '2026-03-25T11:01:04.709087696Z'
+                    verifications:
+                    - status: ACTIVE
+                      general_information:
+                        property_number: '6535007960400000'
+                        first_registration_date:
+                          gregorian: '2025-01-28'
+                          hijri: '1446-07-28'
+                        ownership_date:
+                          gregorian: null
+                          hijri: '1446-07-28'
+                      spatial:
+                        area_size: 441.9901
+                        property_use: RESIDENTIAL
+                        property_use_code: 2
+                        property_type_name: null
+                        property_status: null
+                      address:
+                        city_name:
+                          en: Riyadh
+                          ar: الرياض
+                        district_name:
+                          en: AL-JANADRIYAH
+                          ar: الجنادرية
+                        district_code: '001022175'
+                      owner_share_percentage: 100.000 %
+                    - status: ACTIVE
+                      general_information:
+                        property_number: '7660081406600000'
+                        first_registration_date:
+                          gregorian: '2026-01-25'
+                          hijri: '1447-08-06'
+                        ownership_date:
+                          gregorian: null
+                          hijri: '1447-08-06'
+                      spatial:
+                        area_size: 600
+                        property_use: MIXED_USE
+                        property_use_code: 11
+                        property_type_name:
+                          en: Residential Apartment
+                          ar: شقة سكنية
+                        property_status: BUILDING
+                      address:
+                        city_name:
+                          en: Riyadh
+                          ar: الرياض
+                        district_name:
+                          en: TWAEEQ
+                          ar: طويق
+                        district_code: '001022163'
+                      owner_share_percentage: 4.000 %
+                    page:
+                      number: 0
+                      size: 20
+                      total_elements: 2
+                      total_pages: 1
+                '2':
+                  summary: Success - No properties found
+                  value:
+                    status: OK
+                    results_id: a894ede4-dd81-41fb-b52d-fb4fec16c16c
+                    message: Data successfully retrieved
+                    timestamp: '2026-03-25T13:15:32.251834909Z'
+                    verifications: []
+                    page:
+                      number: 0
+                      size: 20
+                      total_elements: 0
+                      total_pages: 0
+      tags:
+      - Property Verification
+components:
+  schemas:
+    PropertyIdentificationMethod:
+      description: 'The identification method that determines which identifications are required:
+
+        - `REGISTRATION_DATE`: Identify by property number and first registration date
+
+        - `IDENTITY`: Identify by property number and owner identification (type + value)
+
+        '
+      type: string
+      enum:
+      - REGISTRATION_DATE
+      - IDENTITY
+    LocalizedText:
+      type:
+      - object
+      - 'null'
+      properties:
+        en:
+          description: English text
+          type:
+          - string
+          - 'null'
+        ar:
+          description: Arabic text
+          type:
+          - string
+          - 'null'
+    Currency:
+      description: The ISO 3 letter currency code
+      type: string
+      examples:
+      - AED
+      pattern: ^[A-Z]{3}$
+    PageMetadata:
+      description: Metadata about the current page of results
+      type: object
+      properties:
+        number:
+          description: The current page being returned by the API
+          type: integer
+          format: int32
+        size:
+          description: The page size requested
+          type: integer
+          format: int32
+        total_elements:
+          description: The total number of elements in all pages
+          type: integer
+          format: int64
+        total_pages:
+          description: The total number of pages retrievable
+          type: integer
+          format: int32
+        sort:
+          description: Sort parameters applied to the results
+          type: array
+          items:
+            type: string
+      required:
+      - number
+      - size
+      - total_elements
+      - total_pages
+    PropertyAddress:
+      type:
+      - object
+      - 'null'
+      properties:
+        city_code:
+          description: City code
+          type:
+          - string
+          - 'null'
+        city_name:
+          $ref: '#/components/schemas/LocalizedText'
+        parcel_number:
+          description: Parcel number
+          type:
+          - string
+          - 'null'
+        block_number:
+          description: Block number
+          type:
+          - string
+          - 'null'
+        plan_number:
+          description: Plan number
+          type:
+          - string
+          - 'null'
+        district_name:
+          $ref: '#/components/schemas/LocalizedText'
+        district_code:
+          description: District code
+          type:
+          - string
+          - 'null'
+      required:
+      - city_code
+      - city_name
+      - parcel_number
+      - block_number
+      - plan_number
+      - district_name
+      - district_code
+    PropertyRrr:
+      description: Right, Responsibility, or Restriction associated with the property
+      type: object
+      properties:
+        id:
+          description: Reference ID of the RRR record
+          type:
+          - string
+          - 'null'
+        number:
+          description: RRR number
+          type: string
+        type:
+          description: 'Type of Right, Responsibility, or Restriction:
+
+            - `LIEN`
+
+            - `LEASE`
+
+            - `EASEMENT`
+
+            - `USUFRUCT`
+
+            - `RIGHT_OF_USE`
+
+            - `RIGHT_OF_RESIDENCE`
+
+            - `ENDOWMENT`
+
+            - `CREDIT_PRIORITY`
+
+            - `FIRST_REFUSAL`
+
+            - `WILL`
+
+            - `OWNERSHIP`
+
+            - `OFF_PLAN`
+
+            - `PROPERTY_SUSPENSION`
+
+            - `LIEN_PREVENTION`
+
+            - `LEASE_PREVENTION`
+
+            - `SALE_PREVENTION`
+
+            '
+          type: string
+        is_restriction:
+          description: Whether this RRR is a restriction
+          type: boolean
+        status:
+          description: 'Status of the RRR record:
+
+            - `ACTIVE`
+
+            - `INACTIVE`
+
+            '
+          type: string
+      required:
+      - id
+      - number
+      - type
+      - is_restriction
+      - status
+    PropertyOwnerInfo:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/LocalizedText'
+        type:
+          description: 'Type of property owner:
+
+            - `INDIVIDUAL`
+
+            - `ORGANIZATION`
+
+            - `OTHER`
+
+            '
+          type: string
+        identity_type:
+          description: 'Type of identification document for the property owner:
+
+            - `NATIONAL_ID`
+
+            - `IQAMA_ID`
+
+            - `GCC_ID`
+
+            - `PASSPORT`
+
+            - `PREMIUM_IQAMA`
+
+            - `MOI_IDENTIFIER`
+
+            - `UNIFIED_NUMBER`
+
+            - `COMMERCIAL_NUMBER`
+
+            - `GOVERNMENT_ENTITY_NUMBER`
+
+            - `OTHER`
+
+            '
+          type: string
+        id:
+          description: Owner's identity number
+          type: string
+        owner_share:
+          description: Ownership share as a decimal value
+          type: string
+        owner_share_fraction:
+          description: Ownership share as a fraction
+          type: string
+        owning_area:
+          description: Area owned by this owner
+          type: string
+      required:
+      - name
+      - type
+      - identity_type
+      - id
+      - owner_share
+      - owner_share_fraction
+      - owning_area
+    PropertyIdentificationType:
+      description: 'Type of identification for property verification:
+
+        - `PROPERTY_NUMBER`: The Real Estate Number (REN) issued by the Saudi Real Estate Registry (always required)
+
+        - `FIRST_REGISTRATION_DATE`: First registration date in Hijri format YYYY-MM-DD (for REGISTRATION_DATE verification)
+
+        - `DATE_OF_BIRTH_HIJRI`: Owner''s date of birth in Hijri format YYYY-MM-DD (for property search when the owner identification is NATIONAL_ID)
+
+        - `DATE_OF_BIRTH_GREGORIAN`: Owner''s date of birth in Gregorian format YYYY-MM-DD (for property search when the owner identification is not NATIONAL_ID)
+
+        - `NATIONAL_ID`: Saudi National ID
+
+        - `IQAMA_ID`: Resident ID
+
+        - `GCC_ID`: Gulf Cooperation Council ID
+
+        - `PASSPORT`: Passport number
+
+        - `PREMIUM_IQAMA`: Premium resident ID
+
+        - `MOI_IDENTIFIER`: Ministry of Interior identifier
+
+        - `UNIFIED_NUMBER`: Business unified number
+
+        - `COMMERCIAL_NUMBER`: Business registration number
+
+        - `GOVERNMENT_ENTITY_NUMBER`: Government organization ID
+
+        - `OTHER`: Other identification type
+
+        '
+      type: string
+      enum:
+      - PROPERTY_NUMBER
+      - FIRST_REGISTRATION_DATE
+      - DATE_OF_BIRTH_HIJRI
+      - DATE_OF_BIRTH_GREGORIAN
+      - NATIONAL_ID
+      - IQAMA_ID
+      - GCC_ID
+      - PASSPORT
+      - PREMIUM_IQAMA
+      - MOI_IDENTIFIER
+      - UNIFIED_NUMBER
+      - COMMERCIAL_NUMBER
+      - GOVERNMENT_ENTITY_NUMBER
+      - OTHER
+    PropertyUnitDetails:
+      description: Unit details, present when the property is a unit within a larger building
+      type:
+      - object
+      - 'null'
+      properties:
+        unit_area_size:
+          description: Area size of the unit
+          type:
+          - number
+          - 'null'
+          format: double
+        unit_type:
+          description: 'Type of unit within a building:
+
+            - `APARTMENT`
+
+            - `DOUBLE_FLOOR_APARTMENT`
+
+            - `FLOOR`
+
+            - `CONNECT_DUPLEX_VILLA`
+
+            - `CONNECTED_VILLA`
+
+            - `VILLA`
+
+            - `BUILDING`
+
+            - `SHOP`
+
+            - `OFFICE`
+
+            - `HOTEL`
+
+            - `TOWER`
+
+            '
+          type:
+          - string
+          - 'null'
+        unit_number:
+          description: Unit number within the building
+          type:
+          - string
+          - 'null'
+        undivided_share_of_land:
+          description: The unit's share of the common property as a decimal fraction
+          type:
+          - string
+          - 'null'
+      required:
+      - unit_area_size
+      - unit_type
+      - unit_number
+      - undivided_share_of_land
+    PropertySearchIdentificationType:
+      description: 'Type of identification used to search for owned properties:
+
+        - `DATE_OF_BIRTH_HIJRI`: Owner''s date of birth in Hijri format YYYY-MM-DD (when the owner identification is NATIONAL_ID)
+
+        - `DATE_OF_BIRTH_GREGORIAN`: Owner''s date of birth in Gregorian format YYYY-MM-DD (when the owner identification is not NATIONAL_ID)
+
+        - `NATIONAL_ID`: Saudi National ID
+
+        - `IQAMA_ID`: Resident ID
+
+        - `GCC_ID`: Gulf Cooperation Council ID
+
+        - `PASSPORT`: Passport number
+
+        - `PREMIUM_IQAMA`: Premium resident ID
+
+        - `MOI_IDENTIFIER`: Ministry of Interior identifier
+
+        - `UNIFIED_NUMBER`: Business unified number
+
+        - `COMMERCIAL_NUMBER`: Business registration number
+
+        - `GOVERNMENT_ENTITY_NUMBER`: Government organization ID
+
+        - `OTHER`: Other identification type
+
+        '
+      type: string
+      enum:
+      - DATE_OF_BIRTH_HIJRI
+      - DATE_OF_BIRTH_GREGORIAN
+      - NATIONAL_ID
+      - IQAMA_ID
+      - GCC_ID
+      - PASSPORT
+      - PREMIUM_IQAMA
+      - MOI_IDENTIFIER
+      - UNIFIED_NUMBER
+      - COMMERCIAL_NUMBER
+      - GOVERNMENT_ENTITY_NUMBER
+      - OTHER
+    PropertySearchSpatialInfo:
+      type: object
+      properties:
+        area_size:
+          description: Size of the property area
+          type:
+          - number
+          - 'null'
+          format: double
+        property_use:
+          description: 'Designated use of the property:
+
+            - `UNAVAILABLE`
+
+            - `RESIDENTIAL`
+
+            - `COMMERCIAL`
+
+            - `PUBLIC_SERVICES`
+
+            - `PUBLIC_FACILITIES_TRANSPORTATION`
+
+            - `INDUSTRIAL`
+
+            - `AGRICULTURAL`
+
+            - `ANCIENT_URBAN_REGION`
+
+            - `VACANT_LAND`
+
+            - `PLANS_AND_SYMBOLS`
+
+            - `MIXED_USE`
+
+            - `MANSION_USE`
+
+            '
+          type:
+          - string
+          - 'null'
+        property_use_code:
+          description: Property use code
+          type:
+          - integer
+          - 'null'
+        property_type_name:
+          $ref: '#/components/schemas/LocalizedText'
+        property_status:
+          description: 'Physical status of the property:
+
+            - `VACANT_LAND`: Undeveloped land
+
+            - `BUILDING`: Complete building
+
+            - `BUILDING_PART`: Part of a building
+
+            '
+          type:
+          - string
+          - 'null'
+      required:
+      - area_size
+      - property_use
+      - property_use_code
+      - property_type_name
+      - property_status
+    PropertySearchIdentificationMethod:
+      description: 'The identification method used to search for owned properties:
+
+        - `IDENTITY`: Search by owner identification (type + value) and date of birth
+
+        '
+      type: string
+      const: IDENTITY
+    Result:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ResultStatus'
+        results_id:
+          description: The unique identifier for the request
+          type: string
+          format: uuid
+        message:
+          description: A message describing the status of the request
+          type: string
+        meta:
+          description: Meta information about the request
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: string
+        timestamp:
+          description: The datetime of when the request was made
+          type: string
+          format: date-time
+        status_detail:
+          description: Additional information about the status
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/StatusDetail'
+      required:
+      - status
+      - results_id
+      - message
+      - timestamp
+    PropertySearchResult:
+      type: object
+      properties:
+        status:
+          description: 'Status of the Real Estate Registry record:
+
+            - `ACTIVE`: The property record is active
+
+            - `INACTIVE`: The property record is inactive
+
+            - `SUSPENDED`: The property record is suspended
+
+            - `TEMPORARY`: The property record is temporary
+
+            '
+          type: string
+        general_information:
+          $ref: '#/components/schemas/PropertySearchGeneralInformation'
+        spatial:
+          $ref: '#/components/schemas/PropertySearchSpatialInfo'
+        address:
+          $ref: '#/components/schemas/PropertySearchAddress'
+        owner_share_percentage:
+          description: The searched owner's share of the property, as a percentage
+          type: string
+      required:
+      - status
+      - general_information
+      - spatial
+      - address
+      - owner_share_percentage
+    PropertyVerificationRequest:
+      type: object
+      properties:
+        verification_type:
+          $ref: '#/components/schemas/PropertyVerificationType'
+        identification_method:
+          $ref: '#/components/schemas/PropertyIdentificationMethod'
+        identifications:
+          description: Array of identification documents. Must always include PROPERTY_NUMBER. REGISTRATION_DATE method requires PROPERTY_NUMBER and FIRST_REGISTRATION_DATE. IDENTITY method requires PROPERTY_NUMBER and an owner identification (NATIONAL_ID, IQAMA_ID, GCC_ID, PASSPORT, COMMERCIAL_NUMBER, etc.).
+          type: array
+          items:
+            $ref: '#/components/schemas/PropertyIdentificationDto'
+          maxItems: 2
+      required:
+      - verification_type
+      - identification_method
+      - identifications
+    PropertySpatialInfo:
+      type:
+      - object
+      - 'null'
+      properties:
+        area_size:
+          description: Size of the property area
+          type:
+          - number
+          - 'null'
+          format: double
+        property_type:
+          description: 'Type of the property:
+
+            - `VACANT_LAND`: Undeveloped land
+
+            - `BUILDING`: A building structure
+
+            '
+          type:
+          - string
+          - 'null'
+        property_use:
+          description: 'Designated use of the property:
+
+            - `UNAVAILABLE`
+
+            - `RESIDENTIAL`
+
+            - `COMMERCIAL`
+
+            - `PUBLIC_SERVICES`
+
+            - `PUBLIC_FACILITIES_TRANSPORTATION`
+
+            - `INDUSTRIAL`
+
+            - `AGRICULTURAL`
+
+            - `ANCIENT_URBAN_REGION`
+
+            - `VACANT_LAND`
+
+            - `PLANS_AND_SYMBOLS`
+
+            - `MIXED_USE`
+
+            - `MANSION_USE`
+
+            '
+          type:
+          - string
+          - 'null'
+        property_status:
+          description: 'Physical status of the property:
+
+            - `VACANT_LAND`: Undeveloped land
+
+            - `BUILDING`: Complete building
+
+            - `BUILDING_PART`: Part of a building
+
+            '
+          type:
+          - string
+          - 'null'
+        building_availability:
+          description: Whether a building exists on the property
+          type:
+          - boolean
+          - 'null'
+      required:
+      - area_size
+      - property_type
+      - property_use
+      - property_status
+      - building_availability
+    PropertyIdentificationDto:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/PropertyIdentificationType'
+        value:
+          description: Identification value
+          type: string
+          minLength: 1
+      required:
+      - type
+      - value
+    PropertyVerificationResponse:
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          verifications:
+            $ref: '#/components/schemas/PropertyVerificationPayload'
+    PropertySearchGeneralInformation:
+      type: object
+      properties:
+        property_number:
+          description: The Real Estate Number (REN)
+          type: string
+        first_registration_date:
+          $ref: '#/components/schemas/DatePair'
+        ownership_date:
+          $ref: '#/components/schemas/DatePair'
+      required:
+      - property_number
+      - first_registration_date
+    PropertyVerificationType:
+      description: 'The level of property verification to perform:
+
+        - `STATUS_ONLY`: Returns only the property record status
+
+        - `BASIC`: Returns the core property verification details
+
+        - `FULL`: Returns the complete property verification details
+
+        '
+      type: string
+      enum:
+      - STATUS_ONLY
+      - BASIC
+      - FULL
+    PropertyVerificationPayload:
+      type: object
+      properties:
+        status:
+          description: 'Status of the Real Estate Registry record:
+
+            - `ACTIVE`: The property record is active
+
+            - `INACTIVE`: The property record is inactive
+
+            - `SUSPENDED`: The property record is suspended
+
+            - `TEMPORARY`: The property record is temporary
+
+            '
+          type: string
+        selling_price:
+          $ref: '#/components/schemas/PropertySellingPrice'
+        general_information:
+          $ref: '#/components/schemas/PropertyGeneralInformation'
+        spatial:
+          $ref: '#/components/schemas/PropertySpatialInfo'
+        unit_details:
+          $ref: '#/components/schemas/PropertyUnitDetails'
+        address:
+          $ref: '#/components/schemas/PropertyAddress'
+        border_info:
+          description: Border information of the property
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/PropertyBorderInfo'
+        owner_information:
+          description: List of property owners with their ownership details
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/PropertyOwnerInfo'
+        rrrs:
+          description: Rights, Responsibilities, and Restrictions associated with the property
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/PropertyRrr'
+        total_share:
+          description: Total ownership share across all owners
+          type:
+          - string
+          - 'null'
+        acquired_absolute_ownership:
+          description: Whether absolute ownership has been acquired
+          type:
+          - string
+          - 'null'
+        is_published:
+          description: Whether the property record has been published
+          type:
+          - boolean
+          - 'null'
+      required:
+      - status
+      - selling_price
+      - general_information
+      - spatial
+      - unit_details
+      - address
+      - border_info
+      - owner_information
+      - rrrs
+      - total_share
+      - acquired_absolute_ownership
+      - is_published
+    PropertySellingPrice:
+      description: Selling price of the property
+      type:
+      - object
+      - 'null'
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          description: The selling price amount
+          type:
+          - number
+          - 'null'
+      required:
+      - currency
+      - amount
+    PropertySearchIdentificationDto:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/PropertySearchIdentificationType'
+        value:
+          description: Identification value
+          type: string
+          minLength: 1
+      required:
+      - type
+      - value
+    PropertyBorderInfo:
+      type: object
+      properties:
+        direction:
+          description: 'Cardinal direction of the property border:
+
+            - `NORTH`
+
+            - `EAST`
+
+            - `WEST`
+
+            - `SOUTH`
+
+            '
+          type:
+          - string
+          - 'null'
+        type:
+          description: 'Type of border:
+
+            - `LAND`: Border with adjacent land/parcel
+
+            - `ROAD`: Border with a road/street
+
+            '
+          type:
+          - string
+          - 'null'
+        length:
+          description: Length of the border
+          type:
+          - string
+          - 'null'
+      required:
+      - direction
+      - type
+      - length
+    ResultStatus:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - PROCESSING_STARTED
+    PropertyGeneralInformation:
+      type:
+      - object
+      - 'null'
+      properties:
+        property_number:
+          description: The Real Estate Number (REN)
+          type: string
+        version_number:
+          description: Version number of the property record
+          type: string
+        version_date:
+          $ref: '#/components/schemas/DatePair'
+        first_registration_date:
+          $ref: '#/components/schemas/DatePair'
+        parent_property_number:
+          description: Parent Real Estate Number, present when the property has child units
+          type:
+          - string
+          - 'null'
+      required:
+      - property_number
+      - version_number
+      - version_date
+      - first_registration_date
+      - parent_property_number
+    PropertySearchAddress:
+      type: object
+      properties:
+        city_name:
+          $ref: '#/components/schemas/LocalizedText'
+        district_name:
+          $ref: '#/components/schemas/LocalizedText'
+        district_code:
+          description: District code
+          type:
+          - string
+          - 'null'
+      required:
+      - city_name
+      - district_name
+      - district_code
+    StatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        granular_status_code:
+          description: Granular status code
+          type:
+          - string
+          - 'null'
+        status_additional_info:
+          description: Additional information about the status
+          type:
+          - string
+          - 'null'
+    PropertySearchRequest:
+      type: object
+      properties:
+        identification_method:
+          $ref: '#/components/schemas/PropertySearchIdentificationMethod'
+        identifications:
+          description: Array of identifications used to search for owned properties. Must include an owner identification (e.g. NATIONAL_ID, IQAMA_ID, COMMERCIAL_NUMBER) and the owner's date of birth. Use DATE_OF_BIRTH_HIJRI when the owner identification is NATIONAL_ID, otherwise use DATE_OF_BIRTH_GREGORIAN.
+          type: array
+          items:
+            $ref: '#/components/schemas/PropertySearchIdentificationDto'
+          maxItems: 2
+      required:
+      - identification_method
+      - identifications
+    DatePair:
+      type:
+      - object
+      - 'null'
+      properties:
+        gregorian:
+          description: Gregorian date in ISO 8601 format (YYYY-MM-DD)
+          type:
+          - string
+          - 'null'
+          format: date
+        hijri:
+          description: Hijri date in ISO 8601 format (YYYY-MM-DD)
+          type:
+          - string
+          - 'null'
+          format: date
+    PropertySearchResponse:
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        required:
+        - verifications
+        - page
+        properties:
+          verifications:
+            description: The list of properties owned by the searched identity
+            type: array
+            items:
+              $ref: '#/components/schemas/PropertySearchResult'
+          page:
+            $ref: '#/components/schemas/PageMetadata'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

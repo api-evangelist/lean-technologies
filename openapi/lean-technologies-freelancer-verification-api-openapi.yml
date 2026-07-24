@@ -1,0 +1,557 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Freelancer Verification API
+  version: v0.2.3
+  description: Operations for verifying freelancer certificate information
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Freelancer Verification
+  description: Operations for verifying freelancer certificate information
+  x-displayName: Freelancer Verification
+paths:
+  /verifications/v1/freelancers:
+    servers: []
+    post:
+      operationId: verifyFreelancer
+      summary: Verify freelancer certificate information
+      description: Verifies freelancer certificate information using National ID and/or Freelancer Number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FreelancerVerificationRequest'
+            examples:
+              withNationalId:
+                summary: FULL - Request with both National ID and Freelancer Number
+                value:
+                  type: FULL
+                  identifications:
+                  - type: NATIONAL_ID
+                    value: '1106972886'
+                  - type: FREELANCER_NUMBER
+                    value: FL-013988291
+              fullListWithNationalId:
+                summary: FULL_LIST - Retrieve all certificates by National ID
+                value:
+                  type: FULL_LIST
+                  identifications:
+                  - type: NATIONAL_ID
+                    value: '1107454009'
+              basicType:
+                summary: BASIC - Basic verification with National ID and Freelancer Number
+                value:
+                  type: BASIC
+                  identifications:
+                  - type: NATIONAL_ID
+                    value: '1106972886'
+                  - type: FREELANCER_NUMBER
+                    value: FL-013988291
+      responses:
+        '200':
+          description: Freelancer verification completed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FreelancerVerificationResponse'
+              examples:
+                certVerifiedActive:
+                  summary: 200 - Freelancer Certificate Verified - ACTIVE
+                  value:
+                    status: OK
+                    results_id: e894ede4-dd81-41fb-b52d-fb4fec16c16c
+                    message: Data successfully retrieved
+                    timestamp: '2025-05-19T12:09:54.672818827Z'
+                    meta: null
+                    status_detail: null
+                    verifications:
+                      certificate_ownership_verified: VERIFIED
+                      national_id: '1107454009'
+                      name:
+                        ar: عادل عيد نفل الحارثي
+                        en: adel
+                      national_id_expiry_date: '1450-07-01'
+                      certificate:
+                      - expiry_date: '2025-08-21'
+                        number: FL-013988291
+                        status: ACTIVE
+                        revoked_at: null
+                        issue_date: '2024-08-21'
+                        speciality:
+                          code: AS090
+                          name:
+                            en: Sales Promotion and Management
+                            ar: ادارة وتنشيط المبيعات
+                          category:
+                            name:
+                              en: Sales & Marketing
+                              ar: المبيعات والتسويق
+                            code: C106
+                        canceled_at: null
+                      gender: MALE
+                certStatusChecked:
+                  summary: 200 - Freelancer Certificate Status Checked
+                  value:
+                    status: OK
+                    results_id: e894ede4-dd81-41fb-b52d-fb4fec16c16c
+                    message: Data successfully retrieved
+                    timestamp: '2025-05-19T12:09:54.672818827Z'
+                    meta: null
+                    status_detail: null
+                    verifications:
+                      certificate_ownership_verified: NOT_CHECKED
+                      national_id: null
+                      name: null
+                      national_id_expiry_date: null
+                      certificate:
+                      - expiry_date: '2025-08-21'
+                        number: FL-013988291
+                        status: CANCELED
+                        revoked_at: null
+                        issue_date: '2024-08-21'
+                        speciality: null
+                        canceled_at: '2025-05-26T00:00:00Z'
+                      gender: null
+                certNotVerified:
+                  summary: 200 - Freelancer Certificate Not Verified
+                  value:
+                    status: OK
+                    results_id: e894ede4-dd81-41fb-b52d-fb4fec16c16c
+                    message: National ID and certificate number doesn't match
+                    timestamp: '2025-05-19T12:09:54.672818827Z'
+                    meta: null
+                    status_detail: null
+                    verifications:
+                      certificate_ownership_verified: NOT_VERIFIED
+                      national_id: null
+                      name: null
+                      national_id_expiry_date: null
+                      certificate: []
+                      gender: null
+                certVerifiedCanceled:
+                  summary: 200 - Freelancer Certificate Verified - CANCELLED
+                  value:
+                    status: OK
+                    results_id: e894ede4-dd81-41fb-b52d-fb4fec16c16c
+                    message: Data successfully retrieved
+                    timestamp: '2025-05-19T12:09:54.672818827Z'
+                    meta: null
+                    status_detail: null
+                    verifications:
+                      certificate_ownership_verified: VERIFIED
+                      national_id: '1107454009'
+                      name:
+                        ar: عادل عيد نفل الحارثي
+                        en: adel
+                      national_id_expiry_date: '1450-07-01'
+                      certificate:
+                      - expiry_date: '2025-08-21'
+                        number: FL-013988291
+                        status: CANCELED
+                        revoked_at: null
+                        issue_date: '2024-08-21'
+                        speciality:
+                          code: AS090
+                          name:
+                            en: Sales Promotion and Management
+                            ar: ادارة وتنشيط المبيعات
+                          category:
+                            name:
+                              en: Sales & Marketing
+                              ar: المبيعات والتسويق
+                            code: C106
+                        canceled_at: '2025-05-26T00:00:00Z'
+                      gender: MALE
+                multipleCertificatesAllStatuses:
+                  summary: 200 - Retrieve all certificates by National ID
+                  value:
+                    status: OK
+                    results_id: e286fa03-219c-470e-abdd-0d8796afdb28
+                    message: Freelancer verification successful
+                    timestamp: '2025-08-19T05:57:17.733635157Z'
+                    meta: null
+                    status_detail: null
+                    verifications:
+                      certificate_ownership_verified: VERIFIED
+                      national_id: '1107454009'
+                      national_id_expiry_date: '2030-12-31'
+                      name:
+                        ar: مستقل نشط
+                        en: Active Freelancer
+                      gender: MALE
+                      certificate:
+                      - expiry_date: '2026-08-01'
+                        number: FL-013988291
+                        status: ACTIVE
+                        revoked_at: null
+                        issue_date: '2024-08-01'
+                        speciality:
+                          code: SD001
+                          name:
+                            ar: تطوير البرمجيات
+                            en: Software Development
+                          category:
+                            name:
+                              ar: تقنية المعلومات
+                              en: Information Technology
+                            code: IT001
+                        canceled_at: null
+                      - expiry_date: '2027-01-01'
+                        number: FL-595215341
+                        status: PENDING
+                        revoked_at: null
+                        issue_date: '2025-01-01'
+                        speciality:
+                          code: DM002
+                          name:
+                            ar: التسويق الرقمي
+                            en: Digital Marketing
+                          category:
+                            name:
+                              ar: التسويق
+                              en: Marketing
+                            code: MKT001
+                        canceled_at: null
+                      - expiry_date: '2025-02-01'
+                        number: FL-090302137
+                        status: CANCELED
+                        revoked_at: null
+                        issue_date: '2023-02-01'
+                        speciality:
+                          code: GD003
+                          name:
+                            ar: التصميم الجرافيكي
+                            en: Graphic Design
+                          category:
+                            name:
+                              ar: الفنون الإبداعية
+                              en: Creative Arts
+                            code: CA001
+                        canceled_at: '2024-06-20T00:00:00Z'
+                      - expiry_date: '2025-04-15'
+                        number: FL-490775363
+                        status: REVOKED
+                        revoked_at: '2024-05-15T00:00:00Z'
+                        issue_date: '2023-04-15'
+                        speciality:
+                          code: DS004
+                          name:
+                            ar: علم البيانات
+                            en: Data Science
+                          category:
+                            name:
+                              ar: تقنية المعلومات
+                              en: Information Technology
+                            code: IT001
+                        canceled_at: null
+                      - expiry_date: '2024-03-01'
+                        number: FL-541440269
+                        status: EXPIRED
+                        revoked_at: null
+                        issue_date: '2022-03-01'
+                        speciality:
+                          code: PM005
+                          name:
+                            ar: إدارة المشاريع
+                            en: Project Management
+                          category:
+                            name:
+                              ar: أعمال
+                              en: Business
+                            code: BIZ002
+                        canceled_at: null
+                      - expiry_date: null
+                        number: FL-560899391
+                        status: REJECTED
+                        revoked_at: null
+                        issue_date: null
+                        speciality:
+                          code: HR006
+                          name:
+                            ar: الموارد البشرية
+                            en: Human Resources
+                          category:
+                            name:
+                              ar: أعمال
+                              en: Business
+                            code: BIZ002
+                        canceled_at: null
+                ownershipNotVerified:
+                  summary: 200 - Freelancer Certificate Ownership Not Verified
+                  value:
+                    status: OK
+                    results_id: 8e77e870-5cb2-4dd3-abd6-7c5e2b10767c
+                    message: Freelancer verification successful
+                    timestamp: '2026-01-12T07:09:32.959236671Z'
+                    meta: null
+                    status_detail: null
+                    verifications:
+                      certificate_ownership_verified: NOT_VERIFIED
+                      national_id: null
+                      national_id_expiry_date: null
+                      name: null
+                      gender: null
+                      certificate: []
+                verifiedBasicReponse:
+                  summary: 200 - Freelancer Certificate Ownership Verified with basic response
+                  value:
+                    status: OK
+                    results_id: 54a2e938-527a-4692-83eb-f8575666d604
+                    message: Freelancer verification successful
+                    timestamp: '2026-01-08T07:20:58.627963179Z'
+                    meta: null
+                    status_detail: null
+                    verifications:
+                      certificate_ownership_verified: VERIFIED
+                      national_id: '1119364972'
+                      national_id_expiry_date: null
+                      name: null
+                      gender: null
+                      certificate:
+                      - expiry_date: '2026-03-05'
+                        number: null
+                        status: ACTIVE
+                        revoked_at: null
+                        issue_date: null
+                        speciality: null
+                        canceled_at: null
+        '400':
+          description: Bad request due to invalid input parameters
+        '401':
+          description: Unauthorized due to invalid or missing authentication
+        '403':
+          description: Not allowed to perform the operation
+      tags:
+      - Freelancer Verification
+components:
+  schemas:
+    Name:
+      type: object
+      properties:
+        ar:
+          description: Name in Arabic
+          type: string
+        en:
+          description: Name in English
+          type: string
+      required:
+      - ar
+      - en
+    CertificateStatus:
+      description: Possible statuses of a freelancer certificate
+      type: string
+      enum:
+      - ACTIVE
+      - EXPIRED
+      - CANCELED
+      - REVOKED
+      - REJECTED
+      - PENDING
+      - CANCELED_BEFORE_ACTIVE
+      - EDITED
+      - SEND_IT_BACK
+      - UNKNOWN
+    FreelancerCertificate:
+      type: object
+      properties:
+        expiry_date:
+          description: Expiry date of the certificate (null for rejected certificates)
+          type:
+          - string
+          - 'null'
+          format: date
+        number:
+          description: Certificate number (null for rejected certificates)
+          type:
+          - string
+          - 'null'
+        status:
+          description: Current status of the certificate
+          anyOf:
+          - $ref: '#/components/schemas/CertificateStatus'
+        revoked_at:
+          description: Date when the certificate was revoked (null if not revoked)
+          type:
+          - string
+          - 'null'
+          format: date-time
+        issue_date:
+          description: Date when the certificate was issued (null for rejected certificates)
+          type:
+          - string
+          - 'null'
+          format: date
+        speciality:
+          description: Speciality information (null if not available)
+          type:
+          - object
+          - 'null'
+          properties:
+            code:
+              description: Speciality code
+              type: string
+            name:
+              description: Speciality name in Arabic and English
+              allOf:
+              - $ref: '#/components/schemas/Name'
+            category:
+              $ref: '#/components/schemas/Category'
+        canceled_at:
+          description: Date when the certificate was canceled (null if not canceled)
+          type:
+          - string
+          - 'null'
+          format: date-time
+      required:
+      - expiry_date
+      - number
+      - status
+      - issue_date
+    FreelancerIdentificationType:
+      description: Types of identification documents accepted for freelancer verification
+      type: string
+      enum:
+      - NATIONAL_ID
+      - FREELANCER_NUMBER
+    FreelancerVerificationRequest:
+      type: object
+      properties:
+        type:
+          description: Type of freelancer verification. If not provided, defaults based on app configuration.
+          anyOf:
+          - $ref: '#/components/schemas/FreelancerVerificationType'
+        identifications:
+          description: Array of identification documents. FULL_LIST type requires NATIONAL_ID only. FULL type requires both NATIONAL_ID and FREELANCER_NUMBER. BASIC type requires both NATIONAL_ID and FREELANCER_NUMBER.
+          type: array
+          items:
+            $ref: '#/components/schemas/Identification'
+          maxItems: 2
+          minItems: 1
+      required:
+      - identifications
+    FreelancerVerificationResult:
+      type: object
+      properties:
+        certificate_ownership_verified:
+          description: Status of certificate ownership verification
+          type: string
+          enum:
+          - VERIFIED
+          - NOT_VERIFIED
+          - NOT_CHECKED
+        national_id:
+          description: National ID of the freelancer (null if not provided)
+          type:
+          - string
+          - 'null'
+        national_id_expiry_date:
+          description: Date in Hijri calendar format
+          type:
+          - string
+          - 'null'
+        name:
+          description: Name of the freelancer in Arabic and English (null if not available)
+          type:
+          - object
+          - 'null'
+          properties:
+            ar:
+              description: Name in Arabic
+              type: string
+            en:
+              description: Name in English
+              type: string
+        gender:
+          description: Gender of the freelancer (null if not available)
+          type:
+          - string
+          - 'null'
+        certificate:
+          description: Array of freelancer certificates
+          type: array
+          items:
+            $ref: '#/components/schemas/FreelancerCertificate'
+      required:
+      - certificate_ownership_verified
+      - certificate
+    Identification:
+      type: object
+      properties:
+        type:
+          description: Type of identification document
+          anyOf:
+          - $ref: '#/components/schemas/FreelancerIdentificationType'
+        value:
+          description: Value of the identification document
+          type: string
+      required:
+      - type
+      - value
+    FreelancerVerificationType:
+      description: 'Type of freelancer verification request. Determines pricing and data visibility. FULL_LIST: retrieve all certificates by National ID only. FULL: verify certificate ownership with National ID and Freelancer Number. BASIC: basic verification with National ID and Freelancer Number (reduced data).'
+      type: string
+      enum:
+      - FULL_LIST
+      - FULL
+      - BASIC
+    FreelancerVerificationResponse:
+      type: object
+      properties:
+        status:
+          description: Status of the verification request
+          type: string
+          enum:
+          - OK
+          - FAILED
+        results_id:
+          description: Unique identifier for this verification result
+          type: string
+          format: uuid
+        message:
+          description: Human-readable message about the verification result
+          type: string
+        timestamp:
+          description: Timestamp when the verification was processed
+          type: string
+          format: date-time
+        meta:
+          description: Additional metadata about the verification
+          type:
+          - object
+          - 'null'
+        status_detail:
+          description: Detailed status information
+          type:
+          - string
+          - 'null'
+        verifications:
+          $ref: '#/components/schemas/FreelancerVerificationResult'
+      required:
+      - status
+      - results_id
+      - message
+      - timestamp
+      - verifications
+    Category:
+      type: object
+      properties:
+        name:
+          description: Category name in Arabic and English
+          allOf:
+          - $ref: '#/components/schemas/Name'
+        code:
+          description: Category code
+          type: string
+      required:
+      - name
+      - code
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

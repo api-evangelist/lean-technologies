@@ -1,0 +1,134 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Name Verification API
+  version: v0.2.3
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Name Verification
+  x-displayName: Name Verification
+paths:
+  /insights/v1/name-verification:
+    servers: []
+    post:
+      operationId: nameVerification
+      summary: Verify Name
+      description: 'Verify the name held by the bank matches a name provided. Requires the following permissions: accounts & identity.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NameVerificationRequestDto'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataRequestResultNameVerificationDto'
+              example:
+                status: OK
+                data:
+                  full_name_provided: Cassandra Schultz
+                  full_name_retrieved: Cassandra Marie Schultz
+                  match_type: PARTIAL_MATCH
+                  confidence: 0.8349722450708514
+                  type: name-verification
+                results_id: 0f79abdf-fa89-93a3-8b9c-40a3b6dc2b3a
+                timestamp: '2024-09-18T15:37:35.254Z'
+      tags:
+      - Name Verification
+components:
+  schemas:
+    ResultStatus:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - RECONNECT_REQUIRED
+      - PROCESSING_STARTED
+    StatusAdditionalDetail:
+      type: object
+      properties:
+        granular_status_code:
+          type: string
+        status_additional_info:
+          type: string
+    NameVerificationDto:
+      description: An end user's name verification based on data held by a financial institution
+      type: object
+      properties:
+        type:
+          type: string
+        full_name_provided:
+          description: Full name provided in request
+          type: string
+        full_name_retrieved:
+          description: Full name retrieved from financial institution
+          type: string
+        match_type:
+          description: Match type
+          type: string
+          enum:
+          - PERFECT_MATCH
+          - NO_MATCH
+          - PARTIAL_MATCH
+        confidence:
+          description: Between 0 and 1
+          type: number
+    NameVerificationRequestDto:
+      type: object
+      properties:
+        entity_id:
+          type: string
+          format: uuid
+        full_name:
+          type: string
+        async:
+          type: boolean
+        meta:
+          type: object
+          additionalProperties:
+            type: string
+      required:
+      - entity_id
+      - full_name
+    DataRequestResultNameVerificationDto:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ResultStatus'
+        results_id:
+          type: string
+          format: uuid
+        message:
+          type: string
+        meta:
+          type: object
+          additionalProperties:
+            type: string
+        timestamp:
+          type: string
+          format: date-time
+        status_detail:
+          $ref: '#/components/schemas/StatusAdditionalDetail'
+        data:
+          $ref: '#/components/schemas/NameVerificationDto'
+        type:
+          type: string
+        refreshed_at:
+          type: string
+          format: date-time
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

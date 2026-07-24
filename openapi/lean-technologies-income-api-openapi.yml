@@ -1,0 +1,1197 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Income API
+  version: v0.2.3
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Income
+  x-displayName: Income
+paths:
+  /insights/v2/income:
+    servers: []
+    post:
+      operationId: verifyIncome
+      summary: Get Income
+      description: '`Get Income` endpoint provides essential income verification data for credit decisioning and underwriting processes. This API analyzes transaction history to produce reliable income insights for a specific borrower identified by their `entity_id`.
+
+
+        The API returns comprehensive income information including categorization by source (salary vs. non-salary), monthly income patterns, and statistical analysis that helps lenders accurately assess an applicant''s ability to pay. These insights can be used for:
+
+
+        - Verifying user stated income on loan applications
+
+        - Calculating debt-to-income ratios with precision
+
+        - Identifying income stability and irregularities
+
+        - Supporting automated credit decisioning systems
+
+        - Reducing manual verification workloads in underwriting
+
+
+        Use this endpoint to streamline credit underwriting workflows, reduce time-to-decision, and make more informed lending decisions based on verified financial data.'
+      parameters:
+      - name: async
+        in: query
+        description: 'When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. Note: it''s recommended to use the sync flow (async=false) for all requests by adapting the data workflow for connected entities.'
+        required: false
+        schema:
+          type: boolean
+          default: false
+        deprecated: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IncomeVerificationRequestBody'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    insights:
+                      $ref: '#/components/schemas/IncomeVerificationResponsePayload'
+                    type:
+                      $ref: '#/components/schemas/InsightsResultType'
+                  type: object
+              examples:
+                Get_Income_UAE_2:
+                  summary: Successful income verification with salary and non-salary insights - UAE
+                  value:
+                    status: OK
+                    results_id: d982e1fd-aaf0-41fe-9f11-a4f67f4dc918
+                    message: Data successfully retrieved
+                    timestamp: '2026-01-08T12:07:48Z'
+                    type: income
+                    insights:
+                      salary:
+                        currency: AED
+                        total:
+                          amount: 72000
+                          count: 6
+                          first_date_time: '2025-07-01T00:00:00Z'
+                          last_date_time: '2025-12-25T00:00:00Z'
+                          average_monthly_amount: 12000
+                          average_monthly_count: 1
+                          average_monthly_received_value: 12000
+                          maximum_monthly_amount:
+                            month: 11
+                            year: 2025
+                            amount: 12500
+                          minimum_monthly_amount:
+                            month: 7
+                            year: 2025
+                            amount: 11500
+                        monthly_totals:
+                        - month: 7
+                          year: 2025
+                          amount: 11500
+                          count: 1
+                          is_month_complete: true
+                        - month: 8
+                          year: 2025
+                          amount: 12000
+                          count: 1
+                          is_month_complete: true
+                        - month: 9
+                          year: 2025
+                          amount: 12000
+                          count: 1
+                          is_month_complete: true
+                        - month: 10
+                          year: 2025
+                          amount: 12000
+                          count: 1
+                          is_month_complete: true
+                        - month: 11
+                          year: 2025
+                          amount: 12500
+                          count: 1
+                          is_month_complete: true
+                        - month: 12
+                          year: 2025
+                          amount: 12000
+                          count: 1
+                          is_month_complete: false
+                        transactions:
+                        - account_id: 36f0cf74-b4b0-492f-b50f-0a4680aba59f
+                          transaction_id: TXN-2025-12-25-001
+                          transaction_information: SALARY FROM شركة أرامكو السعودية
+                          booking_date_time: '2025-12-25T08:30:00Z'
+                          amount: 12000
+                          income_source:
+                            type: EMPLOYMENT
+                            name: شركة أرامكو السعودية
+                        - account_id: 36f0cf74-b4b0-492f-b50f-0a4680aba59f
+                          transaction_id: TXN-2025-11-25-001
+                          transaction_information: SALARY FROM شركة أرامكو السعودية
+                          booking_date_time: '2025-11-25T08:30:00Z'
+                          amount: 12500
+                          income_source:
+                            type: EMPLOYMENT
+                            name: شركة أرامكو السعودية
+                        income_factors:
+                          periods:
+                          - period: P3M
+                            income_variation: 2.5
+                            average_income:
+                              currency: AED
+                              amount: 12166.67
+                          - period: P6M
+                            income_variation: 4.2
+                            average_income:
+                              currency: AED
+                              amount: 12000
+                          delta_min_max: 1.087
+                          average_monthly_income_change: 1.2
+                      non_salary:
+                        currency: AED
+                        total:
+                          amount: 8500
+                          count: 8
+                          first_date_time: '2025-07-15T00:00:00Z'
+                          last_date_time: '2025-12-20T00:00:00Z'
+                          average_monthly_amount: 1416.67
+                          average_monthly_count: 1.33
+                          average_monthly_received_value: 1416.67
+                          maximum_monthly_amount:
+                            month: 9
+                            year: 2025
+                            amount: 2500
+                          minimum_monthly_amount:
+                            month: 8
+                            year: 2025
+                            amount: 500
+                        monthly_totals:
+                        - month: 7
+                          year: 2025
+                          amount: 1000
+                          count: 1
+                          is_month_complete: true
+                        - month: 8
+                          year: 2025
+                          amount: 500
+                          count: 1
+                          is_month_complete: true
+                        - month: 9
+                          year: 2025
+                          amount: 2500
+                          count: 2
+                          is_month_complete: true
+                        - month: 10
+                          year: 2025
+                          amount: 1500
+                          count: 1
+                          is_month_complete: true
+                        - month: 11
+                          year: 2025
+                          amount: 1500
+                          count: 2
+                          is_month_complete: true
+                        - month: 12
+                          year: 2025
+                          amount: 1500
+                          count: 1
+                          is_month_complete: false
+                        transactions:
+                        - account_id: 36f0cf74-b4b0-492f-b50f-0a4680aba59f
+                          transaction_id: TXN-2025-12-20-002
+                          transaction_information: RENTAL INCOME FROM PROPERTY
+                          booking_date_time: '2025-12-20T10:15:00Z'
+                          amount: 1500
+                          income_source:
+                            type: RENTAL
+                        - account_id: 36f0cf74-b4b0-492f-b50f-0a4680aba59f
+                          transaction_id: TXN-2025-09-15-003
+                          transaction_information: INVESTMENT DIVIDEND
+                          booking_date_time: '2025-09-15T14:20:00Z'
+                          amount: 1200
+                          income_source:
+                            type: INVESTMENTS
+                        income_factors:
+                          periods:
+                          - period: P3M
+                            income_variation: 15.8
+                            average_income:
+                              currency: AED
+                              amount: 1500
+                          - period: P6M
+                            income_variation: 28.5
+                            average_income:
+                              currency: AED
+                              amount: 1416.67
+                          delta_min_max: 5
+                          average_monthly_income_change: 12.5
+                Get_Income_UAE:
+                  summary: Successful income verification with salary and non-salary insights - UAE
+                  value:
+                    status: OK
+                    results_id: d982e1fd-aaf0-41fe-9f11-a4f67f4dc918
+                    message: Data successfully retrieved
+                    timestamp: '2026-01-08T12:07:48Z'
+                    type: income
+                    insights:
+                      salary:
+                        currency: AED
+                        total:
+                          amount: 90000
+                          count: 6
+                          first_date_time: '2025-07-01T00:00:00Z'
+                          last_date_time: '2025-12-25T00:00:00Z'
+                          average_monthly_amount: 15000
+                          average_monthly_count: 1
+                          average_monthly_received_value: 15000
+                          maximum_monthly_amount:
+                            month: 11
+                            year: 2025
+                            amount: 16000
+                          minimum_monthly_amount:
+                            month: 7
+                            year: 2025
+                            amount: 14000
+                        monthly_totals:
+                        - month: 7
+                          year: 2025
+                          amount: 14000
+                          count: 1
+                          is_month_complete: true
+                        - month: 8
+                          year: 2025
+                          amount: 15000
+                          count: 1
+                          is_month_complete: true
+                        - month: 9
+                          year: 2025
+                          amount: 15000
+                          count: 1
+                          is_month_complete: true
+                        - month: 10
+                          year: 2025
+                          amount: 15000
+                          count: 1
+                          is_month_complete: true
+                        - month: 11
+                          year: 2025
+                          amount: 16000
+                          count: 1
+                          is_month_complete: true
+                        - month: 12
+                          year: 2025
+                          amount: 15000
+                          count: 1
+                          is_month_complete: false
+                        transactions:
+                        - account_id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+                          transaction_id: TXN-AED-2025-12-25-001
+                          transaction_information: SALARY FROM EMIRATES GROUP
+                          booking_date_time: '2025-12-25T08:00:00Z'
+                          amount: 15000
+                          income_source:
+                            type: EMPLOYMENT
+                        - account_id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+                          transaction_id: TXN-AED-2025-11-25-001
+                          transaction_information: SALARY FROM EMIRATES GROUP
+                          booking_date_time: '2025-11-25T08:00:00Z'
+                          amount: 16000
+                          income_source:
+                            type: EMPLOYMENT
+                        income_factors:
+                          periods:
+                          - period: P3M
+                            income_variation: 3.1
+                            average_income:
+                              currency: AED
+                              amount: 15333.33
+                          - period: P6M
+                            income_variation: 5.5
+                            average_income:
+                              currency: AED
+                              amount: 15000
+                          delta_min_max: 1.143
+                          average_monthly_income_change: 1.5
+                      non_salary:
+                        currency: AED
+                        total:
+                          amount: 12000
+                          count: 10
+                          first_date_time: '2025-07-10T00:00:00Z'
+                          last_date_time: '2025-12-18T00:00:00Z'
+                          average_monthly_amount: 2000
+                          average_monthly_count: 1.67
+                          average_monthly_received_value: 2000
+                          maximum_monthly_amount:
+                            month: 9
+                            year: 2025
+                            amount: 3500
+                          minimum_monthly_amount:
+                            month: 8
+                            year: 2025
+                            amount: 800
+                        monthly_totals:
+                        - month: 7
+                          year: 2025
+                          amount: 1500
+                          count: 1
+                          is_month_complete: true
+                        - month: 8
+                          year: 2025
+                          amount: 800
+                          count: 1
+                          is_month_complete: true
+                        - month: 9
+                          year: 2025
+                          amount: 3500
+                          count: 3
+                          is_month_complete: true
+                        - month: 10
+                          year: 2025
+                          amount: 2000
+                          count: 2
+                          is_month_complete: true
+                        - month: 11
+                          year: 2025
+                          amount: 2000
+                          count: 2
+                          is_month_complete: true
+                        - month: 12
+                          year: 2025
+                          amount: 2000
+                          count: 1
+                          is_month_complete: false
+                        transactions:
+                        - account_id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+                          transaction_id: TXN-AED-2025-12-18-002
+                          transaction_information: FREELANCE PROJECT PAYMENT
+                          booking_date_time: '2025-12-18T11:30:00Z'
+                          amount: 2000
+                          income_source:
+                            type: GIG_ECONOMY
+                        - account_id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+                          transaction_id: TXN-AED-2025-09-20-004
+                          transaction_information: RENTAL INCOME - DUBAI MARINA
+                          booking_date_time: '2025-09-20T09:45:00Z'
+                          amount: 1800
+                          income_source:
+                            type: RENTAL
+                        income_factors:
+                          periods:
+                          - period: P3M
+                            income_variation: 18.2
+                            average_income:
+                              currency: AED
+                              amount: 2000
+                          - period: P6M
+                            income_variation: 32.8
+                            average_income:
+                              currency: AED
+                              amount: 2000
+                          delta_min_max: 4.375
+                          average_monthly_income_change: 15.3
+        '202':
+          description: Accepted (Asynchronous request)
+          content:
+            application/json:
+              examples:
+                GetIncomeAsyncExample:
+                  $ref: '#/components/examples/AsyncProcessingV2Example'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                InvalidParametersExample:
+                  $ref: '#/components/examples/InvalidParametersExample'
+        '404':
+          description: Entity not found
+          content:
+            application/json:
+              examples:
+                UnknownEntityExample:
+                  $ref: '#/components/examples/UnknownEntityExample'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                InternalServerErrorExample:
+                  $ref: '#/components/examples/InternalServerErrorExample'
+      tags:
+      - Income
+      x-spring-response-entity: true
+  /insights/v2/income/employment?async=true:
+    get:
+      summary: Get Employment
+      deprecated: false
+      description: 'Provides insights into employment verification and salary consistency based on bank account, including legal employer name in Arabic and English and salary variance details. (only supported for retail accounts).
+
+
+        This API is asynchronous, please read [this guide](https://docs.leantech.me/v2.0-KSA/docs/handling-asynchronous-requests) for further information on how to fetch the results.
+
+
+        > **"Only supported for retail accounts"**
+
+        > '
+      operationId: getEmployment
+      tags:
+      - Income
+      parameters:
+      - name: entity_id
+        in: query
+        description: The `entity_id` you are querying for. The entity needs to have permissions `accounts` and `transactions`.
+        required: true
+        example: a2fca65a-8c9a-4623-a84b-b0b08403669d
+        schema:
+          type: string
+          format: uuid
+      - name: start_date
+        in: query
+        description: The start date in UTC (in the format YYYY-MM-DD) you want to query transactions for.
+        required: true
+        example: '2023-05-01'
+        schema:
+          type: string
+          format: date
+      - name: async
+        in: query
+        description: 'When `true` the API will only return a `results_id` which can be fetched from the `/results` endpoint when ready.
+
+
+          Defaults to true if not provided. Synchronous requests (false) are not supported and will return a 501 error.'
+        required: false
+        example: 'true'
+        schema:
+          type: boolean
+          default: true
+      - name: lean-app-token
+        in: header
+        description: 'How Lean identifies your application. '
+        required: true
+        example: 34c3bb0f-1e1a-4c94-9c4d-057c90631b72
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    description: The status of the results. For async requests, initially returns PENDING.
+                    enum:
+                    - OK
+                    - FAILED
+                    - PENDING
+                    - CONSENT_EXPIRED
+                    type: string
+                  results_id:
+                    type: string
+                    description: The ID for this result, this is used when retrieving results from the `/results` endpoint.
+                    format: uuid
+                  message:
+                    description: A message describing the status of the request.
+                    type: string
+                  meta:
+                    type:
+                    - string
+                    - 'null'
+                    description: Optional metadata associated with the result.
+                  timestamp:
+                    format: date-time
+                    description: The timestamp with timezone offset indicating when the response was generated.
+                    type: string
+                  status_detail:
+                    description: Further detail on the error if status=FAILED
+                    $ref: '#/components/schemas/StatusDetailObject'
+                  insights:
+                    type:
+                    - object
+                    - 'null'
+                    description: The employment insights data.
+                    properties:
+                      employmentDetails:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/employmentDetailsObject'
+                        description: Array of employment details for each identified employer
+                    required:
+                    - employmentDetails
+                  type:
+                    type: string
+                    enum:
+                    - EMPLOYMENT
+                    description: The type of insights being returned.
+                required:
+                - type
+                - status
+                - results_id
+                - message
+                - meta
+                - timestamp
+                - status_detail
+                examples:
+                - status: OK
+                  results_id: 550e8400-e29b-41d4-a716-446655440000
+                  message: Data successfully retrieved
+                  timestamp: '2023-04-15T14:30:00Z'
+                  type: EMPLOYMENT
+                  insights:
+                    employmentDetails:
+                    - bankEmployerName: ACME Corporation
+                      matchedReferenceEmployer:
+                        name:
+                          en: ACME Corporation Ltd.
+                          ar: شركة أكمي المحدودة
+                        crNumber: 123456789
+                      salaryConsistent: true
+                      salaryDateVariance: 2.5
+                      salaryAmountVariance: 0
+                      firstSalaryDate: '2022-01-15T00:00:00Z'
+                    - bankEmployerName: XYZ Company
+                      matchedReferenceEmployer:
+                        name:
+                          en: XYZ International
+                          ar: شركة إكس واي زد الدولية
+                        crNumber: 987654321
+                      salaryConsistent: false
+                      salaryDateVariance: 8.2
+                      salaryAmountVariance: 1500.5
+                      firstSalaryDate: '2021-06-30T00:00:00Z'
+                - status: PENDING
+                  results_id: 550e8400-e29b-41d4-a716-446655440001
+                  message: Please wait for a webhook or try again later.
+                  timestamp: '2023-04-15T14:30:00Z'
+                  type: EMPLOYMENT
+              example: "{\n    \"status\": \"OK\",\n    \"results_id\": \"31f51bd1-b689-444b-8ba5-b1ab63e99d8a\",\n    \"message\": \"Data successfully retrieved\",\n    \"meta\": null,\n    \"timestamp\": \"2024-11-08T05:55:47.154131271Z\",\n    \"status_detail\": null,\n    \"insights\": {\n        \"employment_details\": [\n            {\n                \"bank_employer_name\": \"شركة لين تكنولوجيز\",\n                \"matched_reference_employer\": {\n                    \"name\": {\n                        \"en\": \"Saudi Lean Technologies Company for Information Systems Technology\",\n                        \"ar\": \"شركة لين تكنولوجيز السعودية لتقنية نظم المعلومات\n                    },\n                    \"cr_number\": 1010299593\n                },\n                \"salary_consistent\": true,\n                \"salary_date_variance\": 2.14,\n                \"salary_amount_variance\": 145.75,\n                \"first_salary_date\": \"2024-07-27T00:00:00Z\"\n            },\n            {\n                \"bank_employer_name\": \"Ahad sys\",\n                \"matched_reference_employer\": {\n                    \"name\": {\n                        \"en\": \"Ahad Systems company \",\n                        \"ar\": \"شركة عهد التكنولوجيا\"\n                    },\n                    \"cr_number\": 4030123456\n                },\n                \"salary_consistent\": false,\n                \"salary_date_variance\": 6.82,\n                \"salary_amount_variance\": 1824.50,\n                \"first_salary_date\": \"2023-11-26T00:00:00Z\"\n            },\n            {\n                \"bank_employer_name\": \"Agility\",\n                \"matched_reference_employer\": null,\n                \"salary_consistent\": false,\n                \"salary_date_variance\": 12.35,\n                \"salary_amount_variance\": 3571.22,\n                \"first_salary_date\": \"2024-10-25T00:00:00Z\"\n            }\n        ]\n    }\n}"
+          headers: {}
+      security:
+      - bearer: []
+  /insights/v2/income/employment:
+    servers: []
+    get:
+      operationId: getEmploymentDetails
+      summary: Get Employment
+      description: 'Provides insights into employment verification and salary consistency based on bank account, including legal employer name in Arabic and English and salary variance details. (only supported for retail accounts).
+
+
+        This API is asynchronous, please read [this guide](https://docs.leantech.me/v2.0-KSA/docs/handling-asynchronous-requests) for further information on how to fetch the results.'
+      parameters:
+      - name: entity_id
+        in: query
+        description: The `entity_id` you are querying for. The entity needs to have permissions `accounts` and `transactions`.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: start_date
+        in: query
+        description: The start date in UTC (in the format YYYY-MM-DD) you want to query transactions for.
+        required: true
+        schema:
+          type: string
+          format: date
+        x-field-extra-annotation: '@jakarta.validation.constraints.PastOrPresent'
+      - name: async
+        in: query
+        description: 'When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. Note: it''''s recommended to use the sync flow (async=false) for all requests by adapting the data workflow for connected entities.'
+        required: false
+        schema:
+          type: boolean
+          default: true
+        deprecated: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - properties:
+                    insights:
+                      $ref: '#/components/schemas/EmploymentPayload'
+                    type:
+                      $ref: '#/components/schemas/InsightsResultType'
+                  type: object
+              examples:
+                successfulEmployment:
+                  summary: Successful employment verification with employer details
+                  value:
+                    status: OK
+                    results_id: 187c5cc4-9874-41b7-bc16-01e857569c2c
+                    message: Data successfully retrieved
+                    timestamp: '2026-01-08T12:09:29Z'
+                    type: employment
+                    insights:
+                      employment_details:
+                      - bank_employer_name: من شركـة لين تكنولوجيز
+                        matched_reference_employer:
+                          name:
+                            en: Balady Co.
+                            ar: مصنع شركة بلدي للدواجن
+                          cr_number: 5855346148
+                        salary_consistent: true
+                        salary_date_variance: 0
+                        salary_amount_variance: 0
+                        first_salary_date: '2025-04-24T00:00:00Z'
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              examples:
+                pendingEmployment:
+                  summary: Request accepted and processing
+                  value:
+                    status: PENDING
+                    results_id: 97a23607-29b0-4ad6-9f26-3c1a5efa65da
+                    message: Please wait for a webhook or try again later.
+                    meta: null
+                    timestamp: '2026-01-08T11:57:14.909323921Z'
+                    status_detail: null
+        '501':
+          $ref: '#/components/responses/UnsupportedByBankResponse'
+      tags:
+      - Income
+      x-spring-response-entity: true
+components:
+  schemas:
+    Translation:
+      type:
+      - object
+      - 'null'
+      properties:
+        en:
+          description: Employer name in English.
+          type: string
+        ar:
+          description: Employer name in Arabic.
+          type: string
+      required:
+      - en
+      - ar
+    IncomeSourceDetails:
+      type:
+      - object
+      - 'null'
+      properties:
+        type:
+          description: The type of income source
+          allOf:
+          - $ref: '#/components/schemas/IncomeSourceType'
+        name:
+          description: The name of the employer or the source of the incoming transaction if available
+          type: string
+      x-class-extra-annotation: '@lombok.AllArgsConstructor'
+    IncomeCategoryPayload:
+      type: object
+      properties:
+        currency:
+          description: Currency of the account
+          type: string
+        total:
+          $ref: '#/components/schemas/IncomeTotal'
+        monthly_totals:
+          type: array
+          items:
+            $ref: '#/components/schemas/IncomeMonthlyTotal'
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/IncomeTransaction'
+        income_factors:
+          $ref: '#/components/schemas/IncomeFactors'
+      additionalProperties: false
+    Currency:
+      description: The ISO 3 letter currency code
+      type: string
+      examples:
+      - AED
+      pattern: ^[A-Z]{3}$
+    IncomeVerificationResponsePayload:
+      type: object
+      properties:
+        salary:
+          $ref: '#/components/schemas/IncomeCategoryPayload'
+        non_salary:
+          $ref: '#/components/schemas/IncomeCategoryPayload'
+      additionalProperties: false
+    IncomeSourceType:
+      description: Classification of income source type (combined enum for all income sources)
+      type: string
+      enum:
+      - EMPLOYMENT
+      - RETIREMENT
+      - HOUSING_BENEFIT
+      - GIG_ECONOMY
+      - UNEMPLOYMENT
+      - RENTAL
+      - TRANSFER_FROM_OWN_APPLICATION
+      - STUDENT_STIPEND
+      - INVESTMENTS
+      - CITIZEN_ACCOUNT
+      - SOCIAL_SECURITY
+      - SIDE_BUSINESS
+      - BONUS
+      - CASH_DEPOSIT
+    IncomeVerificationRequestBody:
+      type: object
+      properties:
+        entity_id:
+          description: The `entity_id` you are querying for. The entity needs to have permissions `accounts` and `transactions`.
+          type: string
+          format: uuid
+          x-field-extra-annotation: '@jakarta.validation.constraints.NotNull'
+        start_date:
+          description: 'The start date in UTC (in the format YYYY-MM-DD) you want to query transactions for.
+
+
+            If not provided, we will default to 6 months before now.'
+          type: string
+          format: date
+          x-field-extra-annotation: '@jakarta.validation.constraints.PastOrPresent'
+        estimated_monthly_income:
+          description: 'Monthly income for the user that you have gathered from another source (e.g.: reported by the user).'
+          type: number
+          x-field-extra-annotation: '@jakarta.validation.constraints.Positive'
+        income_type:
+          description: If you want to get salary or non-salary income or both. If you do not provide any value, it will default to ALL.
+          allOf:
+          - $ref: '#/components/schemas/IncomeType'
+      required:
+      - entity_id
+    MonthlyAmount:
+      type: object
+      properties:
+        month:
+          description: The transaction month
+          type: integer
+          format: int32
+        year:
+          description: The transaction year
+          type: integer
+          format: int32
+        amount:
+          description: The transaction amount
+          type: number
+      x-class-extra-annotation: '@lombok.AllArgsConstructor'
+    EmploymentPayload:
+      type: object
+      properties:
+        employment_details:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmploymentDetails'
+      additionalProperties: false
+    EmployerDetails:
+      type: object
+      properties:
+        name:
+          description: Official name of the employer in English and Arabic.
+          allOf:
+          - $ref: '#/components/schemas/Translation'
+        cr_number:
+          description: Employer’s Commercial Registration (CR) number.
+          type:
+          - integer
+          - 'null'
+          format: int64
+    CurrencyAmount:
+      type: object
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          description: The amount of money in the currency specified.
+          type: number
+      required:
+      - currency
+      - amount
+    InsightsResultType:
+      description: type of insight
+      type: string
+      enum:
+      - income
+      - employment
+      - cashflow
+      - credits-obligations
+      - non-credits-obligations
+      - expenses
+      - cash-balances
+      - freelancer-cashflow
+      - behaviors
+      - cashflow-patterns
+      - credit-assessments
+      - account-controls
+      - credit-obligations
+    Result:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ResultStatus'
+        results_id:
+          description: The unique identifier for the request
+          type: string
+          format: uuid
+        message:
+          description: A message describing the status of the request
+          type: string
+        meta:
+          description: Meta information about the request
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: string
+        timestamp:
+          description: The datetime of when the request was made
+          type: string
+          format: date-time
+        status_detail:
+          description: Additional information about the status
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/StatusDetail'
+      required:
+      - status
+      - results_id
+      - message
+      - timestamp
+    IncomeTotal:
+      type: object
+      properties:
+        amount:
+          description: The total amount of transactions
+          type: number
+        count:
+          description: The total number of transactions within the time period.
+          type: integer
+          format: int32
+        last_date_time:
+          description: End date for transactions range
+          type: string
+          format: date-time
+        first_date_time:
+          description: Start date for transactions range
+          type: string
+          format: date-time
+        average_monthly_amount:
+          description: The average of all transaction amounts per month within the time period.
+          type: number
+        average_monthly_count:
+          description: The average number of transactions per month within the period.
+          type: number
+        average_monthly_received_value:
+          description: The average received value calculated as total amount divided by the count of months that had income (excluding zero months).
+          type: number
+        maximum_monthly_amount:
+          description: Maximum monthly transaction amount within the period.
+          allOf:
+          - $ref: '#/components/schemas/MonthlyAmount'
+        minimum_monthly_amount:
+          description: Minimum monthly transaction amount within the period.
+          allOf:
+          - $ref: '#/components/schemas/MonthlyAmount'
+      x-toBuilder: true
+    employmentDetailsObject:
+      type: object
+      properties:
+        bank_employer_name:
+          type: string
+          description: The name of the employer as it appears in bank transaction descriptions. This is the raw employer name extracted directly from salary payment transaction records.
+        matched_reference_employer:
+          type:
+          - object
+          - 'null'
+          properties:
+            name:
+              type:
+              - object
+              - 'null'
+              properties:
+                en:
+                  type:
+                  - string
+                  - 'null'
+                  description: Employer name in English.
+                ar:
+                  type:
+                  - string
+                  - 'null'
+                  description: Employer name in Arabic.
+              description: Official name of the employer in English and Arabic.
+            cr_number:
+              type:
+              - integer
+              - 'null'
+              description: Employer’s Commercial Registration (CR) number.
+              format: int64
+          description: Information about the verified employer entity that matched with the bank employer name. Value will be NULL if no matching stored in our database
+          required:
+          - name
+          - cr_number
+        salary_consistent:
+          type: boolean
+          description: Boolean indicator that determines if the salary payments from this employer follow a consistent pattern. true indicates stable payment patterns, while false indicates irregularity. This is calculated by comparing both date and amount variances against predefined thresholds (typically 5 days for dates and 1000 currency units for amounts).
+        salary_date_variance:
+          type: number
+          description: A statistical measure of the variability in the timing of salary payments, expressed as the standard deviation of intervals (in days) between consecutive salary payments. Lower values indicate more consistent payment timing. A value of 0 means all payments were made at exactly the same interval.
+          format: double
+        salary_amount_variance:
+          type: number
+          description: A statistical measure of the variability in salary payment amounts, expressed as the standard deviation of payment amounts. Lower values indicate more consistent payment amounts. A value of 0 means all payments were exactly the same amount.
+          format: double
+        first_salary_date:
+          type: string
+          description: The timestamp of the earliest detected salary payment from this employer. This indicates when the employment relationship began or when the earliest available transaction record starts.
+          format: date-time
+      required:
+      - bank_employer_name
+      - matched_reference_employer
+      - salary_consistent
+      - salary_date_variance
+      - salary_amount_variance
+      - first_salary_date
+    IncomeTransaction:
+      type: object
+      properties:
+        account_id:
+          description: The account ID associated with the transaction
+          type: string
+          format: uuid
+        transaction_id:
+          description: The unique transaction identifier
+          type: string
+        transaction_information:
+          description: Additional information about the transaction
+          type: string
+        booking_date_time:
+          description: The date and time when the transaction was booked
+          type: string
+          format: date-time
+        amount:
+          description: The transaction amount
+          type: number
+        income_source:
+          $ref: '#/components/schemas/IncomeSourceDetails'
+      required:
+      - account_id
+      - transaction_id
+      - transaction_information
+      - booking_date_time
+      - amount
+    StatusDetailObject:
+      description: Status Details
+      type: object
+      properties:
+        granular_status_code:
+          description: Detailed error code
+          type: string
+        status_additional_info:
+          description: Further detail on the encountered error
+          type: string
+    EmploymentDetails:
+      type: object
+      properties:
+        bank_employer_name:
+          description: The name of the employer as it appears in bank transaction descriptions. This is the raw employer name extracted directly from salary payment transaction records.
+          type:
+          - string
+          - 'null'
+        matched_reference_employer:
+          description: Information about the verified employer entity that matched with the bank employer name. Value will be NULL if no matching stored in our database
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/EmployerDetails'
+          required:
+          - name
+          - cr_number
+        salary_consistent:
+          description: Boolean indicator that determines if the salary payments from this employer follow a consistent pattern. true indicates stable payment patterns, while false indicates irregularity. This is calculated by comparing both date and amount variances against predefined thresholds (typically 5 days for dates and 1000 currency units for amounts).
+          type:
+          - boolean
+          - 'null'
+        salary_date_variance:
+          description: A statistical measure of the variability in the timing of salary payments, expressed as the standard deviation of intervals (in days) between consecutive salary payments. Lower values indicate more consistent payment timing. A value of 0 means all payments were made at exactly the same interval.
+          type:
+          - number
+          - 'null'
+          format: double
+          x-java-type: java.math.BigDecimal
+        salary_amount_variance:
+          description: A statistical measure of the variability in salary payment amounts, expressed as the standard deviation of payment amounts. Lower values indicate more consistent payment amounts. A value of 0 means all payments were exactly the same amount.
+          type:
+          - number
+          - 'null'
+          format: double
+          x-java-type: java.math.BigDecimal
+        first_salary_date:
+          description: The timestamp of the earliest detected salary payment from this employer. This indicates when the employment relationship began or when the earliest available transaction record starts.
+          type:
+          - string
+          - 'null'
+          format: date-time
+          x-java-type: java.time.Instant
+      required:
+      - bank_employer_name
+      - matched_reference_employer
+      - salary_consistent
+      - salary_date_variance
+      - salary_amount_variance
+      - first_salary_date
+    ResultStatus:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - PROCESSING_STARTED
+    StatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        granular_status_code:
+          description: Granular status code
+          type:
+          - string
+          - 'null'
+        status_additional_info:
+          description: Additional information about the status
+          type:
+          - string
+          - 'null'
+    IncomeFactors:
+      type: object
+      properties:
+        periods:
+          description: Array of income periods with their respective statistics
+          type: array
+          items:
+            $ref: '#/components/schemas/IncomeFactorsPeriod'
+        delta_min_max:
+          description: Ratio of the maximum salary amount to minimum salary amount
+          type: number
+        average_monthly_income_change:
+          description: Average of Percentage Change Month on Month within the time period.
+          type: number
+      x-class-extra-annotation: '@lombok.AllArgsConstructor'
+    IncomeFactorsPeriod:
+      type: object
+      properties:
+        period:
+          description: The time period
+          type: string
+        income_variation:
+          description: The variation in income for this period
+          type: number
+        average_income:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+    IncomeType:
+      type: string
+      enum:
+      - SALARY
+      - NON_SALARY
+      - ALL
+    IncomeMonthlyTotal:
+      type: object
+      properties:
+        month:
+          description: The month of the reporting period
+          type: integer
+          format: int32
+        year:
+          description: The year of the reporting period
+          type: integer
+          format: int32
+        amount:
+          description: The total amount of transactions in the Month
+          type: number
+        count:
+          description: Number of transactions in the month
+          type: integer
+          format: int32
+        is_month_complete:
+          description: Indicates whether the data for this month is complete
+          type: boolean
+      x-class-extra-annotation: '@lombok.AllArgsConstructor'
+      x-toBuilder: true
+  examples:
+    InternalServerErrorExample:
+      summary: Internal server error response
+      description: Response when an unexpected server error occurs
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-08-07T13:07:38.834977945Z'
+        status: INTERNAL_SERVER_ERROR
+        message: Something has gone wrong. If you continue to see this error, please get in touch with Lean.
+        metadata: null
+    UnknownEntityExample:
+      summary: Entity not found error response
+      description: Response when the provided entity_id is not found
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-10T21:03:05.413806605Z'
+        status: UNKNOWN_ENTITY
+        message: The entity_id provided did not match an account in our records.
+        metadata: null
+    InvalidParametersExample:
+      summary: Invalid parameters error response
+      description: Response when required parameters are missing or invalid
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-10T21:05:59.919233187Z'
+        status: INVALID_PARAMETERS
+        message: 'The request is badly formatted or a parameter of the wrong type has been provided, field: entity_id, value: e34d8e49-9af2-4252-a53e-bd2df855134.'
+        metadata: null
+    AsyncProcessingV2Example:
+      summary: Asynchronous processing response with async=true
+      description: Response to request with async=true
+      value:
+        status: PENDING
+        results_id: df73d596-7138-46df-af96-cbcbe9a8af59
+        message: Please wait for a webhook or try again later.
+        meta: null
+        timestamp: '2025-09-11T19:15:07.829993148Z'
+        status_detail: null
+        data: null
+        type: null
+        refreshed_at: null
+  responses:
+    UnsupportedByBankResponse:
+      description: Not Implemented
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Result'
+          examples:
+            unsupportedByBank:
+              summary: Sync requests not supported by bank
+              value:
+                results_id: 5e99047e-c45f-4aef-9cae-837e52aaa415
+                timestamp: '2026-01-08T12:54:57.100547167Z'
+                status: FAILED
+                message: Sync requests are not supported
+                metadata: null
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

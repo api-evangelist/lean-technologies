@@ -1,0 +1,527 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Data refresh API
+  version: v0.2.3
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Data refresh
+  x-displayName: Data refresh
+paths:
+  /data/v2/refreshes:
+    servers: []
+    post:
+      operationId: triggerDataRefresh
+      summary: Trigger a Manual Data Refresh
+      description: Trigger on-demand data refresh for an entity that has an active consent
+      parameters:
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/PageParameter'
+      - $ref: '#/components/parameters/SizeParameter'
+      - $ref: '#/components/parameters/EntityIdParameter'
+      - $ref: '#/components/parameters/MetaParameter'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TriggerDataRefreshRequestBody'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TriggerDataRefreshResponseBody'
+              examples:
+                Successful_Refresh_Example:
+                  summary: Successful data refresh trigger
+                  value:
+                    refresh_id: 79f89fa4-03aa-4beb-b31e-b4f18c953e79
+                    status: OK
+                    message: Data refresh triggered successfully
+                    timestamp: '2025-09-12T08:41:32.579538664Z'
+                Reconnect_Required_Example:
+                  summary: Reconnection required
+                  value:
+                    reconnect_id: 14ced864-13fa-481a-a785-7b6d84788aff
+                    refresh_id: 14ced864-13fa-481a-a785-7b6d84788aff
+                    status: RECONNECT_REQUIRED
+                    message: User input is required to reconnect with the bank.
+                    timestamp: '2025-09-12T08:08:40.084979049Z'
+                    metadata: null
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                InvalidParametersExample:
+                  $ref: '#/components/examples/InvalidParametersExample'
+        '403':
+          description: Forbidden - Consent expired
+          content:
+            application/json:
+              examples:
+                ConsentExpiredExample:
+                  summary: Consent expired error
+                  value:
+                    timestamp: '2025-09-12T08:08:40.084979049Z'
+                    status: CONSENT_EXPIRED
+                    message: Consent was suspended, revoked, or expired. New consent is required, please connect the entity once again.
+                    metadata: null
+        '404':
+          description: Entity not found
+          content:
+            application/json:
+              examples:
+                UnknownEntityExample:
+                  $ref: '#/components/examples/UnknownEntityExample'
+        '429':
+          description: Too Many Requests - Duplicated request
+          content:
+            application/json:
+              examples:
+                DuplicatedRequestExample:
+                  summary: Duplicated data refresh request error
+                  value:
+                    timestamp: '2025-09-12T08:36:15.261673121Z'
+                    status: DUPLICATED_REQUEST
+                    message: Data refresh is already pending.
+                    metadata: null
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                InternalServerErrorExample:
+                  $ref: '#/components/examples/InternalServerErrorExample'
+      tags:
+      - Data refresh
+    get:
+      operationId: getDataRefreshes
+      summary: Get data refreshes
+      parameters:
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/PageParameter'
+      - $ref: '#/components/parameters/SizeParameter'
+      - $ref: '#/components/parameters/EntityIdParameter'
+      - $ref: '#/components/parameters/MetaParameter'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetDataRefreshesResponseBody'
+              examples:
+                GetDataRefreshesExample:
+                  summary: List of data refreshes
+                  value:
+                    content:
+                    - created_at: '2025-09-12T08:41:30.279Z'
+                      customer_id: fb8310d0-365a-4d4f-be94-f9726ac8a8af
+                      entity_id: 206b7203-d5ef-4790-a2de-9356e03795da
+                      refresh_id: 79f89fa4-03aa-4beb-b31e-b4f18c953e79
+                      status: PENDING
+                      updated_at: '2025-09-12T08:41:37.96Z'
+                    - created_at: '2025-09-12T08:36:13.978Z'
+                      customer_id: fb8310d0-365a-4d4f-be94-f9726ac8a8af
+                      entity_id: 206b7203-d5ef-4790-a2de-9356e03795da
+                      refresh_id: d2ef6ae5-ba73-4a09-8653-cb3906e1f192
+                      status: FINISHED
+                      updated_at: '2025-09-12T08:36:17.888Z'
+                    - created_at: '2025-09-12T08:34:49.67Z'
+                      customer_id: fb8310d0-365a-4d4f-be94-f9726ac8a8af
+                      entity_id: 206b7203-d5ef-4790-a2de-9356e03795da
+                      refresh_id: 721d6010-828f-4b30-9039-4c72ad6906a8
+                      status: FINISHED
+                      updated_at: '2025-09-12T08:34:56.299Z'
+                    - created_at: '2025-09-10T06:16:23.278Z'
+                      customer_id: fb8310d0-365a-4d4f-be94-f9726ac8a8af
+                      entity_id: 206b7203-d5ef-4790-a2de-9356e03795da
+                      refresh_id: 641f9d90-7654-47c8-9f74-c235f1d99be4
+                      status: FINISHED
+                      updated_at: '2025-09-10T06:16:35.487Z'
+                    page:
+                      number: 0
+                      size: 50
+                      total_elements: 4
+                      total_pages: 1
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                InvalidParametersExample:
+                  $ref: '#/components/examples/InvalidParametersExample'
+        '404':
+          description: Entity not found
+          content:
+            application/json:
+              examples:
+                UnknownEntityExample:
+                  $ref: '#/components/examples/UnknownEntityExample'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                InternalServerErrorExample:
+                  $ref: '#/components/examples/InternalServerErrorExample'
+      tags:
+      - Data refresh
+  /data/v2/refreshes/{refresh_id}:
+    servers: []
+    get:
+      operationId: getDataRefreshStatus
+      parameters:
+      - name: refresh_id
+        in: path
+        required: true
+        schema:
+          description: Refresh ID for the request created by server
+          type: string
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/PageParameter'
+      - $ref: '#/components/parameters/SizeParameter'
+      - $ref: '#/components/parameters/EntityIdParameter'
+      - $ref: '#/components/parameters/MetaParameter'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetDataRefreshStatusResponseBody'
+              examples:
+                GetDataRefreshStatusExample:
+                  summary: Data refresh details
+                  value:
+                    refresh_id: 721d6010-828f-4b30-9039-4c72ad6906a8
+                    entity_id: 206b7203-d5ef-4790-a2de-9356e03795da
+                    customer_id: fb8310d0-365a-4d4f-be94-f9726ac8a8af
+                    status: FINISHED
+                    data_status:
+                      accounts: OK
+                      identity: OK
+                      account_data:
+                      - account_id: b7daaae2-5342-4e88-be7a-d5e1aa896e61
+                        balance: OK
+                        identity: FAILED
+                        transactions: OK
+                        scheduled_payments: UNSUPPORTED
+                        direct_debits: OK
+                        standing_orders: FAILED
+                        beneficiaries: OK
+                        transactionAvailability:
+                          start: '2024-09-07'
+                          end: '2025-09-12'
+                    created_at: '2025-09-12T08:36:04.084Z'
+                    updated_at: '2025-09-12T08:36:11.151Z'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                InvalidParametersExample:
+                  $ref: '#/components/examples/InvalidParametersExample'
+        '404':
+          description: Entity not found
+          content:
+            application/json:
+              examples:
+                UnknownEntityExample:
+                  $ref: '#/components/examples/UnknownEntityExample'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                InternalServerErrorExample:
+                  $ref: '#/components/examples/InternalServerErrorExample'
+      tags:
+      - Data refresh
+components:
+  schemas:
+    DataRefreshDataStatusStatus:
+      description: Status of the data refresh for account, identity, balance, transaction
+      type: string
+      enum:
+      - PENDING
+      - OK
+      - FAILED
+      - UNSUPPORTED
+    GetDataRefreshesResponseBody:
+      type: object
+      properties:
+        content:
+          items:
+            type: object
+            properties:
+              refresh_id:
+                type: string
+                format: uuid
+              entity_id:
+                type: string
+                format: uuid
+              customer_id:
+                type: string
+                format: uuid
+              status:
+                $ref: '#/components/schemas/DataRefreshStatus'
+              created_at:
+                type: string
+                format: date-time
+              updated_at:
+                type: string
+                format: date-time
+            required:
+            - refresh_id
+            - entity_id
+            - customer_id
+            - status
+            - created_at
+            - updated_at
+          type: array
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+      required:
+      - content
+      - page
+    DataRefreshDataStatus:
+      type: object
+      properties:
+        accounts:
+          $ref: '#/components/schemas/DataRefreshDataStatusStatus'
+        identity:
+          $ref: '#/components/schemas/DataRefreshDataStatusStatus'
+        account_data:
+          type: array
+          items:
+            type: object
+            properties:
+              account_id:
+                type: string
+                format: uuid
+              balance:
+                $ref: '#/components/schemas/DataRefreshDataStatusStatus'
+              identity:
+                $ref: '#/components/schemas/DataRefreshDataStatusStatus'
+              transactions:
+                $ref: '#/components/schemas/DataRefreshDataStatusStatus'
+              scheduled_payments:
+                $ref: '#/components/schemas/DataRefreshDataStatusStatus'
+              direct_debits:
+                $ref: '#/components/schemas/DataRefreshDataStatusStatus'
+              standing_orders:
+                $ref: '#/components/schemas/DataRefreshDataStatusStatus'
+              beneficiaries:
+                $ref: '#/components/schemas/DataRefreshDataStatusStatus'
+              transactionAvailability:
+                type: object
+                properties:
+                  start:
+                    type: string
+                    format: date
+                  end:
+                    type: string
+                    format: date
+                required:
+                - start
+                - end
+            required:
+            - account_id
+            - balance
+            - identity
+            - transactions
+            - scheduled_payments
+            - direct_debits
+            - standing_orders
+            - beneficiaries
+      required:
+      - accounts
+      - identity
+      - account_data
+    TriggerDataRefreshRequestBody:
+      type: object
+      properties:
+        entity_id:
+          description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
+          type: string
+          format: uuid
+      required:
+      - entity_id
+    GetDataRefreshStatusResponseBody:
+      type: object
+      properties:
+        refresh_id:
+          description: Refresh ID for the request created by server
+          type: string
+          format: uuid
+        entity_id:
+          description: The entity_id you're querying for
+          type: string
+          format: uuid
+        customer_id:
+          description: The customer_id you're querying for
+          type: string
+          format: uuid
+        status:
+          $ref: '#/components/schemas/DataRefreshStatus'
+        data_status:
+          $ref: '#/components/schemas/DataRefreshDataStatus'
+        created_at:
+          description: Data refresh created date
+          type: string
+          format: date-time
+        updated_at:
+          description: Data refresh updated date
+          type: string
+          format: date-time
+      required:
+      - refresh_id
+      - entity_id
+      - customer_id
+      - status
+      - data_status
+      - created_at
+      - updated_at
+    TriggerDataRefreshResponseBody:
+      type: object
+      properties:
+        refresh_id:
+          description: Refresh ID for the request created by server
+          type: string
+          format: uuid
+        status:
+          description: 'Status of the data refresh which will be '
+          type: string
+        message:
+          description: Message
+          type: string
+        timestamp:
+          description: Data refresh trigger date time
+          type: string
+          format: date-time
+      required:
+      - refresh_id
+      - status
+      - message
+      - timestamp
+    PageMetadata:
+      description: Metadata about the current page of results
+      type: object
+      properties:
+        number:
+          description: The current page being returned by the API
+          type: integer
+          format: int32
+        size:
+          description: The page size requested
+          type: integer
+          format: int32
+        total_elements:
+          description: The total number of elements in all pages
+          type: integer
+          format: int64
+        total_pages:
+          description: The total number of pages retrievable
+          type: integer
+          format: int32
+        sort:
+          description: Sort parameters applied to the results
+          type: array
+          items:
+            type: string
+      required:
+      - number
+      - size
+      - total_elements
+      - total_pages
+    DataRefreshStatus:
+      description: Overall data refresh status
+      type: string
+      enum:
+      - PENDING
+      - FINISHED
+  parameters:
+    AsyncParameter:
+      name: async
+      in: query
+      description: 'When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. **Note: it''s recommended to use the sync flow (async=false) for all requests by adapting the [data workflow](https://docs.leantech.me/docs/data-workflow) for connected entities.**'
+      required: false
+      schema:
+        type: boolean
+        default: false
+      deprecated: true
+    PageParameter:
+      name: page
+      in: query
+      description: The page you're requesting - returns page 0 of a response if not specified.
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+    SizeParameter:
+      name: size
+      description: The number of objects you want to return as a page size.
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 50
+        maximum: 100
+        minimum: 1
+    EntityIdParameter:
+      name: entity_id
+      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
+      in: query
+      required: false
+      schema:
+        type: string
+        format: uuid
+    MetaParameter:
+      name: meta
+      description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
+      in: query
+      required: false
+      schema:
+        type: string
+  examples:
+    UnknownEntityExample:
+      summary: Entity not found error response
+      description: Response when the provided entity_id is not found
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-10T21:03:05.413806605Z'
+        status: UNKNOWN_ENTITY
+        message: The entity_id provided did not match an account in our records.
+        metadata: null
+    InternalServerErrorExample:
+      summary: Internal server error response
+      description: Response when an unexpected server error occurs
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-08-07T13:07:38.834977945Z'
+        status: INTERNAL_SERVER_ERROR
+        message: Something has gone wrong. If you continue to see this error, please get in touch with Lean.
+        metadata: null
+    InvalidParametersExample:
+      summary: Invalid parameters error response
+      description: Response when required parameters are missing or invalid
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-10T21:05:59.919233187Z'
+        status: INVALID_PARAMETERS
+        message: 'The request is badly formatted or a parameter of the wrong type has been provided, field: entity_id, value: e34d8e49-9af2-4252-a53e-bd2df855134.'
+        metadata: null
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

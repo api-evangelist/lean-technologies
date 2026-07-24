@@ -1,0 +1,1008 @@
+openapi: 3.1.0
+info:
+  title: Consents Account Controls (New) Account Controls (New) Account On File API
+  version: v0.2.3
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Account On File
+paths:
+  /consents/account-on-file:
+    post:
+      summary: Create a new non-authorized AoF consent
+      description: This operation will result in creation of non-authorized consent of Account-On-File type.
+      operationId: createAccountOnFileConsent
+      tags:
+      - Account On File
+      security:
+      - OAuth2:
+        - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - customer_id
+              - destination_account_id
+              - currency
+              - reference
+              - purpose
+              - control_parameters
+              properties:
+                customer_id:
+                  type: string
+                  format: uuid
+                  description: The unique identifier of the customer for whom the consent is being created.
+                  example: acc176ca-7716-4fbb-a735-d0e3dec24b40
+                destination_account_id:
+                  type: string
+                  format: uuid
+                  description: The unique identifier of the account acting as a consent beneficiary.
+                  example: 911f30d8-8fc8-4fe9-86a1-3f9fea11a674
+                currency:
+                  $ref: '#/components/schemas/Currency'
+                reference:
+                  $ref: '#/components/schemas/Reference'
+                purpose:
+                  $ref: '#/components/schemas/PaymentPurposeCode'
+                control_parameters:
+                  $ref: '#/components/schemas/AccountOnFileControlParameters'
+                government_identifier:
+                  description: "Unique government identifier of the customer making the payment.  \nAs required by the UAE Open Finance standard, it ensures the debtor can be uniquely recognized.\nThis field supports providing or updating the identifier on-the-fly when creating a consent."
+                  allOf:
+                  - $ref: '#/components/schemas/GovernmentIdentifierRequest'
+                start_date_time:
+                  type: string
+                  format: date-time
+                  nullable: true
+                  example: '2025-07-11T16:58:03.559872Z'
+                  description: "The date and time when the consent becomes active.  \n**Optional.** Defaults to the current date and time if not provided.\n"
+                expiration_date_time:
+                  type: string
+                  format: date-time
+                  nullable: true
+                  example: '2026-07-11T16:58:03.559872Z'
+                  description: "The date and time when the consent expires.  \n**Optional.** Defaults to one year after `start_date_time` if not provided.\n"
+            examples:
+              minimal:
+                summary: Minimal Request
+                description: The minimum required fields to create a new Account On File consent.
+                value:
+                  customer_id: acc176ca-7716-4fbb-a735-d0e3dec24b40
+                  destination_account_id: 911f30d8-8fc8-4fe9-86a1-3f9fea11a674
+                  currency: AED
+                  reference: ACME-ACCOUNT-LINK-2025-001
+                  purpose: GDS
+                  control_parameters:
+                    period_type: Day
+                    max_individual_amount: '1000.00'
+              complete:
+                summary: Complete Request
+                description: The complete set of fields to create a new Account On File consent.
+                value:
+                  customer_id: acc176ca-7716-4fbb-a735-d0e3dec24b40
+                  destination_account_id: 911f30d8-8fc8-4fe9-86a1-3f9fea11a674
+                  currency: AED
+                  reference: ACME-ACCOUNT-LINK-2025-001
+                  purpose: GDS
+                  control_parameters:
+                    period_type: Day
+                    max_individual_amount: '1000.00'
+                    max_cumulative_amount: '10000.00'
+                    max_cumulative_number_of_payments: 100
+                    max_cumulative_amount_per_period: '3000.00'
+                    max_cumulative_number_of_payments_per_period: 10
+                  government_identifier:
+                    type: EMIRATES_ID
+                    value: 784-1234-1234-1234
+                  start_date_time: '2025-12-01T12:00:00.559872Z'
+                  expiration_date_time: '2026-12-10T16:00:00.559872Z'
+        description: Request to create a new Account on File consent
+        required: true
+      responses:
+        '200':
+          description: Consent created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - id
+                - application_id
+                - start_date_time
+                - expiration_date_time
+                - customer_id
+                - status
+                - destination_account_id
+                - reference
+                - currency
+                - payment_purpose
+                - control_parameters
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    description: The unique identifier for the consent. Provided as a UUID.
+                  application_id:
+                    type: string
+                    description: Application identifier owning this consent
+                  start_date_time:
+                    type: string
+                    format: date-time
+                    description: Date and time from when the consent will be active
+                  expiration_date_time:
+                    type: string
+                    format: date-time
+                    description: Date and time of the expiration of this consent
+                  customer_id:
+                    type: string
+                    format: uuid
+                    description: Id of a customer that this consent belongs to
+                  status:
+                    type: string
+                    enum:
+                    - AWAITING_AUTHORISATION
+                    - AUTHORISED
+                    - REVOKED
+                    - REJECTED
+                    - EXPIRED
+                    - CONSUMED
+                    - SUSPENDED
+                    description: Current status of this consent.
+                  destination_account_id:
+                    type: string
+                    format: uuid
+                    description: Account id that this consent allows payments to
+                  reference:
+                    type: string
+                    description: A reason or reference in relation to a payment. Passed as a part of OF `creditor_reference`. This value will be used as default reference for payments made with this consent.
+                  currency:
+                    $ref: '#/components/schemas/Currency'
+                  purpose:
+                    $ref: '#/components/schemas/PaymentPurposeCode'
+                  control_parameters:
+                    $ref: '#/components/schemas/AccountOnFileControlParameters'
+              examples:
+                minimal:
+                  summary: Minimal Response
+                  value:
+                    id: 123e4567-e89b-12d3-a456-426655440000
+                    status: AWAITING_AUTHORISATION
+                    customer_id: acc176ca-7716-4fbb-a735-d0e3dec24b40
+                    destination_account_id: 911f30d8-8fc8-4fe9-86a1-3f9fea11a674
+                    currency: AED
+                    reference: ACME-ACCOUNT-LINK-2025-001
+                    purpose: GDS
+                    control_parameters:
+                      period_type: Day
+                      max_individual_amount: '1000.00'
+                complete:
+                  summary: Complete Response
+                  value:
+                    id: 123e4567-e89b-12d3-a456-426655440000
+                    status: AWAITING_AUTHORISATION
+                    customer_id: acc176ca-7716-4fbb-a735-d0e3dec24b40
+                    destination_account_id: 911f30d8-8fc8-4fe9-86a1-3f9fea11a674
+                    currency: AED
+                    reference: ACME-ACCOUNT-LINK-2025-001
+                    purpose: GDS
+                    start_date_time: '2025-07-11T16:58:03.559872Z'
+                    expiration_date_time: '2026-07-11T16:58:03.559872Z'
+                    control_parameters:
+                      period_type: Day
+                      max_individual_amount: '1000.00'
+                      max_cumulative_amount: '10000.00'
+                      max_cumulative_number_of_payments: 100
+                      max_cumulative_amount_per_period: '3000.00'
+                      max_cumulative_number_of_payments_per_period: 10
+  /payments/account-on-file:
+    post:
+      summary: Initiate a AoF payment
+      description: Endpoint responsible for initiating a AoF payment against an existing, authorized consent
+      tags:
+      - Account On File
+      security:
+      - OAuth2:
+        - api
+      parameters:
+      - name: Idempotency-Key
+        in: header
+        required: true
+        description: 'Unique key used to ensure idempotency of requests.
+
+          Must be unique per operation.
+
+          '
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: Request to initiate a new account on file payment
+              type: object
+              required:
+              - consent_id
+              - amount
+              - risk_details
+              properties:
+                consent_id:
+                  type: string
+                  format: uuid
+                  description: An id of an authorized consent that should be used to authorize this payment
+                amount:
+                  type: number
+                  format: double
+                  description: The amount to be paid.
+                purpose:
+                  $ref: '#/components/schemas/PaymentPurposeCode'
+                risk_details:
+                  allOf:
+                  - $ref: '#/components/schemas/RiskDetails'
+                reference:
+                  type: string
+                  nullable: true
+                  description: The reference submitted to the bank as a reference when initiating a payment. Can be used for reconciliation.
+              example:
+                consent_id: 123e4567-e89b-12d3-a456-426655440000
+                amount: 130.52
+                purpose: GDS
+                reference: INV-2025-004321
+                risk_details:
+                  transaction_indicators:
+                    channel: WEB
+                  debtor_indicators:
+                    geo_location:
+                      latitude: 25.2048
+                      longitude: 55.2708
+      responses:
+        '200':
+          description: "Indicates that request was processed and payment initiation request was sent to the bank. \nThis does not mean that the payment was successful!"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payments20InitiateAccountOnFilePaymentResponse'
+              examples:
+                minimal:
+                  summary: Minimal Response
+                  value:
+                    id: 341c3308-408d-48d9-ae44-c98eb1aa9a6f
+                    account_id: 911f30d8-8fc8-4fe9-86a1-3f9fea11a674
+                    application_id: 21ecf613-adaa-4c6b-8cd5-827de43bbe52
+                    consent_id: 123e4567-e89b-12d3-a456-426655440000
+                    status: CREATED
+                    reference: ACME-ACCOUNT-LINK-2025-001
+                    amount:
+                      currency: AED
+                      value: 130.52
+                    type: ACCOUNT_ON_FILE
+                    sender_customer_id: acc176ca-7716-4fbb-a735-d0e3dec24b40
+                complete:
+                  summary: Complete Response
+                  value:
+                    id: 341c3308-408d-48d9-ae44-c98eb1aa9a6f
+                    account_id: 911f30d8-8fc8-4fe9-86a1-3f9fea11a674
+                    application_id: 21ecf613-adaa-4c6b-8cd5-827de43bbe52
+                    consent_id: 123e4567-e89b-12d3-a456-426655440000
+                    status: FAILED
+                    reference: ACME-ACCOUNT-LINK-2025-001
+                    amount:
+                      currency: AED
+                      value: 130.52
+                    type: ACCOUNT_ON_FILE
+                    sender_customer_id: acc176ca-7716-4fbb-a735-d0e3dec24b40
+                    failure_details:
+                      code: BANK_ISSUE
+                      details: The banks is having a technical issues. Please try again later.
+components:
+  schemas:
+    AppInformation:
+      title: AppInformation
+      type: object
+      description: Mobile application specific information.
+      properties:
+        app_version:
+          type: string
+          description: Version of the mobile application.
+        package_name:
+          type: string
+          description: Application package identifier.
+        build_number:
+          type: string
+          description: Application build number.
+    PeriodType:
+      type: string
+      title: PeriodType
+      description: "Defines the time period used for applying limits on a long‑lived consent. \nThis value determines how consumption limits (e.g., maximum amounts or number of payments) are calculated within each period.\n\n**Supported values:**\n- `Day` – A single calendar day (00:00 to 23:59).\n- `Week` – Seven consecutive days.\n- `Month` – A full calendar month (from the 1st to the last day).\n- `Year` – A full calendar year (12 consecutive months)."
+      enum:
+      - Day
+      - Week
+      - Month
+      - Year
+    ScreenInformation:
+      title: ScreenInformation
+      type: object
+      properties:
+        pixel_density:
+          type: number
+          format: double
+        orientation:
+          type: string
+          enum:
+          - PORTRAIT
+          - LANDSCAPE
+    AccountRiskIndicators:
+      title: AccountRiskIndicators
+      description: Risk indicators related to the account.
+      type: object
+      properties:
+        user_onboarding_date_time:
+          type: string
+          format: date-time
+          description: The exact date and time when the User account was activated.
+        last_account_change_date:
+          type: string
+          description: Date that the User's account was last changed.
+        last_password_change_date:
+          type: string
+          description: Date of the last password change by the User.
+        suspicious_activity:
+          type: string
+          enum:
+          - NO_SUSPICIOUS_ACTIVITY
+          - SUSPICIOUS_ACTIVITY_DETECTED
+        transaction_history:
+          $ref: '#/components/schemas/TransactionHistory'
+    PossessionFactor:
+      title: PossessionFactor
+      description: The User's possession, that only the User possesses
+      type: object
+      properties:
+        is_used:
+          type: boolean
+        type:
+          type: string
+          enum:
+          - FIDO2_SECURITY_KEY
+          - PASSKEY
+          - OTP_DEVICE
+          - OTP_APP
+          - SMS_OTP
+          - EMAIL_OTP
+          - PUSH_NOTIFICATION
+          - WEBAUTHN_TOKEN
+          - SECURE_ENCLAVE_KEY
+          - HARDWARE_OTP_KEY
+          - TRUSTED_DEVICE
+          - OTHER
+    Currency:
+      type: string
+      pattern: ^[A-Z]{3}$
+      description: The ISO 3 letter currency code.
+      example: AED
+    GeoLocation:
+      title: GeoLocation
+      description: GPS to identify and track the whereabouts of the connected electronic device.
+      type: object
+      properties:
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+    TransactionHistory:
+      title: TransactionHistory
+      type: object
+      properties:
+        last_day:
+          type: integer
+          description: Total transactions made by the account in the last 24 hours.
+        last_year:
+          type: integer
+          description: Total transactions made by the account in the past year.
+    ChannelType:
+      type: string
+      description: Where the payment has been initiated from
+      enum:
+      - WEB
+      - MOBILE
+    TransactionIndicators:
+      title: TransactionIndicators
+      type: object
+      required:
+      - channel
+      properties:
+        is_customer_present:
+          type: boolean
+          description: This field differentiates between automatic and manual initiation.
+        is_contract_present:
+          type: boolean
+          description: Indicates if the Creditor has a contractual relationship.
+        channel:
+          $ref: '#/components/schemas/ChannelType'
+        channel_type:
+          description: The channel through which the transaction is being conducted.
+          type: string
+          enum:
+          - ECOMMERCE
+          - IN_STORE
+          - IN_APP
+          - TELEPHONE
+          - MAIL
+          - RECURRING_PAYMENT
+          - OTHER
+        sub_channel_type:
+          description: More specific classification of the transaction channel.
+          type: string
+          enum:
+          - WEB_BROWSER
+          - MOBILE_APP
+          - SMART_TV
+          - WEARABLE_DEVICE
+          - POS_TERMINAL
+          - ATM
+          - KIOSK_TERMINAL
+          - OTHER
+        merchant_risk:
+          $ref: '#/components/schemas/MerchantRisk'
+        supplementary_data:
+          type: object
+          description: Additional information that cannot be captured in the structured fields and/or any other specific block.
+    DeviceType:
+      type: string
+      title: DeviceType
+      enum:
+      - MOBILE
+      - DESKTOP
+      - TABLET
+      - WEARABLE
+      - OTHER
+    AccountOnFileControlParameters:
+      title: AccountOnFileControlParameters
+      description: "Defines the control parameters for a Account On File (AoF) consent.  \nThese parameters specify the applicable limits for individual payments, cumulative amounts, and the number of payments allowed within a defined period or across the consent's lifetime.\nAt least one of `max_individual_amount`, `max_cumulative_amount`, or `max_cumulative_number_of_payments` must be provided."
+      type: object
+      required:
+      - period_type
+      properties:
+        period_type:
+          $ref: '#/components/schemas/PeriodType'
+        max_individual_amount:
+          type: number
+          description: Maximum amount allowed for a single payment
+          minimum: 0.01
+        max_cumulative_amount:
+          type: number
+          description: Maximum cumulative amount allowed across all payments
+          minimum: 0.01
+        max_cumulative_number_of_payments:
+          type: integer
+          description: Maximum number of payments allowed in total
+          minimum: 1
+        max_cumulative_amount_per_period:
+          type: number
+          description: Maximum cumulative amount allowed per period
+          minimum: 0.01
+        max_cumulative_number_of_payments_per_period:
+          type: integer
+          description: Maximum number of payments allowed per period
+          minimum: 1
+    ConnectionType:
+      type: string
+      title: ConnectionType
+      enum:
+      - WIFI
+      - CELLULAR
+      - OTHER
+    DebtorIndicators:
+      title: DebtorIndicators
+      type: object
+      description: Debtor (User) Indicators
+      properties:
+        authentication:
+          $ref: '#/components/schemas/Authentication'
+        user_name:
+          $ref: '#/components/schemas/Name'
+        geo_location:
+          $ref: '#/components/schemas/GeoLocation'
+        device_information:
+          $ref: '#/components/schemas/DeviceInformation'
+        biometric_capabilities:
+          $ref: '#/components/schemas/BiometricCapabilities'
+        app_information:
+          $ref: '#/components/schemas/AppInformation'
+        browser_information:
+          $ref: '#/components/schemas/BrowserInformation'
+        user_behavior:
+          $ref: '#/components/schemas/UserBehavior'
+        account_risk_indicators:
+          $ref: '#/components/schemas/AccountRiskIndicators'
+        supplementary_data:
+          type: object
+          description: Additional information that cannot be captured in the structured fields and/or any other specific block. This may include information that is not available in the structured fields, such as a user's behavioural data like their typing speed and typing patterns.
+    ReorderItemsIndicator:
+      type: string
+      title: ReorderItemsIndicator
+      description: Indicates if the transaction is a reorder
+      enum:
+      - FIRST_TIME_ORDER
+      - REORDER
+    Authentication:
+      title: Authentication
+      description: The authentication method used by the User to access their account
+      type: object
+      properties:
+        authentication_channel:
+          $ref: '#/components/schemas/ChannelType'
+        possession_factor:
+          $ref: '#/components/schemas/PossessionFactor'
+        knowledge_factor:
+          $ref: '#/components/schemas/KnowledgeFactor'
+        inherence_factor:
+          $ref: '#/components/schemas/InherenceFactor'
+        challenge_outcome:
+          type: string
+          enum:
+          - PASS
+          - FAIL
+          - NOT_PERFORMED
+        authentication_flow:
+          type: string
+          enum:
+          - MFA
+          - OTHER
+        authentication_value:
+          type: string
+          description: Cryptographic proof of authentication where supported by the device and protocol.
+        challenge_date_time:
+          type: string
+          format: date-time
+    Reference:
+      title: Reference
+      description: A reason or reference in relation to a payment. Maximum 64 chars
+      type: string
+      maxLength: 64
+      example: 'Invoice #12345'
+    DeliveryTimeframe:
+      type: string
+      title: DeliveryTimeframe
+      description: Timeframe for the delivery of purchased items
+      enum:
+      - ELECTRONIC_DELIVERY
+      - SAME_DAY_SHIPPING
+      - OVERNIGHT_SHIPPING
+      - MORE_THAN_1_DAY_SHIPPING
+    CurrencyAmount:
+      type: object
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          type: number
+      required:
+      - currency
+      - amount
+    BatteryStatus:
+      title: BatteryStatus
+      type: object
+      properties:
+        level:
+          type: number
+          format: double
+        is_charging:
+          type: boolean
+    RiskDetails:
+      title: RiskDetails
+      type: object
+      description: The Risk section is used to specify additional details for risk/fraud scoring regarding Payments
+      properties:
+        debtor_indicators:
+          $ref: '#/components/schemas/DebtorIndicators'
+        destination_delivery_address:
+          $ref: '#/components/schemas/DestinationDeliveryAddress'
+        transaction_indicators:
+          $ref: '#/components/schemas/TransactionIndicators'
+    Payments20InitiateAccountOnFilePaymentResponse:
+      type: object
+      required:
+      - id
+      - account_id
+      - application_id
+      - consent_id
+      - status
+      - amount
+      - sender_customer_id
+      - created_at
+      - last_modified_at
+      - type
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The unique identifier for the payment.
+        account_id:
+          type: string
+          format: uuid
+          description: The account id that the payment is being made to.
+        application_id:
+          type: string
+          format: uuid
+          description: The application id that the payment is being made to.
+        consent_id:
+          type: string
+          format: uuid
+          description: The consent id that the payment is being made under.
+        status:
+          type: string
+          description: "Reflects the latest known state of processing in Lean’s systems and bank.\n\n**Possible values:**\n\n- **`CREATED`** —  \n  An internal transaction record has been created, but **no interaction with the bank has occurred yet**.  \n  This includes any validation steps required before initiation.  \n  Detailed progress within the approval flow may be represented through *sub-statuses*.\n\n- **`PROCESSING`** —  \n  The transaction has been **submitted or is being attempted at the bank**.  \n  Multiple initiation attempts may occur under this state.  \n  More granular progress can be indicated by *sub-statuses*.\n\n- **`PROCESSED`** —  \n  The **final successful** state.  \n  The payment has been confirmed as completed by the payment status tracking process.\n  Sub-statuses or other technology-specific codes may appear to indicate settlement details.\n\n- **`FAILED`** —  \n  The **final unsuccessful** state.  \n  Failure may occur:\n    - before any bank initiation (e.g. validation issues),\n    - after repeated unsuccessful initiation attempts (e.g. bank unavailable, other technical issues), or\n    - even after an initially successful initiation followed by a **reversal detected by payment status tracking** before final reporting.\n---\n**Notes:**\n- `CREATED` and `PROCESSING` are transitional states.  \n- `PROCESSED` and `FAILED` are terminal states.  \n- Sub-statuses provide additional context.\n"
+          enum:
+          - CREATED
+          - PROCESSING
+          - PROCESSED
+          - FAILED
+        sub_status:
+          type: string
+          description: 'Provides additional detail about the current lifecycle stage of the payment.
+
+            It can represent intermediate workflow steps, bank-specific responses or system conditions that further qualify the main status.'
+        reference:
+          type: string
+          description: A reason or reference in relation to a payment. Passed as a part of OF `creditor_reference`. This value will be used as default reference for payments made with this consent.
+        amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+        type:
+          type: string
+          enum:
+          - ACCOUNT_ON_FILE
+        sender_customer_id:
+          type: string
+          format: uuid
+          description: The customer id of the sender.
+        created_at:
+          type: string
+          format: date-time
+          description: The date and time when the payment was created.
+        last_modified_at:
+          type: string
+          format: date-time
+          description: The date and time when the payment was last modified.
+        failure_details:
+          type: object
+          properties:
+            code:
+              type: string
+              description: The error code.
+            details:
+              type: string
+              description: The error details.
+    ScrollBehavior:
+      title: ScrollBehavior
+      type: object
+      properties:
+        direction:
+          type: string
+          enum:
+          - UP
+          - DOWN
+          - BOTH
+        speed:
+          description: Average scroll speed in pixels per second.
+          type: number
+          format: double
+        frequency:
+          description: Number of scroll events per minute
+          type: number
+          format: double
+    PreOrderPurchaseIndicator:
+      type: string
+      title: PreOrderPurchaseIndicator
+      description: Indicates if this is a pre-ordered item
+      enum:
+      - MERCHANDISE_AVAILABLE
+      - FUTURE_AVAILABILITY
+    BrowserInformation:
+      title: BrowserInformation
+      type: object
+      description: Browser-specific information
+      properties:
+        user_agent:
+          description: Complete browser user agent string
+          type: string
+        is_cookies_enabled:
+          description: Whether cookies are enabled in the browser.
+          type: boolean
+        available_fonts:
+          description: List of available fonts.
+          type: array
+          items:
+            type: string
+        plugins:
+          description: List of installed browser plugins.
+          type: array
+          items:
+            type: string
+        pixel_ratio:
+          description: Device pixel ratio for scaling.
+          type: number
+          format: double
+    InherenceType:
+      type: string
+      title: InherenceType
+      enum:
+      - BIOMETRIC
+      - FINGERPRINT
+      - FACE_RECOGNITION
+      - IRIS_SCAN
+      - VOICE_RECOGNITION
+      - FIDO_BIOMETRIC
+      - DEVICE_BIOMETRICS
+      - OTHER
+    DestinationDeliveryAddress:
+      title: DestinationDeliveryAddress
+      type: object
+      properties:
+        recipient_type:
+          type: string
+          enum:
+          - INDIVIDUAL
+          - CORPORATE
+        recipient_name:
+          $ref: '#/components/schemas/Name'
+        national_address:
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
+    DeviceManufacturer:
+      title: DeviceManufacturer
+      type: object
+      properties:
+        model:
+          type: string
+        manufacturer:
+          type: string
+    PaymentPurposeCode:
+      type: string
+      title: PaymentPurposeCode
+      description: "A category code that relates to the type of services or goods that corresponds to the underlying purpose of the payment.  \nThe code must conform to the payment purpose code list.  \n**Supported values:**  \n- `FIS` – Financial services\n- `TCS` – Telecommunication services\n- `MWP` – Mobile wallet card payments\n- `OAT` – Own account transfer\n- `IFS` – Information services\n- `RNT` – Rent payments\n- `LNC` – Loan charges\n- `PIN` – Personal investments\n- `GDS` – Goods bought or sold"
+      enum:
+      - FIS
+      - TCS
+      - MWP
+      - OAT
+      - IFS
+      - RNT
+      - LNC
+      - PIN
+      - GDS
+    DeviceEnvironmentContext:
+      type: string
+      enum:
+      - VPN_DETECTED
+      - EMULATOR_DETECTED
+    TouchSupport:
+      title: TouchSupport
+      type: object
+      properties:
+        supported:
+          type: boolean
+        max_touch_points:
+          type: integer
+    BiometricType:
+      type: string
+      title: BiometricType
+      enum:
+      - FINGERPRINT
+      - FACIAL_RECOGNITION
+      - IRIS
+      - VOICE_PRINT
+      - OTHER
+    Name:
+      type: object
+      properties:
+        en:
+          type: string
+        ar:
+          type: string
+    MotionSensors:
+      title: MotionSensors
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - IN_MOTION
+          - STATIONARY
+        accelerometer:
+          type: boolean
+        gyroscope:
+          type: boolean
+    BiometricCapabilities:
+      title: BiometricCapabilities
+      properties:
+        supports_biometric:
+          type: boolean
+        biometric_types:
+          type: array
+          items:
+            $ref: '#/components/schemas/BiometricType'
+    AddressMatchLevel:
+      type: string
+      title: AddressMatchLevel
+      description: Level of match between delivery and billing addresses
+      enum:
+      - FULL_MATCH
+      - PARTIAL_MATCH
+      - NO_MATCH
+      - NOT_APPLICABLE
+    UserBehavior:
+      title: UserBehavior
+      type: object
+      properties:
+        scroll_behavior:
+          $ref: '#/components/schemas/ScrollBehavior'
+    MerchantRisk:
+      title: MerchantRisk
+      type: object
+      required:
+      - delivery_timeframe
+      - reorder_items_indicator
+      - pre_order_purchase_indicator
+      - is_gift_card_purchase
+      - is_deliver_address_matching_billing
+      - address_match_level
+      properties:
+        delivery_timeframe:
+          $ref: '#/components/schemas/DeliveryTimeframe'
+        reorder_items_indicator:
+          $ref: '#/components/schemas/ReorderItemsIndicator'
+        pre_order_purchase_indicator:
+          $ref: '#/components/schemas/PreOrderPurchaseIndicator'
+        is_gift_card_purchase:
+          type: boolean
+          description: Indicates if the transaction includes a gift card
+        is_delivery_address_matching_billing:
+          type: boolean
+          description: Indicates if delivery address matches billing address
+        address_match_level:
+          $ref: '#/components/schemas/AddressMatchLevel'
+    KnowledgeFactor:
+      title: KnowledgeFactor
+      description: The User's knowledge, that only the User knows
+      type: object
+      properties:
+        is_used:
+          type: boolean
+        type:
+          type: string
+          enum:
+          - PIN
+          - PASSWORD
+          - SECURITY_QUESTION
+          - SMS_OTP
+          - EMAIL_OTP
+          - OTP_PUSH
+          - OTHER
+    DeviceInformation:
+      title: DeviceInformation
+      description: Detailed device information
+      properties:
+        device_id:
+          type: string
+          description: IMEISV number of the connected electronic device.
+        alternative_device_id:
+          type: string
+          description: Alternative identifier for the connected electronic device.
+        device_operating_system:
+          type: string
+          description: Device operating system.
+        device_operating_system_version:
+          type: string
+          description: Device operating system version.
+        device_binding_id:
+          type: string
+          description: An identifier that associates a device uniquely with a specific application.
+        last_binding_date_time:
+          type: string
+          format: date-time
+          description: Date and time when the device was last bound to the application.
+        binding_duration:
+          type: string
+          description: ISO 8601 duration since device was last bound (e.g., P30D for 30 days).
+        binding_status:
+          type: string
+          enum:
+          - ACTIVE
+          - EXPIRED
+          - REVOKED
+          - SUSPENDED
+        device_type:
+          $ref: '#/components/schemas/DeviceType'
+        device_manufacturer:
+          $ref: '#/components/schemas/DeviceManufacturer'
+        device_language:
+          type: string
+        device_local_date_time:
+          type: string
+        connection_type:
+          $ref: '#/components/schemas/ConnectionType'
+        screen_information:
+          $ref: '#/components/schemas/ScreenInformation'
+        battery_status:
+          $ref: '#/components/schemas/BatteryStatus'
+        touch_support:
+          $ref: '#/components/schemas/TouchSupport'
+        motion_sensors:
+          $ref: '#/components/schemas/MotionSensors'
+        device_environment_context:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeviceEnvironmentContext'
+    Address:
+      title: Address
+      type: object
+      required:
+      - address_line
+      - country
+      properties:
+        address_type:
+          type: string
+          enum:
+          - BUSINESS
+          - CORRESPONDENCE
+          - RESIDENTIAL
+        address_line:
+          type: string
+        building_number:
+          type: string
+        building_name:
+          type: string
+        floor:
+          type: string
+        street_name:
+          type: string
+        district_name:
+          type: string
+        post_box:
+          type: string
+        town_name:
+          type: string
+        region:
+          type: string
+        country:
+          type: string
+    GovernmentIdentifierRequest:
+      type: object
+      required:
+      - type
+      - value
+      properties:
+        value:
+          type: string
+          description: The identifier value
+          minLength: 1
+          pattern: ^(?!\s*$).+
+        type:
+          type: string
+          description: The type of Government ID
+          enum:
+          - EMIRATES_ID
+          - TRADE_LICENSE_NUMBER
+    InherenceFactor:
+      title: InherenceFactor
+      description: The User's inherence, that is unique to the User's physical characteristics
+      type: object
+      properties:
+        is_used:
+          type: boolean
+        type:
+          $ref: '#/components/schemas/InherenceType'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

@@ -1,0 +1,605 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Iban Verification API
+  version: v0.2.3
+  description: IBAN ownership verification operations
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Iban Verification
+  description: IBAN ownership verification operations
+  x-displayName: Iban Verification
+paths:
+  /verifications/v2/iban:
+    servers: []
+    post:
+      operationId: ibanVerification
+      summary: Verify IBAN Ownership
+      description: 'Verifies whether an ID or FULL NAME is the account owner of a provided IBAN.
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IbanVerificationRequest'
+            example:
+              type: PERSONAL
+              iban: SA2810000011100000461309
+              identifications:
+              - type: NATIONAL_ID
+                value: '1106972886'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerificationResponseIbanVerificationResponsePayload'
+              examples:
+                '1':
+                  summary: UAE - Success - Verified (ID or name matching)
+                  value:
+                    status: OK
+                    results_id: d2d95011-f834-4979-83eb-9c35b95f093c
+                    message: Data successfully retrieved
+                    timestamp: '2025-07-25T11:01:04.709087696Z'
+                    meta: null
+                    status_detail: null
+                    verifications:
+                      iban_ownership_verified: true
+                      swift_code: WIOBAEADXXX
+                      bank_name:
+                        en: WIO Bank PJSC
+                        ar: ويو بنك ش.م.ع
+                      bank_code: 086
+                      account_status: ACTIVE
+                      account_holder_name: 'Ker*** Ace*** Ander*** '
+                      verification_method: CONFIRMATION_OF_PAYEE_SERVICE
+                '2':
+                  summary: UAE - Success - Not verified (name matching)
+                  value:
+                    status: OK
+                    results_id: 6157e56c-7508-4287-ad3b-1840f0d48ae7
+                    message: Data successfully retrieved
+                    timestamp: '2024-09-11T16:58:54.750933Z'
+                    meta: null
+                    status_detail: null
+                    verifications:
+                      iban_ownership_verified: false
+                      matching:
+                        type: NO_MATCH
+                        score: 0
+                      swift_code: ABDIAEAD
+                      bank_name:
+                        en: ENBDx Bank
+                        ar: مصرف الامارات
+                      bank_code: '006'
+                      account_status: ACTIVE
+                      account_holder_name: Adam Ahme*
+                      verification_method: CONFIRMATION_OF_PAYEE_SERVICE
+                '3':
+                  summary: UAE - Success - Partial match (name matching)
+                  value:
+                    status: OK
+                    results_id: 6157e56c-7508-4287-ad3b-1840f0d48ae7
+                    message: Data successfully retrieved
+                    timestamp: '2024-09-11T16:58:54.750933Z'
+                    meta: null
+                    status_detail: null
+                    verifications:
+                      iban_ownership_verified: false
+                      matching:
+                        type: PARTIAL
+                        score: 0.7
+                      swift_code: ABDIAEAD
+                      bank_name:
+                        en: ENBDx Bank
+                        ar: مصرف الامارات
+                      bank_code: '006'
+                      account_holder_name: Adam Ahme*
+                      verification_method: CONFIRMATION_OF_PAYEE_SERVICE
+                '4':
+                  summary: KSA - 200 - Success - matchExample
+                  value:
+                    status: OK
+                    results_id: e894ede4-dd81-41fb-b52d-fb4fec16c16c
+                    message: Data successfully retrieved
+                    timestamp: '2025-05-19T12:09:54.672818827Z'
+                    meta: null
+                    status_detail: null
+                    verifications:
+                      iban_ownership_verified: true
+                      swift_code: ALBISARI
+                      bank_name:
+                        en: AlBilad Bank
+                        ar: بنك البلاد
+                      bank_code: ١٥
+                      account_status: ACTIVE
+                      account_holder_name: NA****AL**** IN****RM****IO**** SY****E****
+                      verification_method: SARIE
+                '5':
+                  summary: KSA - 200 - Success - no match
+                  value:
+                    status: OK
+                    results_id: e894ede4-dd81-41fb-b52d-fb4fec16c16c
+                    message: Data successfully retrieved
+                    timestamp: '2025-05-19T12:09:54.672818827Z'
+                    meta: null
+                    status_detail: null
+                    verifications:
+                      iban_ownership_verified: false
+                      swift_code: ALBISARI
+                      bank_name:
+                        en: AlBilad Bank
+                        ar: بنك البلاد
+                      bank_code: ١٥
+                      account_status: ACTIVE
+                      account_holder_name: NA****AL**** IN****RM****IO**** SY****E****
+                      verification_method: SARIE
+                '6':
+                  summary: KSA - 200 - Success - Account inactive
+                  value:
+                    status: OK
+                    results_id: e894ede4-dd81-41fb-b52d-fb4fec16c16c
+                    message: Data successfully retrieved
+                    timestamp: '2024-02-09T15:57:29.144075150Z'
+                    verifications:
+                      iban_ownership_verified: false
+                      swift_code: ALBISARI
+                      bank_name:
+                        en: AlBilad Bank
+                        ar: بنك البلاد
+                      bank_code: '15'
+                      verification_method: SARIE
+                      account_status: BLOCKED
+                '7':
+                  summary: KSA - 200 - Failed - unsupported by bank
+                  value:
+                    status: FAILED
+                    results_id: f894ede4-dd81-41fb-b52d-fb4fec16c16c
+                    message: Iban Verification by Saudi Payments Failed
+                    timestamp: '2024-04-30T07:54:25.224020260Z'
+                    status_detail:
+                      granular_status_code: UNSUPPORTED_BY_BANK
+                      status_additional_info: This endpoint is currently not supported for this bank.
+                '8':
+                  summary: KSA - 200 - Failed - disabled by Lean
+                  value:
+                    status: FAILED
+                    results_id: f894ede4-dd81-41fb-b52d-fb4fec16c16c
+                    message: Iban Verification by Saudi Payments Failed
+                    timestamp: '2024-04-30T07:54:25.224020260Z'
+                    status_detail:
+                      granular_status_code: DISABLED_BY_LEAN
+                      status_additional_info: This functionality has been temporarily disabled for this bank. Please try again later.
+                '9':
+                  summary: KSA - 200 - Failed - disabled by client
+                  value:
+                    status: FAILED
+                    results_id: f894ede4-dd81-41fb-b52d-fb4fec16c16c
+                    message: Iban Verification by Saudi Payments Failed
+                    timestamp: '2024-04-30T07:54:25.224020260Z'
+                    status_detail:
+                      granular_status_code: DISABLED_BY_CLIENT
+                      status_additional_info: This application has temporarily disabled functionality for this bank. Please try again later.
+                '10':
+                  summary: KSA - 200 - Failed - bank issue
+                  value:
+                    status: FAILED
+                    results_id: f894ede4-dd81-41fb-b52d-fb4fec16c16c
+                    message: Iban Verification by Saudi Payments Failed
+                    timestamp: '2024-04-30T07:54:25.224020260Z'
+                    status_detail:
+                      granular_status_code: BANK_ISSUE
+                      status_additional_info: Your bank is currently experiencing technological problems. Please try again later.
+                '11':
+                  summary: KSA - 200 - Name matching - partial
+                  value:
+                    status: OK
+                    results_id: e894ede4-dd81-41fb-b52d-fb4fec16c16c
+                    message: Data successfully retrieved
+                    timestamp: '2025-05-19T12:09:54.672818827Z'
+                    meta: null
+                    status_detail: null
+                    verifications:
+                      iban_ownership_verified: false
+                      matching:
+                        type: PARTIAL
+                        score: 0.7
+                      swift_code: ALBISARI
+                      bank_name:
+                        en: AlBilad Bank
+                        ar: بنك البلاد
+                      bank_code: '24'
+                      account_status: ACTIVE
+                      account_holder_name: NA****AL**** IN****RM****IO**** SY****E****
+                      verification_method: SARIE_AND_CONFIRMATION_OF_PAYEE_SERVICE
+                '12':
+                  summary: KSA - 200 - Name matching - no match
+                  value:
+                    status: OK
+                    results_id: e894ede4-dd81-41fb-b52d-fb4fec16c16c
+                    message: Data successfully retrieved
+                    timestamp: '2025-05-19T12:09:54.672818827Z'
+                    meta: null
+                    status_detail: null
+                    verifications:
+                      iban_ownership_verified: false
+                      matching:
+                        type: NO_MATCH
+                        score: 0.3
+                      swift_code: ALBISARI
+                      bank_name:
+                        en: AlBilad Bank
+                        ar: بنك البلاد
+                      bank_code: '24'
+                      account_status: ACTIVE
+                      account_holder_name: Jonathan Dogherty
+                      verification_method: SARIE_AND_CONFIRMATION_OF_PAYEE_SERVICE
+                '13':
+                  summary: KSA - 200 - Name matching - match
+                  value:
+                    status: OK
+                    results_id: e894ede4-dd81-41fb-b52d-fb4fec16c16c
+                    message: Data successfully retrieved
+                    timestamp: '2025-05-19T12:09:54.672818827Z'
+                    meta: null
+                    status_detail: null
+                    verifications:
+                      iban_ownership_verified: true
+                      swift_code: ALBISARI
+                      bank_name:
+                        en: AlBilad Bank
+                        ar: بنك البلاد
+                      bank_code: '24'
+                      account_status: ACTIVE
+                      account_holder_name: NA****AL**** IN****RM****IO**** SY****E****
+                      verification_method: SARIE_AND_CONFIRMATION_OF_PAYEE_SERVICE
+      tags:
+      - Iban Verification
+  /verifications/v2/iban/banks:
+    servers: []
+    get:
+      operationId: getIbanVerificationBankConfigurations
+      summary: Get IBAN Verification Bank Configurations
+      description: Retrieves the list of banks with their availability and enablement status for IBAN verification
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IbanVerificationBankConfiguration'
+              example:
+              - country_code: SAU
+                bank_code: '15'
+                bank_name:
+                  en: AlBilad Bank
+                  ar: بنك البلاد
+                availability:
+                  global: ENABLED
+                  account_type:
+                    personal:
+                      match: ENABLED
+                      no_match: ENABLED
+                    freelancer:
+                      match: ENABLED
+                      no_match: DISABLED
+                    business:
+                      match: ENABLED
+                      no_match: ENABLED
+                application_enablement: ENABLED
+              - country_code: ARE
+                bank_code: '006'
+                bank_name:
+                  en: Emirates NBD
+                  ar: الإمارات دبي الوطني
+                availability:
+                  global: ENABLED
+                  account_type:
+                    personal:
+                      match: ENABLED
+                      no_match: ENABLED
+                    freelancer:
+                      match: DISABLED
+                      no_match: DISABLED
+                    business:
+                      match: ENABLED
+                      no_match: ENABLED
+                application_enablement: DISABLED
+      tags:
+      - Iban Verification
+    put:
+      operationId: updateIbanVerificationBankConfigurations
+      summary: Update IBAN Verification Bank Configurations
+      description: Updates the application-level bank enablement configurations for IBAN verification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateIbanVerificationBankConfigurationRequest'
+            example:
+              availabilities:
+              - country_code: SAU
+                bank_code: '15'
+                enablement: ENABLED
+              - country_code: ARE
+                bank_code: '006'
+                enablement: DISABLED
+      responses:
+        '200':
+          description: OK
+      tags:
+      - Iban Verification
+components:
+  schemas:
+    ResultStatus:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - PROCESSING_STARTED
+    Result:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ResultStatus'
+        results_id:
+          description: The unique identifier for the request
+          type: string
+          format: uuid
+        message:
+          description: A message describing the status of the request
+          type: string
+        meta:
+          description: Meta information about the request
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: string
+        timestamp:
+          description: The datetime of when the request was made
+          type: string
+          format: date-time
+        status_detail:
+          description: Additional information about the status
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/StatusDetail'
+      required:
+      - status
+      - results_id
+      - message
+      - timestamp
+    Translation:
+      type: object
+      properties:
+        en:
+          description: English translation
+          type: string
+        ar:
+          description: Arabic translation
+          type:
+          - string
+          - 'null'
+      required:
+      - en
+    IbanVerificationBankConfiguration:
+      description: Bank configuration for IBAN verification including availability and enablement status
+      type: object
+      properties:
+        country_code:
+          description: ISO 3166-1 alpha-2 country code where the bank is located
+          type: string
+        bank_code:
+          description: Unique identifier code for the bank
+          type: string
+        bank_name:
+          $ref: '#/components/schemas/Translation'
+        availability:
+          $ref: '#/components/schemas/IbanVerificationBankAvailability'
+        application_enablement:
+          $ref: '#/components/schemas/IbanVerificationEnablement'
+      required:
+      - country_code
+      - bank_code
+      - bank_name
+      - availability
+      - application_enablement
+    IbanVerificationEnablement:
+      description: Enablement status indicating whether a feature is enabled or disabled
+      type: string
+      enum:
+      - ENABLED
+      - DISABLED
+    IbanVerificationAccountTypeAvailability:
+      description: Availability status per account type for IBAN verification
+      type: object
+      properties:
+        personal:
+          $ref: '#/components/schemas/IbanVerificationMatchAvailability'
+        freelancer:
+          $ref: '#/components/schemas/IbanVerificationMatchAvailability'
+        business:
+          $ref: '#/components/schemas/IbanVerificationMatchAvailability'
+      required:
+      - personal
+      - freelancer
+      - business
+    IbanVerificationMatchAvailability:
+      description: Availability status for match and no-match scenarios
+      type: object
+      properties:
+        match:
+          $ref: '#/components/schemas/IbanVerificationEnablement'
+        no_match:
+          $ref: '#/components/schemas/IbanVerificationEnablement'
+      required:
+      - match
+      - no_match
+    IbanVerificationResponsePayload:
+      type: object
+      properties:
+        iban_ownership_verified:
+          description: Verifying whether the account holder name provided owns the IBAN checked. Allowed values true and false
+          type: boolean
+        matching:
+          $ref: '#/components/schemas/MatchingResult'
+        swift_code:
+          description: Swift code that identifies the bank for international transfers
+          type: string
+        bank_name:
+          $ref: '#/components/schemas/Translation'
+        bank_code:
+          description: Bank code identifier
+          type: string
+        account_status:
+          description: Status of the bank account
+          type: string
+        account_holder_name:
+          description: Name of the account holder
+          type: string
+        verification_method:
+          description: The verification method used to verify the entity's ownership
+          type: string
+          enum:
+          - CONFIRMATION_OF_PAYEE_SERVICE
+          - OPEN_BANKING
+          - SARIE
+          - SARIE_AND_CONFIRMATION_OF_PAYEE_SERVICE
+    MatchingResult:
+      description: Where `iban_ownership_verified` is false the matching attribute will identify whether there is a 'partial' or 'no match'
+      type:
+      - object
+      - 'null'
+      properties:
+        type:
+          description: Identifies whether there is a partial match or no match
+          type: string
+          enum:
+          - PARTIAL
+          - NO_MATCH
+        score:
+          description: Similarity score on a scale of 0 to 1, with 0 being no similarity and 1 being high similarity.
+          type: number
+          format: double
+          maximum: 1
+          minimum: 0
+    AvsIdentificationType:
+      description: "`NATIONAL_ID`: Saudi ID or Iqama \n`FULL_NAME`: Full name \n`COMMERCIAL_REGISTRATION`: Commercial registration number\n`UNIFIED_NUMBER`: Unified number\n`FREELANCER_NUMBER`: Freelancer certificate number\n"
+      type: string
+    IbanVerificationRequest:
+      type: object
+      properties:
+        type:
+          description: 'Will take the value PERSONAL for retail accounts, BUSINESS for corporate accounts and FREELANCER for freelancer accounts.
+
+            '
+          type: string
+        iban:
+          description: 'A valid Saudi IBAN.
+
+            '
+          type: string
+        identifications:
+          description: 'List of identifiers for your customers. You can use full name or an ID. Where using ID, if type is PERSONAL, provide a valid Saudi NID/Iqama for NATIONAL_ID.
+
+
+            If type is BUSINESS, provide either a COMMERCIAL_REGISTRATION or UNIFIED_NUMBER (which starts with ‘7’) or you can provide both identifiers where available.
+
+
+            If type is FREELANCER, provide both the FREELANCER_NUMBER (starting with ‘FL-‘) and a valid Saudi NID/Iqama for NATIONAL_ID.
+
+            '
+          type: array
+          items:
+            $ref: '#/components/schemas/AvsIdentificationDto'
+    VerificationResponseIbanVerificationResponsePayload:
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          verifications:
+            $ref: '#/components/schemas/IbanVerificationResponsePayload'
+    StatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        granular_status_code:
+          description: Granular status code
+          type:
+          - string
+          - 'null'
+        status_additional_info:
+          description: Additional information about the status
+          type:
+          - string
+          - 'null'
+    UpdateIbanVerificationBankConfigurationRequest:
+      description: Request body for updating application-level bank configurations
+      type: object
+      properties:
+        availabilities:
+          description: List of bank availability configurations to update
+          type: array
+          items:
+            $ref: '#/components/schemas/ApplicationBankAvailability'
+      required:
+      - availabilities
+    AvsIdentificationDto:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/AvsIdentificationType'
+        value:
+          description: Identification value
+          type: string
+          minLength: 1
+    ApplicationBankAvailability:
+      description: Application-level bank enablement configuration
+      type: object
+      properties:
+        country_code:
+          description: ISO 3166-1 alpha-2 country code where the bank is located
+          type: string
+        bank_code:
+          description: Unique identifier code for the bank
+          type: string
+        enablement:
+          $ref: '#/components/schemas/IbanVerificationEnablement'
+      required:
+      - country_code
+      - bank_code
+      - enablement
+    IbanVerificationBankAvailability:
+      description: Availability status of the bank for IBAN verification
+      type: object
+      properties:
+        global:
+          $ref: '#/components/schemas/IbanVerificationEnablement'
+        account_type:
+          $ref: '#/components/schemas/IbanVerificationAccountTypeAvailability'
+      required:
+      - global
+      - account_type
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

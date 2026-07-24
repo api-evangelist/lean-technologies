@@ -1,0 +1,707 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Cashflows API
+  version: v0.2.3
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Cashflows
+paths:
+  /insights/v2/assets/cashflows?async=true:
+    get:
+      summary: Get Cashflow
+      deprecated: false
+      description: 'The Cashflow API provides access to **Personal** and **Business** cash flow data. For personal accounts, it offers insights into monthly cash inflows, outflows, and net cash flow. For business accounts, it offers detailed insights on revenue, expenses, and net cash flow.
+
+
+        You can use this API to evaluate financial stability, manage cash flow effectively, and assess the account holder’s ability to meet financial obligations.
+
+
+
+        This API is asynchronous, please read [this guide](https://docs.leantech.me/v2.0-KSA/docs/handling-asynchronous-requests) for further information on how to fetch the results.
+
+
+        > **"Supported for both retail and corporate accounts"**
+
+        > '
+      operationId: GetCashflow
+      tags:
+      - Cashflows
+      parameters:
+      - name: entity_id
+        in: query
+        description: The `entity_id` you're querying for.
+        required: true
+        example: bc287977-2094-3bef-82a0-bae3fe8dadfe
+        schema:
+          type: string
+          format: uuid
+      - name: start_date
+        in: query
+        description: The start date in UTC (in the format YYYY-MM-DD) you want to query expenses for.
+        required: true
+        example: '2024-09-01'
+        schema:
+          format: date
+          type: string
+      - name: async
+        in: query
+        description: "When `true` the API will only return a `results_id` which can be fetched from the `/results` endpoint when ready. \n\nDefaults to true if not provided. Synchronous requests (false) are not supported and will return a 501 error."
+        required: false
+        example: 'true'
+        schema:
+          type: boolean
+          default: true
+      - name: lean-app-token
+        in: header
+        description: Your Lean app token.
+        required: true
+        example: ad0832f0-76aa-4b7b-b267-1f002d7104df
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    description: The status of the results. For async requests, initially returns PENDING.
+                    enum:
+                    - OK
+                    - FAILED
+                    - PENDING
+                    - CONSENT_EXPIRED
+                    type: string
+                  results_id:
+                    type: string
+                    description: The ID for this result, this is used when retrieving results from the `/results` endpoint.
+                    format: uuid
+                  message:
+                    description: A message describing the status of the request.
+                    type: string
+                  meta:
+                    type:
+                    - string
+                    - 'null'
+                    description: Optional metadata associated with the result.
+                  timestamp:
+                    format: date-time
+                    description: The timestamp with timezone offset indicating when the response was generated.
+                    type: string
+                  status_detail:
+                    description: Further detail on the error if status=FAILED
+                    $ref: '#/components/schemas/StatusDetailObject'
+                  insights:
+                    type:
+                    - object
+                    - 'null'
+                    description: The cash flow insights data. Null when status is PENDING or in error states.
+                    properties:
+                      total:
+                        type: object
+                        description: Aggregate cash flow data across all months in the analyzed period.
+                        properties:
+                          inwards:
+                            type: array
+                            description: List of inward cash flow categories with their totals. For retail accounts, typically contains only the 'inflow' category.
+                            items:
+                              type: object
+                              properties:
+                                category:
+                                  type: string
+                                  enum:
+                                  - inflow
+                                  description: For retail accounts, only 'inflow' is used to represent money coming into accounts.
+                                amount:
+                                  type: object
+                                  description: The monetary amount for this inflow category.
+                                  properties:
+                                    amount:
+                                      type: number
+                                      description: The numeric value of the total inflow amount.
+                                    currency:
+                                      type: string
+                                      description: The three-letter currency code (e.g., 'USD', 'EUR', 'SAR').
+                                count:
+                                  type: integer
+                                  description: The total number of inflow transactions across all analyzed months.
+                          outwards:
+                            type: array
+                            description: List of outward cash flow categories with their totals. For retail accounts, typically contains only the 'outflow' category.
+                            items:
+                              type: object
+                              properties:
+                                category:
+                                  type: string
+                                  enum:
+                                  - outflow
+                                  description: For retail accounts, only 'outflow' is used to represent money going out of accounts.
+                                amount:
+                                  type: object
+                                  description: The monetary amount for this outflow category.
+                                  properties:
+                                    amount:
+                                      type: number
+                                      description: The numeric value of the total outflow amount.
+                                    currency:
+                                      type: string
+                                      description: The three-letter currency code (e.g., 'USD', 'EUR', 'SAR').
+                                count:
+                                  type: integer
+                                  description: The total number of outflow transactions across all analyzed months.
+                          net:
+                            type: object
+                            description: Net cash flow calculation aggregated across all analyzed months.
+                            properties:
+                              overall_amount:
+                                type: object
+                                description: The net monetary amount (inflow minus outflow) across all months.
+                                properties:
+                                  amount:
+                                    type: number
+                                    description: The numeric value of the net amount. Positive indicates net inflow, negative indicates net outflow.
+                                  currency:
+                                    type: string
+                                    description: The three-letter currency code (e.g., 'USD', 'EUR', 'SAR').
+                              net_cashflow:
+                                type: 'null'
+                                description: Not used for retail entities, always null. This is only populated for corporate accounts.
+                      monthly_totals:
+                        type: array
+                        description: Cash flow details broken down by individual months in the analyzed period.
+                        items:
+                          type: object
+                          properties:
+                            year:
+                              type: integer
+                              description: The year (e.g., 2024) of this monthly total.
+                            month:
+                              type: integer
+                              description: The month number (1-12) of this monthly total, where 1 is January and 12 is December.
+                            is_month_complete:
+                              type: boolean
+                              description: Indicates if the month's data is complete (true) or partial (false). Months that haven't ended yet will be marked as incomplete.
+                            inwards:
+                              type: array
+                              description: List of inward cash flow categories for this specific month.
+                              items:
+                                type: object
+                                properties:
+                                  category:
+                                    type: string
+                                    enum:
+                                    - inflow
+                                    description: For retail accounts, only 'inflow' is used for inwards in each month.
+                                  amount:
+                                    type: object
+                                    description: The total inflow monetary amount for this month.
+                                    properties:
+                                      amount:
+                                        type: number
+                                        description: The numeric value of the inflow amount for this month.
+                                      currency:
+                                        type: string
+                                        description: The three-letter currency code (e.g., 'USD', 'EUR', 'SAR').
+                                  count:
+                                    type: integer
+                                    description: The number of inflow transactions in this specific month.
+                            outwards:
+                              type: array
+                              description: List of outward cash flow categories for this specific month.
+                              items:
+                                type: object
+                                properties:
+                                  category:
+                                    type: string
+                                    enum:
+                                    - outflow
+                                    description: For retail accounts, only 'outflow' is used for outwards in each month.
+                                  amount:
+                                    type: object
+                                    description: The total outflow monetary amount for this month.
+                                    properties:
+                                      amount:
+                                        type: number
+                                        description: The numeric value of the outflow amount for this month.
+                                      currency:
+                                        type: string
+                                        description: The three-letter currency code (e.g., 'USD', 'EUR', 'SAR').
+                                  count:
+                                    type: integer
+                                    description: The number of outflow transactions in this specific month.
+                            net:
+                              type: object
+                              description: Net cash flow calculation for this specific month.
+                              properties:
+                                overall_amount:
+                                  type: object
+                                  description: The net monetary amount (inflow minus outflow) for this month.
+                                  properties:
+                                    amount:
+                                      type: number
+                                      description: The numeric value of the net amount for this month. Positive indicates net inflow, negative indicates net outflow.
+                                    currency:
+                                      type: string
+                                      description: The three-letter currency code (e.g., 'USD', 'EUR', 'SAR').
+                                net_cashflow:
+                                  type: 'null'
+                                  description: Not used for retail entities, always null. This is only populated for corporate accounts.
+                      credit_debit_behaviour:
+                        type: object
+                        description: Analysis of credit and debit transaction patterns over different time periods.
+                        properties:
+                          periods:
+                            type: array
+                            description: 'List of time periods with credit/debit behavior analysis. Always contains 4 periods: 12 months (P12M), 9 months (P9M), 6 months (P6M), and 3 months (P3M).'
+                            items:
+                              type: object
+                              properties:
+                                period:
+                                  type: string
+                                  enum:
+                                  - P12M
+                                  - P9M
+                                  - P6M
+                                  - P3M
+                                  description: ISO 8601 duration format indicating the period length (P12M = 12 months, P9M = 9 months, etc.).
+                                grand_average_credit_amount:
+                                  description: The average amount of all credit transactions during this period.
+                                  $ref: '#/components/schemas/AmountObject'
+                                grand_average_credit_count:
+                                  type: integer
+                                  description: The average count of credit transactions per month during this period.
+                                grand_average_debit_amount:
+                                  description: The average amount of all debit transactions during this period.
+                                  $ref: '#/components/schemas/AmountObject'
+                                grand_average_debit_count:
+                                  type: integer
+                                  description: The average count of debit transactions per month during this period.
+                                grand_average_credit_debit_amount_ratio:
+                                  type:
+                                  - number
+                                  - 'null'
+                                  description: The ratio of average credit amount to average debit amount (credit divided by debit). Null when there are no debit transactions.
+                                grand_average_credit_debit_count_ratio:
+                                  type:
+                                  - number
+                                  - 'null'
+                                  description: The ratio of average credit count to average debit count (credit divided by debit). Null when there are no debit transactions.
+                                total_volume_of_credit:
+                                  description: The total sum of all credit transactions during this period.
+                                  $ref: '#/components/schemas/AmountObject'
+                                total_volume_of_debit:
+                                  description: The total sum of all debit transactions during this period.
+                                  $ref: '#/components/schemas/AmountObject'
+                                total_volume_of_credit_debit_ratio:
+                                  type:
+                                  - number
+                                  - 'null'
+                                  description: The ratio of total credit volume to total debit volume (credit divided by debit). Null when there are no debit transactions.
+                      big_payments:
+                        type: object
+                        description: Analysis of significant payment transactions that stand out from regular transaction patterns.
+                        properties:
+                          periods:
+                            type: array
+                            description: 'List of time periods with significant payment analysis. Always contains 4 periods: 12 months (P12M), 9 months (P9M), 6 months (P6M), and 3 months (P3M).'
+                            items:
+                              type: object
+                              properties:
+                                period:
+                                  type: string
+                                  enum:
+                                  - P12M
+                                  - P9M
+                                  - P6M
+                                  - P3M
+                                  description: ISO 8601 duration format indicating the period length (P12M = 12 months, P9M = 9 months, etc.).
+                                average_max_monthly_credit_amount:
+                                  description: The average of the maximum credit transaction amount per month during this period.
+                                  $ref: '#/components/schemas/AmountObject'
+                                average_max_monthly_debit_amount:
+                                  description: The average of the maximum debit transaction amount per month during this period.
+                                  $ref: '#/components/schemas/AmountObject'
+                                average_max_monthly_credit_debit_amount_ratio:
+                                  type:
+                                  - number
+                                  - 'null'
+                                  description: The ratio of average maximum monthly credit amount to average maximum monthly debit amount. Null when there are no debit transactions.
+                required:
+                - status
+                - results_id
+                - message
+                - meta
+                - timestamp
+                - status_detail
+              example:
+                status: OK
+                results_id: 52c59732-8e5c-45e1-9c16-6e5a0bfd555a
+                message: Data successfully retrieved
+                meta: null
+                timestamp: '2025-03-25T05:38:38.124820906Z'
+                status_detail: null
+                insights:
+                  total:
+                    inwards:
+                    - category: inflow
+                      amount:
+                        currency: SAR
+                        amount: 404642.7
+                      count: 24
+                    outwards:
+                    - category: outflow
+                      amount:
+                        currency: SAR
+                        amount: 175509.7
+                      count: 472
+                    net:
+                      overall_amount:
+                        currency: SAR
+                        amount: 229133
+                      net_cashflow: null
+                  monthly_totals:
+                  - month: 12
+                    year: 2024
+                    is_month_complete: true
+                    inwards:
+                    - category: inflow
+                      amount:
+                        currency: SAR
+                        amount: 50000
+                      count: 2
+                    outwards:
+                    - category: outflow
+                      amount:
+                        currency: SAR
+                        amount: 24131.33
+                      count: 69
+                    net:
+                      overall_amount:
+                        currency: SAR
+                        amount: 25868.67
+                      net_cashflow: null
+                  - month: 11
+                    year: 2024
+                    is_month_complete: true
+                    inwards:
+                    - category: inflow
+                      amount:
+                        currency: SAR
+                        amount: 30000
+                      count: 1
+                    outwards:
+                    - category: outflow
+                      amount:
+                        currency: SAR
+                        amount: 18197.72
+                      count: 45
+                    net:
+                      overall_amount:
+                        currency: SAR
+                        amount: 11802.28
+                      net_cashflow: null
+                  - month: 10
+                    year: 2024
+                    is_month_complete: true
+                    inwards:
+                    - category: inflow
+                      amount:
+                        currency: SAR
+                        amount: 30000
+                      count: 1
+                    outwards:
+                    - category: outflow
+                      amount:
+                        currency: SAR
+                        amount: 28263.44
+                      count: 61
+                    net:
+                      overall_amount:
+                        currency: SAR
+                        amount: 1736.56
+                      net_cashflow: null
+                  - month: 9
+                    year: 2024
+                    is_month_complete: true
+                    inwards:
+                    - category: inflow
+                      amount:
+                        currency: SAR
+                        amount: 50000
+                      count: 2
+                    outwards:
+                    - category: outflow
+                      amount:
+                        currency: SAR
+                        amount: 22255.64
+                      count: 62
+                    net:
+                      overall_amount:
+                        currency: SAR
+                        amount: 27744.36
+                      net_cashflow: null
+                  - month: 8
+                    year: 2024
+                    is_month_complete: true
+                    inwards:
+                    - category: inflow
+                      amount:
+                        currency: SAR
+                        amount: 50000
+                      count: 2
+                    outwards:
+                    - category: outflow
+                      amount:
+                        currency: SAR
+                        amount: 17177.14
+                      count: 52
+                    net:
+                      overall_amount:
+                        currency: SAR
+                        amount: 32822.86
+                      net_cashflow: null
+                  - month: 7
+                    year: 2024
+                    is_month_complete: true
+                    inwards:
+                    - category: inflow
+                      amount:
+                        currency: SAR
+                        amount: 50000
+                      count: 2
+                    outwards:
+                    - category: outflow
+                      amount:
+                        currency: SAR
+                        amount: 19213.91
+                      count: 51
+                    net:
+                      overall_amount:
+                        currency: SAR
+                        amount: 30786.09
+                      net_cashflow: null
+                  - month: 6
+                    year: 2024
+                    is_month_complete: true
+                    inwards:
+                    - category: inflow
+                      amount:
+                        currency: SAR
+                        amount: 30000
+                      count: 1
+                    outwards:
+                    - category: outflow
+                      amount:
+                        currency: SAR
+                        amount: 3240.29
+                      count: 13
+                    net:
+                      overall_amount:
+                        currency: SAR
+                        amount: 26759.71
+                      net_cashflow: null
+                  - month: 3
+                    year: 2025
+                    is_month_complete: false
+                    inwards:
+                    - category: inflow
+                      amount:
+                        currency: SAR
+                        amount: 12118.1
+                      count: 4
+                    outwards:
+                    - category: outflow
+                      amount:
+                        currency: SAR
+                        amount: 10459.36
+                      count: 28
+                    net:
+                      overall_amount:
+                        currency: SAR
+                        amount: 1658.74
+                      net_cashflow: null
+                  - month: 2
+                    year: 2025
+                    is_month_complete: true
+                    inwards:
+                    - category: inflow
+                      amount:
+                        currency: SAR
+                        amount: 52524.6
+                      count: 7
+                    outwards:
+                    - category: outflow
+                      amount:
+                        currency: SAR
+                        amount: 12228.42
+                      count: 35
+                    net:
+                      overall_amount:
+                        currency: SAR
+                        amount: 40296.18
+                      net_cashflow: null
+                  - month: 1
+                    year: 2025
+                    is_month_complete: true
+                    inwards:
+                    - category: inflow
+                      amount:
+                        currency: SAR
+                        amount: 50000
+                      count: 2
+                    outwards:
+                    - category: outflow
+                      amount:
+                        currency: SAR
+                        amount: 20342.45
+                      count: 56
+                    net:
+                      overall_amount:
+                        currency: SAR
+                        amount: 29657.55
+                      net_cashflow: null
+                  credit_debit_behaviour:
+                    periods:
+                    - period: P12M
+                      grand_average_credit_amount:
+                        currency: SAR
+                        amount: 18794.42
+                      grand_average_credit_count: 2
+                      grand_average_debit_amount:
+                        currency: SAR
+                        amount: 301.58
+                      grand_average_debit_count: 39
+                      grand_average_credit_debit_amount_ratio: 62.32
+                      grand_average_credit_debit_count_ratio: 0.05
+                      total_volume_of_credit:
+                        currency: SAR
+                        amount: 404642.7
+                      total_volume_of_debit:
+                        currency: SAR
+                        amount: 175509.7
+                      total_volume_of_credit_debit_ratio: 2.31
+                    - period: P9M
+                      grand_average_credit_amount:
+                        currency: SAR
+                        amount: 21725.89
+                      grand_average_credit_count: 2
+                      grand_average_debit_amount:
+                        currency: SAR
+                        amount: 374.41
+                      grand_average_debit_count: 51
+                      grand_average_credit_debit_amount_ratio: 58.03
+                      grand_average_credit_debit_count_ratio: 0.05
+                      total_volume_of_credit:
+                        currency: SAR
+                        amount: 374642.7
+                      total_volume_of_debit:
+                        currency: SAR
+                        amount: 172269.41
+                      total_volume_of_credit_debit_ratio: 2.17
+                    - period: P6M
+                      grand_average_credit_amount:
+                        currency: SAR
+                        amount: 20088.84
+                      grand_average_credit_count: 2
+                      grand_average_debit_amount:
+                        currency: SAR
+                        amount: 383.94
+                      grand_average_debit_count: 49
+                      grand_average_credit_debit_amount_ratio: 52.32
+                      grand_average_credit_debit_count_ratio: 0.06
+                      total_volume_of_credit:
+                        currency: SAR
+                        amount: 224642.7
+                      total_volume_of_debit:
+                        currency: SAR
+                        amount: 113622.72
+                      total_volume_of_credit_debit_ratio: 1.98
+                    - period: P3M
+                      grand_average_credit_amount:
+                        currency: SAR
+                        amount: 11844.35
+                      grand_average_credit_count: 4
+                      grand_average_debit_amount:
+                        currency: SAR
+                        amount: 362.06
+                      grand_average_debit_count: 39
+                      grand_average_credit_debit_amount_ratio: 32.71
+                      grand_average_credit_debit_count_ratio: 0.11
+                      total_volume_of_credit:
+                        currency: SAR
+                        amount: 114642.7
+                      total_volume_of_debit:
+                        currency: SAR
+                        amount: 43030.23
+                      total_volume_of_credit_debit_ratio: 2.66
+                  big_payments:
+                    periods:
+                    - period: P12M
+                      average_max_monthly_credit_amount:
+                        currency: SAR
+                        amount: 23295.29
+                      average_max_monthly_debit_amount:
+                        currency: SAR
+                        amount: 925.22
+                      average_max_monthly_credit_debit_amount_ratio: 25.18
+                    - period: P9M
+                      average_max_monthly_credit_amount:
+                        currency: SAR
+                        amount: 27727.05
+                      average_max_monthly_debit_amount:
+                        currency: SAR
+                        amount: 1164.95
+                      average_max_monthly_credit_debit_amount_ratio: 23.8
+                    - period: P6M
+                      average_max_monthly_credit_amount:
+                        currency: SAR
+                        amount: 26590.58
+                      average_max_monthly_debit_amount:
+                        currency: SAR
+                        amount: 1142.08
+                      average_max_monthly_credit_debit_amount_ratio: 23.28
+                    - period: P3M
+                      average_max_monthly_credit_amount:
+                        currency: SAR
+                        amount: 23181.16
+                      average_max_monthly_debit_amount:
+                        currency: SAR
+                        amount: 1098.98
+                      average_max_monthly_credit_debit_amount_ratio: 21.09
+          headers: {}
+      security:
+      - bearer: []
+components:
+  schemas:
+    StatusDetailObject:
+      description: Status Details
+      type: object
+      properties:
+        granular_status_code:
+          description: Detailed error code
+          type: string
+        status_additional_info:
+          description: Further detail on the encountered error
+          type: string
+    AmountObject:
+      type: object
+      properties:
+        currency:
+          type: string
+          description: The currency in which the amount is represented.
+        amount:
+          type: number
+          description: The decimal amount for the transaction
+      description: The total amount for the category.
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

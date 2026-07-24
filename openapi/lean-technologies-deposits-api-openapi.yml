@@ -1,0 +1,248 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Deposits API
+  version: v0.2.3
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Deposits
+  x-displayName: Deposits
+paths:
+  /reconciliation/v1/deposits:
+    servers: []
+    get:
+      operationId: getDeposits
+      summary: Get deposits
+      parameters:
+      - name: filters
+        in: query
+        description: Deposits query filter
+        required: true
+        schema:
+          $ref: '#/components/schemas/DepositsQuery'
+      responses:
+        '200':
+          description: Successfully retrieved deposits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageableResponse'
+              examples:
+                '1':
+                  summary: Success
+                  value:
+                    data:
+                    - id: 84738989-ce46-4e21-9d7c-a8a64e51573b
+                      description: 'TRANSFERIPI TT REF: 99OTT08379977075 LEAN FINANCIAL SERVICES 45-62176280-1-151 - AE0361941'
+                      amount: 1001.5
+                      currency: AED
+                      bank_deposit_reference: 1234567890AE
+                      timestamp: '2025-02-13T13:20:57.674299Z'
+                      local_timestamp: '2022-11-27T00:00:00+04:00'
+                      beneficiary_account:
+                        account_id: b8ec46af-2a79-49dc-b453-eab38c16adb7
+                        iban: AE790260000315528734002
+                      reconciliation:
+                        status: RECONCILED
+                        payment_id: 322ac1dd-8534-4448-89e9-db59505fd3ed
+                      deposit_source_id: 18ac894e-0c76-4929-8701-51e33f6283c7
+      tags:
+      - Deposits
+components:
+  schemas:
+    Reconciliation:
+      description: The reconciliation status of the deposit.
+      type: object
+      properties:
+        payment_id:
+          description: The unique identifier for the payment.
+          type: string
+          format: uuid
+        status:
+          description: The reconciliation status of the payment with this deposit.
+          type: string
+          enum:
+          - RECONCILED
+          - NOT_RECONCILED
+      required:
+      - status
+      - payment_id
+    BeneficiaryAccount:
+      description: The account that the deposit was made to.
+      type: object
+      properties:
+        account_id:
+          description: The account ID referencing the account number.
+          type: string
+          format: uuid
+        iban:
+          description: The International Bank Account Number (IBAN) of the account.
+          type: string
+      required:
+      - account_id
+      - iban
+    PageableResponse:
+      type: object
+      properties:
+        data:
+          description: The list of deposits.
+          type: array
+          items:
+            $ref: '#/components/schemas/DepositResponse'
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+    SenderAccount:
+      description: The account that the deposit was made from.
+      type: object
+      properties:
+        account_number:
+          description: The account ID referencing the account number.
+          type: string
+        iban:
+          description: The International Bank Account Number (IBAN) of the account.
+          type: string
+      required:
+      - account_number
+      - iban
+      x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)'
+    PageMetadata:
+      description: Metadata about the current page of results
+      type: object
+      properties:
+        number:
+          description: The current page being returned by the API
+          type: integer
+          format: int32
+        size:
+          description: The page size requested
+          type: integer
+          format: int32
+        total_elements:
+          description: The total number of elements in all pages
+          type: integer
+          format: int64
+        total_pages:
+          description: The total number of pages retrievable
+          type: integer
+          format: int32
+        sort:
+          description: Sort parameters applied to the results
+          type: array
+          items:
+            type: string
+      required:
+      - number
+      - size
+      - total_elements
+      - total_pages
+    DepositsQuery:
+      type: object
+      properties:
+        start_date:
+          description: Start date for filtering deposits
+          type: string
+          format: date
+          examples:
+          - '2025-09-14'
+        end_date:
+          description: End date for filtering deposits
+          type: string
+          format: date
+          examples:
+          - '2025-10-13'
+        time_zone:
+          description: Time zone for timestamps eg 'Asia/Dubai', 'UTC'
+          type: string
+          examples:
+          - Asia/Dubai
+          default: Asia/Dubai
+          x-javaType: java.time.ZoneId
+        reconciliation_status:
+          description: Filter by reconciliation status
+          type: string
+          enum:
+          - RECONCILED
+          - NOT_RECONCILED
+        deposit_source_id:
+          description: Filter by deposit source ID
+          type: string
+          format: uuid
+        page:
+          description: The page number to retrieve
+          type:
+          - integer
+          - 'null'
+          default: 0
+          minimum: 0
+        size:
+          description: The number of items per page
+          type:
+          - integer
+          - 'null'
+          default: 50
+          maximum: 100
+          minimum: 1
+      required:
+      - start_date
+      - end_date
+      x-explicit-constructor: true
+      x-implements:
+      - me.leantech.api.validation.LocalDateRange
+    DepositResponse:
+      type: object
+      properties:
+        id:
+          description: The unique identifier for the deposit.
+          type: string
+          format: uuid
+        bank_deposit_reference:
+          description: The reference number provided by the bank.
+          type: string
+        amount:
+          description: The amount of the deposit.
+          type: number
+        currency:
+          description: The currency of the deposit.
+          type: string
+        description:
+          description: The description of the deposit as found in the bank statement.
+          type:
+          - string
+          - 'null'
+        timestamp:
+          description: The transaction timestamp.
+          type: string
+          format: date-time
+        local_timestamp:
+          description: The transaction timestamp adjusted to the timezone specified in the 'timeZone' query parameter.
+          type: string
+          format: date-time
+        beneficiary_account:
+          $ref: '#/components/schemas/BeneficiaryAccount'
+        reconciliation:
+          $ref: '#/components/schemas/Reconciliation'
+        deposit_source_id:
+          description: The unique identifier for the deposit source - ie the corporate bank account where the deposit was made.
+          type: string
+          format: uuid
+        sender_account:
+          $ref: '#/components/schemas/SenderAccount'
+      required:
+      - id
+      - bank_deposit_reference
+      - amount
+      - currency
+      - timestamp
+      - local_timestamp
+      - beneficiary_account
+      - reconciliation
+      - deposit_source_id
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

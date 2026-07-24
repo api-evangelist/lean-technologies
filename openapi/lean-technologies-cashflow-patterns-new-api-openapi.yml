@@ -1,0 +1,2648 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Cashflow Patterns (New) API
+  version: v0.2.3
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Cashflow Patterns (New)
+paths:
+  /insights/v3/cashflow-patterns:
+    servers: []
+    get:
+      operationId: getCashFlow
+      summary: Get Cash Flow Patterns
+      description: "Detects recurring inflow and outflow transactions and groups them into structured patterns, surfacing frequency, \nexpected timing, and whether each pattern is ongoing, new, or stopped."
+      parameters:
+      - name: entity_id
+        in: query
+        description: The `entity_id` you're querying for.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: start_date
+        in: query
+        description: The start date in UTC (in the format YYYY-MM-DD) of the analysis window. When omitted, defaults to the earliest transaction available for the entity.
+        required: false
+        schema:
+          type: string
+          format: date
+        x-field-extra-annotation: '@jakarta.validation.constraints.PastOrPresent'
+      - name: end_date
+        in: query
+        description: The end date in UTC (in the format YYYY-MM-DD) of the analysis window (inclusive — transactions on this date are included). When omitted, defaults to the current time.
+        required: false
+        schema:
+          type: string
+          format: date
+        x-field-extra-annotation: '@jakarta.validation.constraints.PastOrPresent'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    insights:
+                      $ref: '#/components/schemas/CashflowPatterns'
+                    type:
+                      $ref: '#/components/schemas/InsightsResultType'
+                  type: object
+              examples:
+                GetCashFlow:
+                  summary: Successful cashflow patterns response
+                  value:
+                    status: OK
+                    results_id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+                    message: Data successfully retrieved
+                    timestamp: '2026-03-01T12:00:00Z'
+                    type: cashflow-patterns
+                    insights:
+                      cashflow_patterns:
+                      - credit_debit_indicator: DEBIT
+                        primary_category: Health & Wellbeing
+                        secondary_category: Gym
+                        counter_party: Warehouse Gym
+                        total_amount:
+                          currency: AED
+                          amount: 3000
+                        transaction_count: 3
+                        monthly_totals:
+                        - month: 2026-01
+                          amount:
+                            currency: AED
+                            amount: 1000
+                          transaction_count: 1
+                        - month: 2026-02
+                          amount:
+                            currency: AED
+                            amount: 1000
+                          transaction_count: 1
+                        - month: 2026-03
+                          amount:
+                            currency: AED
+                            amount: 1000
+                          transaction_count: 1
+                        regularity:
+                          days_of_month_numbers:
+                          - 2
+                          days_of_month_names:
+                          - Sunday
+                          interval:
+                            minimum_days: 27
+                            maximum_days: 33
+                          average_interval_days: 30
+                          frequency: MONTHLY
+                          activity_status: ONGOING
+                      - credit_debit_indicator: DEBIT
+                        primary_category: Health & Wellbeing
+                        secondary_category: Gym
+                        counter_party: Gym XX
+                        total_amount:
+                          currency: AED
+                          amount: 3000
+                        transaction_count: 3
+                        monthly_totals:
+                        - month: 2026-01
+                          amount:
+                            currency: AED
+                            amount: 1000
+                          transaction_count: 1
+                        - month: 2026-02
+                          amount:
+                            currency: AED
+                            amount: 1000
+                          transaction_count: 1
+                        - month: 2026-03
+                          amount:
+                            currency: AED
+                            amount: 1000
+                          transaction_count: 1
+                        regularity:
+                          days_of_month_numbers:
+                          - 2
+                          days_of_month_names:
+                          - Monday
+                          interval:
+                            minimum_days: 27
+                            maximum_days: 33
+                          average_interval_days: 30
+                          frequency: WEEKLY
+                          activity_status: ONGOING
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsightsResult'
+              examples:
+                InvalidParametersExample:
+                  $ref: '#/components/examples/InsightsInvalidParametersExample'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsightsResult'
+              examples:
+                UserPermissionsNotGrantedExample:
+                  $ref: '#/components/examples/InsightsUserPermissionsNotGrantedExample'
+                ConsentExpiredExample:
+                  $ref: '#/components/examples/InsightsConsentExpiredExample'
+                TransactionRangeNotGrantedExample:
+                  $ref: '#/components/examples/InsightsTransactionRangeNotGrantedExample'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsightsResult'
+              examples:
+                UnknownEntityExample:
+                  $ref: '#/components/examples/InsightsUnknownEntityExample'
+                DataNotFoundExample:
+                  $ref: '#/components/examples/InsightsDataNotFoundExample'
+        '408':
+          description: Request Timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsightsResult'
+              examples:
+                TimeoutExample:
+                  $ref: '#/components/examples/InsightsTimeoutExample'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsightsResult'
+              examples:
+                InternalServerErrorExample:
+                  $ref: '#/components/examples/InsightsInternalServerErrorExample'
+      tags:
+      - Cashflow Patterns (New)
+components:
+  schemas:
+    CashFlowNet:
+      type: object
+      properties:
+        overall_amount:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        net_cashflow:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+    CashBalanceTotal:
+      type: object
+      properties:
+        average_balance:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        initial_balance:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        current_balance:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        available_balance:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        frequency_of_contributions:
+          description: How often deposits are made to the account
+          type: string
+    CreditObligationsV2:
+      description: Lender-oriented view of credit activity, split into repayments and disbursements.
+      type: object
+      properties:
+        repayments:
+          description: Aggregated credit repayment activity (e.g. BNPL instalments, loan repayments).
+          allOf:
+          - $ref: '#/components/schemas/CreditObligationsRepayments'
+        disbursements:
+          description: Aggregated credit disbursement activity (loans received).
+          allOf:
+          - $ref: '#/components/schemas/CreditObligationsDisbursements'
+      additionalProperties: false
+      required:
+      - repayments
+      - disbursements
+    CreditDebitBehaviour:
+      type: object
+      properties:
+        periods:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreditDebitBehaviourPeriod'
+      required:
+      - periods
+    CashflowPatterns:
+      description: Cashflow pattern analysis results.
+      type: object
+      properties:
+        cashflow_patterns:
+          description: List of identified cashflow patterns.
+          type: array
+          items:
+            $ref: '#/components/schemas/CashflowPattern'
+      required:
+      - cashflow_patterns
+    CreditAssessmentComputedIndicators:
+      description: Derived financial indicators used in credit assessment decisions.
+      type: object
+      properties:
+        average_monthly_net_cashflow:
+          description: Average monthly net cashflow (weighted income minus total expenses).
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        dbr:
+          description: monthly credit obligations ÷ weighted monthly income, with the lender's configurable ceiling (default 0.45) and the maximum new installment affordable before that ceiling
+          allOf:
+          - $ref: '#/components/schemas/CreditAssessmentRatioIndicator'
+        affordability:
+          description: (essential expenses + credit obligations) ÷ weighted monthly income over configured essential categories, with the lender's configurable ceiling (default 0.70) and the maximum new installment affordable before that ceiling.
+          allOf:
+          - $ref: '#/components/schemas/CreditAssessmentRatioIndicator'
+      additionalProperties: false
+      required:
+      - average_monthly_net_cashflow
+      - dbr
+      - affordability
+    CurrencyAmount:
+      type: object
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          description: The amount of money in the currency specified.
+          type: number
+      required:
+      - currency
+      - amount
+    InsightsResultType:
+      description: type of insight
+      type: string
+      enum:
+      - income
+      - employment
+      - cashflow
+      - credits-obligations
+      - non-credits-obligations
+      - expenses
+      - cash-balances
+      - freelancer-cashflow
+      - behaviors
+      - cashflow-patterns
+      - credit-assessments
+      - account-controls
+      - credit-obligations
+    NonCreditObligationsMonthlyAmount:
+      type: object
+      properties:
+        month:
+          description: The month name (e.g., "September", "October")
+          type: string
+        amount:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+    Result:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ResultStatus'
+        results_id:
+          description: The unique identifier for the request
+          type: string
+          format: uuid
+        message:
+          description: A message describing the status of the request
+          type: string
+        meta:
+          description: Meta information about the request
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: string
+        timestamp:
+          description: The datetime of when the request was made
+          type: string
+          format: date-time
+        status_detail:
+          description: Additional information about the status
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/StatusDetail'
+      required:
+      - status
+      - results_id
+      - message
+      - timestamp
+    CashFlowCategoryAmountCount:
+      type: object
+      properties:
+        category:
+          description: The category of the cash flow
+          type: string
+        amount:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        count:
+          description: The count of transactions in this category
+          type: integer
+    EmploymentDetails:
+      type: object
+      properties:
+        bank_employer_name:
+          description: The name of the employer as it appears in bank transaction descriptions. This is the raw employer name extracted directly from salary payment transaction records.
+          type:
+          - string
+          - 'null'
+        matched_reference_employer:
+          description: Information about the verified employer entity that matched with the bank employer name. Value will be NULL if no matching stored in our database
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/EmployerDetails'
+          required:
+          - name
+          - cr_number
+        salary_consistent:
+          description: Boolean indicator that determines if the salary payments from this employer follow a consistent pattern. true indicates stable payment patterns, while false indicates irregularity. This is calculated by comparing both date and amount variances against predefined thresholds (typically 5 days for dates and 1000 currency units for amounts).
+          type:
+          - boolean
+          - 'null'
+        salary_date_variance:
+          description: A statistical measure of the variability in the timing of salary payments, expressed as the standard deviation of intervals (in days) between consecutive salary payments. Lower values indicate more consistent payment timing. A value of 0 means all payments were made at exactly the same interval.
+          type:
+          - number
+          - 'null'
+          format: double
+          x-java-type: java.math.BigDecimal
+        salary_amount_variance:
+          description: A statistical measure of the variability in salary payment amounts, expressed as the standard deviation of payment amounts. Lower values indicate more consistent payment amounts. A value of 0 means all payments were exactly the same amount.
+          type:
+          - number
+          - 'null'
+          format: double
+          x-java-type: java.math.BigDecimal
+        first_salary_date:
+          description: The timestamp of the earliest detected salary payment from this employer. This indicates when the employment relationship began or when the earliest available transaction record starts.
+          type:
+          - string
+          - 'null'
+          format: date-time
+          x-java-type: java.time.Instant
+      required:
+      - bank_employer_name
+      - matched_reference_employer
+      - salary_consistent
+      - salary_date_variance
+      - salary_amount_variance
+      - first_salary_date
+    CreditObligationsRepayments:
+      description: Repayment aggregates and breakdown by lender_name, credit_type.
+      type: object
+      properties:
+        overall:
+          description: Overall repayment summary across all lenders.
+          allOf:
+          - $ref: '#/components/schemas/CreditObligationsOverall'
+        breakdown:
+          description: One entry per lender that received repayments.
+          type: array
+          items:
+            $ref: '#/components/schemas/CreditObligationsRepaymentBreakdown'
+      additionalProperties: false
+      required:
+      - overall
+      - breakdown
+    CreditAssessmentOtherIncomeBreakdownItem:
+      description: A single non-employment income source with its contribution details.
+      type: object
+      properties:
+        source:
+          description: The income source type.
+          allOf:
+          - $ref: '#/components/schemas/IncomeSourceType'
+        total_amount:
+          description: Total amount from this income source over the analysis period.
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_monthly_amount:
+          description: Average monthly amount from this income source.
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        contribution_factor:
+          description: Factor applied to weight this income source in the overall income calculation. Range is 0.0 to 1.0.
+          type: number
+        contributed_average_monthly_income:
+          description: Weighted average monthly amount after applying the contribution factor.
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+      additionalProperties: false
+      required:
+      - source
+      - total_amount
+      - average_monthly_amount
+      - contribution_factor
+      - contributed_average_monthly_income
+    CurrentCreditCardsBalance:
+      type: object
+      properties:
+        amount:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+    BehavioralMerchantBreakdown:
+      description: Aggregate stats for one merchant.
+      type: object
+      properties:
+        merchant_name:
+          description: Merchant name.
+          type: string
+        transaction_count:
+          description: Number of transactions with this merchant.
+          type: integer
+        total_amount:
+          description: Total spend with this merchant.
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_transaction_amount:
+          description: Average transaction amount with this merchant.
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_monthly_transactions:
+          description: Average monthly transaction count for this merchant across the full analysis window.
+          type: number
+          format: double
+          x-java-type: java.math.BigDecimal
+        average_monthly_transactions_active:
+          description: Average monthly transaction count for this merchant across active months only.
+          type: number
+          format: double
+          x-java-type: java.math.BigDecimal
+        average_monthly_amount:
+          description: Average monthly spend with this merchant across the full analysis window.
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_monthly_amount_active:
+          description: Average monthly spend with this merchant across active months only.
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        first_transaction_date:
+          description: Timestamp of the first transaction with this merchant.
+          type: string
+          format: date-time
+        last_transaction_date:
+          description: Timestamp of the most recent transaction with this merchant.
+          type: string
+          format: date-time
+        active_months:
+          description: Number of months with at least one transaction with this merchant.
+          type: integer
+      required:
+      - merchant_name
+      - transaction_count
+      - total_amount
+      - average_transaction_amount
+      - average_monthly_transactions
+      - average_monthly_transactions_active
+      - average_monthly_amount
+      - average_monthly_amount_active
+      - first_transaction_date
+      - last_transaction_date
+      - active_months
+    IncomeMonthlyTotal:
+      type: object
+      properties:
+        month:
+          description: The month of the reporting period
+          type: integer
+          format: int32
+        year:
+          description: The year of the reporting period
+          type: integer
+          format: int32
+        amount:
+          description: The total amount of transactions in the Month
+          type: number
+        count:
+          description: Number of transactions in the month
+          type: integer
+          format: int32
+        is_month_complete:
+          description: Indicates whether the data for this month is complete
+          type: boolean
+      x-class-extra-annotation: '@lombok.AllArgsConstructor'
+      x-toBuilder: true
+    CreditAssessmentBalance:
+      description: Balance statistics over the analysis period.
+      type: object
+      properties:
+        average_balance:
+          description: Average account balance over the analysis period.
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        minimum_balance:
+          description: Minimum account balance observed during the analysis period.
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        maximum_balance:
+          description: Maximum account balance observed during the analysis period.
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+      additionalProperties: false
+      required:
+      - average_balance
+      - minimum_balance
+      - maximum_balance
+    IncomeSourceType:
+      description: Classification of income source type (combined enum for all income sources)
+      type: string
+      enum:
+      - EMPLOYMENT
+      - RETIREMENT
+      - HOUSING_BENEFIT
+      - GIG_ECONOMY
+      - UNEMPLOYMENT
+      - RENTAL
+      - TRANSFER_FROM_OWN_APPLICATION
+      - STUDENT_STIPEND
+      - INVESTMENTS
+      - CITIZEN_ACCOUNT
+      - SOCIAL_SECURITY
+      - SIDE_BUSINESS
+      - BONUS
+      - CASH_DEPOSIT
+    BigPayments:
+      type: object
+      properties:
+        periods:
+          type: array
+          items:
+            $ref: '#/components/schemas/BigPaymentsPeriod'
+      required:
+      - periods
+    CreditObligationsV2Payload:
+      description: Insights payload wrapper carrying the lender-oriented credit-obligations
+      type: object
+      properties:
+        credit_obligations:
+          description: Lender-oriented credit obligations insights.
+          allOf:
+          - $ref: '#/components/schemas/CreditObligationsV2'
+      additionalProperties: false
+      required:
+      - credit_obligations
+    BehaviorsMerchantSection:
+      description: Merchant breakdown with detected-merchant count.
+      type: object
+      properties:
+        detected_merchant_count:
+          description: Number of distinct merchants detected.
+          type: integer
+        transaction_count:
+          description: Total number of classifiable debit transactions in the analysis window.
+          type: integer
+        breakdown:
+          description: One entry per detected merchant.
+          type: array
+          items:
+            $ref: '#/components/schemas/BehavioralMerchantBreakdown'
+      required:
+      - detected_merchant_count
+      - transaction_count
+      - breakdown
+    EmployerDetails:
+      type: object
+      properties:
+        name:
+          description: Official name of the employer in English and Arabic.
+          allOf:
+          - $ref: '#/components/schemas/Translation'
+        cr_number:
+          description: Employer’s Commercial Registration (CR) number.
+          type:
+          - integer
+          - 'null'
+          format: int64
+    CreditAssessmentRatioIndicator:
+      description: A ratio-based credit indicator including the computed rate, regulatory ceiling, and derived maximum installment.
+      type: object
+      properties:
+        rate:
+          description: The computed ratio as a decimal between 0 and 1.
+          type: number
+        ceiling:
+          description: The regulatory or policy ceiling for this ratio as a decimal between 0 and 1.
+          type: number
+        maximum_monthly_installment:
+          description: The maximum monthly installment the entity can afford based on this ratio and its ceiling.
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+      additionalProperties: false
+      required:
+      - rate
+      - ceiling
+      - maximum_monthly_installment
+    FreelancerInflowsOutflows:
+      type: object
+      properties:
+        total_amount:
+          description: Total amount of inflows/outflows
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        transactions_count:
+          description: Total number of transactions
+          type: integer
+        periods:
+          description: Historical data for different periods
+          type: array
+          items:
+            $ref: '#/components/schemas/FreelancerPeriodFactors'
+    CreditObligationsMonthlyTotal:
+      type: object
+      properties:
+        month:
+          description: The month number (1-12)
+          type: integer
+          format: int32
+        year:
+          description: The year
+          type: integer
+          format: int32
+        is_month_complete:
+          description: Indicates if the month has complete data
+          type: boolean
+        loan_repayments:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/AmountCount'
+        loan_received:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/AmountCount'
+        credit_cards_repayments:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/AmountCount'
+        credit_cards_spending:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/AmountCount'
+        credit_cards_balance:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/BalanceInsights'
+    ExpensesMonthlyAmount:
+      type: object
+      properties:
+        month:
+          description: 'Number of month within the year (e.g.: January is represented as 1 and December is represented as 12)'
+          type: integer
+          format: int32
+        year:
+          description: Year
+          type: integer
+          format: int32
+        amount:
+          description: Total expenses for the month
+          type: number
+          x-java-type: java.math.BigDecimal
+      required:
+      - amount
+    CreditObligationsOverall:
+      description: Aggregate totals across all lenders for a credit activity type.
+      type: object
+      properties:
+        transaction_count:
+          description: Total number of transactions across all lenders.
+          type: integer
+        total_amount:
+          description: Total amount across all transactions.
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_monthly_amount:
+          description: Total amount divided by the number of months in the full analysis window.
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_monthly_amount_active:
+          description: Total amount divided by the number of months that had at least one transaction.
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_monthly_transactions:
+          description: Average number of transactions per month across the full analysis window (all months, not just active months).
+          type: number
+          format: double
+          x-java-type: java.math.BigDecimal
+        active_months:
+          description: Number of months that contained at least one transaction.
+          type: integer
+        lender_count:
+          description: Number of distinct lender organizations detected.
+          type: integer
+        lender_organizations:
+          description: Distinct lender organization names detected.
+          type: array
+          items:
+            type: string
+      additionalProperties: false
+      required:
+      - transaction_count
+      - total_amount
+      - average_monthly_amount
+      - average_monthly_amount_active
+      - average_monthly_transactions
+      - active_months
+      - lender_count
+      - lender_organizations
+    Expenses:
+      type: object
+      properties:
+        currency:
+          description: The 3 Letter ISO code denominating the currency that the salary is provided in. This will be local currency (AED in UAE).
+          type: string
+        total:
+          description: Insights on the expenses since start_date.
+          allOf:
+          - $ref: '#/components/schemas/ExpensesTotal'
+        monthly_totals:
+          description: Total expenses for all months from start_date until today.
+          type: array
+          items:
+            $ref: '#/components/schemas/MonthlyTotalExpenses'
+        transactions:
+          description: List of expense transactions (internal use only, not serialized in API response)
+          type: array
+          items:
+            $ref: '#/components/schemas/ExpensesTransaction'
+          x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonIgnore'
+      additionalProperties: false
+      required:
+      - currency
+      - total
+      - monthly_totals
+      - transactions
+    IncomeTotal:
+      type: object
+      properties:
+        amount:
+          description: The total amount of transactions
+          type: number
+        count:
+          description: The total number of transactions within the time period.
+          type: integer
+          format: int32
+        last_date_time:
+          description: End date for transactions range
+          type: string
+          format: date-time
+        first_date_time:
+          description: Start date for transactions range
+          type: string
+          format: date-time
+        average_monthly_amount:
+          description: The average of all transaction amounts per month within the time period.
+          type: number
+        average_monthly_count:
+          description: The average number of transactions per month within the period.
+          type: number
+        average_monthly_received_value:
+          description: The average received value calculated as total amount divided by the count of months that had income (excluding zero months).
+          type: number
+        maximum_monthly_amount:
+          description: Maximum monthly transaction amount within the period.
+          allOf:
+          - $ref: '#/components/schemas/MonthlyAmount'
+        minimum_monthly_amount:
+          description: Minimum monthly transaction amount within the period.
+          allOf:
+          - $ref: '#/components/schemas/MonthlyAmount'
+      x-toBuilder: true
+    AccountControls:
+      description: 'Account Controls assessment of a connected account: config-independent observable signals, configurable threshold-gate flags, and an aggregated eligibility verdict for underwriting decisions.'
+      type: object
+      properties:
+        signals:
+          $ref: '#/components/schemas/AccountControlsSignals'
+        thresholds:
+          $ref: '#/components/schemas/AccountControlsThresholds'
+        verdict:
+          $ref: '#/components/schemas/AccountControlsVerdict'
+      additionalProperties: false
+      required:
+      - signals
+      - thresholds
+      - verdict
+    IncomeTransaction:
+      type: object
+      properties:
+        account_id:
+          description: The account ID associated with the transaction
+          type: string
+          format: uuid
+        transaction_id:
+          description: The unique transaction identifier
+          type: string
+        transaction_information:
+          description: Additional information about the transaction
+          type: string
+        booking_date_time:
+          description: The date and time when the transaction was booked
+          type: string
+          format: date-time
+        amount:
+          description: The transaction amount
+          type: number
+        income_source:
+          $ref: '#/components/schemas/IncomeSourceDetails'
+      required:
+      - account_id
+      - transaction_id
+      - transaction_information
+      - booking_date_time
+      - amount
+    AmountCount:
+      type: object
+      properties:
+        amount:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        count:
+          description: The total number of transactions
+          type:
+          - integer
+          - 'null'
+          format: int32
+      required:
+      - amount
+    FreelancerCashFlowTotal:
+      type: object
+      properties:
+        current_balance_amount:
+          description: Current balance amount
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_monthly_balance_amount:
+          description: Average monthly balance calculated across available months
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        inflows:
+          $ref: '#/components/schemas/FreelancerInflowsOutflows'
+        outflows:
+          $ref: '#/components/schemas/FreelancerInflowsOutflows'
+    CreditObligationsTotal:
+      type: object
+      properties:
+        loan_repayments:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/AmountCount'
+        minimum_loan_repayment:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        maximum_loan_repayment:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_loan_repayment:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        last_loan_repayment_date_time:
+          description: Date and time of the last loan repayment transaction
+          type:
+          - string
+          - 'null'
+          format: date-time
+        loan_received:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/AmountCount'
+        minimum_loan_received:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        maximum_loan_received:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_loan_received:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        last_loan_received_date_time:
+          description: Date and time of the last loan received transaction
+          type:
+          - string
+          - 'null'
+          format: date-time
+        credit_cards_repayments:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/AmountCount'
+        credit_cards_spending:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/AmountCount'
+        credit_cards_balance:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/BalanceInsights'
+    IncomeFactors:
+      type: object
+      properties:
+        periods:
+          description: Array of income periods with their respective statistics
+          type: array
+          items:
+            $ref: '#/components/schemas/IncomeFactorsPeriod'
+        delta_min_max:
+          description: Ratio of the maximum salary amount to minimum salary amount
+          type: number
+        average_monthly_income_change:
+          description: Average of Percentage Change Month on Month within the time period.
+          type: number
+      x-class-extra-annotation: '@lombok.AllArgsConstructor'
+    BalanceFactorsPeriod:
+      type: object
+      properties:
+        period:
+          description: The time period
+          type: string
+        average_balance:
+          description: The average balance for the period
+          type: number
+      x-class-extra-annotation: '@lombok.AllArgsConstructor'
+    BehaviorsPayload:
+      description: Insights payload wrapper carrying the behavioral aggregations on debit transactions
+      type: object
+      properties:
+        behaviors:
+          allOf:
+          - $ref: '#/components/schemas/Behaviors'
+      required:
+      - behaviors
+    NonCreditObligations:
+      type: object
+      properties:
+        total:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/NonCreditObligationsTotal'
+        monthly_totals:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/NonCreditObligationsMonthlyTotal'
+      additionalProperties: false
+    Translation:
+      type:
+      - object
+      - 'null'
+      properties:
+        en:
+          description: Employer name in English.
+          type: string
+        ar:
+          description: Employer name in Arabic.
+          type: string
+      required:
+      - en
+      - ar
+    CashFlowMonthlyTotal:
+      type: object
+      properties:
+        month:
+          description: The month of the reporting period
+          type: integer
+        year:
+          description: The year of the reporting period
+          type: integer
+        is_month_complete:
+          description: Indicates whether the data for this month is complete
+          type: boolean
+        inwards:
+          type: array
+          items:
+            $ref: '#/components/schemas/CashFlowCategoryAmountCount'
+        outwards:
+          type: array
+          items:
+            $ref: '#/components/schemas/CashFlowCategoryAmountCount'
+        net:
+          $ref: '#/components/schemas/CashFlowNet'
+    CashBalance:
+      type: object
+      properties:
+        total:
+          $ref: '#/components/schemas/CashBalanceTotal'
+        monthly_totals:
+          type: array
+          items:
+            $ref: '#/components/schemas/CashBalanceMonthlyTotal'
+        balance_factors:
+          $ref: '#/components/schemas/BalanceFactors'
+      additionalProperties: false
+    FrequencyTime:
+      description: Frequency of contributions
+      type: string
+      enum:
+      - MONTHLY
+      - WEEKLY
+      - DAILY
+    CategoryMonthlyBreakdownElement:
+      type: object
+      properties:
+        category:
+          description: The category of the transaction.
+          type: string
+        amount:
+          description: Total expenses for the category.
+          type: number
+          x-java-type: java.math.BigDecimal
+        count:
+          description: Number of expenses transactions for the category.
+          type: integer
+          format: int32
+        fraction_of_total_expenses:
+          description: Fraction of the total expenses that this category represents.
+          type: number
+          x-java-type: java.math.BigDecimal
+      required:
+      - category
+      - amount
+    IncomeCategoryPayload:
+      type: object
+      properties:
+        currency:
+          description: Currency of the account
+          type: string
+        total:
+          $ref: '#/components/schemas/IncomeTotal'
+        monthly_totals:
+          type: array
+          items:
+            $ref: '#/components/schemas/IncomeMonthlyTotal'
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/IncomeTransaction'
+        income_factors:
+          $ref: '#/components/schemas/IncomeFactors'
+      additionalProperties: false
+    MonthlyTotalExpenses:
+      type: object
+      properties:
+        month:
+          description: 'Number of month within the year (e.g.: January is represented as 1 and December is represented as 12)'
+          type: integer
+          format: int32
+        year:
+          description: Year.
+          type: integer
+          format: int32
+        amount:
+          description: Total expenses for the month.
+          type: number
+          x-java-type: java.math.BigDecimal
+        count:
+          description: Number of expense transactions in the month.
+          type: integer
+          format: int32
+        is_month_complete:
+          description: Determines if Lean retrieved the data for all days for the month. This will always be `true`, except for the first and last month retrieved.
+          type: boolean
+        breakdown:
+          description: Breakdown of expenses by category.
+          type: array
+          items:
+            $ref: '#/components/schemas/Breakdown'
+      required:
+      - amount
+      - breakdown
+    AccountControlsPayload:
+      description: Insights payload wrapper carrying aggregated eligibility verdict for underwriting decisions
+      type: object
+      properties:
+        account_controls:
+          $ref: '#/components/schemas/AccountControls'
+      additionalProperties: false
+      required:
+      - account_controls
+    Currency:
+      description: The ISO 3 letter currency code
+      type: string
+      examples:
+      - AED
+      pattern: ^[A-Z]{3}$
+    IncomeVerificationResponsePayload:
+      type: object
+      properties:
+        salary:
+          $ref: '#/components/schemas/IncomeCategoryPayload'
+        non_salary:
+          $ref: '#/components/schemas/IncomeCategoryPayload'
+      additionalProperties: false
+    MonthlyAmount:
+      type: object
+      properties:
+        month:
+          description: The transaction month
+          type: integer
+          format: int32
+        year:
+          description: The transaction year
+          type: integer
+          format: int32
+        amount:
+          description: The transaction amount
+          type: number
+      x-class-extra-annotation: '@lombok.AllArgsConstructor'
+    Behaviors:
+      description: 'Behavioral insights aggregating debit transactions over a period: three breakdown sections (by category, by merchant, by location), each carrying its own detected-* counts and entry breakdown.'
+      type: object
+      properties:
+        by_category:
+          $ref: '#/components/schemas/BehaviorsCategorySection'
+        by_merchant:
+          $ref: '#/components/schemas/BehaviorsMerchantSection'
+        by_location:
+          $ref: '#/components/schemas/BehaviorsLocationSection'
+      required:
+      - by_category
+      - by_merchant
+      - by_location
+    FreelancerAccountInformation:
+      type: object
+      properties:
+        account_holder_full_name:
+          description: Full name of the account holder
+          type: string
+        account_holder_short_name:
+          description: Short form of the account holder name
+          type: string
+        account_opening_date:
+          description: Date when the account was opened
+          type: string
+          format: date-time
+    NonCreditObligationsBreakdown:
+      type: object
+      properties:
+        transaction_name:
+          description: Name of the recurring transaction
+          type: string
+        amount:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        count:
+          description: Total number of transactions
+          type: integer
+          format: int64
+        fraction_of_total_obligations:
+          description: Fraction of this transaction type relative to total obligations
+          type:
+          - number
+          - 'null'
+        average_monthly_amount:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_monthly_count:
+          description: Average number of transactions per month
+          type: integer
+          format: int64
+        maximum_monthly_amount:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/NonCreditObligationsMonthlyAmount'
+        minimum_monthly_amount:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/NonCreditObligationsMonthlyAmount'
+      required:
+      - count
+      - average_monthly_count
+    BehaviorsCategorySection:
+      description: Category breakdown with detected-category counts.
+      type: object
+      properties:
+        detected_primary_category_count:
+          description: Number of distinct primary categories detected.
+          type: integer
+        detected_secondary_category_count:
+          description: Number of distinct (primary, secondary) category combinations detected.
+          type: integer
+        transaction_count:
+          description: Total number of classifiable debit transactions in the analysis window.
+          type: integer
+        breakdown:
+          description: One entry per (primary_category, secondary_category) combination.
+          type: array
+          items:
+            $ref: '#/components/schemas/BehavioralCategoryBreakdown'
+      required:
+      - detected_primary_category_count
+      - detected_secondary_category_count
+      - transaction_count
+      - breakdown
+    BigPaymentsPeriod:
+      type: object
+      properties:
+        period:
+          description: The time period
+          type: string
+        average_max_monthly_credit_amount:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_max_monthly_debit_amount:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_max_monthly_credit_debit_amount_ratio:
+          description: The ratio of credit to debit amounts
+          type: number
+      required:
+      - period
+      - average_max_monthly_credit_amount
+      - average_max_monthly_debit_amount
+      - average_max_monthly_credit_debit_amount_ratio
+    CreditAssessmentEmploymentIncome:
+      description: Employment income details for credit assessment.
+      type: object
+      properties:
+        total_amount:
+          description: Total employment income over the analysis period.
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_monthly_amount:
+          description: Average monthly employment income.
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        contribution_factor:
+          description: Factor applied to weight employment income in the overall income calculation. Range is 0.0 to 1.0.
+          type: number
+        contributed_average_monthly_income:
+          description: Weighted average monthly employment income after applying the contribution factor.
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+      additionalProperties: false
+      required:
+      - total_amount
+      - average_monthly_amount
+      - contribution_factor
+      - contributed_average_monthly_income
+    CreditObligationsDisbursementBreakdown:
+      description: Aggregate disbursement stats for a single lender.
+      type: object
+      properties:
+        lender_name:
+          description: Lender organization name.
+          type: string
+        transaction_count:
+          description: Number of disbursement transactions from this lender.
+          type: integer
+        total_amount:
+          description: Total disbursement amount from this lender.
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_monthly_amount:
+          description: Average monthly disbursement amount across the full analysis window.
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_monthly_amount_active:
+          description: Average monthly disbursement amount across active months only.
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        first_transaction_date:
+          description: Date of the first disbursement transaction from this lender.
+          type: string
+          format: date
+        last_transaction_date:
+          description: Date of the most recent disbursement transaction from this lender.
+          type: string
+          format: date
+        active_months:
+          description: Number of months with at least one disbursement from this lender.
+          type: integer
+      additionalProperties: false
+      required:
+      - lender_name
+      - transaction_count
+      - total_amount
+      - average_monthly_amount
+      - average_monthly_amount_active
+      - first_transaction_date
+      - last_transaction_date
+      - active_months
+    CashBalanceOutflowFactors:
+      type: object
+      properties:
+        spike_transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/MonthlyAmount'
+      allOf:
+      - $ref: '#/components/schemas/BaseInflowOutflowFactors'
+      required:
+      - spike_transactions
+      x-child: true
+    AccountControlsThresholds:
+      description: Result of evaluating each configurable gate. A null flag means the gate is not configured/enabled for this client and is excluded from the verdict.
+      type: object
+      properties:
+        meets_minimum_average_salary:
+          description: Detected average salary is greater than or equal to the configured minimum salary.
+          type:
+          - boolean
+          - 'null'
+        meets_minimum_average_non_salary:
+          description: Detected average non-salary income is greater than or equal to the configured minimum non-salary income.
+          type:
+          - boolean
+          - 'null'
+        meets_minimum_account_age:
+          description: account_age_months is greater than or equal to the configured minimum account age.
+          type:
+          - boolean
+          - 'null'
+        meets_minimum_current_balance:
+          description: Current balance is greater than or equal to the configured minimum current balance.
+          type:
+          - boolean
+          - 'null'
+      additionalProperties: false
+      required:
+      - meets_minimum_average_salary
+      - meets_minimum_average_non_salary
+      - meets_minimum_account_age
+      - meets_minimum_current_balance
+    NonCreditObligationsMonthlyTotal:
+      type: object
+      properties:
+        month:
+          description: The month number (1-12)
+          type: integer
+          format: int32
+        year:
+          description: The year
+          type: integer
+          format: int32
+        is_month_complete:
+          description: Indicates if the month has complete data
+          type: boolean
+        amount:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        count:
+          description: Total number of transactions for this month
+          type: integer
+          format: int64
+      required:
+      - count
+    InsightsResult:
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          type:
+            $ref: '#/components/schemas/InsightsResultType'
+          insights:
+            $ref: '#/components/schemas/InsightsPayload'
+    CreditAssessmentPayload:
+      description: Insights payload wrapper carrying the credit evaluation data
+      type: object
+      properties:
+        credit_assessments:
+          $ref: '#/components/schemas/CreditAssessments'
+      additionalProperties: false
+      required:
+      - credit_assessments
+    FreelancerPeriodFactors:
+      type: object
+      properties:
+        period:
+          $ref: '#/components/schemas/Period'
+        total_amount:
+          description: Total amount for the period
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_amount:
+          description: Average amount for the period
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+    ResultStatus:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - RECONNECT_REQUIRED
+      - PROCESSING_STARTED
+    ExpensesTransaction:
+      type: object
+      properties:
+        account_id:
+          description: The account ID for the transaction
+          type: string
+          format: uuid
+        transaction_id:
+          description: The unique transaction identifier
+          type: string
+        transaction_information:
+          description: Additional information about the transaction
+          type:
+          - string
+          - 'null'
+        booking_date_time:
+          description: The date and time when the transaction was booked
+          type: string
+          format: date-time
+        amount:
+          description: The transaction amount
+          type: number
+        category:
+          description: The expense category
+          type: string
+      required:
+      - account_id
+      - transaction_id
+      - booking_date_time
+      - amount
+      - category
+    Period:
+      description: Time period for historical data
+      type: string
+      enum:
+      - P12M
+      - P9M
+      - P6M
+      - P3M
+    FreelancerMonthlyFlows:
+      type: object
+      properties:
+        monthly_average_amount:
+          description: Average of inflow/outflow transactions in the month
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        total_amount:
+          description: Total amount of inflow/outflow transactions in the month
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        transactions_count:
+          description: Total number of inflow/outflow transactions in the month
+          type: integer
+    CreditObligationsRepaymentBreakdown:
+      description: Aggregate repayment stats for a single lender.
+      type: object
+      properties:
+        lender_name:
+          description: Lender organization name.
+          type: string
+        credit_type:
+          description: The type of credit product (e.g. "BNPL").
+          type: string
+        transaction_count:
+          description: Number of repayment transactions with this lender.
+          type: integer
+        total_amount:
+          description: Total repayment amount with this lender.
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_monthly_amount:
+          description: Average monthly repayment amount across the full analysis window.
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_monthly_amount_active:
+          description: Average monthly repayment amount across active months only.
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        first_transaction_date:
+          description: Date of the first repayment transaction with this lender.
+          type: string
+          format: date
+        last_transaction_date:
+          description: Date of the most recent repayment transaction with this lender.
+          type: string
+          format: date
+        active_months:
+          description: Number of months with at least one repayment to this lender.
+          type: integer
+      additionalProperties: false
+      required:
+      - lender_name
+      - credit_type
+      - transaction_count
+      - total_amount
+      - average_monthly_amount
+      - average_monthly_amount_active
+      - first_transaction_date
+      - last_transaction_date
+      - active_months
+    AccountControlsVerdict:
+      description: True only if all enabled thresholds pass
+      type: object
+      properties:
+        eligible:
+          description: True only if all enabled thresholds pass
+          type: boolean
+      additionalProperties: false
+      required:
+      - eligible
+    CreditAssessmentIncome:
+      description: Income components used in credit assessment.
+      type: object
+      properties:
+        employment_income:
+          $ref: '#/components/schemas/CreditAssessmentEmploymentIncome'
+        other_income:
+          $ref: '#/components/schemas/CreditAssessmentOtherIncome'
+        total_contributed_average_monthly_income:
+          description: Average monthly weighted total income across all income sources.
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+      additionalProperties: false
+      required:
+      - employment_income
+      - other_income
+      - total_contributed_average_monthly_income
+    IncomeFactorsPeriod:
+      type: object
+      properties:
+        period:
+          description: The time period
+          type: string
+        income_variation:
+          description: The variation in income for this period
+          type: number
+        average_income:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+    CreditAssessments:
+      description: Credit evaluation data including income, expenses, balance, and computed indicators.
+      type: object
+      properties:
+        income:
+          $ref: '#/components/schemas/CreditAssessmentIncome'
+        expenses:
+          $ref: '#/components/schemas/CreditAssessmentExpenses'
+        balance:
+          $ref: '#/components/schemas/CreditAssessmentBalance'
+        computed_indicators:
+          $ref: '#/components/schemas/CreditAssessmentComputedIndicators'
+      additionalProperties: false
+      required:
+      - income
+      - expenses
+      - balance
+      - computed_indicators
+    CashflowRegularity:
+      type: object
+      properties:
+        days_of_month_numbers:
+          description: The day(s) of the month when the transaction typically occurs.
+          type: array
+          items:
+            type: integer
+        days_of_month_names:
+          description: The day name(s) of the week (e.g. Sunday, Monday) on which the transaction typically occurs.
+          type: array
+          items:
+            type: string
+        interval:
+          $ref: '#/components/schemas/CashflowInterval'
+        average_interval_days:
+          description: The average number of days between transactions.
+          type: number
+        frequency:
+          description: The frequency of the cashflow pattern.
+          type: string
+          enum:
+          - DAILY
+          - WEEKLY
+          - BIWEEKLY
+          - MONTHLY
+          - QUARTERLY
+          - ANNUALLY
+        activity_status:
+          description: 'The lifecycle status of the cashflow pattern within the analysis window: `STARTED_AND_ONGOING` — the pattern first appeared inside the window and is still active; `STARTED_AND_STOPPED` — the pattern both started and stopped within the window; `STOPPED` — the pattern predates the window and has since stopped; `ONGOING` — the pattern predates the window and is still active.'
+          type: string
+          enum:
+          - STARTED_AND_ONGOING
+          - STARTED_AND_STOPPED
+          - STOPPED
+          - ONGOING
+      required:
+      - days_of_month_numbers
+      - days_of_month_names
+      - interval
+      - average_interval_days
+      - frequency
+      - activity_status
+    CreditAssessmentOtherIncome:
+      description: Non-employment income sources for credit assessment.
+      type: object
+      properties:
+        breakdown:
+          description: Breakdown of non-employment income by source.
+          type: array
+          items:
+            $ref: '#/components/schemas/CreditAssessmentOtherIncomeBreakdownItem'
+      additionalProperties: false
+      required:
+      - breakdown
+    ExpensesTotal:
+      type: object
+      properties:
+        count:
+          description: Number of expenses transactions within the time period.
+          type: integer
+          format: int32
+        amount:
+          description: Total expenses since start_date.
+          type: number
+          x-java-type: java.math.BigDecimal
+        first_date_time:
+          description: UTC datetime of first expense transaction since start_date.
+          type: string
+          format: date-time
+        last_date_time:
+          description: UTC datetime of last expense transaction.
+          type: string
+          format: date-time
+        average_monthly_count:
+          description: Average number of expenses transactions per month since start_date.
+          type: number
+        average_monthly_amount:
+          description: Average expenses amount per month since start_date.
+          type: number
+        minimum_monthly_amount:
+          description: Minimum expenses amount in a month since start_date and month when this happened.
+          allOf:
+          - $ref: '#/components/schemas/ExpensesMonthlyAmount'
+        maximum_monthly_amount:
+          description: Maximum expenses amount in a month since start_date and month when this happened.
+          allOf:
+          - $ref: '#/components/schemas/ExpensesMonthlyAmount'
+        breakdown:
+          description: Breakdown of expenses by category.
+          type: array
+          items:
+            $ref: '#/components/schemas/Breakdown'
+      required:
+      - amount
+      - breakdown
+    FreelancerCashFlowMonthlyTotal:
+      type: object
+      properties:
+        month:
+          description: The month of the reporting period from 1 to 12
+          type: integer
+          format: int32
+        year:
+          description: The year of the reporting period
+          type: integer
+          format: int32
+        is_month_complete:
+          description: Indicates whether the data for this month is complete or not
+          type: boolean
+        inflows:
+          $ref: '#/components/schemas/FreelancerMonthlyFlows'
+        outflows:
+          $ref: '#/components/schemas/FreelancerMonthlyFlows'
+        balance:
+          $ref: '#/components/schemas/FreelancerMonthlyBalance'
+      required:
+      - month
+      - year
+      - is_month_complete
+    FreelancerMonthlyBalance:
+      type: object
+      properties:
+        monthly_average_amount:
+          description: Average balance amount for the month
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        initial_balance_amount:
+          description: Initial balance amount at the start of the month
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+    InsightsPayload:
+      oneOf:
+      - $ref: '#/components/schemas/CashflowPatterns'
+      - $ref: '#/components/schemas/IncomeVerificationResponsePayload'
+      - $ref: '#/components/schemas/EmploymentPayload'
+      - $ref: '#/components/schemas/CashFlow'
+      - $ref: '#/components/schemas/CashBalance'
+      - $ref: '#/components/schemas/Expenses'
+      - $ref: '#/components/schemas/CreditObligations'
+      - $ref: '#/components/schemas/NonCreditObligations'
+      - $ref: '#/components/schemas/FreelancerCashFlow'
+      - $ref: '#/components/schemas/BehaviorsPayload'
+      - $ref: '#/components/schemas/CreditObligationsV2Payload'
+      - $ref: '#/components/schemas/CreditAssessmentPayload'
+      - $ref: '#/components/schemas/AccountControlsPayload'
+    BaseInflowOutflowFactors:
+      type: object
+      properties:
+        median_transaction_amount:
+          description: Median of all transactions
+          type: number
+        max_transaction_amount:
+          description: Maximum of all transactions amount
+          type: number
+        min_transaction_amount:
+          description: Minimum of all transactions amount
+          type: number
+        weekday_transaction_count:
+          description: Count of all transactions on weekdays (Mon-Fri)
+          type: integer
+        weekend_transaction_count:
+          description: Count of all transactions on weekend (Sat, Sun)
+          type: integer
+        average_time:
+          description: Average of all transactions time
+          type: number
+        percent_greater_than_x:
+          description: Percentage of all transactions amount greater than X
+          type: number
+        recurring_average:
+          description: Average of all recurring transactions amount
+          type: number
+        median_days:
+          description: Median of difference between transaction dates
+          type: number
+          format: double
+      required:
+      - median_transaction_amount
+      - max_transaction_amount
+      - min_transaction_amount
+      - weekday_transaction_count
+      - weekend_transaction_count
+      - average_time
+      - percent_greater_than_x
+      - recurring_average
+      - median_days
+      x-parent: true
+    EmploymentPayload:
+      type: object
+      properties:
+        employment_details:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmploymentDetails'
+      additionalProperties: false
+    CashflowPattern:
+      type: object
+      properties:
+        credit_debit_indicator:
+          description: Indicates whether the cashflow pattern is a credit or debit.
+          type: string
+          enum:
+          - CREDIT
+          - DEBIT
+        primary_category:
+          description: The primary category of the cashflow pattern.
+          type: string
+        secondary_category:
+          description: The secondary category of the cashflow pattern.
+          type: string
+        counter_party:
+          description: The merchant, employer, sender, or receiver associated with the cashflow pattern.
+          type: string
+        total_amount:
+          description: The total amount across all transactions over the analysis period.
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        transaction_count:
+          description: The total number of transactions over the analysis period.
+          type: integer
+        monthly_totals:
+          description: Monthly breakdown over the analysis period.
+          type: array
+          items:
+            $ref: '#/components/schemas/CashFlowPatternMonthlyTotal'
+        regularity:
+          $ref: '#/components/schemas/CashflowRegularity'
+      required:
+      - credit_debit_indicator
+      - primary_category
+      - secondary_category
+      - counter_party
+      - total_amount
+      - transaction_count
+      - monthly_totals
+      - regularity
+    CreditObligationsDisbursements:
+      description: Disbursement aggregates and breakdown by lender_name.
+      type: object
+      properties:
+        overall:
+          description: Overall disbursement summary across all lenders.
+          allOf:
+          - $ref: '#/components/schemas/CreditObligationsOverall'
+        breakdown:
+          description: One entry per lender that disbursed credit.
+          type: array
+          items:
+            $ref: '#/components/schemas/CreditObligationsDisbursementBreakdown'
+      additionalProperties: false
+      required:
+      - overall
+      - breakdown
+    CategoryTotalBreakdownElement:
+      type: object
+      properties:
+        category:
+          description: The category of the transaction.
+          type: string
+        amount:
+          description: Total expenses for the category.
+          type: number
+          x-java-type: java.math.BigDecimal
+        count:
+          description: Number of expenses transactions within the month.
+          type: integer
+          format: int32
+        fraction_of_total_expenses:
+          description: Fraction of the total expenses that this category represents.
+          type: number
+          x-java-type: java.math.BigDecimal
+        average_days_between_transactions:
+          description: Average number of days between transactions in this category.
+          type: number
+          x-java-type: java.math.BigDecimal
+        last_date_time:
+          description: Date and time of the last transaction in this category.
+          type: string
+          format: date-time
+        first_date_time:
+          description: Date and time of the first transaction in this category.
+          type: string
+          format: date-time
+        average_monthly_amount:
+          description: Average expenses amount per month for this category.
+          type: number
+          x-java-type: java.math.BigDecimal
+        average_monthly_count:
+          description: Average number of transactions per month for this category.
+          type: number
+          x-java-type: java.math.BigDecimal
+        maximum_monthly_amount:
+          description: Maximum expenses amount in a month for this category.
+          allOf:
+          - $ref: '#/components/schemas/ExpensesMonthlyAmount'
+        minimum_monthly_amount:
+          description: Minimum expenses amount in a month for this category.
+          allOf:
+          - $ref: '#/components/schemas/ExpensesMonthlyAmount'
+      required:
+      - category
+      - amount
+      - average_monthly_count
+    CreditAssessmentExpenses:
+      description: Monthly expense breakdown used for credit assessment.
+      type: object
+      properties:
+        average_monthly_credit_repayments:
+          description: Average monthly credit repayment (loan repayments, credit card repayments, etc.).
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_monthly_essential_expenses:
+          description: Average monthly essential expenses (rent, transportation, etc.).
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_monthly_discretionary_expenses:
+          description: Average monthly discretionary expenses (non-essential spending).
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_monthly_total_expenses:
+          description: Average monthly total expenses across all categories.
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        defined_essential_categories:
+          description: List of expense categories classified as essential for this evaluation.
+          type: array
+          items:
+            type: string
+      additionalProperties: false
+      required:
+      - average_monthly_credit_repayments
+      - average_monthly_essential_expenses
+      - average_monthly_discretionary_expenses
+      - average_monthly_total_expenses
+      - defined_essential_categories
+    AccountControlsSignals:
+      description: Config-independent observable facts about the account.
+      type: object
+      properties:
+        account_age_months:
+          description: Months since the account was opened.
+          type: integer
+        is_current_account:
+          description: Whether the account is a current account.
+          type: boolean
+        has_salary_income:
+          description: Whether salaried income was detected.
+          type: boolean
+        has_non_salary_income:
+          description: Whether non-salary income was detected.
+          type: boolean
+        has_inflows:
+          description: Whether any credit (inflow) transaction was detected.
+          type: boolean
+        has_loan_repayments:
+          description: Whether loan-repayment outflows were detected.
+          type: boolean
+        has_loan_disbursements:
+          description: Whether loan-disbursement inflows were detected.
+          type: boolean
+        is_expense_account:
+          description: Whether the account is used primarily for expenses.
+          type: boolean
+      additionalProperties: false
+      required:
+      - account_age_months
+      - is_current_account
+      - has_salary_income
+      - has_non_salary_income
+      - has_inflows
+      - has_loan_repayments
+      - has_loan_disbursements
+      - is_expense_account
+    NonCreditObligationsTotal:
+      type: object
+      properties:
+        amount:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        count:
+          description: Total number of transactions
+          type: integer
+          format: int32
+        first_date_time:
+          description: Date and time of the first transaction
+          type:
+          - string
+          - 'null'
+          format: date-time
+          x-java-type: java.time.Instant
+        last_date_time:
+          description: Date and time of the last transaction
+          type:
+          - string
+          - 'null'
+          format: date-time
+          x-java-type: java.time.Instant
+        average_monthly_amount:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_monthly_count:
+          description: Average number of transactions per month
+          type: number
+        maximum_monthly_amount:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/NonCreditObligationsMonthlyAmount'
+        minimum_monthly_amount:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/NonCreditObligationsMonthlyAmount'
+        breakdown:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/NonCreditObligationsBreakdownBy'
+      required:
+      - average_monthly_amount
+    FreelancerCashFlow:
+      type: object
+      properties:
+        account_information:
+          $ref: '#/components/schemas/FreelancerAccountInformation'
+        total:
+          $ref: '#/components/schemas/FreelancerCashFlowTotal'
+        monthly_totals:
+          description: Monthly breakdown of cashflow data
+          type: array
+          items:
+            $ref: '#/components/schemas/FreelancerCashFlowMonthlyTotal'
+      additionalProperties: false
+    BreakdownElement:
+      oneOf:
+      - $ref: '#/components/schemas/CategoryMonthlyBreakdownElement'
+      - $ref: '#/components/schemas/CategoryTotalBreakdownElement'
+    BehaviorsLocationSection:
+      description: Location breakdown with detected-location count.
+      type: object
+      properties:
+        detected_location_count:
+          description: Number of distinct locations detected.
+          type: integer
+        transaction_count:
+          description: Total number of classifiable debit transactions in the analysis window.
+          type: integer
+        breakdown:
+          description: One entry per detected location.
+          type: array
+          items:
+            $ref: '#/components/schemas/BehavioralLocationBreakdown'
+      required:
+      - detected_location_count
+      - transaction_count
+      - breakdown
+    BalanceFactors:
+      type: object
+      properties:
+        periods:
+          type: array
+          items:
+            $ref: '#/components/schemas/BalanceFactorsPeriod'
+        balance_trend_average_month_on_month:
+          description: Ratio of average percentage of positive balance trends to negative balance trends.
+          type: number
+        current_balance:
+          description: The current balance amount
+          type: number
+        balance_trend:
+          description: Number of times the balance increased month over month
+          type: integer
+        inflow_factors:
+          description: Factors corresponding to all inflow transactions
+          allOf:
+          - $ref: '#/components/schemas/CashBalanceInflowFactors'
+        outflow_factors:
+          description: Factors corresponding to all outflow transactions
+          allOf:
+          - $ref: '#/components/schemas/CashBalanceOutflowFactors'
+        daily_net_cashflow_estimate:
+          description: Total difference between inflows and outflows
+          type: number
+          format: double
+      required:
+      - periods
+      - balance_trend_average_month_on_month
+      - current_balance
+      - balance_trend
+      - inflow_factors
+      - outflow_factors
+      - daily_net_cashflow_estimate
+    BehavioralLocationBreakdown:
+      description: Aggregate stats for one location.
+      type: object
+      properties:
+        location:
+          description: Location name where transactions occurred.
+          type: string
+        transaction_count:
+          description: Number of transactions in this location.
+          type: integer
+        total_amount:
+          description: Total spend in this location.
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_transaction_amount:
+          description: Average transaction amount in this location.
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_monthly_transactions:
+          description: Average monthly transaction count in this location across the full analysis window.
+          type: number
+          format: double
+          x-java-type: java.math.BigDecimal
+        average_monthly_transactions_active:
+          description: Average monthly transaction count in this location across active months only.
+          type: number
+          format: double
+          x-java-type: java.math.BigDecimal
+        average_monthly_amount:
+          description: Average monthly spend in this location across the full analysis window.
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_monthly_amount_active:
+          description: Average monthly spend in this location across active months only.
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        first_transaction_date:
+          description: Timestamp of the first transaction in this location.
+          type: string
+          format: date-time
+        last_transaction_date:
+          description: Timestamp of the most recent transaction in this location.
+          type: string
+          format: date-time
+        active_months:
+          description: Number of months with at least one transaction in this location.
+          type: integer
+      required:
+      - location
+      - transaction_count
+      - total_amount
+      - average_transaction_amount
+      - average_monthly_transactions
+      - average_monthly_transactions_active
+      - average_monthly_amount
+      - average_monthly_amount_active
+      - first_transaction_date
+      - last_transaction_date
+      - active_months
+    CashflowInterval:
+      type: object
+      properties:
+        minimum_days:
+          description: The minimum number of days between transactions.
+          type: integer
+        maximum_days:
+          description: The maximum number of days between transactions.
+          type: integer
+      required:
+      - minimum_days
+      - maximum_days
+    CreditObligations:
+      type: object
+      properties:
+        current_credit_cards_balance:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrentCreditCardsBalance'
+        number_of_credit_cards:
+          description: Total number of credit cards
+          type:
+          - integer
+          - 'null'
+          format: int32
+        total:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CreditObligationsTotal'
+        monthly_totals:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/CreditObligationsMonthlyTotal'
+      additionalProperties: false
+      required:
+      - current_credit_cards_balance
+      - number_of_credit_cards
+      - total
+      - monthly_totals
+    Breakdown:
+      type: object
+      properties:
+        by:
+          description: Criteria by which we are breaking down the expenses.
+          type: string
+        breakdowns:
+          description: List of breakdown elements.
+          type: array
+          items:
+            $ref: '#/components/schemas/BreakdownElement'
+      required:
+      - by
+      - breakdowns
+    CreditDebitBehaviourPeriod:
+      type: object
+      properties:
+        period:
+          description: The time period
+          type: string
+        grand_average_credit_amount:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        grand_average_credit_count:
+          description: The average credit transaction count
+          type: integer
+        grand_average_debit_amount:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        grand_average_debit_count:
+          description: The average debit transaction count
+          type: integer
+        grand_average_credit_debit_amount_ratio:
+          description: The ratio of credit to debit amounts
+          type: number
+        grand_average_credit_debit_count_ratio:
+          description: The ratio of credit to debit transaction counts
+          type: number
+        total_volume_of_credit:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        total_volume_of_debit:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        total_volume_of_credit_debit_ratio:
+          description: The ratio of total credit to debit volumes
+          type: number
+      required:
+      - period
+      - grand_average_credit_amount
+      - grand_average_credit_count
+      - grand_average_debit_amount
+      - grand_average_debit_count
+      - grand_average_credit_debit_amount_ratio
+      - grand_average_credit_debit_count_ratio
+      - total_volume_of_credit
+      - total_volume_of_debit
+      - total_volume_of_credit_debit_ratio
+    CashFlowPatternMonthlyTotal:
+      type: object
+      properties:
+        month:
+          description: The month in YYYY-MM format.
+          type: string
+          examples:
+          - 2026-01
+        amount:
+          description: The total amount for this month.
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        transaction_count:
+          description: The number of transactions in this month.
+          type: integer
+      required:
+      - month
+      - amount
+      - transaction_count
+    BalanceInsights:
+      type: object
+      properties:
+        average_balance:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        initial_balance:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        current_balance:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        available_balance:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        frequency_of_contributions:
+          description: Frequency of balance contributions (MONTHLY, WEEKLY, or DAILY)
+          type:
+          - string
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/FrequencyTime'
+    CashBalanceInflowFactors:
+      type: object
+      properties:
+        percent_salary_transaction:
+          description: Percentage of salary inflows
+          type: number
+      allOf:
+      - $ref: '#/components/schemas/BaseInflowOutflowFactors'
+      required:
+      - pct_salary
+      x-child: true
+    StatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        granular_status_code:
+          description: Granular status code
+          type:
+          - string
+          - 'null'
+        status_additional_info:
+          description: Additional information about the status
+          type:
+          - string
+          - 'null'
+    BehavioralCategoryBreakdown:
+      description: Aggregate stats for one (primary_category, secondary_category) combination.
+      type: object
+      properties:
+        primary_category:
+          description: Primary category name.
+          type: string
+        secondary_category:
+          description: Secondary category name.
+          type: string
+        merchant_names:
+          description: Distinct merchant names observed within this category.
+          type: array
+          items:
+            type: string
+        merchant_count:
+          description: Number of distinct merchants in this category.
+          type: integer
+        total_amount:
+          description: Total spend within this category.
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_transaction_amount:
+          description: Average amount per transaction in this category.
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        transaction_count:
+          description: Number of transactions in this category.
+          type: integer
+        average_monthly_transactions:
+          description: Average monthly transaction count across the full analysis window.
+          type: number
+          format: double
+          x-java-type: java.math.BigDecimal
+        average_monthly_transactions_active:
+          description: Average monthly transaction count across months that had at least one transaction in this category.
+          type: number
+          format: double
+          x-java-type: java.math.BigDecimal
+        average_monthly_amount:
+          description: Average monthly spend across the full analysis window.
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_monthly_amount_active:
+          description: Average monthly spend across active months only.
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        first_transaction_date:
+          description: Timestamp of the first transaction in this category.
+          type: string
+          format: date-time
+        last_transaction_date:
+          description: Timestamp of the most recent transaction in this category.
+          type: string
+          format: date-time
+        active_months:
+          description: Number of months with at least one transaction in this category.
+          type: integer
+      required:
+      - primary_category
+      - secondary_category
+      - merchant_names
+      - merchant_count
+      - total_amount
+      - average_transaction_amount
+      - transaction_count
+      - average_monthly_transactions
+      - average_monthly_transactions_active
+      - average_monthly_amount
+      - average_monthly_amount_active
+      - first_transaction_date
+      - last_transaction_date
+      - active_months
+    CashBalanceMonthlyTotal:
+      type: object
+      properties:
+        month:
+          description: The month of the reporting period
+          type: integer
+        year:
+          description: The year of the reporting period
+          type: integer
+        is_month_complete:
+          description: Indicates whether the data for this month is complete
+          type: boolean
+        monthly_growth_rate:
+          description: The growth rate for the month
+          type: number
+        contribution_amount:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_balance:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        initial_balance:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+    CashFlow:
+      type: object
+      properties:
+        total:
+          type: object
+          properties:
+            inwards:
+              type: array
+              items:
+                $ref: '#/components/schemas/CashFlowCategoryAmountCount'
+            outwards:
+              type: array
+              items:
+                $ref: '#/components/schemas/CashFlowCategoryAmountCount'
+            net:
+              $ref: '#/components/schemas/CashFlowNet'
+        monthly_totals:
+          type: array
+          items:
+            $ref: '#/components/schemas/CashFlowMonthlyTotal'
+        credit_debit_behaviour:
+          $ref: '#/components/schemas/CreditDebitBehaviour'
+        big_payments:
+          $ref: '#/components/schemas/BigPayments'
+      additionalProperties: false
+    NonCreditObligationsBreakdownBy:
+      type: object
+      properties:
+        by:
+          description: The breakdown category type (e.g., RECURRING_TRANSACTIONS)
+          type: string
+        breakdowns:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/NonCreditObligationsBreakdown'
+    IncomeSourceDetails:
+      type:
+      - object
+      - 'null'
+      properties:
+        type:
+          description: The type of income source
+          allOf:
+          - $ref: '#/components/schemas/IncomeSourceType'
+        name:
+          description: The name of the employer or the source of the incoming transaction if available
+          type: string
+      x-class-extra-annotation: '@lombok.AllArgsConstructor'
+  examples:
+    InsightsTransactionRangeNotGrantedExample:
+      summary: Requested dates outside granted transaction range
+      description: Returned with HTTP 403 when the requested analysis window falls outside the date range the customer granted access to.
+      value:
+        status: FAILED
+        results_id: e1b8f4d2-7c3a-4e9b-8d2f-6a1c3b5d8e02
+        message: Your customer has not granted you access to transaction data for the dates you are requesting. You define the dates of transactions you are able to access in the connect() flow in the SDK by defining the parameters access_to and access_from. You can query which date range you are allowed to access by using the Get Entity request.
+        timestamp: '2026-03-01T12:00:00Z'
+        status_detail:
+          granular_status_code: USER_TRANSACTION_RANGE_NOT_GRANTED
+          status_additional_info: Your customer has not granted you access to transaction data for the dates you are requesting. You define the dates of transactions you are able to access in the connect() flow in the SDK by defining the parameters access_to and access_from. You can query which date range you are allowed to access by using the Get Entity request.
+    InsightsTimeoutExample:
+      summary: Insight still processing
+      description: Returned with HTTP 408 when the insight is still being computed and the synchronous request timed out. Retry shortly.
+      value:
+        status: FAILED
+        results_id: b4e2d8f6-1a3c-4b7d-9f2e-4d6c8b1a3e15
+        message: Insight is still processing, please try again later
+        timestamp: '2026-03-01T12:00:00Z'
+        status_detail:
+          granular_status_code: TIMEOUT
+          status_additional_info: The request has timed out.
+    InsightsUnknownEntityExample:
+      summary: Entity not found
+      description: Returned with HTTP 404 when the provided entity_id does not match an account in our records.
+      value:
+        status: FAILED
+        results_id: f2c9a5e3-8d4b-4f1c-9e3a-7b2d4c6e9f13
+        message: The entity_id provided did not match an account in our records.
+        timestamp: '2026-03-01T12:00:00Z'
+        status_detail:
+          granular_status_code: UNKNOWN_ENTITY
+          status_additional_info: The entity_id provided did not match an account in our records.
+    InsightsInternalServerErrorExample:
+      summary: Internal server error
+      description: Returned with HTTP 500 when an unexpected server error occurs.
+      value:
+        status: FAILED
+        results_id: c5f3e9a7-2b4d-4c8e-9a3f-5e7d9c2b4f26
+        message: Something has gone wrong. If you continue to see this error, please get in touch with Lean.
+        timestamp: '2026-03-01T12:00:00Z'
+        status_detail:
+          granular_status_code: INTERNAL_SERVER_ERROR
+          status_additional_info: Something has gone wrong. If you continue to see this error, please get in touch with Lean.
+    InsightsInvalidParametersExample:
+      summary: Invalid parameters (start_date after end_date)
+      description: Returned with HTTP 400 when start_date is after end_date or a parameter is otherwise invalid.
+      value:
+        status: FAILED
+        results_id: b3c1e6a2-9d4f-4f7a-8c21-1f0d9a6e2b44
+        message: start_date 2026-03-10 must not be after end_date 2026-01-10
+        timestamp: '2026-03-01T12:00:00Z'
+        status_detail:
+          granular_status_code: INVALID_PARAMETERS
+          status_additional_info: The request provided invalid parameters.
+    InsightsDataNotFoundExample:
+      summary: Insight data not found
+      description: Returned with HTTP 404 when no insight data could be found for the entity over the requested window.
+      value:
+        status: FAILED
+        results_id: a3d1c7e5-9f2b-4a6c-8e1d-3c5b7a9e2f04
+        message: Data not found
+        timestamp: '2026-03-01T12:00:00Z'
+        status_detail:
+          granular_status_code: DATA_NOT_FOUND
+          status_additional_info: The data requested could not be found
+    InsightsUserPermissionsNotGrantedExample:
+      summary: Permissions not granted
+      description: Returned with HTTP 403 when the customer has not granted accounts and transactions permissions.
+      value:
+        status: FAILED
+        results_id: c7f2d1b8-3a5e-4c9d-9b6f-2e8a1c4d7f30
+        message: You do not have the required permissions from your customer to make this call.
+        timestamp: '2026-03-01T12:00:00Z'
+        status_detail:
+          granular_status_code: USER_PERMISSIONS_NOT_GRANTED
+          status_additional_info: You do not have the required permissions from your customer to make this call.
+    InsightsConsentExpiredExample:
+      summary: Consent expired or revoked
+      description: Returned with HTTP 403 when the entity's consent was suspended, revoked, or expired.
+      value:
+        status: FAILED
+        results_id: d4a9e3c1-6b2f-4d8a-9c1e-5f7b2a3d6e91
+        message: Consent was suspended, revoked, or expired. New consent is required, please connect the entity once again.
+        timestamp: '2026-03-01T12:00:00Z'
+        status_detail:
+          granular_status_code: CONSENT_EXPIRED
+          status_additional_info: Consent was suspended, revoked, or expired. New consent is required, please connect the entity once again.
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

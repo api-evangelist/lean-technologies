@@ -1,0 +1,201 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Pending & Asynchronous Requests API
+  version: v0.2.3
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Pending & Asynchronous Requests
+  x-displayName: Pending & Asynchronous Requests
+paths:
+  /data/v2/results/{results_id}:
+    servers: []
+    get:
+      operationId: getResultsV2
+      summary: Get Results
+      description: "Get the results for an asynchronous response. Note that the request will\nnot work for results_id that have been returned with a synchronous\nrequest, i.e.: it will work only when you receive a response for any API\nwhere status=PENDING and then receive a webhook. \n**Note: it's recommended to use the sync flow (async=false) for all request by adapting the new data workflow.**\n"
+      parameters:
+      - $ref: '#/components/parameters/ResultsIdParameter'
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/PageParameter'
+      - $ref: '#/components/parameters/SizeParameter'
+      - $ref: '#/components/parameters/EntityIdParameter'
+      - $ref: '#/components/parameters/MetaParameter'
+      responses:
+        '200':
+          description: Get results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    description: The status of the request.
+                    type: string
+                    enum:
+                    - OK
+                    - FAILED
+                    - PENDING
+                    - RECONNECT_REQUIRED
+                  data:
+                    description: The payload corresponding to the result requested, the schema of object depends on the original request was made to and it will be matching its response schema
+                    type: object
+                    properties: {}
+                  results_id:
+                    description: The ID for this result, this is used when retrieving results from the /results endpoint.
+                    type: string
+                  timestamp:
+                    description: The timestamp of when the response was retrieved
+                    type: string
+                  type:
+                    description: The endpoint the original request was made to.
+                    type: string
+                required:
+                - status
+                - results_id
+                - timestamp
+                - data
+                - type
+              examples:
+                '200':
+                  summary: Success
+                  value:
+                    status: OK
+                    results_id: 2caa051e-04e2-4745-b50a-5133c99ce046
+                    message: Data successfully retrieved
+                    meta: null
+                    timestamp: '2025-09-13T00:27:07.322969021Z'
+                    status_detail: null
+                    data:
+                      accounts:
+                      - entity_id: b7fe8c0c-212b-4168-a2e7-479f5a57e668
+                        account_id: 20132874-5e62-4fed-9ae8-9e7763814224
+                        status: DISABLED
+                        status_update_date_time: '2025-03-21T07:03:03Z'
+                        currency: SAR
+                        account_type: PERSONAL
+                        account_sub_type: CURRENT
+                        nickname: null
+                        description: null
+                        opening_date: '2025-03-11'
+                        maturity_date: null
+                        account:
+                        - scheme_name: IBAN
+                          identification: SA4820000123456789012345
+                          name: AHMED MOHAMMAD ALI SALEM
+                        - scheme_name: BBAN
+                          identification: 077030010006084567890
+                          name: AHMED MOHAMMAD ALI SALEM
+                        - scheme_name: OTHER
+                          identification: '1110987654'
+                          name: AHMED MOHAMMAD ALI SALEM
+                        servicer:
+                          scheme_name: BICFI
+                          identification: RJHISARI
+                      page:
+                        number: 0
+                        size: 50
+                        total_elements: 1
+                        total_pages: 1
+                      type: accounts
+                    type: accounts
+                    refreshed_at: '2025-08-07T08:08:29.794Z'
+        '404':
+          description: Result not found
+          content:
+            application/json:
+              examples:
+                UnknownResultExample:
+                  $ref: '#/components/examples/UnknownResultExample'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                InternalServerErrorExample:
+                  $ref: '#/components/examples/InternalServerErrorExample'
+      deprecated: false
+      tags:
+      - Pending & Asynchronous Requests
+components:
+  parameters:
+    AsyncParameter:
+      name: async
+      in: query
+      description: 'When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. **Note: it''s recommended to use the sync flow (async=false) for all requests by adapting the [data workflow](https://docs.leantech.me/docs/data-workflow) for connected entities.**'
+      required: false
+      schema:
+        type: boolean
+        default: false
+      deprecated: true
+    PageParameter:
+      name: page
+      in: query
+      description: The page you're requesting - returns page 0 of a response if not specified.
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+    ResultsIdParameter:
+      name: results_id
+      in: path
+      description: results_id was returned from a request with `async=true`
+      required: true
+      example: 549fd28b-1268-4ab3-a34d-bed7d4710c00
+      schema:
+        type: string
+        format: uuid
+    SizeParameter:
+      name: size
+      description: The number of objects you want to return as a page size.
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 50
+        maximum: 100
+        minimum: 1
+    EntityIdParameter:
+      name: entity_id
+      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
+      in: query
+      required: false
+      schema:
+        type: string
+        format: uuid
+    MetaParameter:
+      name: meta
+      description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
+      in: query
+      required: false
+      schema:
+        type: string
+  examples:
+    UnknownResultExample:
+      summary: Result not found error response
+      description: Response when the provided result_id is not found
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-10T21:03:05.413806605Z'
+        status: UNKNOWN_RESULTS_ID
+        message: The results_id provided has not been recognized by Lean or has not been processed yet
+        metadata: null
+    InternalServerErrorExample:
+      summary: Internal server error response
+      description: Response when an unexpected server error occurs
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-08-07T13:07:38.834977945Z'
+        status: INTERNAL_SERVER_ERROR
+        message: Something has gone wrong. If you continue to see this error, please get in touch with Lean.
+        metadata: null
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

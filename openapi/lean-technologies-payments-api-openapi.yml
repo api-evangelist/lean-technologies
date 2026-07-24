@@ -1,0 +1,149 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Payments API
+  version: v0.2.3
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Payments
+  x-displayName: Payments
+paths:
+  /payments/v1/{payment_id}:
+    get:
+      operationId: getPaymentById
+      summary: Get Payment
+      description: Fetch a single payment
+      parameters:
+      - name: payment_id
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+              example:
+                id: 88c4d3e8-b80c-cd46-ac56-f084879744d6
+                payment_intent_id: 30caf494-d6e0-d83e-907b-9393361c3895
+                payment_source_id: 8d98c54d-b11f-4f39-52bb-6065dc0f4749
+                sender_details:
+                  account_number: 0101929293
+                  iban: AE132353311P10164V8R3
+                  name: Dwight Schrute
+                recipient_details:
+                  account_number: 0192929827
+                  iban: AE23QQWD1004305268319738
+                  name: Michael Gary Scott
+                amount: 3448.38
+                currency: AED
+                description: 30caf494d6e0d83e907b9393361c3895
+                submission_timestamp: '2024-09-19T11:43:08.933Z'
+                initiation_timestamp: '2024-09-19T11:43:17.683Z'
+                status: ACCEPTED_BY_BANK
+                bank_transaction_reference: WD100430526831
+      deprecated: false
+      tags:
+      - Payments
+components:
+  schemas:
+    Payment:
+      type: object
+      properties:
+        id:
+          description: The unique identifier for this payment.
+          type: string
+          format: uuid
+        payment_intent_id:
+          description: The Payment Intent identifier responsible for generating the Payment.
+          type: string
+          format: uuid
+        payment_source_id:
+          description: The identifier for the payment source object from which the payment was initiatied.
+          type: string
+          format: uuid
+        sender_details:
+          description: The account details for the customer sending the payment. Includes account number, name of the account holder and IBAN.
+          type: object
+          properties:
+            account_number:
+              type: string
+            iban:
+              type: string
+            name:
+              type: string
+          required:
+          - account_number
+          - iban
+          - name
+        recipient_details:
+          description: Details for the recipient of the Payment, generated from the details available in the payment_destination.
+          type: object
+          properties:
+            account_number:
+              type: string
+            iban:
+              type: string
+            name:
+              type: string
+          required:
+          - account_number
+          - iban
+          - name
+        amount:
+          description: The amount the charge was initiated for.
+          type: number
+        currency:
+          description: The currency the payment was initiated with.
+          type: string
+        description:
+          description: The description submitted to the bank as a reference when initiating a payment. Can be used for reconciliation. By default this value is a the Payment Intent UUID without hyphens but you can also specify the description upon creation of a payment intent.
+          type: string
+        submission_timestamp:
+          description: The time the Payment Initiation was submitted.
+          type: string
+          format: date-time
+        initiation_timestamp:
+          description: The time the Payment Initiation was started.
+          type: string
+          format: date-time
+        status:
+          description: 'The current status of the payment - see Payments Errors for a list of available MFAs. '
+          type: string
+          enum:
+          - AWAITING_LOGIN_MFA
+          - AWAITING_PAYMENT_MFA
+          - AWAITING_APP_AUTH
+          - FAILED
+          - PENDING_WITH_BANK
+          - ACCEPTED_BY_BANK
+        bank_transaction_reference:
+          description: The transaction reference number supplied by the initiating bank on successful initiation of a transfer. Can be used for reconciliation.
+          type: string
+      required:
+      - id
+      - payment_intent_id
+      - payment_source_id
+      - sender_details
+      - recipient_details
+      - amount
+      - currency
+      - description
+      - submission_timestamp
+      - initiation_timestamp
+      - status
+      - bank_transaction_reference
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

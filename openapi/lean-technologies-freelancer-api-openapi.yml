@@ -1,0 +1,466 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Freelancer API
+  version: v0.2.3
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Freelancer
+  x-displayName: Freelancer
+paths:
+  /insights/v2/assets/freelancers/cashflows:
+    servers: []
+    get:
+      operationId: getFreelancersCashflows
+      summary: Get Freelancer Cashflow Data
+      description: 'The Freelancer Cashflow Insights API provides access to freelancers'' certified income data.
+
+        It offers insights into total and monthly cash inflows (filtered based on income verification logic) and outflows.
+
+        '
+      parameters:
+      - name: entity_id
+        in: query
+        description: The `entity_id` you're querying for.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: start_date
+        in: query
+        description: The start date in UTC (in the format YYYY-MM-DD) you want to query transactions for. Defaults to start_date of consent transaction range.
+        required: false
+        schema:
+          type: string
+          format: date
+        x-field-extra-annotation: '@jakarta.validation.constraints.PastOrPresent'
+      - name: async
+        in: query
+        description: 'When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. Note: it''''s recommended to use the sync flow (async=false) for all requests by adapting the data workflow for connected entities.'
+        required: false
+        schema:
+          type: boolean
+          default: false
+        deprecated: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Result'
+                - properties:
+                    insights:
+                      $ref: '#/components/schemas/FreelancerCashFlow'
+                    type:
+                      $ref: '#/components/schemas/InsightsResultType'
+                  type: object
+              examples:
+                successfulFreelancerCashflow:
+                  summary: Successful freelancer cashflow retrieval with insights
+                  value:
+                    status: OK
+                    results_id: 085d1619-c8fb-488e-b362-ebc1abefc573
+                    message: Data successfully retrieved
+                    meta: null
+                    timestamp: '2026-02-09T06:15:42.742984477Z'
+                    status_detail: null
+                    type: freelancer-cashflow
+                    insights:
+                      account_information:
+                        account_holder_full_name: Ahmed Mohammed Al-Saud
+                        account_holder_short_name: Ahmed
+                        account_opening_date: '2023-01-15T00:00:00Z'
+                      total:
+                        current_balance_amount:
+                          currency: SAR
+                          amount: 186720.18
+                        average_monthly_balance_amount:
+                          currency: SAR
+                          amount: 150127.95
+                        inflows:
+                          total_amount:
+                            currency: SAR
+                            amount: 1453.66
+                          transactions_count: 3
+                          periods:
+                          - period: P12M
+                            total_amount:
+                              currency: SAR
+                              amount: 1453.66
+                            average_amount:
+                              currency: SAR
+                              amount: 121.14
+                          - period: P6M
+                            total_amount:
+                              currency: SAR
+                              amount: 1453.66
+                            average_amount:
+                              currency: SAR
+                              amount: 242.28
+                          - period: P3M
+                            total_amount:
+                              currency: SAR
+                              amount: 1453.66
+                            average_amount:
+                              currency: SAR
+                              amount: 484.55
+                        outflows:
+                          total_amount:
+                            currency: SAR
+                            amount: 113946.62
+                          transactions_count: 291
+                          periods:
+                          - period: P12M
+                            total_amount:
+                              currency: SAR
+                              amount: 113946.62
+                            average_amount:
+                              currency: SAR
+                              amount: 9495.55
+                          - period: P6M
+                            total_amount:
+                              currency: SAR
+                              amount: 113946.62
+                            average_amount:
+                              currency: SAR
+                              amount: 18991.1
+                          - period: P3M
+                            total_amount:
+                              currency: SAR
+                              amount: 113946.62
+                            average_amount:
+                              currency: SAR
+                              amount: 37982.21
+                      monthly_totals:
+                      - month: 1
+                        year: 2026
+                        is_month_complete: true
+                        inflows:
+                          monthly_average_amount:
+                            currency: SAR
+                            amount: 0
+                          total_amount:
+                            currency: SAR
+                            amount: 0
+                          transactions_count: 0
+                        outflows:
+                          monthly_average_amount:
+                            currency: SAR
+                            amount: 0
+                          total_amount:
+                            currency: SAR
+                            amount: 0
+                          transactions_count: 0
+                        balance:
+                          monthly_average_amount:
+                            currency: SAR
+                            amount: 149213.14
+                          initial_balance_amount:
+                            currency: SAR
+                            amount: 149213.14
+                      - month: 2
+                        year: 2026
+                        is_month_complete: false
+                        inflows:
+                          monthly_average_amount:
+                            currency: SAR
+                            amount: 484.55
+                          total_amount:
+                            currency: SAR
+                            amount: 1453.66
+                          transactions_count: 3
+                        outflows:
+                          monthly_average_amount:
+                            currency: SAR
+                            amount: 391.57
+                          total_amount:
+                            currency: SAR
+                            amount: 113946.62
+                          transactions_count: 291
+                        balance:
+                          monthly_average_amount:
+                            currency: SAR
+                            amount: 153380.59
+                          initial_balance_amount:
+                            currency: SAR
+                            amount: 149213.14
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FreelancerCashFlowResult'
+              examples:
+                pendingFreelancer:
+                  summary: Request accepted and processing
+                  value:
+                    status: PENDING
+                    results_id: 97a23607-29b0-4ad6-9f26-3c1a5efa65da
+                    message: Please wait for a webhook or try again later.
+                    meta: null
+                    timestamp: '2026-01-08T11:57:14.909323921Z'
+                    status_detail: null
+                    insights: {}
+        '501':
+          $ref: '#/components/responses/UnsupportedByBankResponse'
+      tags:
+      - Freelancer
+components:
+  schemas:
+    ResultStatus:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - PROCESSING_STARTED
+    Result:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ResultStatus'
+        results_id:
+          description: The unique identifier for the request
+          type: string
+          format: uuid
+        message:
+          description: A message describing the status of the request
+          type: string
+        meta:
+          description: Meta information about the request
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: string
+        timestamp:
+          description: The datetime of when the request was made
+          type: string
+          format: date-time
+        status_detail:
+          description: Additional information about the status
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/StatusDetail'
+      required:
+      - status
+      - results_id
+      - message
+      - timestamp
+    FreelancerPeriodFactors:
+      type: object
+      properties:
+        period:
+          $ref: '#/components/schemas/Period'
+        total_amount:
+          description: Total amount for the period
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_amount:
+          description: Average amount for the period
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+    FreelancerCashFlowResult:
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          insights:
+            type:
+            - object
+            - 'null'
+            allOf:
+            - $ref: '#/components/schemas/FreelancerCashFlow'
+    Period:
+      description: Time period for historical data
+      type: string
+      enum:
+      - P12M
+      - P9M
+      - P6M
+      - P3M
+    FreelancerInflowsOutflows:
+      type: object
+      properties:
+        total_amount:
+          description: Total amount of inflows/outflows
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        transactions_count:
+          description: Total number of transactions
+          type: integer
+        periods:
+          description: Historical data for different periods
+          type: array
+          items:
+            $ref: '#/components/schemas/FreelancerPeriodFactors'
+    FreelancerMonthlyFlows:
+      type: object
+      properties:
+        monthly_average_amount:
+          description: Average of inflow/outflow transactions in the month
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        total_amount:
+          description: Total amount of inflow/outflow transactions in the month
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        transactions_count:
+          description: Total number of inflow/outflow transactions in the month
+          type: integer
+    Currency:
+      description: The ISO 3 letter currency code
+      type: string
+      examples:
+      - AED
+      pattern: ^[A-Z]{3}$
+    FreelancerCashFlowTotal:
+      type: object
+      properties:
+        current_balance_amount:
+          description: Current balance amount
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_monthly_balance_amount:
+          description: Average monthly balance calculated across available months
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        inflows:
+          $ref: '#/components/schemas/FreelancerInflowsOutflows'
+        outflows:
+          $ref: '#/components/schemas/FreelancerInflowsOutflows'
+    StatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        granular_status_code:
+          description: Granular status code
+          type:
+          - string
+          - 'null'
+        status_additional_info:
+          description: Additional information about the status
+          type:
+          - string
+          - 'null'
+    CurrencyAmount:
+      type: object
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          description: The amount of money in the currency specified.
+          type: number
+      required:
+      - currency
+      - amount
+    FreelancerCashFlow:
+      type: object
+      properties:
+        account_information:
+          $ref: '#/components/schemas/FreelancerAccountInformation'
+        total:
+          $ref: '#/components/schemas/FreelancerCashFlowTotal'
+        monthly_totals:
+          description: Monthly breakdown of cashflow data
+          type: array
+          items:
+            $ref: '#/components/schemas/FreelancerCashFlowMonthlyTotal'
+      additionalProperties: false
+    FreelancerCashFlowMonthlyTotal:
+      type: object
+      properties:
+        month:
+          description: The month of the reporting period from 1 to 12
+          type: integer
+          format: int32
+        year:
+          description: The year of the reporting period
+          type: integer
+          format: int32
+        is_month_complete:
+          description: Indicates whether the data for this month is complete or not
+          type: boolean
+        inflows:
+          $ref: '#/components/schemas/FreelancerMonthlyFlows'
+        outflows:
+          $ref: '#/components/schemas/FreelancerMonthlyFlows'
+        balance:
+          $ref: '#/components/schemas/FreelancerMonthlyBalance'
+      required:
+      - month
+      - year
+      - is_month_complete
+    InsightsResultType:
+      description: type of insight
+      type: string
+      enum:
+      - income
+      - employment
+      - cashflow
+      - credits-obligations
+      - non-credits-obligations
+      - expenses
+      - cash-balances
+      - freelancer-cashflow
+      - behaviors
+      - cashflow-patterns
+      - credit-assessments
+      - account-controls
+      - credit-obligations
+    FreelancerMonthlyBalance:
+      type: object
+      properties:
+        monthly_average_amount:
+          description: Average balance amount for the month
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        initial_balance_amount:
+          description: Initial balance amount at the start of the month
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+    FreelancerAccountInformation:
+      type: object
+      properties:
+        account_holder_full_name:
+          description: Full name of the account holder
+          type: string
+        account_holder_short_name:
+          description: Short form of the account holder name
+          type: string
+        account_opening_date:
+          description: Date when the account was opened
+          type: string
+          format: date-time
+  responses:
+    UnsupportedByBankResponse:
+      description: Not Implemented
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Result'
+          examples:
+            unsupportedByBank:
+              summary: Sync requests not supported by bank
+              value:
+                results_id: 5e99047e-c45f-4aef-9cae-837e52aaa415
+                timestamp: '2026-01-08T12:54:57.100547167Z'
+                status: FAILED
+                message: Sync requests are not supported
+                metadata: null
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

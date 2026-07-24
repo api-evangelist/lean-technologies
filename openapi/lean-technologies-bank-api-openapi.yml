@@ -1,0 +1,356 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Bank API
+  version: v0.2.3
+  description: Bank discovery and configuration operations
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Bank
+  description: Bank discovery and configuration operations
+paths:
+  /banks/v1:
+    get:
+      operationId: getBanks
+      summary: List Banks
+      description: Fetch a list of all supported Banks for your application, includes status and configuration information.
+      parameters:
+      - name: lean-link-sandbox
+        in: header
+        description: Indicates sandbox vs live environment
+        required: false
+        schema:
+          type: string
+      - name: customer_id
+        in: query
+        description: Scopes the returned banks to those enabled for the given customer. Used to control bank rollout on a per-customer basis, so that newly onboarded banks can be exposed to selected customers before being made generally available.
+        required: false
+        schema:
+          type: string
+          format: uuid
+          examples:
+          - f1b2c3d4-5e6f-7a8b-9c0d-1e2f3a4b5c6d
+      - name: bank_type
+        in: query
+        description: 'Specifies whether the Entity is a Retail or Corporate owned account. '
+        required: false
+        schema:
+          $ref: '#/components/schemas/BankType'
+        deprecated: true
+      - name: account_types
+        in: query
+        description: Filters the results to banks that support at least one of the specified account types.
+        required: false
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/BankAccountType'
+          examples:
+          - - PERSONAL
+            - BUSINESS
+      - name: country_codes
+        in: query
+        description: Filters the results to banks located in the specified countries. Values must be alpha-3 (3 character) ISO 3166 country codes.
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          examples:
+          - - SAU
+            - ARE
+      - name: connection_types
+        in: query
+        description: Filters the results to banks that use one of the specified connection types.
+        required: false
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectionType'
+          examples:
+          - - OPEN_BANKING
+            - DIRECT_CONNECTION
+      responses:
+        '200':
+          description: List of banks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Bank'
+              example:
+              - account_type: PERSONAL
+                active: true
+                arabic_name: بنك الرياض
+                availability:
+                  active:
+                    data: true
+                    payments: true
+                  enabled:
+                    data: true
+                    payments: true
+                background_color: '#ffffff'
+                bank_type: RETAIL
+                commercial_name: Riyad Bank
+                commercial_name_arabic: بنك الرياض
+                connection_type: OPEN_BANKING
+                country_code: SAU
+                identifier: RIYAD_SAU
+                international_destinations: []
+                international_transfer_limits: []
+                logo: https://cdn.leantech.me/img/bank-assets/sau/glyphs/riyad/g-white-riyad_sau.png
+                logo_alt: https://cdn.leantech.me/img/bank-assets/sau/glyphs/riyad/g-color-riyad_sau.png
+                main_color: '#16AD98'
+                mock: false
+                name: Riyad Bank
+                relates_to: null
+                supported_account_sub_types:
+                - CHARGE_CARD
+                - CREDIT
+                - CURRENT
+                - EMONEY
+                - LOAN
+                - MORTGAGE
+                - PREPAID
+                - SAVINGS
+                - CALL
+                supported_account_types:
+                - CHARGE_CARD
+                - CREDIT
+                - CURRENT
+                - EMONEY
+                - LOAN
+                - MORTGAGE
+                - PREPAID
+                - SAVINGS
+                - CALL
+                swift_code: RIBLSARI
+                theme: dark
+                traits:
+                - auth-redirect
+                transfer_limits:
+                - currency: AED
+                  min: 10
+                  max: 100000
+      deprecated: false
+      tags:
+      - Bank
+components:
+  schemas:
+    ConnectionType:
+      description: The type of connection used by the bank for data access.
+      type: string
+      enum:
+      - REVERSE_ENGINEERED
+      - OPEN_BANKING
+      - DIRECT_CONNECTION
+    BankAvailability:
+      description: Whether the Bank is currently available for use with the Payments and Data API. Changes to this status trigger banks.availability.updated webhooks.
+      type: object
+      properties:
+        active:
+          description: Whether Lean has enabled the or disabled the Bank for Payments and Data functionality. When this is false, Lean has taken the bank offline due to stability, maintenance or regulatory reasons.
+          type: object
+          properties:
+            payments:
+              type: boolean
+            data:
+              type: boolean
+          required:
+          - payments
+          - data
+        enabled:
+          description: Whether the bank has been enabled in the application dashboard or not. If you want to hide a bank or disable it from use for any reason - you can log in to the [Application Dashboard](https://dev.leantech.me) to enable and disable visibility and functionality of a bank on your platform.
+          type: object
+          properties:
+            payments:
+              type: boolean
+            data:
+              type: boolean
+          required:
+          - payments
+          - data
+      required:
+      - active
+      - enabled
+    BankType:
+      description: Specifies whether the bank is for retail or business (SME) customers.
+      type: string
+      deprecated: true
+      enum:
+      - RETAIL
+      - SME
+    TransferLimit:
+      type: object
+      properties:
+        currency:
+          description: The ISO 4217 currency code for the currency.
+          type: string
+        min:
+          description: The minimum supported transfer amount.
+          type: number
+        max:
+          description: The maximum supported transfer amount.
+          type: number
+      required:
+      - currency
+      - min
+      - max
+    BankAccountSubType:
+      description: Specifies the sub type of account, i.e. product family group such as CURRENT, SAVINGS, CREDIT.
+      type: string
+      enum:
+      - CHARGE_CARD
+      - CREDIT
+      - CURRENT
+      - EMONEY
+      - LOAN
+      - MORTGAGE
+      - PREPAID
+      - SAVINGS
+      - CALL
+    Bank:
+      type: object
+      properties:
+        identifier:
+          description: The unique identifier for the bank.
+          type: string
+        name:
+          description: The user-friendly name of the bank.
+          type: string
+        arabic_name:
+          description: Arabic string for the bank name
+          type: string
+        commercial_name:
+          description: The commercial / branded name of the bank in English.
+          type:
+          - string
+          - 'null'
+        commercial_name_arabic:
+          description: The commercial / branded name of the bank in Arabic.
+          type:
+          - string
+          - 'null'
+        logo:
+          description: A black logo for the bank.
+          type: string
+        logo_alt:
+          description: A white logo for the bank
+          type: string
+        main_color:
+          description: The hex code for the main brand colour for the bank.
+          type: string
+        background_color:
+          description: The hex code for the secondary brand colour for the bank.
+          type: string
+        theme:
+          description: Indicates the color for any overlayed text to ensure contrast
+          type: string
+        country_code:
+          description: The 3 letter ISO for the country the bank is located in.
+          type: string
+        swift_code:
+          description: The SWIFT/BIC code for the bank.
+          type:
+          - string
+          - 'null'
+        active:
+          description: Whether the Bank is currently operational.
+          type: boolean
+        mock:
+          description: Whether the Bank is a mock bank.
+          type: boolean
+        traits:
+          description: An array of traits that are used internally to determine the type of bank connection.
+          type: array
+          items:
+            type: string
+        supported_account_types:
+          description: Indicates the account types Lean supports for this bank.
+          type: array
+          items:
+            $ref: '#/components/schemas/BankAccountSubType'
+          deprecated: true
+        supported_account_sub_types:
+          description: Indicates the account sub-types Lean supports for this bank.
+          type: array
+          items:
+            $ref: '#/components/schemas/BankAccountSubType'
+        bank_type:
+          description: If the bank identifier corresponds to a retail or SME bank.
+          allOf:
+          - $ref: '#/components/schemas/BankType'
+          deprecated: true
+        transfer_limits:
+          description: An array of key-value pairs for supported currencies and their associated transfer limits with the bank.
+          type: array
+          items:
+            $ref: '#/components/schemas/TransferLimit'
+        international_transfer_limits:
+          description: A list of objects representing the limits for transactions to international destinations. These limits apply to all transfers to international payments.
+          type: array
+          items:
+            $ref: '#/components/schemas/TransferLimit'
+        international_destinations:
+          description: A list of objects representing international destinations to where Lean can initiate international payments for this bank.
+          type: array
+          items:
+            type: object
+            properties:
+              country_iso_code:
+                description: The alpha-3 (3 character) ISO 3166 country code for the destination country the bank can initiate transactions to.
+                type: string
+              country_name:
+                description: The name of the destination country the bank can initiate transactions to.
+                type: string
+              supported_currencies:
+                description: A list of supported currencies the bank can initiate transactions to that destination
+                type: array
+                items:
+                  type: string
+        connection_type:
+          $ref: '#/components/schemas/ConnectionType'
+        relates_to:
+          description: Identifiers of related banks. Used to pair an Open Banking bank with its reverse-engineered counterpart (and vice versa) when the same institution is reachable via both connection types.
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+        account_type:
+          $ref: '#/components/schemas/BankAccountType'
+        availability:
+          $ref: '#/components/schemas/BankAvailability'
+      required:
+      - identifier
+      - name
+      - logo
+      - logo_alt
+      - main_color
+      - background_color
+      - theme
+      - country_code
+      - active
+      - traits
+      - supported_account_types
+      - transfer_limits
+      - international_transfer_limits
+      - international_destinations
+      - availability
+      - arabic_name
+    BankAccountType:
+      description: Specifies the type of account (PERSONAL or BUSINESS).
+      type: string
+      enum:
+      - PERSONAL
+      - BUSINESS
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

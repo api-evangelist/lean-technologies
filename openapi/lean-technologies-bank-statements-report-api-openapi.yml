@@ -1,0 +1,200 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Bank Statements Report API
+  version: v0.2.3
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Bank Statements Report
+paths:
+  /insights/v2/customers/{customer_id}/reports/bank-statements:
+    post:
+      summary: Create Bank Statements Report
+      deprecated: false
+      description: ''
+      operationId: createBankStatementsReport
+      tags:
+      - Bank Statements Report
+      parameters:
+      - name: customer_id
+        in: path
+        description: ''
+        required: true
+        example: ''
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBankStatementsReportRequestBody'
+            examples: {}
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateReportResponseBody'
+          headers: {}
+      security:
+      - bearer: []
+  /insights/v2/customers/{customer_id}/reports/bank-statements/{report_id}:
+    get:
+      summary: Get Bank Statements Report
+      deprecated: false
+      description: ''
+      operationId: getBankStatementsReport
+      tags:
+      - Bank Statements Report
+      parameters:
+      - name: customer_id
+        in: path
+        description: ''
+        required: true
+        example: ''
+        schema:
+          type: string
+          format: uuid
+      - name: report_id
+        in: path
+        description: ''
+        required: true
+        example: ''
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetBankStatementsReportResponseBody'
+          headers: {}
+      security:
+      - bearer: []
+components:
+  schemas:
+    ReportStatus:
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+    CreateReportResponseBody:
+      type: object
+      properties:
+        report_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum:
+          - PENDING
+      required:
+      - report_id
+      - status
+    GetBankStatementsReportResponseBody:
+      allOf:
+      - $ref: '#/components/schemas/GetReportResponseBody'
+      - type: object
+        properties:
+          report:
+            allOf:
+            - $ref: '#/components/schemas/BankStatementsReport'
+            type: 'null'
+    BankStatementsReport:
+      type: object
+      properties:
+        properties:
+          type: object
+          properties:
+            start_date:
+              type: string
+              format: date
+              description: Start date for transactions range
+            end_date:
+              type: string
+              format: date
+              description: End date for transactions range
+            account_sub_types:
+              type:
+              - array
+              - 'null'
+              items:
+                type: string
+              description: Account sub types to include in the statements, if undefined all sub types will be included
+          required:
+          - start_date
+          - end_date
+        banks:
+          type: array
+          items:
+            type: object
+            properties: {}
+      required:
+      - properties
+      - banks
+    CreateBankStatementsReportRequestBody:
+      type: object
+      properties:
+        start_date:
+          type: string
+          format: date
+          description: Start date for transactions range
+        end_date:
+          type: string
+          format: date
+          description: End date for transactions range
+        account_sub_types:
+          type:
+          - array
+          - 'null'
+          items:
+            type:
+            - string
+            - 'null'
+            enum:
+            - CHARGE_CARD
+            - CREDIT
+            - CURRENT
+            - EMONEY
+            - LOAN
+            - MORTGAGE
+            - PREPAID
+            - SAVINGS
+            - CALL
+          description: Account sub types to include in the statements, if undefined all sub types will be included
+      required:
+      - start_date
+      - end_date
+    GetReportResponseBody:
+      type: object
+      properties:
+        report_id:
+          type: string
+          format: uuid
+        status:
+          $ref: '#/components/schemas/ReportStatus'
+        status_detail:
+          allOf:
+          - type: object
+            properties: {}
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - report_id
+      - status
+      - created_at
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

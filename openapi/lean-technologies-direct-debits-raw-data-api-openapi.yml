@@ -1,0 +1,435 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Direct Debits Raw Data API
+  version: v0.2.3
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Direct Debits Raw Data
+  x-displayName: Direct Debits Raw Data
+paths:
+  /data/v2/accounts/{account_id}/direct-debits:
+    servers: []
+    get:
+      operationId: fetchDirectDebits
+      summary: Get Direct Debits
+      description: "Get the direct debits for a specific account given an accountId.\nThe accountId can be found by making a call to the /accounts endpoint.  \nRequires the following permissions: `direct_debits`\n"
+      parameters:
+      - $ref: '#/components/parameters/AccountIdParameter'
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/PageParameter'
+      - $ref: '#/components/parameters/SizeParameter'
+      - $ref: '#/components/parameters/EntityIdParameter'
+      - $ref: '#/components/parameters/MetaParameter'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DirectDebitsResult'
+              examples:
+                Get_Direct_Debits_KSA_Example:
+                  summary: Successful get direct debits - KSA
+                  value:
+                    status: OK
+                    results_id: b3c4d5e6-7f80-9012-bcde-f12345678901
+                    message: Data successfully retrieved
+                    meta: null
+                    timestamp: '2025-09-13T11:15:30.456789012Z'
+                    status_detail: null
+                    data:
+                      direct_debits:
+                      - entity_id: a5b23e1f-67d8-42c9-a815-98f4c7e36d92
+                        account_id: 53fd3763-8089-4a85-ac26-b66c8d0a950a
+                        direct_debit_id: d2d02d19-1c3a-47df-b72e-4d776da59578
+                        name: Saudi Electricity Company
+                        status_code: ACTIVE
+                        frequency: MONTHLY
+                        mandate_identification: SAMA-DD-SEC-00048219
+                        previous_payment_date_time: '2025-08-31T21:05:12Z'
+                        previous_payment_amount:
+                          currency: SAR
+                          amount: 248.7
+                      - entity_id: a5b23e1f-67d8-42c9-a815-98f4c7e36d92
+                        account_id: 53fd3763-8089-4a85-ac26-b66c8d0a950a
+                        direct_debit_id: 07da6f91-4a23-4ccb-a1f0-9d9057295d9d
+                        name: stc
+                        status_code: ACTIVE
+                        frequency: MONTHLY
+                        mandate_identification: SAMA-DD-STC-00119384
+                        previous_payment_date_time: '2025-08-29T07:40:03Z'
+                        previous_payment_amount:
+                          currency: SAR
+                          amount: 199.75
+                      page:
+                        number: 0
+                        size: 20
+                        total_elements: 2
+                        total_pages: 1
+                      type: direct-debits
+                    type: direct-debits
+                    refreshed_at: '2025-09-13T11:10:25.123456789Z'
+                BankIssueExample:
+                  summary: Example response for bank issue
+                  value:
+                    status: FAILED
+                    results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+                    message: Your bank is currently experiencing technological problems. Please try again later.
+                    meta: null
+                    timestamp: '2025-09-12T05:13:49.739987382Z'
+                    status_detail:
+                      granular_status_code: BANK_ISSUE
+                      status_additional_info: Your bank is currently experiencing technological problems. Please try again later.
+                    data: null
+                    type: null
+                    refreshed_at: null
+        '202':
+          description: Accepted (Asynchronous request)
+          content:
+            application/json:
+              examples:
+                GetV2AsyncExample:
+                  $ref: '#/components/examples/AsyncProcessingV2Example'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                InvalidParametersExample:
+                  $ref: '#/components/examples/InvalidParametersExample'
+        '404':
+          description: Account or entity not found
+          content:
+            application/json:
+              examples:
+                UnknownAccountExample:
+                  $ref: '#/components/examples/UnknownAccountExample'
+                UnknownEntityExample:
+                  $ref: '#/components/examples/UnknownEntityExample'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                InternalServerErrorExample:
+                  $ref: '#/components/examples/InternalServerErrorExample'
+      tags:
+      - Direct Debits Raw Data
+components:
+  schemas:
+    DirectDebitsData:
+      type:
+      - object
+      - 'null'
+      properties:
+        type:
+          description: The endpoint the original request was made to.
+          type: string
+          const: direct-debits
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+        direct_debits:
+          description: List of direct debits for an Account
+          type: array
+          items:
+            $ref: '#/components/schemas/DirectDebit'
+      required:
+      - type
+      x-toBuilder: true
+    DataResult:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          refreshed_at:
+            description: The datetime of when the data was refreshed
+            type:
+            - string
+            - 'null'
+            format: date-time
+          type:
+            description: The endpoint the original request was made to.
+            type:
+            - string
+            - 'null'
+    Currency:
+      description: The ISO 3 letter currency code
+      type: string
+      examples:
+      - AED
+      pattern: ^[A-Z]{3}$
+    PageMetadata:
+      description: Metadata about the current page of results
+      type: object
+      properties:
+        number:
+          description: The current page being returned by the API
+          type: integer
+          format: int32
+        size:
+          description: The page size requested
+          type: integer
+          format: int32
+        total_elements:
+          description: The total number of elements in all pages
+          type: integer
+          format: int64
+        total_pages:
+          description: The total number of pages retrievable
+          type: integer
+          format: int32
+        sort:
+          description: Sort parameters applied to the results
+          type: array
+          items:
+            type: string
+      required:
+      - number
+      - size
+      - total_elements
+      - total_pages
+    Frequency:
+      description: Regularity with which direct debit instructions are to be created and processed.
+      type: string
+      enum:
+      - MONTHLY
+      - QUARTERLY
+      - HALF_YEARLY
+      - ANNUAL
+      - FORTNIGHTLY
+      - DAILY
+      - WEEKLY
+      - NOT_KNOWN
+      - UNSUPPORTED
+    CurrencyAmount:
+      type: object
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          description: The amount of money in the currency specified.
+          type: number
+      required:
+      - currency
+      - amount
+    Result:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ResultStatus'
+        results_id:
+          description: The unique identifier for the request
+          type: string
+          format: uuid
+        message:
+          description: A message describing the status of the request
+          type: string
+        meta:
+          description: Meta information about the request
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: string
+        timestamp:
+          description: The datetime of when the request was made
+          type: string
+          format: date-time
+        status_detail:
+          description: Additional information about the status
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/StatusDetail'
+      required:
+      - status
+      - results_id
+      - message
+      - timestamp
+    DirectDebitsResult:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/DataResult'
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/DirectDebitsData'
+    ResultStatus:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - RECONNECT_REQUIRED
+      - PROCESSING_STARTED
+    DirectDebit:
+      type: object
+      properties:
+        entity_id:
+          description: The unique identifier for the entity. Provided as a UUID.
+          type: string
+          format: uuid
+        account_id:
+          description: The account_id this direct debit is related to.
+          type: string
+        direct_debit_id:
+          description: A unique identifier of the direct debit resource. This identifier has no meaning to the account owner.
+          type: string
+        name:
+          description: This is the name of the regulated beneficiary entity that initiates the Direct Debit collection.
+          type: string
+        status_code:
+          $ref: '#/components/schemas/StatusCode'
+        frequency:
+          $ref: '#/components/schemas/Frequency'
+        mandate_identification:
+          description: Direct Debit reference. For AUDDIS service users provide Core Reference. For non AUDDIS service users provide Core reference if possible or last used reference.
+          type: string
+        previous_payment_date_time:
+          description: Date of most recent direct debit collection.
+          type: string
+          format: date-time
+        previous_payment_amount:
+          description: The amount of the most recent direct debit collection.
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+      x-builder: true
+    StatusCode:
+      description: Specifies the status of the direct debit in code form.
+      type: string
+      enum:
+      - ACTIVE
+      - INACTIVE
+      - UNSUPPORTED
+    StatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        granular_status_code:
+          description: Granular status code
+          type:
+          - string
+          - 'null'
+        status_additional_info:
+          description: Additional information about the status
+          type:
+          - string
+          - 'null'
+  examples:
+    InternalServerErrorExample:
+      summary: Internal server error response
+      description: Response when an unexpected server error occurs
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-08-07T13:07:38.834977945Z'
+        status: INTERNAL_SERVER_ERROR
+        message: Something has gone wrong. If you continue to see this error, please get in touch with Lean.
+        metadata: null
+    UnknownAccountExample:
+      summary: Account not found error response
+      description: Response when the provided account_id does not match an account for the entity_id
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-11T18:55:42.579432745Z'
+        status: UNKNOWN_ACCOUNT
+        message: The account_id provided does not match an account with the entity_id provided.
+        metadata: null
+    UnknownEntityExample:
+      summary: Entity not found error response
+      description: Response when the provided entity_id is not found
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-10T21:03:05.413806605Z'
+        status: UNKNOWN_ENTITY
+        message: The entity_id provided did not match an account in our records.
+        metadata: null
+    InvalidParametersExample:
+      summary: Invalid parameters error response
+      description: Response when required parameters are missing or invalid
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-10T21:05:59.919233187Z'
+        status: INVALID_PARAMETERS
+        message: 'The request is badly formatted or a parameter of the wrong type has been provided, field: entity_id, value: e34d8e49-9af2-4252-a53e-bd2df855134.'
+        metadata: null
+    AsyncProcessingV2Example:
+      summary: Asynchronous processing response with async=true
+      description: Response to request with async=true
+      value:
+        status: PENDING
+        results_id: df73d596-7138-46df-af96-cbcbe9a8af59
+        message: Please wait for a webhook or try again later.
+        meta: null
+        timestamp: '2025-09-11T19:15:07.829993148Z'
+        status_detail: null
+        data: null
+        type: null
+        refreshed_at: null
+  parameters:
+    MetaParameter:
+      name: meta
+      description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
+      in: query
+      required: false
+      schema:
+        type: string
+    AccountIdParameter:
+      name: account_id
+      description: The account_id used to fetch requested data
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    SizeParameter:
+      name: size
+      description: The number of objects you want to return as a page size.
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 50
+        maximum: 100
+        minimum: 1
+    EntityIdParameter:
+      name: entity_id
+      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
+      in: query
+      required: false
+      schema:
+        type: string
+        format: uuid
+    AsyncParameter:
+      name: async
+      in: query
+      description: 'When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. **Note: it''s recommended to use the sync flow (async=false) for all requests by adapting the [data workflow](https://docs.leantech.me/docs/data-workflow) for connected entities.**'
+      required: false
+      schema:
+        type: boolean
+        default: false
+      deprecated: true
+    PageParameter:
+      name: page
+      in: query
+      description: The page you're requesting - returns page 0 of a response if not specified.
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

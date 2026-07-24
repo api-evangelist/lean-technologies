@@ -1,0 +1,810 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Liabilities API
+  version: v0.2.3
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Liabilities
+  x-displayName: Liabilities
+paths:
+  /insights/v2/liabilities/credit-obligations:
+    servers: []
+    get:
+      operationId: getCreditObligations
+      summary: Get Credit Obligations
+      description: The Credit Obligations API allows you to fetch a businesses debt obligations, including loan repayments, credit card usage, and balances. You can use this to understand a company's credit exposure, repayment behaviour, and overall financial health.
+      parameters:
+      - name: entity_id
+        in: query
+        description: The `entity_id` you're querying for.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: start_date
+        in: query
+        description: The start date in UTC (in the format YYYY-MM-DD) you want to query credit obligations for.
+        required: true
+        schema:
+          type: string
+          format: date
+        x-field-extra-annotation: '@jakarta.validation.constraints.PastOrPresent'
+      - name: async
+        in: query
+        description: 'When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. Note: it''''s recommended to use the sync flow (async=false) for all requests by adapting the data workflow for connected entities.'
+        required: false
+        schema:
+          type: boolean
+          default: true
+        deprecated: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    insights:
+                      $ref: '#/components/schemas/CreditObligations'
+                    type:
+                      $ref: '#/components/schemas/InsightsResultType'
+                  type: object
+              examples:
+                creditObligationsResponse:
+                  summary: Credit Obligations Response
+                  value:
+                    status: OK
+                    results_id: 6cdf799f-6beb-4fb5-a9de-bf07771c8da3
+                    message: Data successfully retrieved
+                    meta: null
+                    timestamp: '2026-01-19T07:19:41.702056182Z'
+                    status_detail: null
+                    type: credits-obligations
+                    insights:
+                      current_credit_cards_balance:
+                        amount:
+                          currency: AED
+                          amount: 8039.76
+                      number_of_credit_cards: 3
+                      total:
+                        loan_repayments:
+                          amount:
+                            currency: AED
+                            amount: 0
+                          count: 0
+                        minimum_loan_repayment: null
+                        maximum_loan_repayment: null
+                        average_loan_repayment: null
+                        last_loan_repayment_date_time: null
+                        loan_received:
+                          amount:
+                            currency: AED
+                            amount: 0
+                          count: 0
+                        minimum_loan_received: null
+                        maximum_loan_received: null
+                        average_loan_received: null
+                        last_loan_received_date_time: null
+                        credit_cards_repayments:
+                          amount:
+                            currency: AED
+                            amount: 570046.48
+                          count: 196
+                        credit_cards_spending:
+                          amount:
+                            currency: AED
+                            amount: 271495.84
+                          count: 791
+                        credit_cards_balance:
+                          average_balance:
+                            currency: AED
+                            amount: 2861.68
+                          initial_balance:
+                            currency: AED
+                            amount: 1885.49
+                      monthly_totals:
+                      - month: 9
+                        year: 2025
+                        is_month_complete: true
+                        loan_repayments:
+                          amount:
+                            currency: AED
+                            amount: 0
+                          count: 0
+                        loan_received:
+                          amount:
+                            currency: AED
+                            amount: 0
+                          count: 0
+                        credit_cards_repayments:
+                          amount:
+                            currency: AED
+                            amount: 384511.84
+                          count: 112
+                        credit_cards_spending:
+                          amount:
+                            currency: AED
+                            amount: 92379.16
+                          count: 282
+                        credit_cards_balance:
+                          average_balance:
+                            currency: AED
+                            amount: 3173.85
+                          initial_balance:
+                            currency: AED
+                            amount: 6861.54
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              examples:
+                pendingResult:
+                  summary: Request accepted and processing
+                  value:
+                    status: PENDING
+                    results_id: 97a23607-29b0-4ad6-9f26-3c1a5efa65da
+                    message: Please wait for a webhook or try again later.
+                    meta: null
+                    timestamp: '2026-01-08T11:57:14.909323921Z'
+                    status_detail: null
+        '501':
+          $ref: '#/components/responses/UnsupportedByBankResponse'
+      tags:
+      - Liabilities
+      x-spring-response-entity: true
+  /insights/v2/liabilities/non-credit-obligations:
+    servers: []
+    get:
+      operationId: getNonCreditObligations
+      summary: Get Non-Credit Obligations
+      description: The Non Credit Obligations API allows you to fetch a recurring personal obligations, including labor wage, monthly external and domestic remittances.
+      parameters:
+      - name: entity_id
+        in: query
+        description: The `entity_id` you're querying for.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: start_date
+        in: query
+        description: The start date in UTC (in the format YYYY-MM-DD) you want to query non-credit obligations for.
+        required: true
+        schema:
+          type: string
+          format: date
+        x-field-extra-annotation: '@jakarta.validation.constraints.PastOrPresent'
+      - name: async
+        in: query
+        description: 'When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. Note: it''''s recommended to use the sync flow (async=false) for all requests by adapting the data workflow for connected entities.'
+        required: false
+        schema:
+          type: boolean
+          default: true
+        deprecated: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    insights:
+                      $ref: '#/components/schemas/NonCreditObligations'
+                    type:
+                      $ref: '#/components/schemas/InsightsResultType'
+                  type: object
+              examples:
+                nonCreditObligationsResponse:
+                  summary: Non-Credit Obligations Response
+                  value:
+                    status: OK
+                    results_id: a7c3d545-5416-3e4f-ce53-fc9d5158bd89
+                    message: Data successfully retrieved
+                    meta: null
+                    timestamp: '2024-09-16T06:40:16.995409316Z'
+                    status_detail: null
+                    type: non-credits-obligations
+                    insights:
+                      total:
+                        amount:
+                          currency: AED
+                          amount: 125000.5
+                        count: 48
+                        first_date_time: '2024-01-01T00:00:00Z'
+                        last_date_time: '2024-09-15T00:00:00Z'
+                        average_monthly_amount:
+                          currency: AED
+                          amount: 15625.06
+                        average_monthly_count: 6
+                        maximum_monthly_amount:
+                          month: September
+                          amount:
+                            currency: AED
+                            amount: 235114.03
+                        minimum_monthly_amount:
+                          month: October
+                          amount:
+                            currency: AED
+                            amount: 1457.63
+                        breakdown:
+                        - by: RECURRING_TRANSACTIONS
+                          breakdowns:
+                          - transaction_name: Labor Wage Payment
+                            amount:
+                              currency: AED
+                              amount: 85000
+                            count: 24
+                            fraction_of_total_obligations: 0.68
+                            average_monthly_amount:
+                              currency: AED
+                              amount: 10625
+                            average_monthly_count: 3
+                            maximum_monthly_amount:
+                              month: September
+                              amount:
+                                currency: AED
+                                amount: 15000
+                            minimum_monthly_amount:
+                              month: January
+                              amount:
+                                currency: AED
+                                amount: 8000
+                          - transaction_name: Domestic Remittance
+                            amount:
+                              currency: AED
+                              amount: 40000.5
+                            count: 24
+                            fraction_of_total_obligations: 0.32
+                            average_monthly_amount:
+                              currency: AED
+                              amount: 5000.06
+                            average_monthly_count: 3
+                      monthly_totals:
+                      - month: 1
+                        year: 2024
+                        is_month_complete: true
+                        amount:
+                          currency: AED
+                          amount: 15000
+                        count: 6
+                      - month: 2
+                        year: 2024
+                        is_month_complete: true
+                        amount:
+                          currency: AED
+                          amount: 12300
+                        count: 5
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              examples:
+                pendingResult:
+                  summary: Request accepted and processing
+                  value:
+                    status: PENDING
+                    results_id: 97a23607-29b0-4ad6-9f26-3c1a5efa65da
+                    message: Please wait for a webhook or try again later.
+                    meta: null
+                    timestamp: '2026-01-08T11:57:14.909323921Z'
+                    status_detail: null
+        '501':
+          $ref: '#/components/responses/UnsupportedByBankResponse'
+      tags:
+      - Liabilities
+      x-spring-response-entity: true
+components:
+  schemas:
+    NonCreditObligations:
+      type: object
+      properties:
+        total:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/NonCreditObligationsTotal'
+        monthly_totals:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/NonCreditObligationsMonthlyTotal'
+      additionalProperties: false
+    FrequencyTime:
+      description: Frequency of contributions
+      type: string
+      enum:
+      - MONTHLY
+      - WEEKLY
+      - DAILY
+    Currency:
+      description: The ISO 3 letter currency code
+      type: string
+      examples:
+      - AED
+      pattern: ^[A-Z]{3}$
+    CreditObligationsMonthlyTotal:
+      type: object
+      properties:
+        month:
+          description: The month number (1-12)
+          type: integer
+          format: int32
+        year:
+          description: The year
+          type: integer
+          format: int32
+        is_month_complete:
+          description: Indicates if the month has complete data
+          type: boolean
+        loan_repayments:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/AmountCount'
+        loan_received:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/AmountCount'
+        credit_cards_repayments:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/AmountCount'
+        credit_cards_spending:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/AmountCount'
+        credit_cards_balance:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/BalanceInsights'
+    NonCreditObligationsBreakdown:
+      type: object
+      properties:
+        transaction_name:
+          description: Name of the recurring transaction
+          type: string
+        amount:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        count:
+          description: Total number of transactions
+          type: integer
+          format: int64
+        fraction_of_total_obligations:
+          description: Fraction of this transaction type relative to total obligations
+          type:
+          - number
+          - 'null'
+        average_monthly_amount:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_monthly_count:
+          description: Average number of transactions per month
+          type: integer
+          format: int64
+        maximum_monthly_amount:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/NonCreditObligationsMonthlyAmount'
+        minimum_monthly_amount:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/NonCreditObligationsMonthlyAmount'
+      required:
+      - count
+      - average_monthly_count
+    CurrencyAmount:
+      type: object
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          description: The amount of money in the currency specified.
+          type: number
+      required:
+      - currency
+      - amount
+    NonCreditObligationsTotal:
+      type: object
+      properties:
+        amount:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        count:
+          description: Total number of transactions
+          type: integer
+          format: int32
+        first_date_time:
+          description: Date and time of the first transaction
+          type:
+          - string
+          - 'null'
+          format: date-time
+          x-java-type: java.time.Instant
+        last_date_time:
+          description: Date and time of the last transaction
+          type:
+          - string
+          - 'null'
+          format: date-time
+          x-java-type: java.time.Instant
+        average_monthly_amount:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_monthly_count:
+          description: Average number of transactions per month
+          type: number
+        maximum_monthly_amount:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/NonCreditObligationsMonthlyAmount'
+        minimum_monthly_amount:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/NonCreditObligationsMonthlyAmount'
+        breakdown:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/NonCreditObligationsBreakdownBy'
+      required:
+      - average_monthly_amount
+    InsightsResultType:
+      description: type of insight
+      type: string
+      enum:
+      - income
+      - employment
+      - cashflow
+      - credits-obligations
+      - non-credits-obligations
+      - expenses
+      - cash-balances
+      - freelancer-cashflow
+      - behaviors
+      - cashflow-patterns
+      - credit-assessments
+      - account-controls
+      - credit-obligations
+    Result:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ResultStatus'
+        results_id:
+          description: The unique identifier for the request
+          type: string
+          format: uuid
+        message:
+          description: A message describing the status of the request
+          type: string
+        meta:
+          description: Meta information about the request
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: string
+        timestamp:
+          description: The datetime of when the request was made
+          type: string
+          format: date-time
+        status_detail:
+          description: Additional information about the status
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/StatusDetail'
+      required:
+      - status
+      - results_id
+      - message
+      - timestamp
+    NonCreditObligationsMonthlyAmount:
+      type: object
+      properties:
+        month:
+          description: The month name (e.g., "September", "October")
+          type: string
+        amount:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+    AmountCount:
+      type: object
+      properties:
+        amount:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        count:
+          description: The total number of transactions
+          type:
+          - integer
+          - 'null'
+          format: int32
+      required:
+      - amount
+    NonCreditObligationsMonthlyTotal:
+      type: object
+      properties:
+        month:
+          description: The month number (1-12)
+          type: integer
+          format: int32
+        year:
+          description: The year
+          type: integer
+          format: int32
+        is_month_complete:
+          description: Indicates if the month has complete data
+          type: boolean
+        amount:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        count:
+          description: Total number of transactions for this month
+          type: integer
+          format: int64
+      required:
+      - count
+    ResultStatus:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - RECONNECT_REQUIRED
+      - PROCESSING_STARTED
+    CreditObligations:
+      type: object
+      properties:
+        current_credit_cards_balance:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrentCreditCardsBalance'
+        number_of_credit_cards:
+          description: Total number of credit cards
+          type:
+          - integer
+          - 'null'
+          format: int32
+        total:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CreditObligationsTotal'
+        monthly_totals:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/CreditObligationsMonthlyTotal'
+      additionalProperties: false
+      required:
+      - current_credit_cards_balance
+      - number_of_credit_cards
+      - total
+      - monthly_totals
+    CreditObligationsTotal:
+      type: object
+      properties:
+        loan_repayments:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/AmountCount'
+        minimum_loan_repayment:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        maximum_loan_repayment:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_loan_repayment:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        last_loan_repayment_date_time:
+          description: Date and time of the last loan repayment transaction
+          type:
+          - string
+          - 'null'
+          format: date-time
+        loan_received:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/AmountCount'
+        minimum_loan_received:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        maximum_loan_received:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_loan_received:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        last_loan_received_date_time:
+          description: Date and time of the last loan received transaction
+          type:
+          - string
+          - 'null'
+          format: date-time
+        credit_cards_repayments:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/AmountCount'
+        credit_cards_spending:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/AmountCount'
+        credit_cards_balance:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/BalanceInsights'
+    BalanceInsights:
+      type: object
+      properties:
+        average_balance:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        initial_balance:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        current_balance:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        available_balance:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        frequency_of_contributions:
+          description: Frequency of balance contributions (MONTHLY, WEEKLY, or DAILY)
+          type:
+          - string
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/FrequencyTime'
+    StatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        granular_status_code:
+          description: Granular status code
+          type:
+          - string
+          - 'null'
+        status_additional_info:
+          description: Additional information about the status
+          type:
+          - string
+          - 'null'
+    CurrentCreditCardsBalance:
+      type: object
+      properties:
+        amount:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+    NonCreditObligationsBreakdownBy:
+      type: object
+      properties:
+        by:
+          description: The breakdown category type (e.g., RECURRING_TRANSACTIONS)
+          type: string
+        breakdowns:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/NonCreditObligationsBreakdown'
+  responses:
+    UnsupportedByBankResponse:
+      description: Not Implemented
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Result'
+          examples:
+            unsupportedByBank:
+              summary: Sync requests not supported by bank
+              value:
+                results_id: 5e99047e-c45f-4aef-9cae-837e52aaa415
+                timestamp: '2026-01-08T12:54:57.100547167Z'
+                status: FAILED
+                message: Sync requests are not supported
+                metadata: null
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

@@ -1,0 +1,1325 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Refunds API
+  version: v0.2.3
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Refunds
+paths:
+  /payouts/refunds:
+    post:
+      summary: Create Refunds
+      deprecated: false
+      description: Creates and queues a refund payment for approval or rejection. Refunds are always returned to the originating account of the corresponding payment. The total refund amount cannot exceed the original payment. For processing amounts greater than the original payment, please refer to payouts.
+      operationId: createRefund
+      tags:
+      - Refunds
+      parameters:
+      - name: Content-Type
+        in: header
+        description: ''
+        required: true
+        example: application/json
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  payment_id:
+                    type: string
+                    description: Unique identifier for the corresponding intitiated payment
+                  amount:
+                    type: integer
+                    description: 'The refund amount to be processed.
+
+                      '
+                  currency:
+                    type: string
+                    description: The ISO 3 letter currency code for the account stores value in.
+                  reason_code:
+                    type: string
+                    description: Code indicating the reason for the refund
+                    enum:
+                    - FRAUDULENT_PAYMENT
+                    - ORDER_CANCELLED
+                    - DUPLICATED_PAYMENT
+                    - CUSTOMER_REQUEST
+                  description:
+                    type: string
+                    description: "Additional notes about the refund being created. \nCan include order references/customer-id for the refund being generated."
+                  external_reference:
+                    type: string
+                    description: Useful for tracking and reporting the transaction on your end. e.g You can enter transaction ID of this refund maintained in your system
+                  status:
+                    type: string
+                    description: Refers to the transaction status of the refund being created.
+                    enum:
+                    - CREATED
+                    - APPROVED
+                    default: CREATED
+                required:
+                - payment_id
+                - reason_code
+                - amount
+            example:
+            - payment_id: 00fdbc90-8116-42b2-bf26-5665b05bfb6b
+              amount: 7
+              currency: AED
+              reason_code: DUPLICATED_PAYMENT
+              description: Refund isused for Order NO. 21342322123
+              external_reference: '21451234567'
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    refund_id:
+                      type: string
+                      description: Unique identifier for the refund inititated
+                    payment_id:
+                      type: string
+                      description: Unique identifier for the payment inititated
+                    status:
+                      type: string
+                      description: "Status of the payment. \nDefault is INITIATED. Acceptable values: INITIATED or CONFIRMED"
+                      enum:
+                      - CREATED
+                      - APPROVED
+                      - ''
+                    amount:
+                      type: number
+                      description: 'The refund amount to be processed.
+
+                        '
+                    currency:
+                      type: string
+                      description: The ISO 3 letter currency code for the refund amount
+                    reason_code:
+                      type: string
+                      description: Code indicating the reason for the refund
+                      enum:
+                      - CUSTOMER_REQUEST
+                      - DUPLICATED_PAYMENT
+                      - ORDER_CANCELLED
+                      - FRAUDULENT_PAYMENT
+                    description:
+                      type: string
+                      description: 'Additional notes about the refund being created.
+
+                        Can include order references/customer-id for the refund being generated'
+                    external_reference:
+                      type: string
+                      description: Useful for tracking and reporting the transaction on your end. e.g You can enter transaction ID of this refund maintained in your system
+                    beneficiary:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          description: Defines the name of the benefeciary.
+                        iban:
+                          type: string
+                          description: Defines the IBAN of the benefeciary
+                        city:
+                          type: string
+                          description: 'Defines city of Benefeciary. Defaults to Dubai
+
+                            '
+                      required:
+                      - name
+                      - city
+                      - iban
+                  required:
+                  - payment_id
+                  - status
+                  - amount
+                  - currency
+                  - description
+                  - refund_id
+                  - external_reference
+                  - 01JKRHNSR3FP3SP1EZDFNB4FKP
+                  - reason_code
+              example:
+              - refund_id: d7427d13-0b4c-4e67-8b23-7c9ba03d95e3
+                payment_id: 00fdbc90-8116-42b2-bf26-5665b05bfb6b
+                status: CREATED
+                amount: 0.01
+                currency: AED
+                reason_code: DUPLICATED_PAYMENT
+                description: Refund isused for Order NO. 21342322123
+                external_reference: '21451234567'
+                beneficiary:
+                  name: Jay Sheron
+                  iban: SA10000000000023
+                  city: Dubai
+          headers: {}
+      security:
+      - bearer: []
+    put:
+      summary: Process Refunds
+      deprecated: false
+      description: 'Updates the refund status based on the approver''s (or checker''s) confirmation or rejection. This serves as a fail-safe mechanism to validate the refund decision after the transaction is initiated, rather than processing it immediately. '
+      operationId: processRefunds
+      tags:
+      - Refunds
+      parameters:
+      - name: Content-Type
+        in: header
+        description: ''
+        required: true
+        example: application/json
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  refund_id:
+                    type: string
+                    description: 'Refers to the unique identity of the refund to be updated.
+
+
+                      '
+                  status:
+                    type: string
+                    description: 'Refers to the updated status of the refund. '
+                    enum:
+                    - APPROVED
+                    - REJECTED
+                required:
+                - refund_id
+                - status
+            example:
+            - refund_id: 5d43a659-a4cf-4f56-af66-ad6478d61890
+              status: CONFIRMED
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  refund_id:
+                    type: string
+                    description: 'Refers to the unique ID of the refund being updated.
+
+                      '
+                  status:
+                    type: string
+                    description: 'Refers to the updated status of the refund.
+
+                      '
+                    enum:
+                    - APPROVED
+                    - REJECTED
+                required:
+                - status
+                - refund_id
+              example:
+              - refund_id: 5d43a659-a4cf-4f56-af66-ad6478d61890
+                status: REJECTED
+          headers: {}
+      security:
+      - bearer: []
+    get:
+      summary: List Refunds
+      deprecated: false
+      description: Returns a list of all refunds intitated . You can filter the transactions based on status of the refund transaction by passing it in the query parameter. This API allows pagination with the default size of 50 refunds per page.
+      operationId: listRefunds
+      tags:
+      - Refunds
+      parameters:
+      - name: status
+        in: query
+        description: Fetch all refund transactions based on the entered refund payment status.
+        required: false
+        example: ''
+        schema:
+          type: string
+          enum:
+          - CREATED
+          - REJECTED
+          - APPROVED
+          - FAILED
+          - ACCEPTED_BY_BANK
+          - PENDING_WITH_BANK
+      - name: size
+        in: query
+        description: Defines the number of transactions per page hence manages payload size
+        required: false
+        schema:
+          type: integer
+          default: 50
+      - name: page
+        in: query
+        description: Specifies the page number to retreive. e.g if page=2 and size=50, the API will return records from 101 to 150
+        required: false
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  refund_id:
+                    type: string
+                    description: Unique identifier for the refund transaction.
+                  deposit_amount:
+                    type: number
+                    description: The deposit amount associated with the refund request.
+                  deposit_currency:
+                    type: string
+                    description: The ISO 3 letter currency code for the deposit amount
+                  payment_id:
+                    type: string
+                    description: Identifier of the payment transaction linked to this refund.
+                  status:
+                    type: string
+                    description: Current status of the refund process.
+                    enum:
+                    - CREATED
+                    - APPROVED
+                    - REJECTED
+                    - ACCEPTED_BY_BANK
+                    - PENDING_WITH_BANK
+                    - FAILED
+                  amount:
+                    type: number
+                    description: The amount that will be refunded
+                  currency:
+                    type: string
+                    description: The ISO 3 letter currency code for the refund amount
+                  reason_code:
+                    type: string
+                    description: Reason for the refund request
+                    enum:
+                    - CUSTOMER_REQUEST
+                    - DUPLICATED_PAYMENT
+                    - ORDER_CANCELLED
+                    - FRAUDULENT_PAYMENT
+                  description:
+                    type: string
+                    description: "Additional notes about the refund being created. \nCan include order references/customer-id for the refund being generated."
+                  external_reference:
+                    type: string
+                    description: Useful for tracking and reporting the transaction on your end. e.g You can enter transaction ID of this refund maintained in your system
+                  benefeciary:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: Name of the beneficiary to which refund is being processed
+                      iban:
+                        type: string
+                        description: IBAN account details of benefeicary
+                      city:
+                        type: string
+                        default: Dubai
+                        description: City associated with the beneficiary account
+                    required:
+                    - city
+                    - iban
+                    - name
+                  created_at:
+                    type: string
+                    format: date-time
+                    description: Timestamp when the refund was created
+                  created_by:
+                    type: string
+                    description: Identifier of the user that initiated the refund
+                  actioned_by:
+                    type: string
+                    description: Identifier of the user that confirmed or rejected  the refund
+                required:
+                - created_at
+                - created_by
+                - refund_id
+                - deposit_amount
+                - deposit_currency
+                - payment_id
+                - status
+                - amount
+                - currency
+                - reason_code
+                - description
+                - external_reference
+                - benefeciary
+              example:
+                content:
+                - refund_id: 8161d683-88f7-4c13-b4f5-1e9cb13a49c1
+                  deposit_amount: 15.34
+                  deposit_currency: AED
+                  payment_id: b16b66fa-3cb0-433e-a8c8-5e0467e4c9d6
+                  status: ACCEPTED_BY_BANK
+                  amount: 15.34
+                  currency: AED
+                  reason_code: FRAUDULENT_PAYMENT
+                  description: 8N&[as39q_
+                  external_reference: x8VerE
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-28T11:36:17.899660Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  refund_intent_id: f41b1b7a-bd15-432b-9fff-a621b68675a4
+                - refund_id: d7d85efa-6fd9-4452-9ca5-850f7ada845d
+                  deposit_amount: 10.35
+                  deposit_currency: AED
+                  payment_id: 9c6cbf27-f2fb-44f6-a0be-57506a144440
+                  status: ACCEPTED_BY_BANK
+                  amount: 10.35
+                  currency: AED
+                  reason_code: CUSTOMER_REQUEST
+                  description: 0`fZ&P1;:@
+                  external_reference: sqo YT
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-28T11:36:16.941592Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  refund_intent_id: b231582c-4e4c-4f86-8cae-75c5356eab06
+                - refund_id: 6c6ab9df-5a6e-4f79-8ff4-07e94cdfdd1d
+                  deposit_amount: 13.55
+                  deposit_currency: AED
+                  payment_id: 7caf7c3e-8e8e-48d9-9e2b-0c2e03f236c0
+                  status: CREATED
+                  amount: 13.55
+                  currency: AED
+                  reason_code: CUSTOMER_REQUEST
+                  description: QA refund initiation
+                  external_reference: SMN9DH
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-28T11:36:31.134243Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: null
+                  refund_intent_id: null
+                - refund_id: de848b84-5dd9-4178-9f07-4e42fee93d67
+                  deposit_amount: 18.62
+                  deposit_currency: AED
+                  payment_id: 80248e0e-588b-4bde-b531-919abc0e68ae
+                  status: CREATED
+                  amount: 18.62
+                  currency: AED
+                  reason_code: DUPLICATED_PAYMENT
+                  description: kVk&sP7V_s
+                  external_reference: I0o6t0
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-28T11:36:29.915697Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: null
+                  refund_intent_id: null
+                - refund_id: f3284877-da5e-4fb7-8e55-c41a4fb4fedc
+                  deposit_amount: 18.25
+                  deposit_currency: AED
+                  payment_id: 5a9b61f7-88f4-4378-a932-2ae0082d4f42
+                  status: ACCEPTED_BY_BANK
+                  amount: 18.25
+                  currency: AED
+                  reason_code: CUSTOMER_REQUEST
+                  description: XSb#3iAuH{
+                  external_reference: mzCLJf
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-28T09:19:32.122751Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  refund_intent_id: 7837da43-a5c9-4777-b7d7-1c7f3f3d66d6
+                - refund_id: b73611bb-7a73-4b38-84af-7c27558fd03c
+                  deposit_amount: 15.34
+                  deposit_currency: AED
+                  payment_id: 7053b95c-b5c2-4f2c-ba59-879a2ab27bf9
+                  status: APPROVED
+                  amount: 15.34
+                  currency: AED
+                  reason_code: FRAUDULENT_PAYMENT
+                  description: ',aZwDar32@'
+                  external_reference: csxXf4
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-28T09:07:54.714141Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  refund_intent_id: 37f5b0c3-b9f4-487e-aec3-36ee9deffafc
+                - refund_id: cc1af5a0-b9df-4377-bca6-4c4d5827e9b5
+                  deposit_amount: 18.42
+                  deposit_currency: AED
+                  payment_id: a7c33c83-4c34-448f-93bf-fce721413733
+                  status: CREATED
+                  amount: 18.42
+                  currency: AED
+                  reason_code: ORDER_CANCELLED
+                  description: Xsj3^  Y53
+                  external_reference: GUnW1J
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-28T09:07:40.845413Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: null
+                  refund_intent_id: null
+                - refund_id: 0f01a43d-e4d5-4da0-a524-dad9daa1ade3
+                  deposit_amount: 17.55
+                  deposit_currency: AED
+                  payment_id: 2b74f624-8ca9-40fc-b8c7-0835b6a52201
+                  status: CREATED
+                  amount: 17.55
+                  currency: AED
+                  reason_code: CUSTOMER_REQUEST
+                  description: QA refund initiation
+                  external_reference: eXGSNb
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-28T09:07:27.057079Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: null
+                  refund_intent_id: null
+                - refund_id: 8e1c8094-8fba-40f4-bbbe-df6f1325f849
+                  deposit_amount: 15.34
+                  deposit_currency: AED
+                  payment_id: 73727d12-c60b-4697-b57c-04e8a411cc0e
+                  status: ACCEPTED_BY_BANK
+                  amount: 15.34
+                  currency: AED
+                  reason_code: DUPLICATED_PAYMENT
+                  description: bc>W!{o6$e
+                  external_reference: fQ4Hom
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-21T17:09:35.525332Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  refund_intent_id: 582de6bb-1108-46d8-9f02-f404a3f51f41
+                - refund_id: 41aacc33-ca14-4509-adf4-02998a62e465
+                  deposit_amount: 19.51
+                  deposit_currency: AED
+                  payment_id: 501169c4-0af3-440e-82f3-2fd12c581832
+                  status: ACCEPTED_BY_BANK
+                  amount: 19.51
+                  currency: AED
+                  reason_code: CUSTOMER_REQUEST
+                  description: _krSH86Lo4
+                  external_reference: 4xSMFI
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-21T17:09:34.732135Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  refund_intent_id: 7ffea5af-5067-4500-a3a3-823bbf63c169
+                - refund_id: c0a57ad4-bc43-44d0-9cde-33d4d78dff1e
+                  deposit_amount: 14.6
+                  deposit_currency: AED
+                  payment_id: 5c453616-b72d-469e-ac0b-a59863e123cb
+                  status: ACCEPTED_BY_BANK
+                  amount: 14.6
+                  currency: AED
+                  reason_code: ORDER_CANCELLED
+                  description: Jrk9YG2b#@
+                  external_reference: 8Fy27W
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-21T17:08:54.856670Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  refund_intent_id: 30cad392-8865-4785-bb8d-0b7d13b6c204
+                - refund_id: 8724b494-4b8d-488e-a4f6-5444c05b3c1d
+                  deposit_amount: 15.34
+                  deposit_currency: AED
+                  payment_id: 4cb52f8d-91c4-40e2-b5bf-db97d3a7f943
+                  status: ACCEPTED_BY_BANK
+                  amount: 15.34
+                  currency: AED
+                  reason_code: CUSTOMER_REQUEST
+                  description: w`2x!ckWFq
+                  external_reference: 7JZrDT
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-21T17:08:55.229138Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  refund_intent_id: deb997f1-d261-49b0-9b27-f11bcbed2c89
+                - refund_id: 623a3cff-0fcd-44a1-aa23-ba473eb373d4
+                  deposit_amount: 16.35
+                  deposit_currency: AED
+                  payment_id: afa65c92-7b01-4ec3-b473-7d322dcdeeca
+                  status: CREATED
+                  amount: 16.35
+                  currency: AED
+                  reason_code: CUSTOMER_REQUEST
+                  description: QA refund initiation
+                  external_reference: knrRpk
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-21T17:09:47.303748Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: null
+                  refund_intent_id: null
+                - refund_id: 261aac81-4030-47e1-9091-30b4e82179d3
+                  deposit_amount: 15.15
+                  deposit_currency: AED
+                  payment_id: bee462a1-5156-4aae-90dd-f549914651d5
+                  status: CREATED
+                  amount: 15.15
+                  currency: AED
+                  reason_code: ORDER_CANCELLED
+                  description: POYoOVCx^Q
+                  external_reference: Lw7GxW
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-21T17:09:46.449358Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: null
+                  refund_intent_id: null
+                - refund_id: d9a74217-8a72-4cee-a4a7-d289389f08d5
+                  deposit_amount: 15.94
+                  deposit_currency: AED
+                  payment_id: c70871c8-2caf-4fe3-80aa-cc45c9b22b1c
+                  status: CREATED
+                  amount: 15.94
+                  currency: AED
+                  reason_code: CUSTOMER_REQUEST
+                  description: QA refund initiation
+                  external_reference: NlSA4M
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-21T17:09:06.392478Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: null
+                  refund_intent_id: null
+                - refund_id: 1536c4c4-2f9f-4142-b5a7-61b74599ccd8
+                  deposit_amount: 19.5
+                  deposit_currency: AED
+                  payment_id: d5941b8b-2045-4318-b162-c5bd34a05340
+                  status: CREATED
+                  amount: 19.5
+                  currency: AED
+                  reason_code: CUSTOMER_REQUEST
+                  description: B?4QI;?A(e
+                  external_reference: kt97gL
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-21T17:09:00.663644Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: null
+                  refund_intent_id: null
+                - refund_id: 0a19c0dc-d6bb-46ca-b60a-2f680c477482
+                  deposit_amount: 15.34
+                  deposit_currency: AED
+                  payment_id: 1606c287-2d10-48db-aec4-e0b4dcbf379f
+                  status: ACCEPTED_BY_BANK
+                  amount: 15.34
+                  currency: AED
+                  reason_code: ORDER_CANCELLED
+                  description: i&,RDGi`J1
+                  external_reference: b2WfBS
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-21T08:37:58.351630Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  refund_intent_id: 132f1b8e-8b31-4e87-980c-3d34d567ed51
+                - refund_id: e4e94108-4bb4-4f45-b362-5d0dc41124c7
+                  deposit_amount: 19.81
+                  deposit_currency: AED
+                  payment_id: 8f2c87ef-9c3c-4b0d-8b60-a66cbf5770cd
+                  status: ACCEPTED_BY_BANK
+                  amount: 19.81
+                  currency: AED
+                  reason_code: FRAUDULENT_PAYMENT
+                  description: YqDCHd$&Gq
+                  external_reference: h85Fmm
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-21T08:37:56.653606Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  refund_intent_id: 0082d74c-07d2-493f-9a94-7cee7f80b437
+                - refund_id: 6ebf5f0f-b6bc-49ba-920b-e68399d20a4f
+                  deposit_amount: 12.11
+                  deposit_currency: AED
+                  payment_id: 331288d4-fe29-4caa-be59-5df83b056502
+                  status: CREATED
+                  amount: 12.11
+                  currency: AED
+                  reason_code: CUSTOMER_REQUEST
+                  description: QA refund initiation
+                  external_reference: Wqj7G3
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-21T08:38:10.936716Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: null
+                  refund_intent_id: null
+                - refund_id: d42b4385-2b92-4b61-9896-31b147458714
+                  deposit_amount: 17.35
+                  deposit_currency: AED
+                  payment_id: 3cd62de6-8092-4be3-8bac-4d8a6d9c0892
+                  status: CREATED
+                  amount: 17.35
+                  currency: AED
+                  reason_code: ORDER_CANCELLED
+                  description: ;LnlORBni6
+                  external_reference: nbe9ac
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-21T08:38:07.425033Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: null
+                  refund_intent_id: null
+                - refund_id: 7f36be50-5fef-46d3-85cd-443d964d7d5c
+                  deposit_amount: 17.83
+                  deposit_currency: AED
+                  payment_id: 9a6b42e9-c703-492e-8d52-6e4d7606e170
+                  status: ACCEPTED_BY_BANK
+                  amount: 17.83
+                  currency: AED
+                  reason_code: FRAUDULENT_PAYMENT
+                  description: Zf0:GKdMk(
+                  external_reference: qkm3p1
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-20T13:00:44.322599Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  refund_intent_id: 90452a2f-c9e9-4210-bb6c-ccc2d145329d
+                - refund_id: 8e377c16-e8cc-4171-b0e0-9d09632b65f4
+                  deposit_amount: 15.34
+                  deposit_currency: AED
+                  payment_id: d9691228-11f7-4e88-a4ea-25499c8913df
+                  status: ACCEPTED_BY_BANK
+                  amount: 15.34
+                  currency: AED
+                  reason_code: CUSTOMER_REQUEST
+                  description: Er;fEbR^rT
+                  external_reference: fEpvVc
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-20T13:00:40.758911Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  refund_intent_id: 40aef1d6-8bd5-4827-b4f8-b101a2ab8d54
+                - refund_id: b8d482cc-cbff-464e-866c-35a6aeca9ae8
+                  deposit_amount: 18.94
+                  deposit_currency: AED
+                  payment_id: fd17be52-6a03-4639-b1ed-d546118c1f23
+                  status: CREATED
+                  amount: 18.94
+                  currency: AED
+                  reason_code: DUPLICATED_PAYMENT
+                  description: E b_T FS9;
+                  external_reference: YzuhYJ
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-20T13:00:41.053090Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: null
+                  refund_intent_id: null
+                - refund_id: 6c343c40-f95a-4e3e-b030-bbb321cbf9bd
+                  deposit_amount: 17.7
+                  deposit_currency: AED
+                  payment_id: 223a7243-50a1-4969-b58a-8cd0a01b0d2e
+                  status: CREATED
+                  amount: 17.7
+                  currency: AED
+                  reason_code: CUSTOMER_REQUEST
+                  description: QA refund initiation
+                  external_reference: 6dDjQS
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-20T13:00:40.795937Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: null
+                  refund_intent_id: null
+                - refund_id: 08aac111-514f-4e88-8353-79fd28529e31
+                  deposit_amount: 17.98
+                  deposit_currency: AED
+                  payment_id: 4aff697e-ca9c-45bc-a544-d63be3865af0
+                  status: ACCEPTED_BY_BANK
+                  amount: 17.98
+                  currency: AED
+                  reason_code: FRAUDULENT_PAYMENT
+                  description: A3 ^Pc&{yV
+                  external_reference: 4ZZJqd
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-20T11:31:05.206280Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  refund_intent_id: 921ea06d-3cf8-4a01-8000-7e78cc0d7b2e
+                - refund_id: c048c84f-7dc0-45e9-8565-b457c52f51d8
+                  deposit_amount: 15.34
+                  deposit_currency: AED
+                  payment_id: da23f8fe-ebe2-4495-b12e-45d037d76a56
+                  status: ACCEPTED_BY_BANK
+                  amount: 15.34
+                  currency: AED
+                  reason_code: DUPLICATED_PAYMENT
+                  description: rZp8JdM(.|
+                  external_reference: ociZ7u
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-20T11:31:05.067652Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  refund_intent_id: 8b084b92-a897-4328-bcf5-7b23c9d49276
+                - refund_id: 84b80cc7-7914-4a89-9154-7da0910455e3
+                  deposit_amount: 11.82
+                  deposit_currency: AED
+                  payment_id: 3294e26d-fbb6-4afd-b3a5-9c65904428d3
+                  status: CREATED
+                  amount: 11.82
+                  currency: AED
+                  reason_code: CUSTOMER_REQUEST
+                  description: QA refund initiation
+                  external_reference: T5wMuT
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-20T11:31:05.206280Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: null
+                  refund_intent_id: null
+                - refund_id: d52c826e-0f50-4c14-b4d7-661bce93e663
+                  deposit_amount: 12.62
+                  deposit_currency: AED
+                  payment_id: 009839be-0e65-4a8b-8840-201e0428505d
+                  status: CREATED
+                  amount: 12.62
+                  currency: AED
+                  reason_code: DUPLICATED_PAYMENT
+                  description: hwmt.#VcpZ
+                  external_reference: gM9krH
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-20T11:31:04.368999Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: null
+                  refund_intent_id: null
+                - refund_id: 9b229bad-2be2-4969-8dd6-e0f33e73fc56
+                  deposit_amount: 17.57
+                  deposit_currency: AED
+                  payment_id: 16146778-212d-40bf-b5ab-1132bc3f759c
+                  status: ACCEPTED_BY_BANK
+                  amount: 17.57
+                  currency: AED
+                  reason_code: DUPLICATED_PAYMENT
+                  description: FqWIm!k{LZ
+                  external_reference: ' utYIf'
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-16T17:59:45.389023Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  refund_intent_id: ebc6d449-a281-47aa-b195-d6e7483f0614
+                - refund_id: b267fc06-644c-403a-acb1-78ef5cfc5d75
+                  deposit_amount: 15.34
+                  deposit_currency: AED
+                  payment_id: e71863e4-56d3-4d1e-83d3-5b5a44fe5ffe
+                  status: ACCEPTED_BY_BANK
+                  amount: 15.34
+                  currency: AED
+                  reason_code: ORDER_CANCELLED
+                  description: 'Xy.+?itDx '
+                  external_reference: 'Fj8IT '
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-16T17:59:36.765057Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  refund_intent_id: dcfb24bc-33af-492a-abc6-157ed343b022
+                - refund_id: 7a8a7639-2676-4eb3-96cd-d3778842bec0
+                  deposit_amount: 11.35
+                  deposit_currency: AED
+                  payment_id: 513ee602-1eb6-44d7-b53c-3b4b5e415fd1
+                  status: CREATED
+                  amount: 11.35
+                  currency: AED
+                  reason_code: ORDER_CANCELLED
+                  description: iIhj!Lr_hE
+                  external_reference: lEJbEj
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-16T17:59:32.375417Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: null
+                  refund_intent_id: null
+                - refund_id: 6003a276-d12a-449a-b7ed-e96783eea0a6
+                  deposit_amount: 12.94
+                  deposit_currency: AED
+                  payment_id: 6abb295e-b5d0-479f-a399-c3a210646269
+                  status: CREATED
+                  amount: 12.94
+                  currency: AED
+                  reason_code: CUSTOMER_REQUEST
+                  description: QA refund initiation
+                  external_reference: a8ng5z
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-16T17:59:22.652382Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: null
+                  refund_intent_id: null
+                - refund_id: 561d1fcb-2343-4880-8ec7-da82b54bef32
+                  deposit_amount: 15.34
+                  deposit_currency: AED
+                  payment_id: e82529c2-25a8-4475-9b63-916f0153a9b5
+                  status: ACCEPTED_BY_BANK
+                  amount: 15.34
+                  currency: AED
+                  reason_code: CUSTOMER_REQUEST
+                  description: 8kDTL jwTj
+                  external_reference: zeCU08
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-16T08:23:48.995862Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  refund_intent_id: 92ddec8b-b71b-4336-828a-74e0bd6a153b
+                - refund_id: a734bbda-b6f1-46ce-b418-671dea03b16f
+                  deposit_amount: 17.61
+                  deposit_currency: AED
+                  payment_id: 518cd8ee-bed2-46be-a20f-58258c1a99b7
+                  status: ACCEPTED_BY_BANK
+                  amount: 17.61
+                  currency: AED
+                  reason_code: ORDER_CANCELLED
+                  description: epC`k[uGm4
+                  external_reference: CQDcnZ
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-16T08:23:48.736775Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  refund_intent_id: f6732478-bd0c-4855-a0fd-0d97f2704eb4
+                - refund_id: bfef9298-be00-44b3-a00a-981abc450334
+                  deposit_amount: 13.14
+                  deposit_currency: AED
+                  payment_id: 20c23166-7dcc-48bb-a323-6ad965208e17
+                  status: CREATED
+                  amount: 13.14
+                  currency: AED
+                  reason_code: CUSTOMER_REQUEST
+                  description: Z4+nON2<*a
+                  external_reference: URHtb3
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-16T08:24:03.404675Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: null
+                  refund_intent_id: null
+                - refund_id: 6a47473a-6710-4b57-b79f-8a4ac2a26a14
+                  deposit_amount: 10.35
+                  deposit_currency: AED
+                  payment_id: 0981017f-6334-4650-b6de-d0397a7ab6d0
+                  status: CREATED
+                  amount: 10.35
+                  currency: AED
+                  reason_code: CUSTOMER_REQUEST
+                  description: QA refund initiation
+                  external_reference: ZRJd 8
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-16T08:23:48.736773Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: null
+                  refund_intent_id: null
+                - refund_id: 75353762-9863-44e0-8517-869e8b1284a4
+                  deposit_amount: 18.79
+                  deposit_currency: AED
+                  payment_id: 0850f9be-98e7-4b04-a139-95a987088b3f
+                  status: CREATED
+                  amount: 18.79
+                  currency: AED
+                  reason_code: CUSTOMER_REQUEST
+                  description: QA refund initiation
+                  external_reference: uTtQnj
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-15T11:28:18.412974Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: null
+                  refund_intent_id: null
+                - refund_id: 67a0a494-28c4-4be8-891e-8833e4780194
+                  deposit_amount: 10.98
+                  deposit_currency: AED
+                  payment_id: e35879f8-4d38-443b-ad95-03da1df2d1bf
+                  status: ACCEPTED_BY_BANK
+                  amount: 10.98
+                  currency: AED
+                  reason_code: FRAUDULENT_PAYMENT
+                  description: '`,`PY@_rZi'
+                  external_reference: S UkVC
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-15T11:26:45.403176Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  refund_intent_id: 641e6270-624f-4099-b3f0-d0143b755285
+                - refund_id: f3fd6d45-fd10-4df1-8161-b88c6d4d44f5
+                  deposit_amount: 15.34
+                  deposit_currency: AED
+                  payment_id: 2037c860-f0b1-4733-8df9-3d6903e7273b
+                  status: ACCEPTED_BY_BANK
+                  amount: 15.34
+                  currency: AED
+                  reason_code: FRAUDULENT_PAYMENT
+                  description: '{xKtE ZBn!'
+                  external_reference: yRFZ3o
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-15T11:26:45.403081Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  refund_intent_id: fe484bd8-9f58-453c-93f6-0f28a76d3a5c
+                - refund_id: a1c185ec-ae82-453c-a2db-7028649abd8a
+                  deposit_amount: 10.37
+                  deposit_currency: AED
+                  payment_id: 20d41570-4d79-4b6b-9b56-b14f957da910
+                  status: CREATED
+                  amount: 10.37
+                  currency: AED
+                  reason_code: CUSTOMER_REQUEST
+                  description: OBYqIU&*S&
+                  external_reference: EFNN21
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-15T11:27:00.163206Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: null
+                  refund_intent_id: null
+                - refund_id: d5c4c96f-9159-4adc-9a1e-5ddd64c862ff
+                  deposit_amount: 15.34
+                  deposit_currency: AED
+                  payment_id: 3d869642-0892-4a22-bf00-7964badc1add
+                  status: ACCEPTED_BY_BANK
+                  amount: 15.34
+                  currency: AED
+                  reason_code: FRAUDULENT_PAYMENT
+                  description: ' Z.Rh7g.b('
+                  external_reference: Nwhs86
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-14T14:40:16.724925Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  refund_intent_id: bf6baed3-f20b-4b0e-89db-24e8e364f2db
+                - refund_id: c89b40bd-e274-452a-a926-d35a580b4155
+                  deposit_amount: 12.71
+                  deposit_currency: AED
+                  payment_id: 83a37c0d-d279-4af2-b394-10bfcf940129
+                  status: ACCEPTED_BY_BANK
+                  amount: 12.71
+                  currency: AED
+                  reason_code: CUSTOMER_REQUEST
+                  description: Wy`6Vt%h[n
+                  external_reference: NBU im
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-14T14:40:15.249139Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  refund_intent_id: 73375386-7398-42e0-8461-1691bd010662
+                - refund_id: cde0a167-8a01-4a23-b5ae-34bc5fa1cf37
+                  deposit_amount: 11.03
+                  deposit_currency: AED
+                  payment_id: 53db5326-9f4b-4160-902d-53e3274c6c1f
+                  status: ACCEPTED_BY_BANK
+                  amount: 11.03
+                  currency: AED
+                  reason_code: FRAUDULENT_PAYMENT
+                  description: AS+_FB@+oM
+                  external_reference: 6DLU7u
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-14T14:40:10.932065Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  refund_intent_id: 68762890-6c28-4755-9908-c0e635699981
+                - refund_id: 4a664c20-57f1-4cbd-9c6f-0b848d7d8564
+                  deposit_amount: 15.34
+                  deposit_currency: AED
+                  payment_id: 8a9c3fe2-4585-419c-898c-929bf35659ec
+                  status: ACCEPTED_BY_BANK
+                  amount: 15.34
+                  currency: AED
+                  reason_code: DUPLICATED_PAYMENT
+                  description: y9f<]lz}@I
+                  external_reference: VIH7Uc
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-14T14:40:11.080025Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  refund_intent_id: 4f04f8f0-ce75-42c0-8080-c1b631df1093
+                - refund_id: 10553d93-7498-493b-80dc-0fbf8f53980b
+                  deposit_amount: 19.06
+                  deposit_currency: AED
+                  payment_id: 460c67ae-0039-494a-aa03-c0071beea9e6
+                  status: CREATED
+                  amount: 19.06
+                  currency: AED
+                  reason_code: ORDER_CANCELLED
+                  description: ' Pr+fLQKJR'
+                  external_reference: mYD9ac
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-14T14:40:31.347124Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: null
+                  refund_intent_id: null
+                - refund_id: bcf4e591-8bf8-4324-9ff0-b540d6f0b27e
+                  deposit_amount: 14.55
+                  deposit_currency: AED
+                  payment_id: 8410366f-b936-42d0-9c4d-6ea49ae99aca
+                  status: CREATED
+                  amount: 14.55
+                  currency: AED
+                  reason_code: FRAUDULENT_PAYMENT
+                  description: ptr:7PspZg
+                  external_reference: w0QYuk
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-14T14:40:26.800408Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: null
+                  refund_intent_id: null
+                - refund_id: bd36fc10-469c-41cd-84d4-cecc919f1e6f
+                  deposit_amount: 15.25
+                  deposit_currency: AED
+                  payment_id: 4aae6753-88a7-4650-a33f-bf50a2cb8333
+                  status: CREATED
+                  amount: 15.25
+                  currency: AED
+                  reason_code: CUSTOMER_REQUEST
+                  description: QA refund initiation
+                  external_reference: MoCw0N
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-14T14:40:14.948910Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: null
+                  refund_intent_id: null
+                - refund_id: b6f9bca4-1a82-42b1-a581-dc81d4ed65d3
+                  deposit_amount: 13.36
+                  deposit_currency: AED
+                  payment_id: b8136d5c-a92a-4167-84f9-4e11d719e986
+                  status: CREATED
+                  amount: 13.36
+                  currency: AED
+                  reason_code: CUSTOMER_REQUEST
+                  description: QA refund initiation
+                  external_reference: qNh1Lh
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-14T14:40:12.337238Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: null
+                  refund_intent_id: null
+                - refund_id: bf3063e1-4896-40ce-898a-7052754422af
+                  deposit_amount: 15.34
+                  deposit_currency: AED
+                  payment_id: 5ca31a84-4007-4cda-a2cc-7b65e3c489ee
+                  status: ACCEPTED_BY_BANK
+                  amount: 15.34
+                  currency: AED
+                  reason_code: ORDER_CANCELLED
+                  description: bhA a?Y{:(
+                  external_reference: ff thU
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-14T13:25:29.020814Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  refund_intent_id: be14a247-a0d4-4240-8d14-56ded21769a6
+                - refund_id: 207a1ee1-4a1b-4eaf-956e-1e4a7cbd5209
+                  deposit_amount: 11.08
+                  deposit_currency: AED
+                  payment_id: 8d4dd7e1-72d6-4d85-94d4-9cdb2ebedbd1
+                  status: ACCEPTED_BY_BANK
+                  amount: 11.08
+                  currency: AED
+                  reason_code: ORDER_CANCELLED
+                  description: 7Ry6 WynK(
+                  external_reference: wAxWnO
+                  beneficiary:
+                    name: Rolf Bogan
+                    iban: AE280003008159427667010
+                    city: Dubai
+                  created_at: '2025-05-14T13:25:28.147737Z'
+                  created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  actioned_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                  refund_intent_id: 2908a48a-6939-45ce-8697-35d7611733f1
+                page:
+                  number: 0
+                  size: 50
+                  total_elements: 1229
+                  total_pages: 25
+                  sort: null
+          headers: {}
+      security:
+      - bearer: []
+  /payouts/refunds/reasons:
+    get:
+      summary: Get Refund Reasons
+      deprecated: false
+      description: Returns the reason code for the created refund, which is then used in the refund request creation.
+      operationId: getRefundReasons
+      tags:
+      - Refunds
+      parameters: []
+      responses:
+        '200':
+          description: Returns the list of reasons for which a refund is being inititated.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    code:
+                      type: string
+                      description: 'Refers to the code of refund reason '
+                    description:
+                      type: string
+                      description: Refers to the reason of the refund
+                  required:
+                  - code
+                  - description
+              example:
+              - code: CUSTOMER_REQUEST
+                description: Requested by the client
+              - code: DUPLICATED_PAYMENT
+                description: Duplicated Payment
+              - code: FRAUDULENT_PAYMENT
+                description: Fraudulent Payment
+              - code: ORDER_CANCELLED
+                description: Service/Order Cancellation
+          headers: {}
+      security:
+      - bearer: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

@@ -1,0 +1,840 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Payments Account On File API
+  version: v0.2.3
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Payments Account On File
+  x-displayName: Payments Account On File
+paths:
+  /payments/v1/account-on-file:
+    servers: []
+    post:
+      operationId: initiateAccountOnFilePayment
+      summary: Initiate an AoF payment
+      description: Endpoint responsible for initiating an AoF payment against an existing, authorized consent.
+      parameters:
+      - name: Idempotency-Key
+        in: header
+        description: 'Unique key used to ensure idempotency of requests.
+
+          Must be unique per operation.
+
+          '
+        required: true
+        schema:
+          type: string
+        x-field-extra-annotation: '@NotBlank'
+      requestBody:
+        $ref: '#/components/requestBodies/InitiateAccountOnFilePayment'
+      responses:
+        '200':
+          description: "Indicates that request was processed and payment initiation request was sent to the bank. \nThis does not mean that the payment was successful!"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InitiateAccountOnFilePaymentResponse'
+              examples:
+                minimal:
+                  summary: Minimal Response
+                  value:
+                    id: 341c3308-408d-48d9-ae44-c98eb1aa9a6f
+                    account_id: 911f30d8-8fc8-4fe9-86a1-3f9fea11a674
+                    application_id: 21ecf613-adaa-4c6b-8cd5-827de43bbe52
+                    consent_id: 123e4567-e89b-12d3-a456-426655440000
+                    status: CREATED
+                    reference: ACME-ACCOUNT-LINK-2025-001
+                    amount:
+                      currency: AED
+                      amount: 130.52
+                    type: ACCOUNT_ON_FILE
+                    sender_customer_id: acc176ca-7716-4fbb-a735-d0e3dec24b40
+                    created_at: '2025-01-27T10:00:00Z'
+                    last_modified_at: '2025-01-27T10:00:00Z'
+                complete:
+                  summary: Complete Response
+                  value:
+                    id: 341c3308-408d-48d9-ae44-c98eb1aa9a6f
+                    account_id: 911f30d8-8fc8-4fe9-86a1-3f9fea11a674
+                    application_id: 21ecf613-adaa-4c6b-8cd5-827de43bbe52
+                    consent_id: 123e4567-e89b-12d3-a456-426655440000
+                    status: FAILED
+                    reference: ACME-ACCOUNT-LINK-2025-001
+                    amount:
+                      currency: AED
+                      amount: 130.52
+                    type: ACCOUNT_ON_FILE
+                    sender_customer_id: acc176ca-7716-4fbb-a735-d0e3dec24b40
+                    created_at: '2025-01-27T10:00:00Z'
+                    last_modified_at: '2025-01-27T10:05:30Z'
+                    failure_details:
+                      code: BANK_ISSUE
+                      details: The banks is having a technical issues. Please try again later.
+      security:
+      - OAuth2:
+        - api
+      tags:
+      - Payments Account On File
+components:
+  schemas:
+    AppInformation:
+      description: Mobile application specific information.
+      type: object
+      properties:
+        app_version:
+          description: Version of the mobile application.
+          type: string
+        package_name:
+          description: Application package identifier.
+          type: string
+        build_number:
+          description: Application build number.
+          type: string
+      title: AppInformation
+    ScreenInformation:
+      type: object
+      properties:
+        pixel_density:
+          description: The screen pixel density in pixels per inch (PPI)
+          type: number
+          format: double
+        orientation:
+          description: The current screen orientation
+          type: string
+          enum:
+          - PORTRAIT
+          - LANDSCAPE
+      title: ScreenInformation
+    AccountRiskIndicators:
+      description: Risk indicators related to the account.
+      type: object
+      properties:
+        user_onboarding_date_time:
+          description: The exact date and time when the User account was activated.
+          type: string
+          format: date-time
+        last_account_change_date:
+          description: Date that the User's account was last changed.
+          type: string
+        last_password_change_date:
+          description: Date of the last password change by the User.
+          type: string
+        suspicious_activity:
+          description: Indicating whether suspicious activity was detected
+          type: string
+          enum:
+          - NO_SUSPICIOUS_ACTIVITY
+          - SUSPICIOUS_ACTIVITY_DETECTED
+        transaction_history:
+          $ref: '#/components/schemas/TransactionHistory'
+      title: AccountRiskIndicators
+    PossessionFactor:
+      description: The User's possession, that only the User possesses
+      type: object
+      properties:
+        is_used:
+          description: Indicates if a possession factor was used for authentication
+          type: boolean
+        type:
+          description: The type of possession-based authentication method used
+          type: string
+          enum:
+          - FIDO2_SECURITY_KEY
+          - PASSKEY
+          - OTP_DEVICE
+          - OTP_APP
+          - SMS_OTP
+          - EMAIL_OTP
+          - PUSH_NOTIFICATION
+          - WEBAUTHN_TOKEN
+          - SECURE_ENCLAVE_KEY
+          - HARDWARE_OTP_KEY
+          - TRUSTED_DEVICE
+          - OTHER
+      title: PossessionFactor
+    InitiateAccountOnFilePaymentResponse:
+      type: object
+      properties:
+        id:
+          description: The unique identifier for the payment.
+          type: string
+          format: uuid
+        account_id:
+          description: The account id that the payment is being made to.
+          type: string
+          format: uuid
+        application_id:
+          description: The application id that the payment is being made to.
+          type: string
+        consent_id:
+          description: The consent id that the payment is being made under.
+          type: string
+          format: uuid
+        status:
+          description: "Reflects the latest known state of processing in Lean’s systems and bank.\n\n**Possible values:**\n\n- **`CREATED`** —  \n  An internal transaction record has been created, but **no interaction with the bank has occurred yet**.  \n  This includes any validation steps required before initiation.  \n  Detailed progress within the approval flow may be represented through *sub-statuses*.\n\n- **`PROCESSING`** —  \n  The transaction has been **submitted or is being attempted at the bank**.  \n  Multiple initiation attempts may occur under this state.  \n  More granular progress can be indicated by *sub-statuses*.\n\n- **`PROCESSED`** —  \n  The **final successful** state.  \n  The payment has been confirmed as completed by the payment status tracking process.\n  Sub-statuses or other technology-specific codes may appear to indicate settlement details.\n\n- **`FAILED`** —  \n  The **final unsuccessful** state.  \n  Failure may occur:\n    - before any bank initiation (e.g. validation issues),\n    - after repeated unsuccessful initiation attempts (e.g. bank unavailable, other technical issues), or\n    - even after an initially successful initiation followed by a **reversal detected by payment status tracking** before final reporting.\n---\n**Notes:**\n- `CREATED` and `PROCESSING` are transitional states.  \n- `PROCESSED` and `FAILED` are terminal states.  \n- Sub-statuses provide additional context.\n"
+          type: string
+          enum:
+          - CREATED
+          - PROCESSING
+          - PROCESSED
+          - FAILED
+        sub_status:
+          description: 'Provides additional detail about the current lifecycle stage of the payment.
+
+            It can represent intermediate workflow steps, bank-specific responses or system conditions that further qualify the main status.'
+          type: string
+        reference:
+          description: A reason or reference in relation to a payment. Passed as a part of OF `creditor_reference`. This value will be used as default reference for payments made with this consent.
+          type: string
+        amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+        type:
+          description: Product type
+          type: string
+          const: ACCOUNT_ON_FILE
+        sender_customer_id:
+          description: The customer id of the sender.
+          type: string
+          format: uuid
+        created_at:
+          description: The date and time when the payment was created.
+          type: string
+          format: date-time
+          x-java-type: java.time.Instant
+        last_modified_at:
+          description: The date and time when the payment was last modified.
+          type: string
+          format: date-time
+          x-java-type: java.time.Instant
+        failure_details:
+          $ref: '#/components/schemas/FailureDetails'
+      required:
+      - id
+      - account_id
+      - application_id
+      - consent_id
+      - status
+      - amount
+      - sender_customer_id
+      - created_at
+      - last_modified_at
+      - type
+    Currency:
+      description: The ISO 3 letter currency code
+      type: string
+      examples:
+      - AED
+      pattern: ^[A-Z]{3}$
+    TransactionHistory:
+      type: object
+      properties:
+        last_day:
+          description: Total transactions made by the account in the last 24 hours.
+          type: integer
+        last_year:
+          description: Total transactions made by the account in the past year.
+          type: integer
+      title: TransactionHistory
+    ChannelType:
+      description: Where the payment has been initiated from
+      type: string
+      enum:
+      - WEB
+      - MOBILE
+    TransactionIndicators:
+      type: object
+      properties:
+        is_customer_present:
+          description: This field differentiates between automatic and manual initiation.
+          type: boolean
+        is_contract_present:
+          description: Indicates if the Creditor has a contractual relationship.
+          type: boolean
+        channel:
+          $ref: '#/components/schemas/ChannelType'
+        channel_type:
+          description: The channel through which the transaction is being conducted.
+          type: string
+          enum:
+          - ECOMMERCE
+          - IN_STORE
+          - IN_APP
+          - TELEPHONE
+          - MAIL
+          - RECURRING_PAYMENT
+          - OTHER
+        sub_channel_type:
+          description: More specific classification of the transaction channel.
+          type: string
+          enum:
+          - WEB_BROWSER
+          - MOBILE_APP
+          - SMART_TV
+          - WEARABLE_DEVICE
+          - POS_TERMINAL
+          - ATM
+          - KIOSK_TERMINAL
+          - OTHER
+        merchant_risk:
+          $ref: '#/components/schemas/MerchantRisk'
+        supplementary_data:
+          description: Additional information that cannot be captured in the structured fields and/or any other specific block.
+          type: object
+      required:
+      - channel
+      title: TransactionIndicators
+    DeviceType:
+      description: The category of device being used
+      type: string
+      enum:
+      - MOBILE
+      - DESKTOP
+      - TABLET
+      - WEARABLE
+      - OTHER
+      title: DeviceType
+    DebtorIndicators:
+      description: Debtor (User) Indicators
+      type: object
+      properties:
+        authentication:
+          $ref: '#/components/schemas/Authentication'
+        user_name:
+          $ref: '#/components/schemas/Name'
+        geo_location:
+          $ref: '#/components/schemas/DecimalGeoLocation'
+        device_information:
+          $ref: '#/components/schemas/DeviceInformation'
+        biometric_capabilities:
+          $ref: '#/components/schemas/BiometricCapabilities'
+        app_information:
+          $ref: '#/components/schemas/AppInformation'
+        browser_information:
+          $ref: '#/components/schemas/BrowserInformation'
+        user_behavior:
+          $ref: '#/components/schemas/UserBehavior'
+        account_risk_indicators:
+          $ref: '#/components/schemas/AccountRiskIndicators'
+        supplementary_data:
+          description: Additional information that cannot be captured in the structured fields and/or any other specific block. This may include information that is not available in the structured fields, such as a user's behavioural data like their typing speed and typing patterns.
+          type: object
+      title: DebtorIndicators
+    ReorderItemsIndicator:
+      description: Indicates if the transaction is a reorder
+      type: string
+      enum:
+      - FIRST_TIME_ORDER
+      - REORDER
+      title: ReorderItemsIndicator
+    Authentication:
+      description: The authentication method used by the User to access their account
+      type: object
+      properties:
+        authentication_channel:
+          $ref: '#/components/schemas/ChannelType'
+        possession_factor:
+          $ref: '#/components/schemas/PossessionFactor'
+        knowledge_factor:
+          $ref: '#/components/schemas/KnowledgeFactor'
+        inherence_factor:
+          $ref: '#/components/schemas/InherenceFactor'
+        challenge_outcome:
+          description: The result of the authentication challenge
+          type: string
+          enum:
+          - PASS
+          - FAIL
+          - NOT_PERFORMED
+        authentication_flow:
+          description: The type of authentication flow used
+          type: string
+          enum:
+          - MFA
+          - OTHER
+        authentication_value:
+          description: Cryptographic proof of authentication where supported by the device and protocol
+          type: string
+        challenge_date_time:
+          description: The date and time when the authentication challenge was performed
+          type: string
+          format: date-time
+      title: Authentication
+    DeliveryTimeframe:
+      description: Timeframe for the delivery of purchased items
+      type: string
+      enum:
+      - ELECTRONIC_DELIVERY
+      - SAME_DAY_SHIPPING
+      - OVERNIGHT_SHIPPING
+      - MORE_THAN_1_DAY_SHIPPING
+      title: DeliveryTimeframe
+    CurrencyAmount:
+      type: object
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          description: The amount of money in the currency specified.
+          type: number
+      required:
+      - currency
+      - amount
+    DecimalGeoLocation:
+      description: GPS to identify and track the whereabouts of the connected electronic device.
+      type: object
+      properties:
+        latitude:
+          description: Geographic latitude coordinate in decimal degrees
+          type: number
+          format: double
+        longitude:
+          description: Geographic longitude coordinate in decimal degrees
+          type: number
+          format: double
+      title: GeoLocation
+    BatteryStatus:
+      type: object
+      properties:
+        level:
+          description: The battery level as a percentage from 0.0 to 100.0
+          type: number
+          format: double
+        is_charging:
+          description: Indicates whether the device is currently charging
+          type: boolean
+      title: BatteryStatus
+    RiskDetails:
+      description: The Risk section is used to specify additional details for risk/fraud scoring regarding Payments
+      type: object
+      properties:
+        debtor_indicators:
+          $ref: '#/components/schemas/DebtorIndicators'
+        destination_delivery_address:
+          $ref: '#/components/schemas/DestinationDeliveryAddress'
+        transaction_indicators:
+          $ref: '#/components/schemas/TransactionIndicators'
+      title: RiskDetails
+    ScrollBehavior:
+      type: object
+      properties:
+        direction:
+          description: The primary direction of scrolling behavior
+          type: string
+          enum:
+          - UP
+          - DOWN
+          - BOTH
+        speed:
+          description: Average scroll speed in pixels per second
+          type: number
+          format: double
+        frequency:
+          description: Number of scroll events per minute
+          type: number
+          format: double
+      title: ScrollBehavior
+    PreOrderPurchaseIndicator:
+      description: Indicates if this is a pre-ordered item
+      type: string
+      enum:
+      - MERCHANDISE_AVAILABLE
+      - FUTURE_AVAILABILITY
+      title: PreOrderPurchaseIndicator
+    BrowserInformation:
+      description: Browser-specific information
+      type: object
+      properties:
+        user_agent:
+          description: Complete browser user agent string
+          type: string
+        is_cookies_enabled:
+          description: Whether cookies are enabled in the browser.
+          type: boolean
+        available_fonts:
+          description: List of available fonts.
+          type: array
+          items:
+            type: string
+        plugins:
+          description: List of installed browser plugins.
+          type: array
+          items:
+            type: string
+        pixel_ratio:
+          description: Device pixel ratio for scaling.
+          type: number
+          format: double
+      title: BrowserInformation
+    InherenceType:
+      description: The type of biometric or inherence-based authentication method
+      type: string
+      enum:
+      - BIOMETRIC
+      - FINGERPRINT
+      - FACE_RECOGNITION
+      - IRIS_SCAN
+      - VOICE_RECOGNITION
+      - FIDO_BIOMETRIC
+      - DEVICE_BIOMETRICS
+      - OTHER
+      title: InherenceType
+    DestinationDeliveryAddress:
+      type: object
+      properties:
+        recipient_type:
+          description: The type of recipient receiving the delivery
+          type: string
+          enum:
+          - INDIVIDUAL
+          - CORPORATE
+        recipient_name:
+          $ref: '#/components/schemas/Name'
+        national_address:
+          description: List of addresses for the delivery recipient
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
+      title: DestinationDeliveryAddress
+    DeviceManufacturer:
+      type: object
+      properties:
+        model:
+          description: The device model name
+          type: string
+        manufacturer:
+          description: The device manufacturer name
+          type: string
+      title: DeviceManufacturer
+    PaymentPurposeCode:
+      description: "A category code that relates to the type of services or goods that corresponds to the underlying purpose of the payment.  \nThe code must conform to the payment purpose code list.  \n**Supported values:**  \n- `FIS` – Financial services\n- `TCS` – Telecommunication services\n- `MWP` – Mobile wallet card payments\n- `OAT` – Own account transfer\n- `IFS` – Information services\n- `RNT` – Rent payments\n- `LNC` – Loan charges\n- `PIN` – Personal investments\n- `GDS` – Goods bought or sold"
+      type: string
+      enum:
+      - FIS
+      - TCS
+      - MWP
+      - OAT
+      - IFS
+      - RNT
+      - LNC
+      - PIN
+      - GDS
+      title: PaymentPurposeCode
+    DeviceEnvironmentContext:
+      description: Environmental indicators about the device context that may affect risk assessment
+      type: string
+      enum:
+      - VPN_DETECTED
+      - EMULATOR_DETECTED
+    TouchSupport:
+      type: object
+      properties:
+        supported:
+          description: Indicates whether the device supports touch input
+          type: boolean
+        max_touch_points:
+          description: The maximum number of simultaneous touch points supported
+          type: integer
+      title: TouchSupport
+    BiometricType:
+      description: The type of biometric authentication supported by the device
+      type: string
+      enum:
+      - FINGERPRINT
+      - FACIAL_RECOGNITION
+      - IRIS
+      - VOICE_PRINT
+      - OTHER
+      title: BiometricType
+    Name:
+      type: object
+      properties:
+        ar:
+          description: Name in Arabic
+          type: string
+        en:
+          description: Name in English
+          type: string
+      required:
+      - ar
+      - en
+    MotionSensors:
+      type: object
+      properties:
+        status:
+          description: The current motion state of the device
+          type: string
+          enum:
+          - IN_MOTION
+          - STATIONARY
+        accelerometer:
+          description: Indicates whether the device has an accelerometer sensor
+          type: boolean
+        gyroscope:
+          description: Indicates whether the device has a gyroscope sensor
+          type: boolean
+      title: MotionSensors
+    BiometricCapabilities:
+      properties:
+        supports_biometric:
+          description: Indicates whether the device supports biometric authentication
+          type: boolean
+        biometric_types:
+          description: List of biometric authentication types supported by the device
+          type: array
+          items:
+            $ref: '#/components/schemas/BiometricType'
+      title: BiometricCapabilities
+    AddressMatchLevel:
+      description: Level of match between delivery and billing addresses
+      type: string
+      enum:
+      - FULL_MATCH
+      - PARTIAL_MATCH
+      - NO_MATCH
+      - NOT_APPLICABLE
+      title: AddressMatchLevel
+    UserBehavior:
+      type: object
+      properties:
+        scroll_behavior:
+          $ref: '#/components/schemas/ScrollBehavior'
+      title: UserBehavior
+    MerchantRisk:
+      type: object
+      properties:
+        delivery_timeframe:
+          $ref: '#/components/schemas/DeliveryTimeframe'
+        reorder_items_indicator:
+          $ref: '#/components/schemas/ReorderItemsIndicator'
+        pre_order_purchase_indicator:
+          $ref: '#/components/schemas/PreOrderPurchaseIndicator'
+        is_gift_card_purchase:
+          description: Indicates if the transaction includes a gift card
+          type: boolean
+        is_delivery_address_matches_billing:
+          description: Indicates if delivery address matches billing address
+          type: boolean
+        address_match_level:
+          $ref: '#/components/schemas/AddressMatchLevel'
+      required:
+      - delivery_timeframe
+      - reorder_items_indicator
+      - pre_order_purchase_indicator
+      - is_gift_card_purchase
+      - is_delivery_address_matches_billing
+      - address_match_level
+      title: MerchantRisk
+    NetworkConnectionType:
+      description: The type of network connection being used
+      type: string
+      enum:
+      - WIFI
+      - CELLULAR
+      - OTHER
+      title: NetworkConnectionType
+    DeviceInformation:
+      description: Detailed device information
+      properties:
+        device_id:
+          description: IMEISV number of the connected electronic device.
+          type: string
+        alternative_device_id:
+          description: Alternative identifier for the connected electronic device.
+          type: string
+        device_operating_system:
+          description: Device operating system.
+          type: string
+        device_operating_system_version:
+          description: Device operating system version.
+          type: string
+        device_binding_id:
+          description: An identifier that associates a device uniquely with a specific application.
+          type: string
+        last_binding_date_time:
+          description: Date and time when the device was last bound to the application.
+          type: string
+          format: date-time
+        binding_duration:
+          description: ISO 8601 duration since device was last bound (e.g., P30D for 30 days).
+          type: string
+        binding_status:
+          description: Current binding status
+          type: string
+          enum:
+          - ACTIVE
+          - EXPIRED
+          - REVOKED
+          - SUSPENDED
+        device_type:
+          $ref: '#/components/schemas/DeviceType'
+        device_manufacturer:
+          $ref: '#/components/schemas/DeviceManufacturer'
+        device_language:
+          description: The language setting configured on the device
+          type: string
+        device_local_date_time:
+          description: The current date and time on the device in local timezone
+          type: string
+        connection_type:
+          $ref: '#/components/schemas/NetworkConnectionType'
+        screen_information:
+          $ref: '#/components/schemas/ScreenInformation'
+        battery_status:
+          $ref: '#/components/schemas/BatteryStatus'
+        touch_support:
+          $ref: '#/components/schemas/TouchSupport'
+        motion_sensors:
+          $ref: '#/components/schemas/MotionSensors'
+        device_environment_context:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeviceEnvironmentContext'
+      title: DeviceInformation
+    KnowledgeFactor:
+      description: The User's knowledge, that only the User knows
+      type: object
+      properties:
+        is_used:
+          description: Indicates if a knowledge factor was used for authentication
+          type: boolean
+        type:
+          description: The type of knowledge-based authentication method used
+          type: string
+          enum:
+          - PIN
+          - PASSWORD
+          - SECURITY_QUESTION
+          - SMS_OTP
+          - EMAIL_OTP
+          - OTP_PUSH
+          - OTHER
+      title: KnowledgeFactor
+    Address:
+      type: object
+      properties:
+        address_type:
+          description: The type of address
+          type: string
+          enum:
+          - BUSINESS
+          - CORRESPONDENCE
+          - RESIDENTIAL
+        address_line:
+          description: The full address line
+          type: string
+        building_number:
+          description: The building number
+          type: string
+        building_name:
+          description: The building name
+          type: string
+        floor:
+          description: The floor number or name
+          type: string
+        street_name:
+          description: The street name
+          type: string
+        district_name:
+          description: The district or neighborhood name
+          type: string
+        post_box:
+          description: The post box or PO box number
+          type: string
+        town_name:
+          description: The town or city name
+          type: string
+        region:
+          description: The region or state name
+          type: string
+        country:
+          description: The country code or name
+          type: string
+      required:
+      - address_line
+      - country
+      title: Address
+    FailureDetails:
+      type:
+      - object
+      - 'null'
+      properties:
+        code:
+          description: The code related to this failure
+          type: string
+        details:
+          description: A human readable description of this failure
+          type: string
+      required:
+      - code
+      - details
+    InherenceFactor:
+      description: The User's inherence, that is unique to the User's physical characteristics
+      type: object
+      properties:
+        is_used:
+          description: Indicates if an inherence factor was used for authentication
+          type: boolean
+        type:
+          $ref: '#/components/schemas/InherenceType'
+      title: InherenceFactor
+  requestBodies:
+    InitiateAccountOnFilePayment:
+      description: Request to initiate a new account on file payment
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              consent_id:
+                description: An id of an authorized consent that should be used to authorize this payment
+                type: string
+                format: uuid
+              amount:
+                description: The amount to be paid.
+                type: number
+                format: decimal
+                x-field-extra-annotation: '@me.leantech.api.validation.ValidAmountRange'
+              purpose:
+                $ref: '#/components/schemas/PaymentPurposeCode'
+              risk_details:
+                allOf:
+                - $ref: '#/components/schemas/RiskDetails'
+                x-field-extra-annotation: '@Valid'
+              reference:
+                description: The reference submitted to the bank as a reference when initiating a payment. Can be used for reconciliation.
+                type:
+                - string
+                - 'null'
+              creditor_reference:
+                description: Clients identifier that can be used in their ERP systems
+                type:
+                - string
+                - 'null'
+            examples:
+            - consent_id: 123e4567-e89b-12d3-a456-426655440000
+              amount: 130.52
+              purpose: GDS
+              reference: ACME-ACCOUNT-LINK-2025-001
+              creditor_reference: INV-2025-004321
+              risk_details:
+                transaction_indicators:
+                  channel: WEB
+                debtor_indicators:
+                  geo_location:
+                    latitude: 25.2048
+                    longitude: 55.2708
+            required:
+            - consent_id
+            - amount
+            - risk_details
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

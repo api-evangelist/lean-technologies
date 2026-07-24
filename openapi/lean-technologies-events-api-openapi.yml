@@ -1,0 +1,159 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Events API
+  version: v0.2.3
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Events
+paths:
+  /events/v1:
+    get:
+      summary: Get all Events
+      deprecated: false
+      description: List all events created by Lean and sent over webhooks in the past 90 days.
+      operationId: getEvents
+      tags:
+      - Events
+      parameters:
+      - name: page
+        in: query
+        description: Page number
+        required: true
+        schema:
+          type: integer
+      - name: size
+        in: query
+        description: Number of items per page
+        required: true
+        schema:
+          type: integer
+      - name: from
+        in: query
+        description: Filter events that have been created after specific DateTime
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: to
+        in: query
+        description: Filter events that have been created before specific DateTime
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: type
+        in: query
+        description: Filter events that are of a specific type. If this field is not populated no filtering will be applied on the event type.
+        required: false
+        schema:
+          type: string
+          enum:
+          - results.ready
+          - entity.created
+          - entity.updated
+          - entity.reconnected
+          - payment.created
+          - payment.updated
+          - payment_intent.created
+          - payment_intent.expired
+          - payment_source.created
+          - payment_source.updated
+          - payment_source.beneficiary.created
+          - payment_source.beneficiary.updated
+          - bank.availability.updated
+          - payment.reconciliation.updated
+          - bulk_payment_intent.created
+          - bulk_payment_intent.updated
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        payload:
+                          type: object
+                          properties: {}
+                          description: Webhook payload
+                        type:
+                          type: string
+                          description: The type of webhook sent
+                        message:
+                          type: string
+                          description: A plain description of the event
+                        timestamp:
+                          type: string
+                          description: The timestamp for the first attempt of the webhook
+                          format: date-time
+                        event_id:
+                          type: string
+                          description: The unique ID for the webhook event
+                      required:
+                      - payload
+                      - type
+                      - message
+                      - timestamp
+                      - event_id
+                  page:
+                    $ref: '#/components/schemas/Pagination'
+                required:
+                - data
+                - page
+              example:
+                data:
+                - payload:
+                    id: cdd8c617-0dd6-4cf7-b374-e244d2735678
+                    customer_id: 61760f96-a382-4f37-aec2-956ede4f3865
+                    payment_source_id: 4e86c5b5-459f-4aa5-8f62-f26b8726639c
+                    payment_destination_id: 902cb198-d1c7-4f00-8597-e54e41beff0f
+                    status: ACTIVE
+                  type: payment_source.beneficiary.created
+                  message: A beneficiary was added for a payment source.
+                  timestamp: '2022-08-10T10:18:39.182841Z'
+                  event_id: 823a6f3c-8a24-4e95-9654-bfec21660c75
+                page:
+                  number: 0
+                  size: 1
+                  total_elements: 46
+                  total_pages: 46
+          headers: {}
+      security:
+      - bearer: []
+components:
+  schemas:
+    Pagination:
+      type: object
+      properties:
+        number:
+          type: integer
+          description: The current page being returned by the API
+        size:
+          type: integer
+          description: The page size requested
+        total_elements:
+          type: integer
+          description: The total number of elements in all pages
+        total_pages:
+          type: integer
+          description: The total number of pages retrievable
+      required:
+      - number
+      - size
+      - total_elements
+      - total_pages
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

@@ -1,0 +1,1061 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Expenses API
+  version: v0.2.3
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Expenses
+  x-displayName: Expenses
+paths:
+  /insights/v2/expenses:
+    servers: []
+    get:
+      operationId: getExpenses
+      summary: Get Expenses
+      description: Provides insights on the expenses (outflows) from a bank account.
+      parameters:
+      - name: entity_id
+        in: query
+        description: The `entity_id` you're querying for.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: async
+        in: query
+        description: 'When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. Note: it''''s recommended to use the sync flow (async=false) for all requests by adapting the data workflow for connected entities.'
+        required: false
+        schema:
+          type: boolean
+          default: true
+        deprecated: true
+      - name: start_date
+        in: query
+        description: The start date in UTC (in the format YYYY-MM-DD) you want to query expenses for.
+        required: false
+        schema:
+          type: string
+          format: date
+        x-field-extra-annotation: '@jakarta.validation.constraints.PastOrPresent'
+      - name: expense_type
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/ExpenseType'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - properties:
+                    insights:
+                      $ref: '#/components/schemas/Expenses'
+                    type:
+                      $ref: '#/components/schemas/InsightsResultType'
+                  type: object
+              examples:
+                Get_Expenses_UAE_2:
+                  summary: Successful get expenses insights - UAE
+                  value:
+                    status: OK
+                    results_id: d982e1fd-aaf0-41fe-9f11-a4f67f4dc918
+                    message: Data successfully retrieved
+                    timestamp: '2026-01-08T12:07:48Z'
+                    type: expenses
+                    insights:
+                      currency: AED
+                      total:
+                        count: 142
+                        amount: 45650.75
+                        first_date_time: '2025-07-01T08:15:00Z'
+                        last_date_time: '2025-12-28T19:45:00Z'
+                        average_monthly_count: 23.67
+                        average_monthly_amount: 7608.46
+                        minimum_monthly_amount:
+                          month: 8
+                          year: 2025
+                          amount: 6850.25
+                        maximum_monthly_amount:
+                          month: 11
+                          year: 2025
+                          amount: 8950.5
+                        breakdown:
+                        - by: category
+                          breakdowns:
+                          - category: GROCERIES
+                            count: 38
+                            amount: 12450
+                            fraction_of_total_expenses: 0.2727
+                          - category: RENT_AND_SERVICES
+                            count: 6
+                            amount: 12000
+                            fraction_of_total_expenses: 0.2629
+                          - category: TRANSPORT
+                            count: 24
+                            amount: 4850.75
+                            fraction_of_total_expenses: 0.1063
+                          - category: RESTAURANTS_DINING
+                            count: 18
+                            amount: 4250
+                            fraction_of_total_expenses: 0.0931
+                          - category: RETAIL
+                            count: 22
+                            amount: 3800
+                            fraction_of_total_expenses: 0.0833
+                          - category: HEALTH_AND_WELLBEING
+                            count: 8
+                            amount: 2500
+                            fraction_of_total_expenses: 0.0548
+                          - category: EDUCATION
+                            count: 4
+                            amount: 2000
+                            fraction_of_total_expenses: 0.0438
+                          - category: ENTERTAINMENT
+                            count: 12
+                            amount: 1800
+                            fraction_of_total_expenses: 0.0394
+                          - category: BANK_FEES_AND_CHARGES
+                            count: 6
+                            amount: 450
+                            fraction_of_total_expenses: 0.0099
+                          - category: CHARITY
+                            count: 2
+                            amount: 500
+                            fraction_of_total_expenses: 0.011
+                          - category: OTHER
+                            count: 2
+                            amount: 250
+                            fraction_of_total_expenses: 0.0055
+                      monthly_totals:
+                      - month: 7
+                        year: 2025
+                        amount: 7200
+                        count: 20
+                        is_month_complete: true
+                        breakdown:
+                        - by: category
+                          breakdowns:
+                          - category: GROCERIES
+                            count: 6
+                            amount: 2100
+                            fraction_of_total_expenses: 0.2917
+                          - category: RENT_AND_SERVICES
+                            count: 1
+                            amount: 2000
+                            fraction_of_total_expenses: 0.2778
+                          - category: TRANSPORT
+                            count: 4
+                            amount: 850
+                            fraction_of_total_expenses: 0.1181
+                          - category: RESTAURANTS_DINING
+                            count: 3
+                            amount: 750
+                            fraction_of_total_expenses: 0.1042
+                          - category: RETAIL
+                            count: 4
+                            amount: 650
+                            fraction_of_total_expenses: 0.0903
+                          - category: HEALTH_AND_WELLBEING
+                            count: 1
+                            amount: 400
+                            fraction_of_total_expenses: 0.0556
+                          - category: ENTERTAINMENT
+                            count: 1
+                            amount: 650
+                            fraction_of_total_expenses: 0.0903
+                      - month: 8
+                        year: 2025
+                        amount: 6850.25
+                        count: 18
+                        is_month_complete: true
+                        breakdown:
+                        - by: category
+                          breakdowns:
+                          - category: GROCERIES
+                            count: 5
+                            amount: 1950
+                            fraction_of_total_expenses: 0.2845
+                          - category: RENT_AND_SERVICES
+                            count: 1
+                            amount: 2000
+                            fraction_of_total_expenses: 0.2918
+                          - category: TRANSPORT
+                            count: 3
+                            amount: 750.25
+                            fraction_of_total_expenses: 0.1095
+                          - category: RESTAURANTS_DINING
+                            count: 3
+                            amount: 650
+                            fraction_of_total_expenses: 0.0949
+                          - category: RETAIL
+                            count: 3
+                            amount: 600
+                            fraction_of_total_expenses: 0.0876
+                          - category: HEALTH_AND_WELLBEING
+                            count: 1
+                            amount: 400
+                            fraction_of_total_expenses: 0.0584
+                          - category: ENTERTAINMENT
+                            count: 2
+                            amount: 500
+                            fraction_of_total_expenses: 0.073
+                      - month: 9
+                        year: 2025
+                        amount: 7850.5
+                        count: 25
+                        is_month_complete: true
+                        breakdown:
+                        - by: category
+                          breakdowns:
+                          - category: GROCERIES
+                            count: 7
+                            amount: 2200
+                            fraction_of_total_expenses: 0.2803
+                          - category: RENT_AND_SERVICES
+                            count: 1
+                            amount: 2000
+                            fraction_of_total_expenses: 0.2548
+                          - category: TRANSPORT
+                            count: 5
+                            amount: 950.5
+                            fraction_of_total_expenses: 0.1211
+                          - category: RESTAURANTS_DINING
+                            count: 4
+                            amount: 900
+                            fraction_of_total_expenses: 0.1146
+                          - category: RETAIL
+                            count: 4
+                            amount: 700
+                            fraction_of_total_expenses: 0.0892
+                          - category: HEALTH_AND_WELLBEING
+                            count: 2
+                            amount: 500
+                            fraction_of_total_expenses: 0.0637
+                          - category: EDUCATION
+                            count: 1
+                            amount: 500
+                            fraction_of_total_expenses: 0.0637
+                          - category: ENTERTAINMENT
+                            count: 1
+                            amount: 100
+                            fraction_of_total_expenses: 0.0127
+                      - month: 10
+                        year: 2025
+                        amount: 8200
+                        count: 26
+                        is_month_complete: true
+                        breakdown:
+                        - by: category
+                          breakdowns:
+                          - category: GROCERIES
+                            count: 7
+                            amount: 2300
+                            fraction_of_total_expenses: 0.2805
+                          - category: RENT_AND_SERVICES
+                            count: 1
+                            amount: 2000
+                            fraction_of_total_expenses: 0.2439
+                          - category: TRANSPORT
+                            count: 5
+                            amount: 1000
+                            fraction_of_total_expenses: 0.122
+                          - category: RESTAURANTS_DINING
+                            count: 4
+                            amount: 950
+                            fraction_of_total_expenses: 0.1159
+                          - category: RETAIL
+                            count: 5
+                            amount: 850
+                            fraction_of_total_expenses: 0.1037
+                          - category: HEALTH_AND_WELLBEING
+                            count: 2
+                            amount: 500
+                            fraction_of_total_expenses: 0.061
+                          - category: EDUCATION
+                            count: 1
+                            amount: 500
+                            fraction_of_total_expenses: 0.061
+                          - category: ENTERTAINMENT
+                            count: 1
+                            amount: 150
+                            fraction_of_total_expenses: 0.0183
+                      - month: 11
+                        year: 2025
+                        amount: 8950.5
+                        count: 28
+                        is_month_complete: true
+                        breakdown:
+                        - by: category
+                          breakdowns:
+                          - category: GROCERIES
+                            count: 7
+                            amount: 2400
+                            fraction_of_total_expenses: 0.2682
+                          - category: RENT_AND_SERVICES
+                            count: 1
+                            amount: 2000
+                            fraction_of_total_expenses: 0.2235
+                          - category: TRANSPORT
+                            count: 4
+                            amount: 850.5
+                            fraction_of_total_expenses: 0.095
+                          - category: RESTAURANTS_DINING
+                            count: 2
+                            amount: 600
+                            fraction_of_total_expenses: 0.067
+                          - category: RETAIL
+                            count: 4
+                            amount: 800
+                            fraction_of_total_expenses: 0.0894
+                          - category: HEALTH_AND_WELLBEING
+                            count: 1
+                            amount: 400
+                            fraction_of_total_expenses: 0.0447
+                          - category: EDUCATION
+                            count: 1
+                            amount: 500
+                            fraction_of_total_expenses: 0.0559
+                          - category: ENTERTAINMENT
+                            count: 4
+                            amount: 800
+                            fraction_of_total_expenses: 0.0894
+                          - category: CHARITY
+                            count: 1
+                            amount: 300
+                            fraction_of_total_expenses: 0.0335
+                          - category: BANK_FEES_AND_CHARGES
+                            count: 3
+                            amount: 200
+                            fraction_of_total_expenses: 0.0223
+                      - month: 12
+                        year: 2025
+                        amount: 8500
+                        count: 25
+                        is_month_complete: false
+                        breakdown:
+                        - by: category
+                          breakdowns:
+                          - category: GROCERIES
+                            count: 6
+                            amount: 1800
+                            fraction_of_total_expenses: 0.2118
+                          - category: RENT_AND_SERVICES
+                            count: 1
+                            amount: 2000
+                            fraction_of_total_expenses: 0.2353
+                          - category: TRANSPORT
+                            count: 3
+                            amount: 450
+                            fraction_of_total_expenses: 0.0529
+                          - category: RESTAURANTS_DINING
+                            count: 2
+                            amount: 400
+                            fraction_of_total_expenses: 0.0471
+                          - category: RETAIL
+                            count: 2
+                            amount: 200
+                            fraction_of_total_expenses: 0.0235
+                          - category: HEALTH_AND_WELLBEING
+                            count: 1
+                            amount: 300
+                            fraction_of_total_expenses: 0.0353
+                          - category: EDUCATION
+                            count: 1
+                            amount: 500
+                            fraction_of_total_expenses: 0.0588
+                          - category: ENTERTAINMENT
+                            count: 3
+                            amount: 500
+                            fraction_of_total_expenses: 0.0588
+                          - category: CHARITY
+                            count: 1
+                            amount: 200
+                            fraction_of_total_expenses: 0.0235
+                          - category: BANK_FEES_AND_CHARGES
+                            count: 3
+                            amount: 150
+                            fraction_of_total_expenses: 0.0176
+                          - category: OTHER
+                            count: 2
+                            amount: 250
+                            fraction_of_total_expenses: 0.0294
+                Get_Expenses_UAE:
+                  summary: Successful get expenses insights - UAE
+                  value:
+                    status: OK
+                    results_id: d982e1fd-aaf0-41fe-9f11-a4f67f4dc918
+                    message: Data successfully retrieved
+                    timestamp: '2026-01-08T12:07:48Z'
+                    type: expenses
+                    insights:
+                      currency: AED
+                      total:
+                        count: 168
+                        amount: 67850.25
+                        first_date_time: '2025-07-01T09:00:00Z'
+                        last_date_time: '2025-12-29T20:30:00Z'
+                        average_monthly_count: 28
+                        average_monthly_amount: 11308.38
+                        minimum_monthly_amount:
+                          month: 8
+                          year: 2025
+                          amount: 9850
+                        maximum_monthly_amount:
+                          month: 11
+                          year: 2025
+                          amount: 12850.75
+                        breakdown:
+                        - by: category
+                          breakdowns:
+                          - category: RENT_AND_SERVICES
+                            count: 6
+                            amount: 18000
+                            fraction_of_total_expenses: 0.2653
+                          - category: GROCERIES
+                            count: 42
+                            amount: 15200
+                            fraction_of_total_expenses: 0.2241
+                          - category: TRANSPORT
+                            count: 28
+                            amount: 7200.25
+                            fraction_of_total_expenses: 0.1061
+                          - category: RESTAURANTS_DINING
+                            count: 24
+                            amount: 6800
+                            fraction_of_total_expenses: 0.1002
+                          - category: RETAIL
+                            count: 26
+                            amount: 6200
+                            fraction_of_total_expenses: 0.0914
+                          - category: HEALTH_AND_WELLBEING
+                            count: 10
+                            amount: 3800
+                            fraction_of_total_expenses: 0.056
+                          - category: ENTERTAINMENT
+                            count: 16
+                            amount: 3200
+                            fraction_of_total_expenses: 0.0472
+                          - category: EDUCATION
+                            count: 6
+                            amount: 3000
+                            fraction_of_total_expenses: 0.0442
+                          - category: TRAVEL
+                            count: 4
+                            amount: 2500
+                            fraction_of_total_expenses: 0.0369
+                          - category: BANK_FEES_AND_CHARGES
+                            count: 4
+                            amount: 750
+                            fraction_of_total_expenses: 0.0111
+                          - category: OTHER
+                            count: 2
+                            amount: 200
+                            fraction_of_total_expenses: 0.0029
+                      monthly_totals:
+                      - month: 7
+                        year: 2025
+                        amount: 10500
+                        count: 24
+                        is_month_complete: true
+                        breakdown:
+                        - by: category
+                          breakdowns:
+                          - category: RENT_AND_SERVICES
+                            count: 1
+                            amount: 3000
+                            fraction_of_total_expenses: 0.2857
+                          - category: GROCERIES
+                            count: 7
+                            amount: 2500
+                            fraction_of_total_expenses: 0.2381
+                          - category: TRANSPORT
+                            count: 4
+                            amount: 1200
+                            fraction_of_total_expenses: 0.1143
+                          - category: RESTAURANTS_DINING
+                            count: 4
+                            amount: 1100
+                            fraction_of_total_expenses: 0.1048
+                          - category: RETAIL
+                            count: 4
+                            amount: 900
+                            fraction_of_total_expenses: 0.0857
+                          - category: HEALTH_AND_WELLBEING
+                            count: 2
+                            amount: 600
+                            fraction_of_total_expenses: 0.0571
+                          - category: ENTERTAINMENT
+                            count: 2
+                            amount: 200
+                            fraction_of_total_expenses: 0.019
+                      - month: 8
+                        year: 2025
+                        amount: 9850
+                        count: 22
+                        is_month_complete: true
+                        breakdown:
+                        - by: category
+                          breakdowns:
+                          - category: RENT_AND_SERVICES
+                            count: 1
+                            amount: 3000
+                            fraction_of_total_expenses: 0.3046
+                          - category: GROCERIES
+                            count: 6
+                            amount: 2200
+                            fraction_of_total_expenses: 0.2234
+                          - category: TRANSPORT
+                            count: 3
+                            amount: 950
+                            fraction_of_total_expenses: 0.0964
+                          - category: RESTAURANTS_DINING
+                            count: 3
+                            amount: 900
+                            fraction_of_total_expenses: 0.0914
+                          - category: RETAIL
+                            count: 4
+                            amount: 800
+                            fraction_of_total_expenses: 0.0812
+                          - category: HEALTH_AND_WELLBEING
+                            count: 2
+                            amount: 500
+                            fraction_of_total_expenses: 0.0508
+                          - category: ENTERTAINMENT
+                            count: 2
+                            amount: 300
+                            fraction_of_total_expenses: 0.0305
+                          - category: BANK_FEES_AND_CHARGES
+                            count: 1
+                            amount: 200
+                            fraction_of_total_expenses: 0.0203
+                      - month: 9
+                        year: 2025
+                        amount: 11200
+                        count: 28
+                        is_month_complete: true
+                        breakdown:
+                        - by: category
+                          breakdowns:
+                          - category: RENT_AND_SERVICES
+                            count: 1
+                            amount: 3000
+                            fraction_of_total_expenses: 0.2679
+                          - category: GROCERIES
+                            count: 7
+                            amount: 2600
+                            fraction_of_total_expenses: 0.2321
+                          - category: TRANSPORT
+                            count: 5
+                            amount: 1250
+                            fraction_of_total_expenses: 0.1116
+                          - category: RESTAURANTS_DINING
+                            count: 4
+                            amount: 1200
+                            fraction_of_total_expenses: 0.1071
+                          - category: RETAIL
+                            count: 5
+                            amount: 1100
+                            fraction_of_total_expenses: 0.0982
+                          - category: HEALTH_AND_WELLBEING
+                            count: 2
+                            amount: 650
+                            fraction_of_total_expenses: 0.058
+                          - category: ENTERTAINMENT
+                            count: 2
+                            amount: 400
+                            fraction_of_total_expenses: 0.0357
+                          - category: EDUCATION
+                            count: 1
+                            amount: 500
+                            fraction_of_total_expenses: 0.0446
+                          - category: TRAVEL
+                            count: 1
+                            amount: 500
+                            fraction_of_total_expenses: 0.0446
+                      - month: 10
+                        year: 2025
+                        amount: 11500.5
+                        count: 30
+                        is_month_complete: true
+                        breakdown:
+                        - by: category
+                          breakdowns:
+                          - category: RENT_AND_SERVICES
+                            count: 1
+                            amount: 3000
+                            fraction_of_total_expenses: 0.2609
+                          - category: GROCERIES
+                            count: 8
+                            amount: 2700
+                            fraction_of_total_expenses: 0.2348
+                          - category: TRANSPORT
+                            count: 5
+                            amount: 1300.5
+                            fraction_of_total_expenses: 0.1131
+                          - category: RESTAURANTS_DINING
+                            count: 5
+                            amount: 1300
+                            fraction_of_total_expenses: 0.113
+                          - category: RETAIL
+                            count: 5
+                            amount: 1200
+                            fraction_of_total_expenses: 0.1043
+                          - category: HEALTH_AND_WELLBEING
+                            count: 2
+                            amount: 700
+                            fraction_of_total_expenses: 0.0609
+                          - category: ENTERTAINMENT
+                            count: 3
+                            amount: 600
+                            fraction_of_total_expenses: 0.0522
+                          - category: EDUCATION
+                            count: 1
+                            amount: 500
+                            fraction_of_total_expenses: 0.0435
+                          - category: TRAVEL
+                            count: 1
+                            amount: 200
+                            fraction_of_total_expenses: 0.0174
+                      - month: 11
+                        year: 2025
+                        amount: 12850.75
+                        count: 32
+                        is_month_complete: true
+                        breakdown:
+                        - by: category
+                          breakdowns:
+                          - category: RENT_AND_SERVICES
+                            count: 1
+                            amount: 3000
+                            fraction_of_total_expenses: 0.2335
+                          - category: GROCERIES
+                            count: 7
+                            amount: 2800
+                            fraction_of_total_expenses: 0.2179
+                          - category: TRANSPORT
+                            count: 5
+                            amount: 1400.75
+                            fraction_of_total_expenses: 0.109
+                          - category: RESTAURANTS_DINING
+                            count: 4
+                            amount: 1200
+                            fraction_of_total_expenses: 0.0934
+                          - category: RETAIL
+                            count: 4
+                            amount: 1100
+                            fraction_of_total_expenses: 0.0856
+                          - category: HEALTH_AND_WELLBEING
+                            count: 1
+                            amount: 500
+                            fraction_of_total_expenses: 0.0389
+                          - category: ENTERTAINMENT
+                            count: 4
+                            amount: 1000
+                            fraction_of_total_expenses: 0.0778
+                          - category: EDUCATION
+                            count: 2
+                            amount: 1000
+                            fraction_of_total_expenses: 0.0778
+                          - category: TRAVEL
+                            count: 2
+                            amount: 1500
+                            fraction_of_total_expenses: 0.1167
+                          - category: BANK_FEES_AND_CHARGES
+                            count: 1
+                            amount: 150
+                            fraction_of_total_expenses: 0.0117
+                      - month: 12
+                        year: 2025
+                        amount: 11950
+                        count: 32
+                        is_month_complete: false
+                        breakdown:
+                        - by: category
+                          breakdowns:
+                          - category: RENT_AND_SERVICES
+                            count: 1
+                            amount: 3000
+                            fraction_of_total_expenses: 0.251
+                          - category: GROCERIES
+                            count: 7
+                            amount: 2400
+                            fraction_of_total_expenses: 0.2008
+                          - category: TRANSPORT
+                            count: 6
+                            amount: 1100
+                            fraction_of_total_expenses: 0.0921
+                          - category: RESTAURANTS_DINING
+                            count: 4
+                            amount: 1100
+                            fraction_of_total_expenses: 0.0921
+                          - category: RETAIL
+                            count: 4
+                            amount: 1100
+                            fraction_of_total_expenses: 0.0921
+                          - category: HEALTH_AND_WELLBEING
+                            count: 1
+                            amount: 650
+                            fraction_of_total_expenses: 0.0544
+                          - category: ENTERTAINMENT
+                            count: 3
+                            amount: 900
+                            fraction_of_total_expenses: 0.0753
+                          - category: EDUCATION
+                            count: 2
+                            amount: 1000
+                            fraction_of_total_expenses: 0.0837
+                          - category: TRAVEL
+                            count: 1
+                            amount: 300
+                            fraction_of_total_expenses: 0.0251
+                          - category: BANK_FEES_AND_CHARGES
+                            count: 2
+                            amount: 400
+                            fraction_of_total_expenses: 0.0335
+                          - category: OTHER
+                            count: 1
+                            amount: 200
+                            fraction_of_total_expenses: 0.0167
+        '202':
+          description: Accepted (Asynchronous request)
+          content:
+            application/json:
+              examples:
+                GetIncomeAsyncExample:
+                  $ref: '#/components/examples/AsyncProcessingV2Example'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                InvalidParametersExample:
+                  $ref: '#/components/examples/InvalidParametersExample'
+        '404':
+          description: Entity not found
+          content:
+            application/json:
+              examples:
+                UnknownEntityExample:
+                  $ref: '#/components/examples/UnknownEntityExample'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                InternalServerErrorExample:
+                  $ref: '#/components/examples/InternalServerErrorExample'
+      tags:
+      - Expenses
+      x-spring-response-entity: true
+components:
+  schemas:
+    CategoryTotalBreakdownElement:
+      type: object
+      properties:
+        category:
+          description: The category of the transaction.
+          type: string
+        amount:
+          description: Total expenses for the category.
+          type: number
+          x-java-type: java.math.BigDecimal
+        count:
+          description: Number of expenses transactions within the month.
+          type: integer
+          format: int32
+        fraction_of_total_expenses:
+          description: Fraction of the total expenses that this category represents.
+          type: number
+          x-java-type: java.math.BigDecimal
+        average_days_between_transactions:
+          description: Average number of days between transactions in this category.
+          type: number
+          x-java-type: java.math.BigDecimal
+        last_date_time:
+          description: Date and time of the last transaction in this category.
+          type: string
+          format: date-time
+        first_date_time:
+          description: Date and time of the first transaction in this category.
+          type: string
+          format: date-time
+        average_monthly_amount:
+          description: Average expenses amount per month for this category.
+          type: number
+          x-java-type: java.math.BigDecimal
+        average_monthly_count:
+          description: Average number of transactions per month for this category.
+          type: number
+          x-java-type: java.math.BigDecimal
+        maximum_monthly_amount:
+          description: Maximum expenses amount in a month for this category.
+          allOf:
+          - $ref: '#/components/schemas/ExpensesMonthlyAmount'
+        minimum_monthly_amount:
+          description: Minimum expenses amount in a month for this category.
+          allOf:
+          - $ref: '#/components/schemas/ExpensesMonthlyAmount'
+      required:
+      - category
+      - amount
+      - average_monthly_count
+    ExpensesTransaction:
+      type: object
+      properties:
+        account_id:
+          description: The account ID for the transaction
+          type: string
+          format: uuid
+        transaction_id:
+          description: The unique transaction identifier
+          type: string
+        transaction_information:
+          description: Additional information about the transaction
+          type:
+          - string
+          - 'null'
+        booking_date_time:
+          description: The date and time when the transaction was booked
+          type: string
+          format: date-time
+        amount:
+          description: The transaction amount
+          type: number
+        category:
+          description: The expense category
+          type: string
+      required:
+      - account_id
+      - transaction_id
+      - booking_date_time
+      - amount
+      - category
+    Breakdown:
+      type: object
+      properties:
+        by:
+          description: Criteria by which we are breaking down the expenses.
+          type: string
+        breakdowns:
+          description: List of breakdown elements.
+          type: array
+          items:
+            $ref: '#/components/schemas/BreakdownElement'
+      required:
+      - by
+      - breakdowns
+    CategoryMonthlyBreakdownElement:
+      type: object
+      properties:
+        category:
+          description: The category of the transaction.
+          type: string
+        amount:
+          description: Total expenses for the category.
+          type: number
+          x-java-type: java.math.BigDecimal
+        count:
+          description: Number of expenses transactions for the category.
+          type: integer
+          format: int32
+        fraction_of_total_expenses:
+          description: Fraction of the total expenses that this category represents.
+          type: number
+          x-java-type: java.math.BigDecimal
+      required:
+      - category
+      - amount
+    MonthlyTotalExpenses:
+      type: object
+      properties:
+        month:
+          description: 'Number of month within the year (e.g.: January is represented as 1 and December is represented as 12)'
+          type: integer
+          format: int32
+        year:
+          description: Year.
+          type: integer
+          format: int32
+        amount:
+          description: Total expenses for the month.
+          type: number
+          x-java-type: java.math.BigDecimal
+        count:
+          description: Number of expense transactions in the month.
+          type: integer
+          format: int32
+        is_month_complete:
+          description: Determines if Lean retrieved the data for all days for the month. This will always be `true`, except for the first and last month retrieved.
+          type: boolean
+        breakdown:
+          description: Breakdown of expenses by category.
+          type: array
+          items:
+            $ref: '#/components/schemas/Breakdown'
+      required:
+      - amount
+      - breakdown
+    ExpensesMonthlyAmount:
+      type: object
+      properties:
+        month:
+          description: 'Number of month within the year (e.g.: January is represented as 1 and December is represented as 12)'
+          type: integer
+          format: int32
+        year:
+          description: Year
+          type: integer
+          format: int32
+        amount:
+          description: Total expenses for the month
+          type: number
+          x-java-type: java.math.BigDecimal
+      required:
+      - amount
+    ExpenseType:
+      type: string
+      enum:
+      - CARD
+      - ALL
+    ExpensesTotal:
+      type: object
+      properties:
+        count:
+          description: Number of expenses transactions within the time period.
+          type: integer
+          format: int32
+        amount:
+          description: Total expenses since start_date.
+          type: number
+          x-java-type: java.math.BigDecimal
+        first_date_time:
+          description: UTC datetime of first expense transaction since start_date.
+          type: string
+          format: date-time
+        last_date_time:
+          description: UTC datetime of last expense transaction.
+          type: string
+          format: date-time
+        average_monthly_count:
+          description: Average number of expenses transactions per month since start_date.
+          type: number
+        average_monthly_amount:
+          description: Average expenses amount per month since start_date.
+          type: number
+        minimum_monthly_amount:
+          description: Minimum expenses amount in a month since start_date and month when this happened.
+          allOf:
+          - $ref: '#/components/schemas/ExpensesMonthlyAmount'
+        maximum_monthly_amount:
+          description: Maximum expenses amount in a month since start_date and month when this happened.
+          allOf:
+          - $ref: '#/components/schemas/ExpensesMonthlyAmount'
+        breakdown:
+          description: Breakdown of expenses by category.
+          type: array
+          items:
+            $ref: '#/components/schemas/Breakdown'
+      required:
+      - amount
+      - breakdown
+    BreakdownElement:
+      oneOf:
+      - $ref: '#/components/schemas/CategoryMonthlyBreakdownElement'
+      - $ref: '#/components/schemas/CategoryTotalBreakdownElement'
+    Expenses:
+      type: object
+      properties:
+        currency:
+          description: The 3 Letter ISO code denominating the currency that the salary is provided in. This will be local currency (AED in UAE).
+          type: string
+        total:
+          description: Insights on the expenses since start_date.
+          allOf:
+          - $ref: '#/components/schemas/ExpensesTotal'
+        monthly_totals:
+          description: Total expenses for all months from start_date until today.
+          type: array
+          items:
+            $ref: '#/components/schemas/MonthlyTotalExpenses'
+        transactions:
+          description: List of expense transactions (internal use only, not serialized in API response)
+          type: array
+          items:
+            $ref: '#/components/schemas/ExpensesTransaction'
+          x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonIgnore'
+      additionalProperties: false
+      required:
+      - currency
+      - total
+      - monthly_totals
+      - transactions
+    InsightsResultType:
+      description: type of insight
+      type: string
+      enum:
+      - income
+      - employment
+      - cashflow
+      - credits-obligations
+      - non-credits-obligations
+      - expenses
+      - cash-balances
+      - freelancer-cashflow
+      - behaviors
+      - cashflow-patterns
+      - credit-assessments
+      - account-controls
+      - credit-obligations
+  examples:
+    InternalServerErrorExample:
+      summary: Internal server error response
+      description: Response when an unexpected server error occurs
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-08-07T13:07:38.834977945Z'
+        status: INTERNAL_SERVER_ERROR
+        message: Something has gone wrong. If you continue to see this error, please get in touch with Lean.
+        metadata: null
+    UnknownEntityExample:
+      summary: Entity not found error response
+      description: Response when the provided entity_id is not found
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-10T21:03:05.413806605Z'
+        status: UNKNOWN_ENTITY
+        message: The entity_id provided did not match an account in our records.
+        metadata: null
+    AsyncProcessingV2Example:
+      summary: Asynchronous processing response with async=true
+      description: Response to request with async=true
+      value:
+        status: PENDING
+        results_id: df73d596-7138-46df-af96-cbcbe9a8af59
+        message: Please wait for a webhook or try again later.
+        meta: null
+        timestamp: '2025-09-11T19:15:07.829993148Z'
+        status_detail: null
+        data: null
+        type: null
+        refreshed_at: null
+    InvalidParametersExample:
+      summary: Invalid parameters error response
+      description: Response when required parameters are missing or invalid
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-10T21:05:59.919233187Z'
+        status: INVALID_PARAMETERS
+        message: 'The request is badly formatted or a parameter of the wrong type has been provided, field: entity_id, value: e34d8e49-9af2-4252-a53e-bd2df855134.'
+        metadata: null
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

@@ -1,0 +1,1132 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Open Banking Account Parties API
+  version: v0.2.3
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Open Banking Account Parties
+  x-displayName: Open Banking Account Parties
+paths:
+  /open-banking/account-information/2022.11.01-final-errata2/accounts/{AccountId}/parties:
+    servers: []
+    get:
+      operationId: GetAccountPartiesV1
+      summary: Get Open Banking Account Parties
+      description: 'Retrieves the parties associated with a specific bank account linked by a user via LinkSDK for the KSA Open Banking (SAMA) ecosystem.
+
+        Each party object contains the party type, account role, and verified identity claims.
+
+        Requires ReadParty consent permission.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/FapiInteractionId'
+      - $ref: '#/components/parameters/EntityId'
+      - $ref: '#/components/parameters/CustomerId'
+      - $ref: '#/components/parameters/OBPageParm'
+      - $ref: '#/components/parameters/OBSizeParam'
+      responses:
+        '200':
+          description: Account Parties Read
+          headers:
+            x-fapi-interaction-id:
+              description: An RFC4122 UID used as a correlation id.
+              required: true
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OBGetAccountPartiesResponse'
+              examples:
+                GetAccountPartiesSuccess:
+                  summary: Successful account parties response
+                  value:
+                    Status: OK
+                    Message: Data successfully retrieved
+                    Timestamp: '2026-04-09T10:30:00.000Z'
+                    RefreshedAt: '2026-04-09T10:25:00.000Z'
+                    StatusDetail: null
+                    Meta:
+                      TotalPages: 1
+                    Links:
+                      Self: https://api.leantech.me/open-banking/account-information/2022.11.01-final-errata2/accounts/7c8a9f12-3456-4abc-b123-9876543210ab/parties
+                      First: https://api.leantech.me/open-banking/account-information/2022.11.01-final-errata2/accounts/7c8a9f12-3456-4abc-b123-9876543210ab/parties
+                      Prev: null
+                      Next: null
+                      Last: https://api.leantech.me/open-banking/account-information/2022.11.01-final-errata2/accounts/7c8a9f12-3456-4abc-b123-9876543210ab/parties
+                    Data:
+                      AccountId: 7c8a9f12-3456-4abc-b123-9876543210ab
+                      Party:
+                      - PartyId: PARTY-00111222
+                        PartyNumber: PN-7890123
+                        PartyType: KSAOB.Sole
+                        AccountRole: KSAOB.Principal
+                        VerifiedClaims:
+                        - Verification:
+                            TrustFramework: SA_IAM
+                            AssuranceLevel: high
+                            Time: '2024-11-15T09:00:00.000Z'
+                            VerificationProcess: VP-2024-SA-001
+                            AssuranceProcess:
+                              Policy: SA_IAM_Policy_v2
+                              Procedure: KYC_Full_Verification
+                              AssuranceDetails:
+                              - AssuranceType: identity
+                                AssuranceClassification: high
+                                EvidenceRef:
+                                - Txn: TXN-EVD-001
+                                  EvidenceMetadata:
+                                    EvidenceClassification: documentary
+                            Evidence:
+                            - Type: document
+                              Time: '2024-11-15T08:45:00.000Z'
+                              CheckDetails:
+                              - CheckMethod: physical_presence
+                                Organization: Al Rajhi Bank
+                                Txn: TXN-CHK-001
+                                Time: '2024-11-15T08:30:00.000Z'
+                              Verifier:
+                                Organization: Al Rajhi Bank KYC Team
+                                Txn: TXN-VER-001
+                              DocumentDetails:
+                                Type: idcard
+                                DocumentNumber: '1234567890'
+                                PersonalNumber: '1098765432'
+                                SerialNumber: SN-2024-001
+                                CalendarType: KSAOB.GregorianCalendar
+                                DateOfIssuance: '2020-01-15T00:00:00.000Z'
+                                DateOfExpiry: '2030-01-15T00:00:00.000Z'
+                                Issuer:
+                                  Name: Ministry of Interior - Saudi Arabia
+                                  CountryCode: SA
+                                  Jurisdiction: Saudi Arabia
+                                  Address:
+                                    Formatted: Ministry of Interior, Riyadh, Saudi Arabia
+                                    StreetAddress: King Fahad Road
+                                    Locality: Riyadh
+                                    Region: Riyadh Province
+                                    PostalCode: '11564'
+                                    Country: SA
+                              Attachments:
+                              - Desc: National ID front scan
+                                ContentType: image/jpeg
+                                Content: base64encodedContent==
+                                Txn: TXN-ATT-001
+                            - Type: electronic_record
+                              Time: '2024-11-15T08:40:00.000Z'
+                              CheckDetails:
+                              - CheckMethod: electronic_verification
+                                Organization: NAFATH
+                                Txn: TXN-CHK-002
+                                Time: '2024-11-15T08:35:00.000Z'
+                              Record:
+                                Type: bank_account
+                                PersonalNumber: '1098765432'
+                                CalendarType: KSAOB.GregorianCalendar
+                                CreatedAt: '2019-03-20T00:00:00.000Z'
+                                DateOfExpiry: '2029-03-20T00:00:00.000Z'
+                                Source:
+                                  Name: Al Rajhi Bank
+                                  CountryCode: SA
+                                  Jurisdiction: Saudi Arabia
+                                  Address:
+                                    Formatted: Al Rajhi Bank HQ, Riyadh
+                                    StreetAddress: Olaya Street
+                                    Locality: Riyadh
+                                    Region: Riyadh Province
+                                    PostalCode: '12244'
+                                    Country: SA
+                              Attachments:
+                              - Desc: Electronic bank record verification
+                                ContentType: application/pdf
+                                Content: base64encodedPdfContent==
+                                Txn: TXN-ATT-002
+                          Claims:
+                            Sub: sub-4f8a-b123-9876
+                            Name: Mohammed Abdullah Al-Rashidi
+                            GivenName: Mohammed
+                            FamilyName: Al-Rashidi
+                            MiddleName: Abdullah
+                            Nickname: Abu Abdullah
+                            PreferredUsername: m.alrashidi
+                            Profile: PRF-00111222
+                            Picture: null
+                            Website: null
+                            Email: m.alrashidi@example.com
+                            EmailVerified: true
+                            Gender: male
+                            BirthDate: '1985-06-15'
+                            ZoneInfo: Asia/Riyadh
+                            Locale: ar-SA
+                            PhoneNumber: '+966501234567'
+                            PhoneNumberVerified: true
+                            Salutation: Mr
+                            Title: Dr
+                            Msisdn: '+966501234567'
+                            BirthFamilyName: Al-Rashidi
+                            BirthGivenName: Mohammed
+                            BirthMiddleName: Abdullah
+                            AlsoKnownAs: null
+                            PlaceOfBirth:
+                              Country: SA
+                              Region: Riyadh Province
+                              Locality: Riyadh
+                            Nationalities:
+                            - SA
+                            Address:
+                              Formatted: 123 King Fahad Road, Al Olaya, Riyadh 12244, Saudi Arabia
+                              StreetAddress: 123 King Fahad Road
+                              Locality: Al Olaya
+                              Region: Riyadh Province
+                              PostalCode: '12244'
+                              Country: SA
+                            UpdatedAt: 1731657600
+                BankIssueExample:
+                  summary: Failed request due to bank technical issues
+                  value:
+                    Status: FAILED
+                    Message: Your bank is currently experiencing technological problems. Please try again later.
+                    Timestamp: '2026-04-09T10:30:00.000Z'
+                    RefreshedAt: null
+                    StatusDetail:
+                      GranularStatusCode: BANK_ISSUE
+                      StatusAdditionalInfo: Your bank is currently experiencing technological problems. Please try again later.
+                    Meta: null
+                    Links: null
+                    Data: null
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                MissingEntityId:
+                  summary: Missing or invalid entity_id
+                  value:
+                    Status: FAILED
+                    Message: entity_id is required and must be a valid UUID
+                    Timestamp: '2026-04-09T10:30:00.000Z'
+                    RefreshedAt: null
+                    StatusDetail:
+                      GranularStatusCode: INVALID_PARAMETERS
+                      StatusAdditionalInfo: The provided entity_id is not a valid UUID format
+                    Meta: null
+                    Links: null
+                    Data: null
+        '404':
+          description: Entity not found
+          content:
+            application/json:
+              examples:
+                EntityNotFound:
+                  summary: Entity not found
+                  value:
+                    Status: FAILED
+                    Message: Entity not found
+                    Timestamp: '2026-04-09T10:30:00.000Z'
+                    RefreshedAt: null
+                    StatusDetail:
+                      GranularStatusCode: ENTITY_NOT_FOUND
+                      StatusAdditionalInfo: No entity found for the provided entity_id
+                    Meta: null
+                    Links: null
+                    Data: null
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                BankIssue:
+                  summary: Bank technical issue
+                  value:
+                    Status: FAILED
+                    Message: Your bank is currently experiencing technological problems. Please try again later.
+                    Timestamp: '2025-09-12T05:13:49.739987382Z'
+                    RefreshedAt: null
+                    StatusDetail:
+                      GranularStatusCode: BANK_ISSUE
+                      StatusAdditionalInfo: Your bank is currently experiencing technological problems. Please try again later.
+                    Meta: null
+                    Links: null
+                    Data: null
+      tags:
+      - Open Banking Account Parties
+components:
+  parameters:
+    AccountId:
+      name: AccountId
+      in: path
+      description: The Lean account identifier uniquely identifying the account within Lean.
+      required: true
+      schema:
+        type: string
+        format: uuid
+    CustomerId:
+      name: CustomerId
+      in: query
+      description: The customer_id of the connected customer.
+      required: false
+      schema:
+        type: string
+        format: uuid
+    OBPageParm:
+      name: Page
+      in: query
+      description: The page you're requesting - returns page 0 of a response if not specified.
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+    OBSizeParam:
+      name: Size
+      description: The number of objects you want to return as a page size.
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 50
+        maximum: 100
+        minimum: 1
+    FapiInteractionId:
+      name: x-fapi-interaction-id
+      in: header
+      description: An RFC4122 UID used as a correlation id.
+      required: false
+      schema:
+        type: string
+    EntityId:
+      name: EntityId
+      in: query
+      description: The entity_id of the connected customer.
+      required: false
+      schema:
+        type: string
+        format: uuid
+  schemas:
+    OBPartyIdentityCheckDetail:
+      description: Details of a check performed on PSU evidence for identity verification.
+      type: object
+      properties:
+        CheckMethod:
+          description: Method used by the PASP for checking the PSU evidence (e.g. biometric, document authenticity check).
+          type:
+          - string
+          - 'null'
+        Organization:
+          description: Legal entity that performed the check on behalf of the OP.
+          type:
+          - string
+          - 'null'
+        Txn:
+          description: Identifier referring to the identity verification transaction for audit purposes.
+          type:
+          - string
+          - 'null'
+        Time:
+          description: Date and time at which the check was performed.
+          type:
+          - string
+          - 'null'
+          format: date-time
+    OBVerificationAssuranceProcess:
+      description: Assurance process that was followed to meet the requirements of the trust framework.
+      type: object
+      properties:
+        Policy:
+          description: Standard or policy that was followed.
+          type:
+          - string
+          - 'null'
+        Procedure:
+          description: Specific procedure from the policy that was followed.
+          type:
+          - string
+          - 'null'
+        AssuranceDetails:
+          description: Details about how the evidence complies with the policy.
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/OBVerificationAssuranceDetail'
+    OBPartyIdentityEvidenceDocumentType:
+      description: The type of evidence provided for document-based identity verification.
+      type: string
+      enum:
+      - document
+      - electronic_record
+    OBParty:
+      description: Unambiguous identification of the party.
+      type: object
+      properties:
+        EntityId:
+          description: Lean entity identifier for the connected customer.
+          type: string
+          format: uuid
+        PartyId:
+          description: Unique and unambiguous identification of the party.
+          type: string
+          maxLength: 40
+          minLength: 1
+        PartyNumber:
+          description: Number assigned by an agent to identify its customer.
+          type:
+          - string
+          - 'null'
+          maxLength: 35
+          minLength: 1
+        PartyType:
+          $ref: '#/components/schemas/OBPartyTypeCode'
+        AccountRole:
+          $ref: '#/components/schemas/OBAccountRoleCode'
+        VerifiedClaims:
+          description: List of verified identity claims for the party.
+          type: array
+          items:
+            $ref: '#/components/schemas/OBVerifiedClaim'
+      required:
+      - PartyId
+      - PartyType
+      - AccountRole
+      - VerifiedClaims
+    OBPartyIdentityAddressClaim:
+      description: Address object as per OpenID Connect Core 1.0 Address Claim.
+      type: object
+      properties:
+        Formatted:
+          description: The PSU full address (street number, street name, city, zip code, country) claim.
+          type:
+          - string
+          - 'null'
+        StreetAddress:
+          description: The PSU address street claim verified by the PASP.
+          type:
+          - string
+          - 'null'
+        Locality:
+          description: The PSU address locality (village, town, city etc) claim verified by the PASP.
+          type:
+          - string
+          - 'null'
+        Region:
+          description: The PSU address region claim verified by the PASP.
+          type:
+          - string
+          - 'null'
+        PostalCode:
+          description: Postal code added to the address to assist the sorting of mail.
+          type:
+          - string
+          - 'null'
+          maxLength: 5
+          minLength: 5
+        Country:
+          description: Country code (ISO 3166) for the PSU address.
+          type:
+          - string
+          - 'null'
+    OBAccountPartiesData:
+      description: Container for the list of parties associated with a specific account.
+      type: object
+      properties:
+        CustomerId:
+          description: Lean provided customer ID
+          type:
+          - string
+          - 'null'
+          format: uuid
+        AccountId:
+          description: The Lean account identifier uniquely identifying the account.
+          type: string
+          format: uuid
+        Party:
+          description: List of parties associated with the account.
+          type: array
+          items:
+            $ref: '#/components/schemas/OBParty'
+      required:
+      - AccountId
+      - Party
+    OBElectronicRecordTypeCode:
+      description: The type of electronic record used for identity verification.
+      type: string
+      enum:
+      - bank_account
+      - mortgage_account
+      - loan_account
+    OBMeta:
+      description: Metadata relevant to the resource.
+      type: object
+      properties:
+        TotalPages:
+          description: Total number of pages where a result set is paginated.
+          type:
+          - integer
+          - 'null'
+          format: int32
+          minimum: 0
+    OBVerification:
+      description: Verification details for the identity claim (OpenID Connect for Identity Assurance 1.0).
+      type: object
+      properties:
+        TrustFramework:
+          $ref: '#/components/schemas/OBTrustFramework'
+        AssuranceLevel:
+          description: Level of assurance for the verified claim (e.g. low, medium, high).
+          type:
+          - string
+          - 'null'
+        AssuranceProcess:
+          description: The assurance process that was followed to meet the trust framework requirements.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBVerificationAssuranceProcess'
+        Time:
+          description: Date and time when the identity verification process took place.
+          type:
+          - string
+          - 'null'
+          format: date-time
+        VerificationProcess:
+          description: Unique reference to the identity verification process for audit and dispute resolution.
+          type:
+          - string
+          - 'null'
+        Evidence:
+          description: Evidence used for verifying the PSU identity.
+          type:
+          - array
+          - 'null'
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/OBPartyIdentityEvidenceTypeDocument'
+            - $ref: '#/components/schemas/OBPartyIdentityEvidenceTypeElectronicRecord'
+      required:
+      - TrustFramework
+    OBPartyIdentityEvidenceTypeElectronicRecord:
+      description: Electronic record evidence for PSU identity verification (OpenID Connect for Identity Assurance 1.0).
+      type: object
+      properties:
+        Type:
+          description: The type of evidence.
+          allOf:
+          - $ref: '#/components/schemas/OBPartyIdentityEvidenceElectronicRecordType'
+        CheckDetails:
+          description: Checks done in relation to the electronic record evidence.
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/OBPartyIdentityCheckDetail'
+        Time:
+          description: Date and time at which the electronic record evidence was verified.
+          type:
+          - string
+          - 'null'
+          format: date-time
+        Record:
+          description: The record used to perform the identity verification.
+          type:
+          - object
+          - 'null'
+          properties:
+            Type:
+              description: The type of electronic record.
+              allOf:
+              - $ref: '#/components/schemas/OBElectronicRecordTypeCode'
+            PersonalNumber:
+              description: An identifier assigned to the PSU not limited to being used in one record.
+              type:
+              - string
+              - 'null'
+            CalendarType:
+              description: The type of calendar used for dates in this record.
+              allOf:
+              - $ref: '#/components/schemas/OBPartyCalendarType'
+            CreatedAt:
+              description: The time the record was created.
+              type:
+              - string
+              - 'null'
+              format: date-time
+            DateOfExpiry:
+              description: The date the evidence will expire.
+              type:
+              - string
+              - 'null'
+              format: date-time
+            Source:
+              description: Information about the source of this record.
+              type:
+              - object
+              - 'null'
+              properties:
+                Name:
+                  description: Designation of the source of the electronic record.
+                  type:
+                  - string
+                  - 'null'
+                Address:
+                  description: Address of the record source.
+                  type:
+                  - object
+                  - 'null'
+                  allOf:
+                  - $ref: '#/components/schemas/OBPartyIdentityAddressClaim'
+                CountryCode:
+                  description: Country or supranational organization that issued the evidence (ISO 3166).
+                  type:
+                  - string
+                  - 'null'
+                Jurisdiction:
+                  description: Region(s)/state(s)/province(s) the source has jurisdiction over.
+                  type:
+                  - string
+                  - 'null'
+        Attachments:
+          description: Attachments related to the electronic record evidence.
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/OBPartyIdentityEvidenceAttachment'
+    OBPartyTypeCode:
+      description: Specifies the type of party.
+      type: string
+      enum:
+      - KSAOB.Delegate
+      - KSAOB.Joint
+      - KSAOB.Sole
+    OBLinks:
+      description: Links relevant to the resource for pagination navigation.
+      type: object
+      properties:
+        Self:
+          description: A link to the current resource.
+          type: string
+          format: uri
+        First:
+          description: A link to the first page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+        Prev:
+          description: A link to the previous page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+        Next:
+          description: A link to the next page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+        Last:
+          description: A link to the last page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+      required:
+      - Self
+    OBPartyIdentityEvidenceAttachment:
+      description: Attachment related to PSU identity evidence (OpenID Connect for Identity Assurance 1.0).
+      type: object
+      properties:
+        Desc:
+          description: Description of the document (e.g. filename or explanation of content).
+          type:
+          - string
+          - 'null'
+        ContentType:
+          description: Content (MIME) type of the document.
+          type:
+          - string
+          - 'null'
+        Content:
+          description: Base64 encoded representation of the document content.
+          type:
+          - string
+          - 'null'
+        Txn:
+          description: Identifier referring to the transaction.
+          type:
+          - string
+          - 'null'
+    OBClaims:
+      description: Standard and identity assurance claims for the party (OpenID Connect Core 1.0).
+      type: object
+      properties:
+        Sub:
+          description: Subject — identifier for the PSU at the Issuer.
+          type:
+          - string
+          - 'null'
+        Name:
+          description: The PSU name claim verified by the PASP.
+          type:
+          - string
+          - 'null'
+        GivenName:
+          description: The PSU given name (forename) claim verified by the PASP.
+          type:
+          - string
+          - 'null'
+        FamilyName:
+          description: The PSU family name claim verified by the PASP.
+          type:
+          - string
+          - 'null'
+        MiddleName:
+          description: The PSU middle name claim verified by the PASP.
+          type:
+          - string
+          - 'null'
+        Nickname:
+          description: The PSU nickname claim verified by the PASP.
+          type:
+          - string
+          - 'null'
+        PreferredUsername:
+          description: The PSU preferred username claim verified by the PASP.
+          type:
+          - string
+          - 'null'
+        Profile:
+          description: The PSU profile id claim verified by the PASP.
+          type:
+          - string
+          - 'null'
+        Picture:
+          description: The PSU photo claim verified by the PASP.
+          type:
+          - string
+          - 'null'
+        Website:
+          description: The PSU website claim verified by the PASP.
+          type:
+          - string
+          - 'null'
+        Email:
+          description: The PSU email claim verified by the PASP.
+          type:
+          - string
+          - 'null'
+        EmailVerified:
+          description: The PSU email verified claim verified by the PASP.
+          type:
+          - boolean
+          - 'null'
+        Gender:
+          description: The PSU gender claim verified by the PASP.
+          type:
+          - string
+          - 'null'
+        BirthDate:
+          description: The PSU date of birth claim verified by the PASP.
+          type:
+          - string
+          - 'null'
+          format: date
+        ZoneInfo:
+          description: The PSU timezone claim verified by the PASP.
+          type:
+          - string
+          - 'null'
+        Locale:
+          description: The PSU locale claim verified by the PASP.
+          type:
+          - string
+          - 'null'
+        PhoneNumber:
+          description: The PSU phone number claim verified by the PASP.
+          type:
+          - string
+          - 'null'
+        PhoneNumberVerified:
+          description: The PSU verified phone number claim verified by the PASP.
+          type:
+          - boolean
+          - 'null'
+        Salutation:
+          description: The PSU salutation claim verified by the PASP.
+          type:
+          - string
+          - 'null'
+        Title:
+          description: The PSU title claim verified by the PASP.
+          type:
+          - string
+          - 'null'
+        Msisdn:
+          description: The PSU MSISDN (mobile subscriber identifier) claim verified by the PASP.
+          type:
+          - string
+          - 'null'
+        BirthFamilyName:
+          description: The PSU birth family name claim verified by the PASP.
+          type:
+          - string
+          - 'null'
+        BirthGivenName:
+          description: The PSU birth given name claim verified by the PASP.
+          type:
+          - string
+          - 'null'
+        BirthMiddleName:
+          description: The PSU birth middle name claim verified by the PASP.
+          type:
+          - string
+          - 'null'
+        AlsoKnownAs:
+          description: The PSU other name claim verified by the PASP.
+          type:
+          - string
+          - 'null'
+        PlaceOfBirth:
+          description: The PSU place of birth claim verified by the PASP.
+          type:
+          - object
+          - 'null'
+          properties:
+            Country:
+              description: Country code (ISO 3166) of birth.
+              type:
+              - string
+              - 'null'
+            Region:
+              description: The PSU region of birth claim verified by the PASP.
+              type:
+              - string
+              - 'null'
+            Locality:
+              description: The PSU locality (village, town, city etc) of birth claim verified by the PASP.
+              type:
+              - string
+              - 'null'
+        Nationalities:
+          description: The PSU nationality claims verified by the PASP.
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+            description: A nationality of the PSU (ISO 3166 country code).
+        Address:
+          description: The PSU address claim verified by the PASP.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBPartyIdentityAddressClaim'
+        UpdatedAt:
+          description: Time the PSU's information was last updated (seconds since 1970-01-01T00:00:00Z UTC).
+          type:
+          - number
+          - 'null'
+    OBAccountRoleCode:
+      description: Specifies the role of the party in relation to the account.
+      type: string
+      enum:
+      - KSAOB.Administrator
+      - KSAOB.Beneficiary
+      - KSAOB.CustodianForMinor
+      - KSAOB.Granter
+      - KSAOB.LegalGuardian
+      - KSAOB.OtherParty
+      - KSAOB.PowerOfAttorney
+      - KSAOB.Principal
+      - KSAOB.Protector
+      - KSAOB.RegisteredShareholderName
+      - KSAOB.SecondaryOwner
+      - KSAOB.SeniorManagingOfficial
+      - KSAOB.Settlor
+      - KSAOB.SuccessorOnDeath
+    OBPartyIdentityEvidenceElectronicRecordType:
+      description: The type of evidence provided for electronic record-based identity verification.
+      type: string
+      const: electronic_record
+    OBGetAccountPartiesResponse:
+      description: Response envelope for the Open Banking account-specific parties.
+      type: object
+      properties:
+        Data:
+          description: Container for the account parties. Null when the request fails.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBAccountPartiesData'
+        Status:
+          description: Status of the request.
+          type: string
+          enum:
+          - OK
+          - PENDING
+          - FAILED
+          - CONSENT_EXPIRED
+        Message:
+          description: Human-readable message describing the status of the request.
+          type: string
+        Timestamp:
+          description: Date and time when the response was generated.
+          type: string
+          format: date-time
+        RefreshedAt:
+          description: Date and time when the data was last refreshed from the bank.
+          type:
+          - string
+          - 'null'
+          format: date-time
+        StatusDetail:
+          description: Additional details about the request status.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBStatusDetail'
+        Meta:
+          description: Metadata relevant to the resource, including pagination information.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBMeta'
+        Links:
+          description: Links relevant to the resource for pagination navigation.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBLinks'
+      required:
+      - Data
+      - Status
+      - Message
+      - Timestamp
+    OBDocumentTypeCode:
+      description: The type of document used for evidence checking by the PASP.
+      type: string
+      enum:
+      - passport
+      - driving_permit
+      - idcard
+      - residence_permit
+    OBVerificationEvidenceRef:
+      description: Reference to a specific evidence transaction.
+      type: object
+      properties:
+        Txn:
+          description: Identifier referring to the transaction used in CheckDetails.
+          type: string
+        EvidenceMetadata:
+          description: Metadata about how the process demonstrated by the check demonstrates compliance with the TrustFramework.
+          type:
+          - object
+          - 'null'
+          properties:
+            EvidenceClassification:
+              description: How the process is classified by the AssuranceProcess to demonstrate compliance with the TrustFramework.
+              type:
+              - string
+              - 'null'
+      required:
+      - Txn
+    OBDocumentDetails:
+      description: The document used to perform the identity verification.
+      type: object
+      properties:
+        Type:
+          description: The type of document used for evidence checking by the PASP.
+          allOf:
+          - $ref: '#/components/schemas/OBDocumentTypeCode'
+        DocumentNumber:
+          description: The unique id number in the evidence used for verification checking.
+          type:
+          - string
+          - 'null'
+        PersonalNumber:
+          description: An identifier assigned to the End-User not limited to being used in one document.
+          type:
+          - string
+          - 'null'
+        SerialNumber:
+          description: An identifier that identifies the document irrespective of personalization information.
+          type:
+          - string
+          - 'null'
+        CalendarType:
+          description: The type of calendar used for the dates in this document.
+          allOf:
+          - $ref: '#/components/schemas/OBPartyCalendarType'
+        DateOfIssuance:
+          description: The issuing date of the document used for verification checking.
+          type:
+          - string
+          - 'null'
+          format: date-time
+        DateOfExpiry:
+          description: The expiry date of the document used for verification checking.
+          type:
+          - string
+          - 'null'
+          format: date-time
+        Issuer:
+          description: Information about the issuer of this document.
+          type:
+          - object
+          - 'null'
+          properties:
+            Name:
+              description: Designation of the issuer of the document.
+              type:
+              - string
+              - 'null'
+            Address:
+              description: Address of the document issuer.
+              type:
+              - object
+              - 'null'
+              allOf:
+              - $ref: '#/components/schemas/OBPartyIdentityAddressClaim'
+            CountryCode:
+              description: Country or supranational organization that issued the document (ISO 3166).
+              type:
+              - string
+              - 'null'
+            Jurisdiction:
+              description: Region(s)/state(s)/province(s)/municipality(ies) the issuer has jurisdiction over.
+              type:
+              - string
+              - 'null'
+    OBPartyCalendarType:
+      description: The type of calendar used for dates in document or electronic record evidence.
+      type: string
+      enum:
+      - KSAOB.IslamicCalendar
+      - KSAOB.GregorianCalendar
+    OBPartyIdentityEvidenceTypeDocument:
+      description: Document evidence for PSU identity verification (OpenID Connect for Identity Assurance 1.0).
+      type: object
+      properties:
+        Type:
+          description: The type of evidence.
+          allOf:
+          - $ref: '#/components/schemas/OBPartyIdentityEvidenceDocumentType'
+        CheckDetails:
+          description: Checks done in relation to the document evidence.
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/OBPartyIdentityCheckDetail'
+        Verifier:
+          description: The legal entity that performed the identity verification on behalf of the OP.
+          type:
+          - object
+          - 'null'
+          properties:
+            Organization:
+              description: Organization which performed the verification on behalf of the OP.
+              type: string
+            Txn:
+              description: Identifier referring to the identity verification transaction for audit purposes.
+              type:
+              - string
+              - 'null'
+          required:
+          - Organization
+        Time:
+          description: Date and time at which the document evidence was verified by the PASP.
+          type:
+          - string
+          - 'null'
+          format: date-time
+        DocumentDetails:
+          description: The document used to perform the identity verification.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBDocumentDetails'
+        Attachments:
+          description: Attachments related to the document evidence.
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/OBPartyIdentityEvidenceAttachment'
+    OBVerifiedClaim:
+      description: Verified identity claim for a party (OpenID Connect for Identity Assurance 1.0).
+      type: object
+      properties:
+        Verification:
+          $ref: '#/components/schemas/OBVerification'
+        Claims:
+          description: Standard and identity assurance claims for the party (OpenID Connect Core 1.0).
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/OBClaims'
+      required:
+      - Verification
+      - Claims
+    OBStatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        GranularStatusCode:
+          description: Granular status code providing additional information on the request status.
+          type:
+          - string
+          - 'null'
+        StatusAdditionalInfo:
+          description: Additional human-readable information about the status.
+          type:
+          - string
+          - 'null'
+    OBTrustFramework:
+      description: Trust framework used to verify the party's identity claims.
+      type: string
+      enum:
+      - SA_IAM
+      - SA_AML
+      - SA_MyAddress
+      - SA_MobileTelecoms
+    OBVerificationAssuranceDetail:
+      description: Details about how a specific piece of evidence complies with the assurance process policy.
+      type: object
+      properties:
+        AssuranceType:
+          description: Which part of the assurance process the evidence fulfils.
+          type:
+          - string
+          - 'null'
+        AssuranceClassification:
+          description: How the evidence has been classified as required by the TrustFramework.
+          type:
+          - string
+          - 'null'
+        EvidenceRef:
+          description: References to evidence transactions.
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/OBVerificationEvidenceRef'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

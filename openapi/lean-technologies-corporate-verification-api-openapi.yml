@@ -1,0 +1,3252 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Corporate Verification API
+  version: v0.2.3
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Corporate Verification
+  x-displayName: Corporate Verification
+paths:
+  /verifications/v1/corporates:
+    servers: []
+    post:
+      operationId: corporateVerification
+      summary: Business Verification
+      description: Verify corporate entity information using unified number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CorporateVerificationRequest'
+            examples:
+              fullInfo:
+                summary: Full information request
+                value:
+                  type: FULL
+                  language: en
+                  identifications:
+                  - type: UNIFIED_NUMBER
+                    value: '7001272184'
+              basicInfo:
+                summary: Basic information request
+                value:
+                  type: BASIC
+                  language: en
+                  identifications:
+                  - type: UNIFIED_NUMBER
+                    value: '7001272184'
+              contractInfo:
+                summary: Contract information request
+                value:
+                  type: CONTRACT
+                  language: en
+                  identifications:
+                  - type: UNIFIED_NUMBER
+                    value: '7001272184'
+              addressInfo:
+                summary: Address information request
+                value:
+                  type: ADDRESS
+                  language: en
+                  identifications:
+                  - type: UNIFIED_NUMBER
+                    value: '7001272184'
+              fullInfoArabic:
+                summary: Full information request in Arabic
+                value:
+                  type: FULL
+                  language: ar
+                  identifications:
+                  - type: UNIFIED_NUMBER
+                    value: '7001272184'
+              basicInfoArabic:
+                summary: Basic information request in Arabic
+                value:
+                  type: BASIC
+                  language: ar
+                  identifications:
+                  - type: UNIFIED_NUMBER
+                    value: '7001272184'
+              contractInfoArabic:
+                summary: Contract information request in Arabic
+                value:
+                  type: CONTRACT
+                  language: ar
+                  identifications:
+                  - type: UNIFIED_NUMBER
+                    value: '7001272184'
+              addressInfoArabic:
+                summary: Address information request in Arabic
+                value:
+                  type: ADDRESS
+                  language: ar
+                  identifications:
+                  - type: UNIFIED_NUMBER
+                    value: '7001272184'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CorporateVerificationResponse'
+              examples:
+                fullInfoResponseArabic:
+                  summary: Full information response (Arabic)
+                  value:
+                    status: OK
+                    results_id: 0f79abdf-fa89-93a3-8b9c-40a3b6dc2b3a
+                    message: Data successfully retrieved
+                    timestamp: '2024-10-24T15:37:35.254Z'
+                    meta: null
+                    status_detail: null
+                    verifications:
+                      contract_copy_number: null
+                      contract_date: null
+                      commercial_registry:
+                        national_number: '1010711252'
+                        registration_number: '7001272184'
+                        version_number: 1
+                      company_name:
+                        ar: شركة اختبار للتجارة
+                        en: null
+                      name_language:
+                        id: 1
+                        description:
+                          ar: العربية
+                          en: null
+                      commercial_registration_capital: 150000
+                      days_since_company_established: 99
+                      main_commercial_registry:
+                        is_main: false
+                        national_number: null
+                        registration_number: null
+                      issue_date:
+                        gregorian: '2002-10-05'
+                        hijri: '1423-07-28'
+                      in_liquidation_process: false
+                      has_e_commerce: true
+                      headquarters:
+                        city_id: 1
+                        city_name:
+                          ar: الرياض
+                          en: null
+                      license:
+                        is_license_based: false
+                        issuer_national_number: '123456789'
+                        issuer_name:
+                          ar: xx
+                          en: null
+                      partners:
+                        nationality_id: 1
+                        nationality:
+                          ar: السعودية
+                          en: null
+                      entity_type:
+                        id: 1
+                        name:
+                          ar: شركة ذات مسؤولية محدودة
+                          en: null
+                        form_id: 1
+                        form_name:
+                          ar: ذات مسؤولية محدودة
+                          en: null
+                        characters:
+                        - id: 3
+                          ar: غير ربحية خاصة
+                          en: null
+                      status:
+                        id: 1
+                        ar: فعال
+                        en: null
+                      confirmation_date:
+                        gregorian: '2003-10-05'
+                        hijri: '1424-07-28'
+                      reactivation_date:
+                        gregorian: '2023-03-10'
+                        hijri: '1444-08-18'
+                      suspension_date:
+                        gregorian: '2022-12-05'
+                        hijri: '1444-04-11'
+                      deletion_date:
+                        gregorian: '2024-07-20'
+                        hijri: '1445-01-13'
+                      contact_info:
+                        phone_number: 011256398
+                        mobile_number: '050111101'
+                        email: TestEmail@mail.com
+                        website_url: www.google.com
+                      e_commerce:
+                        e_store:
+                        - authentication_platform_url: www.google.com
+                          store_url: www.google.com
+                          store_activities:
+                          - id: '476201'
+                            ar: صناعة زبدة المكسرات
+                            en: null
+                      capital_information:
+                        currency_id: 1
+                        currency:
+                          ar: ريال سعودي
+                          en: null
+                        contribution_capital:
+                          type_id: 1
+                          type:
+                            ar: نقدي و عيني
+                            en: null
+                          cash_capital: 75000
+                          in_kind_capital: 75000
+                          contribution_value: 100
+                          total_cash_contribution: 750
+                          total_in_kind_contribution: 750
+                        stock_capital:
+                          type_id: 2
+                          type:
+                            ar: xx
+                            en: null
+                          capital: 12000
+                          announced_capital: 1244
+                          paid_capital: 12333
+                          cash_capital: 1111
+                          in_kind_capital: 111
+                          stocks:
+                          - count: 11
+                            value: 12
+                            type_id: 2
+                            type:
+                              ar: xx
+                              en: null
+                            class_reference_id: 1
+                            class_name:
+                              ar: xx
+                              en: null
+                      fiscal_year:
+                        is_first: true
+                        calendar_type_id: 1
+                        calendar_type:
+                          ar: ميلادي
+                          en: null
+                        end_month: 12
+                        end_day: 30
+                        end_year: null
+                      parties:
+                      - name:
+                          ar: السيد عبدالعزيز احمد خالد الثنيان
+                          en: null
+                        type_id: 11
+                        type:
+                          ar: جمعية خيرية/ مؤسسة أهلية
+                          en: null
+                        identity:
+                          id: '1234567890'
+                          type_id: 1
+                          type:
+                            ar: هوية وطنية
+                            en: null
+                        partnership:
+                        - id: 8
+                          ar: عضو
+                          en: null
+                        partner_share:
+                          cash_contribution_count: 250
+                          in_kind_contribution_count: 250
+                          total_contribution_count: 500
+                        nationality: null
+                        license_number: null
+                        commercial_registration_number: null
+                        partner_profit_loss_distribution: null
+                        guardian: null
+                      management:
+                        structure_id: 3
+                        structure_name:
+                          ar: مجلس مديرين
+                          en: null
+                        dismissal_method: null
+                        managers:
+                        - name:
+                            ar: السيد عبدالعزيز احمد خالد الثنيان
+                            en: null
+                          type_id: 1
+                          type:
+                            ar: سعودي
+                            en: null
+                          is_licensed: true
+                          identity:
+                            id: '1234567890'
+                            type_id: 1
+                            type:
+                              ar: هوية وطنية
+                              en: null
+                          nationality:
+                            id: 113
+                            type:
+                              ar: سعودي
+                              en: null
+                          positions:
+                          - id: 8
+                            ar: عضو
+                            en: null
+                        management_board: null
+                        directors_board: null
+                      liquidators:
+                      - name:
+                          ar: عبدالله سالم هليل الشمري
+                          en: null
+                        type_id: 1
+                        type:
+                          ar: فرد سعودي
+                          en: null
+                        identity:
+                          id: '2345678901'
+                          type_id: 1
+                          type:
+                            ar: هوية وطنية
+                            en: null
+                        nationality:
+                          id: 113
+                          type:
+                            ar: سعودي
+                            en: null
+                        positions:
+                        - id: 8
+                          ar: عضو
+                          en: null
+                      activities:
+                      - id: '162910'
+                        ar: أنشطة أخرى خاصة بصناعة نشر الأخشاب
+                        en: null
+                      - id: '477340'
+                        ar: صناعة السلالم والدرابزينات
+                        en: null
+                      notification_channel: null
+                      partner_decision: null
+                      additional_decision_text: null
+                      set_aside_details: null
+                      articles: null
+                      additional_articles: null
+                      addresses: null
+                fullInfoResponseEnglish:
+                  summary: Full information response (English)
+                  value:
+                    status: OK
+                    results_id: 0f79abdf-fa89-93a3-8b9c-40a3b6dc2b3a
+                    message: Data successfully retrieved
+                    timestamp: '2024-10-24T15:37:35.254Z'
+                    meta: null
+                    status_detail: null
+                    verifications:
+                      contract_copy_number: null
+                      contract_date: null
+                      commercial_registry:
+                        national_number: '1010711252'
+                        registration_number: '7001272184'
+                        version_number: 1
+                      company_name:
+                        ar: null
+                        en: Test Trading Company
+                      name_language:
+                        id: 1
+                        description:
+                          ar: null
+                          en: Arabic
+                      commercial_registration_capital: 150000
+                      days_since_company_established: 99
+                      main_commercial_registry:
+                        is_main: false
+                        national_number: null
+                        registration_number: null
+                      issue_date:
+                        gregorian: '2002-10-05'
+                        hijri: '1423-07-28'
+                      in_liquidation_process: false
+                      has_e_commerce: true
+                      headquarters:
+                        city_id: 1
+                        city_name:
+                          ar: null
+                          en: Riyadh
+                      license:
+                        is_license_based: false
+                        issuer_national_number: '123456789'
+                        issuer_name:
+                          ar: null
+                          en: License Issuer
+                      partners:
+                        nationality_id: 1
+                        nationality:
+                          ar: null
+                          en: Saudi
+                      entity_type:
+                        id: 1
+                        name:
+                          ar: null
+                          en: Limited Liability Company
+                        form_id: 1
+                        form_name:
+                          ar: null
+                          en: Limited Liability
+                        characters:
+                        - id: 3
+                          ar: null
+                          en: Private Non-Profit
+                      status:
+                        id: 1
+                        ar: null
+                        en: Active
+                      confirmation_date:
+                        gregorian: '2003-10-05'
+                        hijri: '1424-07-28'
+                      reactivation_date:
+                        gregorian: '2023-03-10'
+                        hijri: '1444-08-18'
+                      suspension_date:
+                        gregorian: '2022-12-05'
+                        hijri: '1444-04-11'
+                      deletion_date:
+                        gregorian: '2024-07-20'
+                        hijri: '1445-01-13'
+                      contact_info:
+                        phone_number: 011256398
+                        mobile_number: '050111101'
+                        email: TestEmail@mail.com
+                        website_url: www.google.com
+                      e_commerce:
+                        e_store:
+                        - authentication_platform_url: www.google.com
+                          store_url: www.google.com
+                          store_activities:
+                          - id: '476201'
+                            ar: null
+                            en: Nut butter manufacturing
+                      capital_information:
+                        currency_id: 1
+                        currency:
+                          ar: null
+                          en: Saudi Riyal
+                        contribution_capital:
+                          type_id: 1
+                          type:
+                            ar: null
+                            en: Cash and In-kind
+                          cash_capital: 75000
+                          in_kind_capital: 75000
+                          contribution_value: 100
+                          total_cash_contribution: 750
+                          total_in_kind_contribution: 750
+                        stock_capital:
+                          type_id: 2
+                          type:
+                            ar: null
+                            en: Stock Type
+                          capital: 12000
+                          announced_capital: 1244
+                          paid_capital: 12333
+                          cash_capital: 1111
+                          in_kind_capital: 111
+                          stocks:
+                          - count: 11
+                            value: 12
+                            type_id: 2
+                            type:
+                              ar: null
+                              en: Stock Type
+                            class_reference_id: 1
+                            class_name:
+                              ar: null
+                              en: Stock Class
+                      fiscal_year:
+                        is_first: true
+                        calendar_type_id: 1
+                        calendar_type:
+                          ar: null
+                          en: Gregorian
+                        end_month: 12
+                        end_day: 30
+                        end_year: null
+                      parties:
+                      - name:
+                          ar: null
+                          en: Mr. Abdulaziz Ahmed Khaled Al-Thunaian
+                        type_id: 11
+                        type:
+                          ar: null
+                          en: Charitable Association/Private Foundation
+                        identity:
+                          id: '1234567890'
+                          type_id: 1
+                          type:
+                            ar: null
+                            en: National ID
+                        partnership:
+                        - id: 8
+                          ar: null
+                          en: Member
+                        partner_share:
+                          cash_contribution_count: 250
+                          in_kind_contribution_count: 250
+                          total_contribution_count: 500
+                        nationality: null
+                        license_number: null
+                        commercial_registration_number: null
+                        partner_profit_loss_distribution: null
+                        guardian: null
+                      management:
+                        structure_id: 3
+                        structure_name:
+                          ar: null
+                          en: Board of Directors
+                        dismissal_method: null
+                        managers:
+                        - name:
+                            ar: null
+                            en: Mr. Abdulaziz Ahmed Khaled Al-Thunaian
+                          type_id: 1
+                          type:
+                            ar: null
+                            en: Saudi
+                          is_licensed: true
+                          identity:
+                            id: '1234567890'
+                            type_id: 1
+                            type:
+                              ar: null
+                              en: National ID
+                          nationality:
+                            id: 113
+                            type:
+                              ar: null
+                              en: Saudi
+                          positions:
+                          - id: 8
+                            ar: null
+                            en: Member
+                        management_board: null
+                        directors_board: null
+                      liquidators:
+                      - name:
+                          ar: null
+                          en: Abdullah Salem Helel Al-Shammari
+                        type_id: 1
+                        type:
+                          ar: null
+                          en: Saudi Individual
+                        identity:
+                          id: '2345678901'
+                          type_id: 1
+                          type:
+                            ar: null
+                            en: National ID
+                        nationality:
+                          id: 113
+                          type:
+                            ar: null
+                            en: Saudi
+                        positions:
+                        - id: 8
+                          ar: null
+                          en: Member
+                      activities:
+                      - id: '162910'
+                        ar: null
+                        en: Other activities of manufacture of wood sawing
+                      - id: '477340'
+                        ar: null
+                        en: Manufacture of stairs and handrails
+                      notification_channel: null
+                      partner_decision: null
+                      additional_decision_text: null
+                      set_aside_details: null
+                      articles: null
+                      additional_articles: null
+                      addresses: null
+                contractResponseArabic:
+                  summary: Contract information response (Arabic)
+                  value:
+                    status: OK
+                    results_id: 0f79abdf-fa89-93a3-8b9c-40a3b6dc2b3a
+                    message: Data successfully retrieved
+                    timestamp: '2024-10-24T15:37:35.254Z'
+                    meta: null
+                    status_detail: null
+                    verifications:
+                      contract_copy_number: 1
+                      contract_date: '2025-02-23'
+                      commercial_registry:
+                        national_number: '1010711252'
+                        registration_number: '7001272184'
+                        version_number: 1
+                      company_name:
+                        ar: شركة اختبار للتجارة
+                        en: null
+                      name_language:
+                        id: 1
+                        description:
+                          ar: العربية
+                          en: null
+                      commercial_registration_capital: 150000
+                      days_since_company_established: 99
+                      main_commercial_registry:
+                        is_main: false
+                        national_number: null
+                        registration_number: null
+                      issue_date:
+                        gregorian: '2002-10-05'
+                        hijri: '1423-07-28'
+                      in_liquidation_process: false
+                      has_e_commerce: true
+                      headquarters:
+                        city_id: 1
+                        city_name:
+                          ar: الرياض
+                          en: null
+                      license:
+                        is_license_based: true
+                        issuer_national_number: '76537'
+                        issuer_name:
+                          ar: وزارة التجارة
+                          en: null
+                      partners:
+                        nationality_id: 1
+                        nationality:
+                          ar: السعودية
+                          en: null
+                      entity_type:
+                        id: 1
+                        name:
+                          ar: شركة
+                          en: null
+                        form_id: 1
+                        form_name:
+                          ar: ذات مسؤولية محدودة
+                          en: null
+                        characters:
+                        - id: 3
+                          ar: ذات مسؤولية محدودة
+                          en: null
+                      status:
+                        id: 1
+                        ar: فعال
+                        en: null
+                      confirmation_date:
+                        gregorian: '2003-10-05'
+                        hijri: '1424-07-28'
+                      reactivation_date: null
+                      suspension_date: null
+                      deletion_date: null
+                      contact_info:
+                        phone_number: 011256398
+                        mobile_number: '050111101'
+                        email: TestEmail@mail.com
+                        website_url: www.example.com
+                      e_commerce:
+                        e_store:
+                        - authentication_platform_url: www.example.com
+                          store_url: www.example.com
+                          store_activities:
+                          - id: '476201'
+                            ar: صناعة زبدة المكسرات
+                            en: null
+                      capital_information:
+                        currency_id: 1
+                        currency:
+                          ar: ريال سعودي
+                          en: null
+                        contribution_capital:
+                          type_id: 1
+                          type:
+                            ar: نقدي
+                            en: null
+                          cash_capital: 75000
+                          in_kind_capital: 0
+                          contribution_value: 100
+                          total_cash_contribution: 750
+                          total_in_kind_contribution: 0
+                        stock_capital:
+                          type: null
+                          capital: null
+                          announced_capital: null
+                          paid_capital: null
+                          cash_capital: null
+                          in_kind_capital: null
+                          stocks: null
+                      fiscal_year:
+                        is_first: true
+                        calendar_type_id: 2
+                        calendar_type:
+                          ar: هجري
+                          en: null
+                        end_month: 12
+                        end_day: 30
+                        end_year: null
+                      parties:
+                      - name:
+                          ar: وقف
+                          en: null
+                        type_id: 11
+                        type:
+                          ar: وقف
+                          en: null
+                        identity:
+                          id: '7111111111'
+                          type_id: 1
+                          type:
+                            ar: رقم صك الوقف
+                            en: null
+                        partnership:
+                        - id: 2
+                          ar: مؤسس
+                          en: null
+                        partner_share:
+                          cash_contribution_count: 0
+                          in_kind_contribution_count: 0
+                          total_contribution_count: 0
+                        nationality: null
+                        license_number: null
+                        commercial_registration_number: null
+                        partner_profit_loss_distribution:
+                          profit_distribution: 0
+                          loss_distribution: 0
+                        guardian: null
+                      management:
+                        structure_id: 1
+                        structure_name:
+                          ar: مديران أو أكثر
+                          en: null
+                        dismissal_method:
+                          ar: بقرار من مجلس الإدارة
+                          en: null
+                        managers:
+                        - name:
+                            ar: محمد أحمد علي
+                            en: null
+                          type_id: 1
+                          type:
+                            ar: مقيم
+                            en: null
+                          is_licensed: true
+                          identity:
+                            id: '2123456789'
+                            type_id: 1
+                            type:
+                              ar: هوية مقيم
+                              en: null
+                          nationality:
+                            id: 113
+                            type:
+                              ar: سعودي
+                              en: null
+                          positions:
+                          - id: 2
+                            ar: مدير تنفيذي
+                            en: null
+                        management_board:
+                          meeting_quorum_id: 1
+                          meeting_quorum_name:
+                            ar: جميع المديرين
+                            en: null
+                          can_delegate_attendance: true
+                          term_years: 3
+                          way_of_work:
+                            ar: اجتماعات شهرية
+                            en: null
+                          meeting_place:
+                            ar: مقر الشركة
+                            en: null
+                          additional_text: null
+                          positions:
+                          - id: 1
+                            name:
+                              ar: رئيس
+                              en: null
+                        directors_board:
+                          member_count: 5
+                          term_years: 3
+                          value: 10000
+                          value_max: 50000
+                          way_of_work:
+                            ar: اجتماعات ربع سنوية
+                            en: null
+                          meeting_place:
+                            ar: مقر الشركة
+                            en: null
+                          meeting_quorum: 3
+                          meeting_legal_quorum: 4
+                          can_delegate_attendance: true
+                          board_call_mechanism:
+                            ar: إشعار كتابي
+                            en: null
+                          membership_expiry_terms:
+                            ar: نهاية الفترة أو الاستقالة
+                            en: null
+                          additional_text: null
+                          rewards:
+                          - id: '1'
+                            name:
+                              ar: مكافأة سنوية
+                              en: null
+                          positions:
+                          - id: 1
+                            name:
+                              ar: رئيس مجلس الإدارة
+                              en: null
+                      liquidators: null
+                      activities:
+                      - id: '9820'
+                        ar: صناعة عبايات الرجال
+                        en: null
+                      - id: '162910'
+                        ar: أنشطة أخرى خاصة بصناعة نشر الأخشاب
+                        en: null
+                      - id: '477340'
+                        ar: صناعة السلالم والدرابزينات
+                        en: null
+                      notification_channel:
+                      - id: 1
+                        name:
+                          ar: رسائل نصية
+                          en: null
+                      partner_decision:
+                      - id: 4
+                        name:
+                          ar: تعديل عقد التأسيس
+                          en: null
+                        approve_percentage: '75'
+                        approve_additional_text:
+                          ar: يتطلب موافقة مجلس الإدارة
+                          en: null
+                      additional_decision_text: All major decisions require unanimous consent
+                      set_aside_details:
+                        is_set_aside_enabled: true
+                        profit_allocation:
+                          percentage: 10
+                          purpose:
+                            ar: صندوق احتياطي للتوسع
+                            en: null
+                      articles:
+                      - id: 1
+                        text:
+                          ar: تعمل الشركة وفقاً لنظام التجارة السعودي
+                          en: null
+                        part_id: 1
+                        part_name:
+                          ar: الباب الأول
+                          en: null
+                      additional_articles:
+                      - title:
+                          ar: شرط عدم المنافسة
+                          en: null
+                        text:
+                          ar: لا يجوز للشركاء ممارسة أعمال منافسة
+                          en: null
+                        part_id: 2
+                        part_name:
+                          ar: الباب الثاني
+                          en: null
+                      addresses: null
+                contractResponseEnglish:
+                  summary: Contract information response (English)
+                  value:
+                    status: OK
+                    results_id: 0f79abdf-fa89-93a3-8b9c-40a3b6dc2b3a
+                    message: Data successfully retrieved
+                    timestamp: '2024-10-24T15:37:35.254Z'
+                    meta: null
+                    status_detail: null
+                    verifications:
+                      contract_copy_number: 1
+                      contract_date: '2025-02-23'
+                      commercial_registry:
+                        national_number: '1010711252'
+                        registration_number: '7001272184'
+                        version_number: 1
+                      company_name:
+                        ar: null
+                        en: company akhtbar for trade
+                      name_language:
+                        id: 1
+                        description:
+                          ar: null
+                          en: Arabic
+                      commercial_registration_capital: 150000
+                      days_since_company_established: 99
+                      main_commercial_registry:
+                        is_main: false
+                        national_number: null
+                        registration_number: null
+                      issue_date:
+                        gregorian: '2002-10-05'
+                        hijri: '1423-07-28'
+                      in_liquidation_process: false
+                      has_e_commerce: true
+                      headquarters:
+                        city_id: 1
+                        city_name:
+                          ar: null
+                          en: Riyadh
+                      license:
+                        is_license_based: true
+                        issuer_national_number: '76537'
+                        issuer_name:
+                          ar: null
+                          en: Ministry of Commerce
+                      partners:
+                        nationality_id: 1
+                        nationality:
+                          ar: null
+                          en: Saudi
+                      entity_type:
+                        id: 1
+                        name:
+                          ar: null
+                          en: Company
+                        form_id: 1
+                        form_name:
+                          ar: null
+                          en: Limited liability company
+                        characters:
+                        - id: 3
+                          ar: null
+                          en: Limited liability company
+                      status:
+                        id: 1
+                        ar: null
+                        en: Active
+                      confirmation_date:
+                        gregorian: '2003-10-05'
+                        hijri: '1424-07-28'
+                      reactivation_date: null
+                      suspension_date: null
+                      deletion_date: null
+                      contact_info:
+                        phone_number: 011256398
+                        mobile_number: '050111101'
+                        email: TestEmail@mail.com
+                        website_url: www.example.com
+                      e_commerce:
+                        e_store:
+                        - authentication_platform_url: www.example.com
+                          store_url: www.example.com
+                          store_activities:
+                          - id: '476201'
+                            ar: null
+                            en: Nut butter manufacturing
+                      capital_information:
+                        currency_id: 1
+                        currency:
+                          ar: null
+                          en: Saudi Riyal
+                        contribution_capital:
+                          type_id: 1
+                          type:
+                            ar: null
+                            en: Cash
+                          cash_capital: 75000
+                          in_kind_capital: 0
+                          contribution_value: 100
+                          total_cash_contribution: 750
+                          total_in_kind_contribution: 0
+                        stock_capital:
+                          type: null
+                          capital: null
+                          announced_capital: null
+                          paid_capital: null
+                          cash_capital: null
+                          in_kind_capital: null
+                          stocks: null
+                      fiscal_year:
+                        is_first: true
+                        calendar_type_id: 2
+                        calendar_type:
+                          ar: null
+                          en: Hijri
+                        end_month: 12
+                        end_day: 30
+                        end_year: null
+                      parties:
+                      - name:
+                          ar: null
+                          en: Endowment
+                        type_id: 11
+                        type:
+                          ar: null
+                          en: Endowment
+                        identity:
+                          id: '7111111111'
+                          type_id: 1
+                          type:
+                            ar: null
+                            en: Endowment Deed No
+                        partnership:
+                        - id: 2
+                          ar: null
+                          en: Founder
+                        partner_share:
+                          cash_contribution_count: 0
+                          in_kind_contribution_count: 0
+                          total_contribution_count: 0
+                        nationality: null
+                        license_number: null
+                        commercial_registration_number: null
+                        partner_profit_loss_distribution:
+                          profit_distribution: 0
+                          loss_distribution: 0
+                        guardian: null
+                      management:
+                        structure_id: 1
+                        structure_name:
+                          ar: null
+                          en: Two or More Managers
+                        dismissal_method:
+                          ar: null
+                          en: By board resolution
+                        managers:
+                        - name:
+                            ar: null
+                            en: Mohammed Ahmed Ali
+                          type_id: 1
+                          type:
+                            ar: null
+                            en: Resident
+                          is_licensed: true
+                          identity:
+                            id: '2123456789'
+                            type_id: 1
+                            type:
+                              ar: null
+                              en: Resident ID
+                          nationality:
+                            id: 113
+                            type:
+                              ar: null
+                              en: Saudi
+                          positions:
+                          - id: 2
+                            ar: null
+                            en: Executive Director
+                        management_board:
+                          meeting_quorum_id: 1
+                          meeting_quorum_name:
+                            ar: null
+                            en: All Managers
+                          can_delegate_attendance: true
+                          term_years: 3
+                          way_of_work:
+                            ar: null
+                            en: Monthly meetings
+                          meeting_place:
+                            ar: null
+                            en: Company headquarters
+                          additional_text: null
+                          positions:
+                          - id: 1
+                            name:
+                              ar: null
+                              en: Chairman
+                        directors_board:
+                          member_count: 5
+                          term_years: 3
+                          value: 10000
+                          value_max: 50000
+                          way_of_work:
+                            ar: null
+                            en: Quarterly meetings
+                          meeting_place:
+                            ar: null
+                            en: Company headquarters
+                          meeting_quorum: 3
+                          meeting_legal_quorum: 4
+                          can_delegate_attendance: true
+                          board_call_mechanism:
+                            ar: null
+                            en: Written notice
+                          membership_expiry_terms:
+                            ar: null
+                            en: End of term or resignation
+                          additional_text: null
+                          rewards:
+                          - id: '1'
+                            name:
+                              ar: null
+                              en: Annual bonus
+                          positions:
+                          - id: 1
+                            name:
+                              ar: null
+                              en: Chairman of the Board
+                      liquidators: null
+                      activities:
+                      - id: '9820'
+                        ar: null
+                        en: Manufacture of men's cloaks
+                      - id: '162910'
+                        ar: null
+                        en: Other activities of manufacture of wood sawing
+                      - id: '477340'
+                        ar: null
+                        en: Manufacture of stairs and handrails
+                      notification_channel:
+                      - id: 1
+                        name:
+                          ar: null
+                          en: SMS
+                      partner_decision:
+                      - id: 4
+                        name:
+                          ar: null
+                          en: Amendment to the articles of incorporation
+                        approve_percentage: '75'
+                        approve_additional_text:
+                          ar: null
+                          en: Requires board approval
+                      additional_decision_text: All major decisions require unanimous consent
+                      set_aside_details:
+                        is_set_aside_enabled: true
+                        profit_allocation:
+                          percentage: 10
+                          purpose:
+                            ar: null
+                            en: Reserve fund for expansion
+                      articles:
+                      - id: 1
+                        text:
+                          ar: null
+                          en: The company shall operate in accordance with Saudi commercial law
+                        part_id: 1
+                        part_name:
+                          ar: null
+                          en: Part One
+                      additional_articles:
+                      - title:
+                          ar: null
+                          en: Non-compete clause
+                        text:
+                          ar: null
+                          en: Partners shall not engage in competing businesses
+                        part_id: 2
+                        part_name:
+                          ar: null
+                          en: Part Two
+                      addresses: null
+                basicInfoResponseArabic:
+                  summary: Basic information response (Arabic)
+                  value:
+                    status: OK
+                    results_id: 0f79abdf-fa89-93a3-8b9c-40a3b6dc2b3a
+                    message: Data successfully retrieved
+                    timestamp: '2024-10-24T15:37:35.254Z'
+                    meta: null
+                    status_detail: null
+                    verifications:
+                      contract_copy_number: null
+                      contract_date: null
+                      commercial_registry:
+                        national_number: '1010711252'
+                        registration_number: '7001272184'
+                        version_number: 1
+                      company_name:
+                        ar: شركة اختبار للتجارة
+                        en: null
+                      name_language:
+                        id: 1
+                        description:
+                          ar: العربية
+                          en: null
+                      commercial_registration_capital: null
+                      days_since_company_established: null
+                      main_commercial_registry:
+                        is_main: false
+                        national_number: null
+                        registration_number: null
+                      issue_date:
+                        gregorian: '2002-10-05'
+                        hijri: '1423-07-28'
+                      in_liquidation_process: false
+                      has_e_commerce: true
+                      headquarters:
+                        city_id: 1
+                        city_name:
+                          ar: الرياض
+                          en: null
+                      license:
+                        is_license_based: false
+                        issuer_national_number: null
+                        issuer_name:
+                          ar: null
+                          en: null
+                      partners: null
+                      entity_type:
+                        id: 1
+                        name:
+                          ar: شركة ذات مسؤولية محدودة
+                          en: null
+                        form_id: 1
+                        form_name:
+                          ar: ذات مسؤولية محدودة
+                          en: null
+                        characters:
+                        - id: 3
+                          ar: غير ربحية خاصة
+                          en: null
+                      status:
+                        id: 1
+                        ar: فعال
+                        en: null
+                      confirmation_date: null
+                      reactivation_date: null
+                      suspension_date: null
+                      deletion_date: null
+                      contact_info: null
+                      e_commerce: null
+                      capital_information: null
+                      fiscal_year: null
+                      parties: null
+                      management: null
+                      liquidators: null
+                      activities:
+                      - id: '162910'
+                        ar: أنشطة أخرى خاصة بصناعة نشر الأخشاب
+                        en: null
+                      - id: '477340'
+                        ar: صناعة السلالم والدرابزينات
+                        en: null
+                      notification_channel: null
+                      partner_decision: null
+                      additional_decision_text: null
+                      set_aside_details: null
+                      articles: null
+                      additional_articles: null
+                      addresses: null
+                basicInfoResponseEnglish:
+                  summary: Basic information response (English)
+                  value:
+                    status: OK
+                    results_id: 0f79abdf-fa89-93a3-8b9c-40a3b6dc2b3a
+                    message: Data successfully retrieved
+                    timestamp: '2024-10-24T15:37:35.254Z'
+                    meta: null
+                    status_detail: null
+                    verifications:
+                      contract_copy_number: null
+                      contract_date: null
+                      commercial_registry:
+                        national_number: '1010711252'
+                        registration_number: '7001272184'
+                        version_number: 1
+                      company_name:
+                        ar: null
+                        en: Test Trading Company
+                      name_language:
+                        id: 1
+                        description:
+                          ar: null
+                          en: Arabic
+                      commercial_registration_capital: null
+                      days_since_company_established: null
+                      main_commercial_registry:
+                        is_main: false
+                        national_number: null
+                        registration_number: null
+                      issue_date:
+                        gregorian: '2002-10-05'
+                        hijri: '1423-07-28'
+                      in_liquidation_process: false
+                      has_e_commerce: true
+                      headquarters:
+                        city_id: 1
+                        city_name:
+                          ar: null
+                          en: Riyadh
+                      license:
+                        is_license_based: false
+                        issuer_national_number: null
+                        issuer_name:
+                          ar: null
+                          en: null
+                      partners: null
+                      entity_type:
+                        id: 1
+                        name:
+                          ar: null
+                          en: Limited Liability Company
+                        form_id: 1
+                        form_name:
+                          ar: null
+                          en: Limited Liability
+                        characters:
+                        - id: 3
+                          ar: null
+                          en: Private Non-Profit
+                      status:
+                        id: 1
+                        ar: null
+                        en: Active
+                      confirmation_date: null
+                      reactivation_date: null
+                      suspension_date: null
+                      deletion_date: null
+                      contact_info: null
+                      e_commerce: null
+                      capital_information: null
+                      fiscal_year: null
+                      parties: null
+                      management: null
+                      liquidators: null
+                      activities:
+                      - id: '162910'
+                        ar: null
+                        en: Other activities of manufacture of wood sawing
+                      - id: '477340'
+                        ar: null
+                        en: Manufacture of stairs and handrails
+                      notification_channel: null
+                      partner_decision: null
+                      additional_decision_text: null
+                      set_aside_details: null
+                      articles: null
+                      additional_articles: null
+                      addresses: null
+                addressInfoResponseArabic:
+                  summary: Address information response (Arabic)
+                  value:
+                    status: OK
+                    results_id: 0f79abdf-fa89-93a3-8b9c-40a3b6dc2b3a
+                    message: Data successfully retrieved
+                    timestamp: '2024-10-24T15:37:35.254Z'
+                    meta: null
+                    status_detail: null
+                    verifications:
+                      contract_copy_number: null
+                      contract_date: null
+                      commercial_registry: null
+                      company_name: null
+                      name_language: null
+                      commercial_registration_capital: null
+                      days_since_company_established: null
+                      main_commercial_registry: null
+                      issue_date: null
+                      in_liquidation_process: null
+                      has_e_commerce: null
+                      headquarters: null
+                      license: null
+                      partners: null
+                      entity_type: null
+                      status: null
+                      confirmation_date: null
+                      reactivation_date: null
+                      suspension_date: null
+                      deletion_date: null
+                      contact_info: null
+                      e_commerce: null
+                      capital_information: null
+                      fiscal_year: null
+                      parties: null
+                      management: null
+                      liquidators: null
+                      activities: null
+                      notification_channel: null
+                      partner_decision: null
+                      additional_decision_text: null
+                      set_aside_details: null
+                      articles: null
+                      additional_articles: null
+                      addresses:
+                      - title: مطعم ومعجنات السندباد
+                        address: 8411 طريق الملك فهد - حي المروج
+                        address2: الرياض 12263 - 2743
+                        latitude: '24.75014397'
+                        longitude: '46.72224397'
+                        building_number: '2455'
+                        street: طريق الملك فهد
+                        district: حي المروج
+                        district_id: '2422'
+                        city: الرياض
+                        city_id: '3'
+                        post_code: '12263'
+                        additional_number: '14433'
+                        region_name: الرياض
+                        region_id: '1'
+                        is_primary_address: 'true'
+                        unit_number: '1'
+                        restriction: null
+                        pk_address_id: '1226384672743'
+                        status: نشط
+                addressInfoResponseEnglish:
+                  summary: Address information response (English)
+                  value:
+                    status: OK
+                    results_id: 0f79abdf-fa89-93a3-8b9c-40a3b6dc2b3a
+                    message: Data successfully retrieved
+                    timestamp: '2024-10-24T15:37:35.254Z'
+                    meta: null
+                    status_detail: null
+                    verifications:
+                      contract_copy_number: null
+                      contract_date: null
+                      commercial_registry: null
+                      company_name: null
+                      name_language: null
+                      commercial_registration_capital: null
+                      days_since_company_established: null
+                      main_commercial_registry: null
+                      issue_date: null
+                      in_liquidation_process: null
+                      has_e_commerce: null
+                      headquarters: null
+                      license: null
+                      partners: null
+                      entity_type: null
+                      status: null
+                      confirmation_date: null
+                      reactivation_date: null
+                      suspension_date: null
+                      deletion_date: null
+                      contact_info: null
+                      e_commerce: null
+                      capital_information: null
+                      fiscal_year: null
+                      parties: null
+                      management: null
+                      liquidators: null
+                      activities: null
+                      notification_channel: null
+                      partner_decision: null
+                      additional_decision_text: null
+                      set_aside_details: null
+                      articles: null
+                      additional_articles: null
+                      addresses:
+                      - title: Sindbad Restaurant and Pastries
+                        address: 8411 King Fahd Rd - Al Muruj Dist.
+                        address2: RIYADH 12263 - 2743
+                        latitude: '24.75014397'
+                        longitude: '46.72224397'
+                        building_number: '2455'
+                        street: King Fahd Rd
+                        district: Al Muruj Dist
+                        district_id: '2422'
+                        city: RIYADH
+                        city_id: '3'
+                        post_code: '12263'
+                        additional_number: '14433'
+                        region_name: Al Riyadh
+                        region_id: '1'
+                        is_primary_address: 'true'
+                        unit_number: '1'
+                        restriction: null
+                        pk_address_id: '1226384672743'
+                        status: Active
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CorporateVerificationErrorResponse'
+              examples:
+                missingInputData:
+                  summary: Input data is required
+                  value:
+                    timestamp: '2025-10-03T06:16:13.421014232Z'
+                    status: INVALID_PARAMETERS
+                    message: The request provided invalid parameters.
+                    metadata: null
+                invalidUnifiedNumberFormat:
+                  summary: Unified number must be digits only
+                  value:
+                    timestamp: '2025-10-03T06:16:13.421014232Z'
+                    status: INVALID_PARAMETERS
+                    message: Unified number must be digits only
+                    metadata: null
+                invalidUnifiedNumberLength:
+                  summary: Unified number must be 10 digits
+                  value:
+                    timestamp: '2025-10-03T06:16:13.421014232Z'
+                    status: INVALID_PARAMETERS
+                    message: Unified number must be 10 digits
+                    metadata: null
+                invalidLanguage:
+                  summary: Language should be 'ar', 'AR', 'en', or 'EN'
+                  value:
+                    timestamp: '2025-10-03T06:16:13.421014232Z'
+                    status: INVALID_PARAMETERS
+                    message: Language should be 'ar', 'AR', 'en', or 'EN'
+                    metadata: null
+                missingLanguage:
+                  summary: Language field is required
+                  value:
+                    timestamp: '2025-10-03T06:16:13.421014232Z'
+                    status: INVALID_PARAMETERS
+                    message: Language field is required
+                    metadata: null
+      tags:
+      - Corporate Verification
+  /verifications/v1/corporates/managers:
+    servers: []
+    post:
+      operationId: corporateManagerVerification
+      summary: Managers Verification
+      description: Verify corporate manager information including permissions using corporate unified number and manager identity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CorporateManagerVerificationRequest'
+            examples:
+              managerByNationalId:
+                summary: Manager verification by National ID (English)
+                value:
+                  identifications:
+                  - type: UNIFIED_NUMBER
+                    value: '7001272184'
+                  - type: NATIONAL_ID
+                    value: '1234567890'
+                  language: en
+              managerByNationalIdArabic:
+                summary: Manager verification by National ID (Arabic)
+                value:
+                  identifications:
+                  - type: UNIFIED_NUMBER
+                    value: '7001272184'
+                  - type: NATIONAL_ID
+                    value: '1234567890'
+                  language: ar
+              managerWithPermissionFilter:
+                summary: Manager verification with permission filter (English)
+                value:
+                  identifications:
+                  - type: UNIFIED_NUMBER
+                    value: '7001272184'
+                  - type: RESIDENT_ID
+                    value: '2123456789'
+                  permission_id: '5'
+                  language: en
+              managerWithPermissionFilterArabic:
+                summary: Manager verification with permission filter (Arabic)
+                value:
+                  identifications:
+                  - type: UNIFIED_NUMBER
+                    value: '7001272184'
+                  - type: RESIDENT_ID
+                    value: '2123456789'
+                  permission_id: '5'
+                  language: ar
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CorporateManagerVerificationResponse'
+              examples:
+                managerResponseEnglish:
+                  summary: Manager verification response (English)
+                  value:
+                    status: OK
+                    results_id: 0f79abdf-fa89-93a3-8b9c-40a3b6dc2b3a
+                    message: Data successfully retrieved
+                    timestamp: '2024-10-24T15:37:35.254Z'
+                    meta: null
+                    status_detail: null
+                    verifications:
+                    - name:
+                        ar: null
+                        en: Mr. Abdulaziz Ahmed Khaled Al-Thunaian
+                      type_id: 1
+                      type:
+                        ar: null
+                        en: Saudi
+                      is_licensed: true
+                      identity:
+                        id: '1234567890'
+                        type_id: 1
+                        type:
+                          ar: null
+                          en: National ID
+                      nationality:
+                        id: 113
+                        type:
+                          ar: null
+                          en: Saudi
+                      positions:
+                      - id: 2
+                        ar: null
+                        en: Executive Director
+                      permissions:
+                      - id: 5
+                        name:
+                          ar: null
+                          en: Issue Power of Attorney
+                        can_issue_poa: true
+                        can_delegate: false
+                        special_condition_text:
+                          ar: null
+                          en: Requires board approval
+                        exercise_method_id: 1
+                        exercise_method_description:
+                          ar: null
+                          en: Individually
+                      - id: 8
+                        name:
+                          ar: null
+                          en: Sign Contracts
+                        can_issue_poa: false
+                        can_delegate: true
+                        special_condition_text:
+                          ar: null
+                          en: null
+                        exercise_method_id: 2
+                        exercise_method_description:
+                          ar: null
+                          en: Jointly
+                managerResponseArabic:
+                  summary: Manager verification response (Arabic)
+                  value:
+                    status: OK
+                    results_id: 0f79abdf-fa89-93a3-8b9c-40a3b6dc2b3a
+                    message: Data successfully retrieved
+                    timestamp: '2024-10-24T15:37:35.254Z'
+                    meta: null
+                    status_detail: null
+                    verifications:
+                    - name:
+                        ar: السيد عبدالعزيز احمد خالد الثنيان
+                        en: null
+                      type_id: 1
+                      type:
+                        ar: سعودي
+                        en: null
+                      is_licensed: true
+                      identity:
+                        id: '1234567890'
+                        type_id: 1
+                        type:
+                          ar: هوية وطنية
+                          en: null
+                      nationality:
+                        id: 113
+                        type:
+                          ar: سعودي
+                          en: null
+                      positions:
+                      - id: 2
+                        ar: مدير تنفيذي
+                        en: null
+                      permissions:
+                      - id: 5
+                        name:
+                          ar: إصدار توكيل
+                          en: null
+                        can_issue_poa: true
+                        can_delegate: false
+                        special_condition_text:
+                          ar: يتطلب موافقة مجلس الإدارة
+                          en: null
+                        exercise_method_id: 1
+                        exercise_method_description:
+                          ar: منفرداً
+                          en: null
+                      - id: 8
+                        name:
+                          ar: توقيع العقود
+                          en: null
+                        can_issue_poa: false
+                        can_delegate: true
+                        special_condition_text:
+                          ar: null
+                          en: null
+                        exercise_method_id: 2
+                        exercise_method_description:
+                          ar: مجتمعين
+                          en: null
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CorporateVerificationErrorResponse'
+              examples:
+                missingManagerId:
+                  summary: Manager identification is required
+                  value:
+                    timestamp: '2025-10-03T06:16:13.421014232Z'
+                    status: INVALID_PARAMETERS
+                    message: Manager identification is required in addition to corporate unified number
+                    metadata: null
+                missingUnifiedNumber:
+                  summary: Corporate unified number is required
+                  value:
+                    timestamp: '2025-10-03T06:16:13.421014232Z'
+                    status: INVALID_PARAMETERS
+                    message: Corporate unified number identification is required
+                    metadata: null
+                invalidIdType:
+                  summary: Invalid manager identification type
+                  value:
+                    timestamp: '2025-10-03T06:16:13.421014232Z'
+                    status: INVALID_PARAMETERS
+                    message: Invalid manager identification type
+                    metadata: null
+                invalidLanguage:
+                  summary: Language should be 'ar', 'AR', 'en', or 'EN'
+                  value:
+                    timestamp: '2025-10-03T06:16:13.421014232Z'
+                    status: INVALID_PARAMETERS
+                    message: Language should be 'ar', 'AR', 'en', or 'EN'
+                    metadata: null
+      tags:
+      - Corporate Verification
+components:
+  schemas:
+    PartnerProfitLossDistribution:
+      description: Partner profit and loss distribution
+      type:
+      - object
+      - 'null'
+      properties:
+        profit_distribution:
+          description: Profit percentage
+          type:
+          - number
+          - 'null'
+        loss_distribution:
+          description: Loss percentage
+          type:
+          - number
+          - 'null'
+      required:
+      - profit_distribution
+      - loss_distribution
+    Stock:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/TypeIdNamePair'
+      - type: object
+        properties:
+          count:
+            type:
+            - integer
+            - 'null'
+          value:
+            type:
+            - number
+            - 'null'
+          class_reference_id:
+            type:
+            - integer
+            - 'null'
+          class_name:
+            description: Stock class
+            allOf:
+            - $ref: '#/components/schemas/LocalizedText'
+    FiscalYear:
+      type:
+      - object
+      - 'null'
+      properties:
+        is_first:
+          description: Whether this is the first fiscal year
+          type:
+          - boolean
+          - 'null'
+        calendar_type_id:
+          description: Calendar type ID
+          type:
+          - integer
+          - 'null'
+        calendar_type:
+          description: Calendar type
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        end_month:
+          description: End month of fiscal year (1-12)
+          type:
+          - integer
+          - 'null'
+          maximum: 12
+          minimum: 1
+        end_day:
+          description: End day of fiscal year (1-31)
+          type:
+          - integer
+          - 'null'
+          maximum: 31
+          minimum: 1
+        end_year:
+          description: End year of fiscal year
+          type:
+          - integer
+          - 'null'
+    Nationality:
+      type:
+      - object
+      - 'null'
+      properties:
+        id:
+          description: Nationality ID
+          type:
+          - integer
+          - 'null'
+        type:
+          description: Nationality type
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+    DirectorsBoard:
+      description: Directors board information
+      type:
+      - object
+      - 'null'
+      properties:
+        member_count:
+          description: Board member count
+          type:
+          - integer
+          - 'null'
+        term_years:
+          description: Board term in years
+          type:
+          - integer
+          - 'null'
+        value:
+          description: Board reward value
+          type:
+          - integer
+          - 'null'
+        value_max:
+          description: Maximum board reward value
+          type:
+          - integer
+          - 'null'
+        way_of_work:
+          description: Board way of work
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        meeting_place:
+          description: Board meeting place
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        meeting_quorum:
+          description: Meeting quorum
+          type:
+          - integer
+          - 'null'
+        meeting_legal_quorum:
+          description: Meeting legal quorum
+          type:
+          - integer
+          - 'null'
+        can_delegate_attendance:
+          description: Whether attendance can be delegated
+          type:
+          - boolean
+          - 'null'
+        board_call_mechanism:
+          description: Board call mechanism
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        membership_expiry_terms:
+          description: Membership expiry terms
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        additional_text:
+          description: Additional text
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        rewards:
+          description: List of board rewards
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/BoardReward'
+        positions:
+          description: List of board positions
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/BoardPosition'
+      required:
+      - member_count
+      - term_years
+      - value
+      - value_max
+      - way_of_work
+      - meeting_place
+      - meeting_quorum
+      - meeting_legal_quorum
+      - can_delegate_attendance
+      - board_call_mechanism
+      - membership_expiry_terms
+      - additional_text
+      - rewards
+      - positions
+    Liquidator:
+      description: Liquidator information
+      type: object
+      properties:
+        name:
+          description: Liquidator name
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        type_id:
+          description: Liquidator type ID
+          type:
+          - integer
+          - 'null'
+        type:
+          description: Liquidator type
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        identity:
+          description: Liquidator identity
+          allOf:
+          - $ref: '#/components/schemas/Identity'
+        nationality:
+          description: Liquidator nationality
+          allOf:
+          - $ref: '#/components/schemas/Nationality'
+        positions:
+          description: Liquidator positions
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/Position'
+    SetAsideDetails:
+      description: Set aside percentage details for profit allocation
+      type:
+      - object
+      - 'null'
+      properties:
+        is_set_aside_enabled:
+          description: Whether set aside percentage is enabled
+          type:
+          - boolean
+          - 'null'
+        profit_allocation:
+          $ref: '#/components/schemas/ProfitAllocation'
+      required:
+      - is_set_aside_enabled
+      - profit_allocation
+    Guardian:
+      description: Guardian information
+      type:
+      - object
+      - 'null'
+      properties:
+        name:
+          description: Guardian name
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        identity:
+          $ref: '#/components/schemas/Identity'
+        nationality:
+          $ref: '#/components/schemas/Nationality'
+        is_father_guardian:
+          description: Whether the guardian is the father
+          type:
+          - boolean
+          - 'null'
+      required:
+      - name
+      - identity
+      - nationality
+      - is_father_guardian
+    LocalizedText:
+      type:
+      - object
+      - 'null'
+      properties:
+        en:
+          description: English text
+          type:
+          - string
+          - 'null'
+        ar:
+          description: Arabic text
+          type:
+          - string
+          - 'null'
+    ManagementBoard:
+      description: Management board information
+      type:
+      - object
+      - 'null'
+      properties:
+        meeting_quorum_id:
+          description: Meeting quorum ID
+          type:
+          - integer
+          - 'null'
+        meeting_quorum_name:
+          description: Meeting quorum name
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        can_delegate_attendance:
+          description: Whether attendance can be delegated
+          type:
+          - boolean
+          - 'null'
+        term_years:
+          description: Board term in years
+          type:
+          - integer
+          - 'null'
+        way_of_work:
+          description: Board way of work
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        meeting_place:
+          description: Board meeting place
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        additional_text:
+          description: Additional text
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        positions:
+          description: List of board positions
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/BoardPosition'
+      required:
+      - meeting_quorum_id
+      - meeting_quorum_name
+      - can_delegate_attendance
+      - term_years
+      - way_of_work
+      - meeting_place
+      - additional_text
+      - positions
+    Manager:
+      type: object
+      properties:
+        name:
+          description: Manager name
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        type_id:
+          description: Manager type ID
+          type:
+          - integer
+          - 'null'
+        type:
+          description: Manager type
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        is_licensed:
+          description: Whether manager is licensed
+          type:
+          - boolean
+          - 'null'
+        identity:
+          $ref: '#/components/schemas/Identity'
+        nationality:
+          $ref: '#/components/schemas/Nationality'
+        positions:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/Position'
+    Activity:
+      description: Activity Name
+      allOf:
+      - $ref: '#/components/schemas/LocalizedText'
+      - type: object
+        properties:
+          id:
+            description: Activity ID (ISIC code)
+            type:
+            - string
+            - 'null'
+    Identity:
+      type:
+      - object
+      - 'null'
+      properties:
+        id:
+          description: Identity ID
+          type:
+          - string
+          - 'null'
+        type_id:
+          description: Identity type ID
+          type:
+          - integer
+          - 'null'
+        type:
+          description: Identity type
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+    PartnerShare:
+      type:
+      - object
+      - 'null'
+      properties:
+        cash_contribution_count:
+          description: Cash contribution count
+          type:
+          - number
+          - 'null'
+        in_kind_contribution_count:
+          description: In-kind contribution count
+          type:
+          - number
+          - 'null'
+        total_contribution_count:
+          description: Total contribution count
+          type:
+          - number
+          - 'null'
+    CompanyStatus:
+      description: Commercial Registration Status Description
+      type:
+      - object
+      - 'null'
+      properties:
+        en:
+          description: English text
+          type:
+          - string
+          - 'null'
+        ar:
+          description: Arabic text
+          type:
+          - string
+          - 'null'
+        id:
+          description: Commercial Registration status ID
+          type:
+          - integer
+          - 'null'
+    CapitalInfo:
+      type:
+      - object
+      - 'null'
+      properties:
+        currency_id:
+          description: Currency ID
+          type:
+          - integer
+          - 'null'
+        currency:
+          description: Currency
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        contribution_capital:
+          $ref: '#/components/schemas/ContributionCapital'
+        stock_capital:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/StockCapital'
+    ManagerPermission:
+      type: object
+      properties:
+        id:
+          description: Permission ID
+          type:
+          - integer
+          - 'null'
+        name:
+          description: Permission name
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        can_issue_poa:
+          description: Whether the manager can issue a power of attorney for this permission
+          type:
+          - boolean
+          - 'null'
+        can_delegate:
+          description: Whether the manager can delegate this permission
+          type:
+          - boolean
+          - 'null'
+        special_condition_text:
+          description: Special condition text for the permission
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        exercise_method_id:
+          description: Exercise method ID
+          type:
+          - integer
+          - 'null'
+        exercise_method_description:
+          description: Description of how the permission is exercised
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+      required:
+      - id
+      - name
+      - can_issue_poa
+      - can_delegate
+      - special_condition_text
+      - exercise_method_id
+      - exercise_method_description
+    CorporateIdentification:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/CorporateIdentificationType'
+        value:
+          description: Identification value
+          type: string
+          minLength: 1
+      required:
+      - type
+      - value
+    EStore:
+      type: object
+      properties:
+        authentication_platform_url:
+          description: Authentication platform URL
+          type:
+          - string
+          - 'null'
+        store_url:
+          description: Store URL
+          type:
+          - string
+          - 'null'
+        store_activities:
+          description: Store activities
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/StoreActivity'
+    BoardReward:
+      type: object
+      properties:
+        id:
+          description: Board reward ID
+          type:
+          - string
+          - 'null'
+        name:
+          description: Board Reward name
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+      required:
+      - id
+      - name
+    StoreActivity:
+      description: Activity name
+      allOf:
+      - $ref: '#/components/schemas/LocalizedText'
+      - type: object
+        properties:
+          id:
+            description: Store activity ID (ISIC code)
+            type:
+            - string
+            - 'null'
+    IdNamePair:
+      description: Name field
+      allOf:
+      - $ref: '#/components/schemas/LocalizedText'
+      - type: object
+        properties:
+          id:
+            description: ID
+            type:
+            - integer
+            - 'null'
+    CorporateVerificationErrorResponse:
+      type: object
+      properties:
+        status:
+          description: Status of the response
+          type: string
+        message:
+          description: Error message describing the issue
+          type: string
+        timestamp:
+          description: Timestamp when the error occurred
+          type: string
+          format: date-time
+        metadata:
+          description: Additional metadata
+          type:
+          - object
+          - 'null'
+      required:
+      - status
+      - message
+      - timestamp
+    CorporateVerificationRequest:
+      type: object
+      properties:
+        type:
+          description: Type of requested information
+          type: string
+          enum:
+          - FULL
+          - BASIC
+          - CONTRACT
+          - ADDRESS
+        identifications:
+          description: Identifications for corporate verification
+          type: array
+          items:
+            $ref: '#/components/schemas/CorporateIdentification'
+          minItems: 1
+        language:
+          $ref: '#/components/schemas/CorporateVerificationLanguage'
+      required:
+      - type
+      - identifications
+      - language
+    Partnership:
+      description: Partnership information
+      allOf:
+      - $ref: '#/components/schemas/LocalizedText'
+      - type: object
+        properties:
+          id:
+            description: Partnership ID
+            type:
+            - integer
+            - 'null'
+    Result:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ResultStatus'
+        results_id:
+          description: The unique identifier for the request
+          type: string
+          format: uuid
+        message:
+          description: A message describing the status of the request
+          type: string
+        meta:
+          description: Meta information about the request
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: string
+        timestamp:
+          description: The datetime of when the request was made
+          type: string
+          format: date-time
+        status_detail:
+          description: Additional information about the status
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/StatusDetail'
+      required:
+      - status
+      - results_id
+      - message
+      - timestamp
+    ProfitAllocation:
+      type:
+      - object
+      - 'null'
+      properties:
+        percentage:
+          description: Set aside profit percentage
+          type:
+          - integer
+          - 'null'
+        purpose:
+          description: Set aside purpose
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+      required:
+      - percentage
+      - purpose
+    EntityType:
+      type:
+      - object
+      - 'null'
+      properties:
+        id:
+          description: Entity type ID
+          type:
+          - integer
+          - 'null'
+        name:
+          description: Entity type
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        form_id:
+          description: Entity form ID
+          type:
+          - integer
+          - 'null'
+        form_name:
+          description: Entity form
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        characters:
+          description: Characteristics associated with the entity
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/IdNamePair'
+    ManagerWithPermissions:
+      allOf:
+      - $ref: '#/components/schemas/Manager'
+      - type: object
+        required:
+        - permissions
+        properties:
+          permissions:
+            description: List of manager permissions
+            type:
+            - array
+            - 'null'
+            items:
+              $ref: '#/components/schemas/ManagerPermission'
+    ECommerceInfo:
+      type:
+      - object
+      - 'null'
+      properties:
+        e_store:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/EStore'
+          x-field-extra-annotation: '@JsonProperty("e_store")'
+      x-field-extra-annotation: '@JsonProperty("e_commerce")'
+    PartnerDecision:
+      type: object
+      properties:
+        id:
+          description: Partner decision ID
+          type:
+          - integer
+          - 'null'
+        name:
+          description: Partner decision
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        approve_percentage:
+          description: Approve percentage required for decision
+          type:
+          - string
+          - 'null'
+        approve_additional_text:
+          description: Additional text for approval
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+      required:
+      - id
+      - name
+      - approve_percentage
+      - approve_additional_text
+    ManagementInfo:
+      type:
+      - object
+      - 'null'
+      properties:
+        structure_id:
+          description: Management structure ID
+          type:
+          - integer
+          - 'null'
+        structure_name:
+          description: Management structure name
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        dismissal_method:
+          description: Dismissal method
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        managers:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/Manager'
+        management_board:
+          $ref: '#/components/schemas/ManagementBoard'
+        directors_board:
+          $ref: '#/components/schemas/DirectorsBoard'
+      required:
+      - structure_id
+      - structure_name
+      - dismissal_method
+      - managers
+      - management_board
+      - directors_board
+    CorporateIdentificationType:
+      description: Types of identification accepted for corporate verification
+      type: string
+      const: UNIFIED_NUMBER
+    CorporateManagerIdentification:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/CorporateManagerIdentificationType'
+        value:
+          description: Identification value
+          type: string
+          minLength: 1
+      required:
+      - type
+      - value
+    CorporateVerificationResponse:
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          verifications:
+            $ref: '#/components/schemas/CorporateVerificationResult'
+    CorporateManagerVerificationRequest:
+      type: object
+      properties:
+        identifications:
+          description: Identifications for corporate manager verification. Must contain one UNIFIED_NUMBER (corporate) and one manager identity type.
+          type: array
+          items:
+            $ref: '#/components/schemas/CorporateManagerIdentification'
+        permission_id:
+          description: Optional permission role ID to filter returned permissions
+          type:
+          - string
+          - 'null'
+        language:
+          $ref: '#/components/schemas/CorporateVerificationLanguage'
+      required:
+      - identifications
+      - language
+    NotificationChannel:
+      type: object
+      properties:
+        id:
+          description: Notification method ID
+          type:
+          - integer
+          - 'null'
+        name:
+          description: Notification method
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+      required:
+      - id
+      - name
+    ContactInfo:
+      type:
+      - object
+      - 'null'
+      properties:
+        phone_number:
+          description: Phone number
+          type:
+          - string
+          - 'null'
+        mobile_number:
+          description: Mobile number
+          type:
+          - string
+          - 'null'
+        email:
+          description: Email address
+          type:
+          - string
+          - 'null'
+          format: email
+        website_url:
+          description: Website URL
+          type:
+          - string
+          - 'null'
+    ResultStatus:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - PROCESSING_STARTED
+    BoardPosition:
+      type: object
+      properties:
+        id:
+          description: Position ID
+          type:
+          - integer
+          - 'null'
+        name:
+          description: Board position name
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+      required:
+      - id
+      - name
+    StockCapital:
+      type:
+      - object
+      - 'null'
+      allOf:
+      - $ref: '#/components/schemas/TypeIdNamePair'
+      - type: object
+        properties:
+          capital:
+            type:
+            - number
+            - 'null'
+          announced_capital:
+            type:
+            - number
+            - 'null'
+          paid_capital:
+            type:
+            - number
+            - 'null'
+          cash_capital:
+            type:
+            - number
+            - 'null'
+          in_kind_capital:
+            type:
+            - number
+            - 'null'
+          stocks:
+            type:
+            - array
+            - 'null'
+            items:
+              $ref: '#/components/schemas/Stock'
+    ContributionCapital:
+      type:
+      - object
+      - 'null'
+      allOf:
+      - $ref: '#/components/schemas/TypeIdNamePair'
+      - type: object
+        properties:
+          cash_capital:
+            type:
+            - number
+            - 'null'
+          in_kind_capital:
+            type:
+            - number
+            - 'null'
+          contribution_value:
+            type:
+            - number
+            - 'null'
+          total_cash_contribution:
+            type:
+            - number
+            - 'null'
+          total_in_kind_contribution:
+            type:
+            - number
+            - 'null'
+    Position:
+      description: Manager position
+      allOf:
+      - $ref: '#/components/schemas/LocalizedText'
+      - type: object
+        properties:
+          id:
+            description: Position ID
+            type:
+            - integer
+            - 'null'
+    CorporateManagerIdentificationType:
+      description: Types of identification accepted for corporate manager verification
+      type: string
+      enum:
+      - UNIFIED_NUMBER
+      - NATIONAL_ID
+      - RESIDENT_ID
+      - PASSPORT
+      - GCC_ID
+      - ENDOWMENT_DEED_NO
+      - LICENSE_NO
+      - CR_NATIONAL_ID
+      - FOREIGN_CR_NO
+      - NATIONAL_NUMBER
+      - BOARDER_NUMBER
+      - CR_NUMBER
+      - UNDEFINED
+    CorporateVerificationLanguage:
+      description: Language preference for response content
+      type:
+      - string
+      - 'null'
+      default: ar
+      enum:
+      - ar
+      - AR
+      - en
+      - EN
+    TypeIdNamePair:
+      description: Type field
+      allOf:
+      - $ref: '#/components/schemas/LocalizedText'
+      - type: object
+        properties:
+          type_id:
+            description: Type ID
+            type:
+            - integer
+            - 'null'
+    Party:
+      type: object
+      properties:
+        name:
+          description: Party name
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        type_id:
+          description: Party type ID
+          type:
+          - integer
+          - 'null'
+        type:
+          description: Party type
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        identity:
+          $ref: '#/components/schemas/Identity'
+        partnership:
+          description: Partnership information
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/Partnership'
+        partner_share:
+          $ref: '#/components/schemas/PartnerShare'
+        nationality:
+          $ref: '#/components/schemas/Nationality'
+        license_number:
+          description: License number
+          type:
+          - string
+          - 'null'
+        commercial_registration_number:
+          description: Commercial Registration number
+          type:
+          - string
+          - 'null'
+        partner_profit_loss_distribution:
+          $ref: '#/components/schemas/PartnerProfitLossDistribution'
+        guardian:
+          $ref: '#/components/schemas/Guardian'
+      required:
+      - name
+      - type_id
+      - type
+      - identity
+      - partnership
+      - partner_share
+      - nationality
+      - license_number
+      - commercial_registration_number
+      - partner_profit_loss_distribution
+      - guardian
+    StatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        granular_status_code:
+          description: Granular status code
+          type:
+          - string
+          - 'null'
+        status_additional_info:
+          description: Additional information about the status
+          type:
+          - string
+          - 'null'
+    NationalAddress:
+      description: National address information for the establishment
+      type: object
+      properties:
+        title:
+          description: Establishment name/title
+          type:
+          - string
+          - 'null'
+        address:
+          description: Primary address line
+          type:
+          - string
+          - 'null'
+        address2:
+          description: Secondary address line (city and postal code)
+          type:
+          - string
+          - 'null'
+        latitude:
+          description: Geographic latitude coordinate
+          type:
+          - string
+          - 'null'
+        longitude:
+          description: Geographic longitude coordinate
+          type:
+          - string
+          - 'null'
+        building_number:
+          description: Building number
+          type:
+          - string
+          - 'null'
+        street:
+          description: Street name
+          type:
+          - string
+          - 'null'
+        district:
+          description: District name
+          type:
+          - string
+          - 'null'
+        district_id:
+          description: District identifier
+          type:
+          - string
+          - 'null'
+        city:
+          description: City name
+          type:
+          - string
+          - 'null'
+        city_id:
+          description: City identifier
+          type:
+          - string
+          - 'null'
+        post_code:
+          description: Postal code
+          type:
+          - string
+          - 'null'
+        additional_number:
+          description: Additional number
+          type:
+          - string
+          - 'null'
+        region_name:
+          description: Region name
+          type:
+          - string
+          - 'null'
+        region_id:
+          description: Region identifier
+          type:
+          - string
+          - 'null'
+        is_primary_address:
+          description: Whether this is the primary address
+          type:
+          - string
+          - 'null'
+        unit_number:
+          description: Unit number
+          type:
+          - string
+          - 'null'
+        restriction:
+          description: Address restriction information
+          type:
+          - string
+          - 'null'
+        pk_address_id:
+          description: Primary key address identifier
+          type:
+          - string
+          - 'null'
+        status:
+          description: Address status
+          type:
+          - string
+          - 'null'
+      required:
+      - title
+      - address
+      - address2
+      - latitude
+      - longitude
+      - building_number
+      - street
+      - district
+      - district_id
+      - city
+      - city_id
+      - post_code
+      - additional_number
+      - region_name
+      - region_id
+      - is_primary_address
+      - unit_number
+      - restriction
+      - pk_address_id
+      - status
+    CorporateManagerVerificationResponse:
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          verifications:
+            description: List of managers with their permissions
+            type:
+            - array
+            - 'null'
+            items:
+              $ref: '#/components/schemas/ManagerWithPermissions'
+    Article:
+      type: object
+      properties:
+        id:
+          description: Article ID
+          type:
+          - integer
+          - 'null'
+        text:
+          description: Article text
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        part_id:
+          description: Part ID
+          type:
+          - integer
+          - 'null'
+        part_name:
+          description: Part name
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+      required:
+      - id
+      - text
+      - part_id
+      - part_name
+    DatePair:
+      type:
+      - object
+      - 'null'
+      properties:
+        gregorian:
+          description: Gregorian date in ISO 8601 format (YYYY-MM-DD)
+          type:
+          - string
+          - 'null'
+          format: date
+        hijri:
+          description: Hijri date in ISO 8601 format (YYYY-MM-DD)
+          type:
+          - string
+          - 'null'
+          format: date
+    AdditionalArticle:
+      type: object
+      properties:
+        title:
+          description: Additional article title
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        text:
+          description: Additional article text
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        part_id:
+          description: Part ID
+          type:
+          - integer
+          - 'null'
+        part_name:
+          description: Additional article part name
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+      required:
+      - title
+      - text
+      - part_id
+      - part_name
+    CorporateVerificationResult:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/CompanyStatus'
+        commercial_registry:
+          type:
+          - object
+          - 'null'
+          properties:
+            national_number:
+              description: Commercial Registration National Number
+              type:
+              - string
+              - 'null'
+            registration_number:
+              description: Commercial Registration Number
+              type:
+              - string
+              - 'null'
+            version_number:
+              description: Commercial Registry Version Number
+              type:
+              - integer
+              - 'null'
+        company_name:
+          description: Company Name
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        name_language:
+          type:
+          - object
+          - 'null'
+          properties:
+            id:
+              description: Name language ID
+              type:
+              - integer
+              - 'null'
+            description:
+              description: Company name language
+              allOf:
+              - $ref: '#/components/schemas/LocalizedText'
+        commercial_registration_capital:
+          description: Commercial registration capital
+          type:
+          - number
+          - 'null'
+        days_since_company_established:
+          description: Days since company was established
+          type:
+          - integer
+          - 'null'
+        main_commercial_registry:
+          type:
+          - object
+          - 'null'
+          properties:
+            is_main:
+              description: Whether this is the main Commercial Registration
+              type:
+              - boolean
+              - 'null'
+            national_number:
+              description: Main Commercial Registration National Number
+              type:
+              - string
+              - 'null'
+            registration_number:
+              description: Main Commercial Registration Number
+              type:
+              - string
+              - 'null'
+        issue_date:
+          $ref: '#/components/schemas/DatePair'
+        in_liquidation_process:
+          description: Whether the company is in a liquidation process
+          type:
+          - boolean
+          - 'null'
+        has_e_commerce:
+          description: Whether the company engages in ecommerce
+          type:
+          - boolean
+          - 'null'
+          x-field-extra-annotation: '@JsonProperty("has_e_commerce")'
+        headquarters:
+          type:
+          - object
+          - 'null'
+          properties:
+            city_id:
+              description: City ID
+              type:
+              - integer
+              - 'null'
+            city_name:
+              description: Headquarters City
+              allOf:
+              - $ref: '#/components/schemas/LocalizedText'
+        license:
+          type:
+          - object
+          - 'null'
+          properties:
+            is_license_based:
+              description: Whether the Commercial Registration is based on a license
+              type:
+              - boolean
+              - 'null'
+            issuer_national_number:
+              description: License issuer national number
+              type:
+              - string
+              - 'null'
+            issuer_name:
+              description: License issuer name
+              allOf:
+              - $ref: '#/components/schemas/LocalizedText'
+        partners:
+          type:
+          - object
+          - 'null'
+          properties:
+            nationality_id:
+              description: Partner nationality ID
+              type:
+              - integer
+              - 'null'
+            nationality:
+              description: Partner nationality
+              allOf:
+              - $ref: '#/components/schemas/LocalizedText'
+        entity_type:
+          $ref: '#/components/schemas/EntityType'
+        confirmation_date:
+          $ref: '#/components/schemas/DatePair'
+        reactivation_date:
+          $ref: '#/components/schemas/DatePair'
+        suspension_date:
+          $ref: '#/components/schemas/DatePair'
+        deletion_date:
+          $ref: '#/components/schemas/DatePair'
+        contact_info:
+          $ref: '#/components/schemas/ContactInfo'
+        e_commerce:
+          $ref: '#/components/schemas/ECommerceInfo'
+        capital_information:
+          $ref: '#/components/schemas/CapitalInfo'
+        fiscal_year:
+          $ref: '#/components/schemas/FiscalYear'
+        parties:
+          description: Company parties/partners
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/Party'
+        management:
+          $ref: '#/components/schemas/ManagementInfo'
+        liquidators:
+          description: Company liquidators
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/Liquidator'
+        activities:
+          description: Company activities
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/Activity'
+        contract_copy_number:
+          description: Contract copy number
+          type:
+          - integer
+          - 'null'
+        contract_date:
+          description: Contract date
+          type:
+          - string
+          - 'null'
+          format: date
+        notification_channel:
+          description: Notification method list
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/NotificationChannel'
+        partner_decision:
+          description: Partner decisions
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/PartnerDecision'
+        additional_decision_text:
+          description: Additional decision text
+          type:
+          - string
+          - 'null'
+        set_aside_details:
+          $ref: '#/components/schemas/SetAsideDetails'
+        articles:
+          description: Contract article list
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/Article'
+        additional_articles:
+          description: Additional contract articles
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/AdditionalArticle'
+        addresses:
+          description: National addresses of the establishment
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/NationalAddress'
+      required:
+      - contract_copy_number
+      - contract_date
+      - status
+      - commercial_registry
+      - company_name
+      - name_language
+      - commercial_registration_capital
+      - days_since_company_established
+      - main_commercial_registry
+      - issue_date
+      - in_liquidation_process
+      - has_e_commerce
+      - headquarters
+      - license
+      - partners
+      - entity_type
+      - confirmation_date
+      - reactivation_date
+      - suspension_date
+      - deletion_date
+      - contact_info
+      - e_commerce
+      - capital_information
+      - fiscal_year
+      - parties
+      - management
+      - liquidators
+      - activities
+      - notification_channel
+      - partner_decision
+      - additional_decision_text
+      - set_aside_details
+      - articles
+      - additional_articles
+      - addresses
+      x-class-extra-annotation: '@com.fasterxml.jackson.annotation.JsonAutoDetect(isGetterVisibility = com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE, getterVisibility = com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE, fieldVisibility = com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY)'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

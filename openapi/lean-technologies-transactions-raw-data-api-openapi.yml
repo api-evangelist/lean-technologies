@@ -1,0 +1,915 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Transactions Raw Data API
+  version: v0.2.3
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Transactions Raw Data
+  x-displayName: Transactions Raw Data
+paths:
+  /data/v2/accounts/{account_id}/transactions:
+    servers: []
+    get:
+      operationId: fetchTransactionsV2
+      summary: Get Transactions
+      description: 'The `Get Transactions `endpoint retrieves a list of historical transactions associated with a specific bank account linked by a user via LinkSDK, identified by both the entity_id and the account_id. Each transaction object contains fields such as amount, status, balance after each transaction, transaction category and type, and additional information. Requires an active entity with the `transactions` permission to use.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountIdParameter'
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/PageParameter'
+      - $ref: '#/components/parameters/SizeParameter'
+      - $ref: '#/components/parameters/EntityIdParameter'
+      - $ref: '#/components/parameters/MetaParameter'
+      - name: start_date
+        in: query
+        description: The start date in UTC (in the format YYYY-MM-DD) you want to query transactions for.
+        required: false
+        schema:
+          type: string
+          format: date
+        x-field-extra-annotation: '@PastOrPresent'
+      - name: end_date
+        in: query
+        description: The end date in UTC (in the format YYYY-MM-DD) you want to query transactions for.
+        required: false
+        schema:
+          type: string
+          format: date
+        x-field-extra-annotation: '@PastOrPresent'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FetchTransactionsResultV2'
+              examples:
+                Get_Transactions_V2_KSA_Example:
+                  summary: Successful get transactions - KSA
+                  value:
+                    status: OK
+                    results_id: 81bac9e7-e51b-45bd-b660-a7557b286642
+                    message: Data successfully retrieved
+                    meta: null
+                    timestamp: '2025-09-11T19:02:04.447189646Z'
+                    status_detail: null
+                    data:
+                      type: transactions
+                      transactions:
+                      - entity_id: 2f229893-893d-408c-a968-d2df6daf5f4f
+                        account_id: 73acd95b-1106-4e2b-891f-176c7ba64be1
+                        transaction_id: efb1b58b-aca9-430a-8f87-f8833c6aba06
+                        transaction_information: شراء من حساب 2000 20 SAR من KHALED ALGHAMDI STATIO في 03-02-2020 09:31PM
+                        transaction_reference: ERPpSJRubRgXXXr
+                        credit_debit_indicator: DEBIT
+                        amount:
+                          currency: SAR
+                          amount: 42.7
+                        transaction_mutability: IMMUTABLE
+                        booking_date_time: '2025-06-05T00:00:00Z'
+                        insights: null
+                        balance:
+                          type: PREVIOUSLY_CLOSED_BOOKED
+                          credit_debit_indicator: CREDIT
+                          amount:
+                            currency: SAR
+                            amount: 44902.6
+                        status: BOOKED
+                        statement_reference:
+                        - FerDHEpKQjFHlTl
+                        value_date_time: '2025-06-05T00:00:00Z'
+                        index: 0
+                        charge_amount:
+                          amount: 0.42
+                          currency: SAR
+                          charge_included: false
+                        bank_transaction_code:
+                          code: Counter Transactions
+                          sub_code: Cash Withdrawal
+                        card_instrument:
+                          authorization_type: CONSUMER_DEVICE
+                          card_scheme_name: DINERS
+                          identification: dveRUhRJTPykpmS
+                          name: OCKdZZjsJlrMvqS
+                        merchant_details:
+                          merchant_category_code: CC8311
+                          merchant_name: Amazon SA
+                        proprietary_bank_transaction_code:
+                          code: FQSPovkTmxcqDWudyENpikr
+                          issuer: LzbpfbvcuRgMPOLyCLu
+                        currency_exchange: null
+                        creditor_account:
+                          name: Zetta
+                          scheme_name: null
+                          identification: SA04607NTDHIJYI2VFQKPPKO
+                        creditor_agent:
+                          scheme_name: OTHER
+                          identification: KSAOB.SAOTHE
+                          name: Some Other Bank
+                          postal_address:
+                            address_type: BUSINESS
+                            address_line: 5423, Al Hawi Street, 13516, Riyadh
+                            building_number: '5423'
+                            country: Saudi Arabia
+                            country_subdivision: Hiteen District
+                            post_code: '13516'
+                            street_name: Al Hawi Street
+                            town_name: Riyadh
+                        debtor_account:
+                          name: Ahmed Abdullah CURRENT Account
+                          scheme_name: null
+                          identification: SA4420000001234567891234
+                        debtor_agent:
+                          scheme_name: BICFI
+                          identification: RIBLSARI
+                          name: Riyad Bank
+                          postal_address:
+                            address_type: BUSINESS
+                            address_line: King Fahd Road, 11411, Riyadh
+                            building_number: '1234'
+                            country: Saudi Arabia
+                            country_subdivision: Al Olaya District
+                            post_code: '11411'
+                            street_name: King Fahd Road
+                            town_name: Riyadh
+                        local_time_zone: UTC+00:00
+                        transaction_type: ATM
+                        sub_transaction_type: DEPOSIT_REVERSAL
+                        payment_modes: null
+                        flags: []
+                      - entity_id: 2f229893-893d-408c-a968-d2df6daf5f4f
+                        account_id: 73acd95b-1106-4e2b-891f-176c7ba64be1
+                        transaction_id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+                        transaction_information: SAUDI ELECTRICITY COMPANY - BILL PAYMENT
+                        transaction_reference: REF-KSA-20250805-002345
+                        credit_debit_indicator: DEBIT
+                        amount:
+                          currency: SAR
+                          amount: 450.5
+                        transaction_mutability: MUTABLE
+                        booking_date_time: '2025-08-05T14:20:00Z'
+                        insights: null
+                        balance:
+                          type: CLOSING_AVAILABLE
+                          credit_debit_indicator: CREDIT
+                          amount:
+                            currency: SAR
+                            amount: 30230.75
+                        status: BOOKED
+                        statement_reference:
+                        - STMT-2025-08-002
+                        value_date_time: '2025-08-05T14:20:00Z'
+                        index: 1
+                        charge_amount:
+                          amount: 0
+                          currency: SAR
+                          charge_included: false
+                        bank_transaction_code:
+                          code: Payments
+                          sub_code: Bill Payment
+                        card_instrument: null
+                        merchant_details: null
+                        proprietary_bank_transaction_code:
+                          code: BILL_PAY
+                          issuer: NCBKSAJE
+                        currency_exchange: null
+                        creditor_account:
+                          name: Saudi Electricity Company
+                          scheme_name: IBAN
+                          identification: SA4420000001234567891234
+                        creditor_agent:
+                          scheme_name: BICFI
+                          identification: NCBKSAJE
+                          name: The National Commercial Bank
+                          postal_address:
+                            address_type: BUSINESS
+                            address_line: King Abdulaziz Road, 11411, Riyadh
+                            building_number: '1000'
+                            country: Saudi Arabia
+                            country_subdivision: Al Olaya District
+                            post_code: '11411'
+                            street_name: King Abdulaziz Road
+                            town_name: Riyadh
+                        debtor_account:
+                          name: Ahmed Abdullah CURRENT Account
+                          scheme_name: null
+                          identification: SA4420000001234567891234
+                        debtor_agent:
+                          scheme_name: BICFI
+                          identification: RIBLSARI
+                          name: Riyad Bank
+                          postal_address:
+                            address_type: BUSINESS
+                            address_line: King Fahd Road, 11411, Riyadh
+                            building_number: '1234'
+                            country: Saudi Arabia
+                            country_subdivision: Al Olaya District
+                            post_code: '11411'
+                            street_name: King Fahd Road
+                            town_name: Riyadh
+                        local_time_zone: Asia/Riyadh
+                        transaction_type: BILL_PAYMENTS
+                        sub_transaction_type: MONEY_TRANSFER
+                        payment_modes: ONLINE
+                        flags: []
+                      - entity_id: 2f229893-893d-408c-a968-d2df6daf5f4f
+                        account_id: 73acd95b-1106-4e2b-891f-176c7ba64be1
+                        transaction_id: b2c3d4e5-f6a7-8901-bcde-f12345678901
+                        transaction_information: POS PURCHASE - PANDORA JEWELLERY RIYADH PARK
+                        transaction_reference: REF-KSA-20250803-003456
+                        credit_debit_indicator: DEBIT
+                        amount:
+                          currency: SAR
+                          amount: 1250
+                        transaction_mutability: IMMUTABLE
+                        booking_date_time: '2025-08-03T18:45:00Z'
+                        insights: null
+                        balance:
+                          type: CLOSING_AVAILABLE
+                          credit_debit_indicator: CREDIT
+                          amount:
+                            currency: SAR
+                            amount: 30681.25
+                        status: BOOKED
+                        statement_reference:
+                        - STMT-2025-08-003
+                        value_date_time: '2025-08-03T18:45:00Z'
+                        index: 2
+                        charge_amount:
+                          amount: 0
+                          currency: SAR
+                          charge_included: false
+                        bank_transaction_code:
+                          code: Card Payments
+                          sub_code: POS Purchase
+                        card_instrument:
+                          authorization_type: CONTACTLESS
+                          card_scheme_name: VISA
+                          identification: '****1234'
+                          name: AHMED ABDULLAH
+                        merchant_details:
+                          merchant_category_code: '5944'
+                          merchant_name: PANDORA JEWELLERY RIYADH PARK
+                        proprietary_bank_transaction_code:
+                          code: POS_PURCHASE
+                          issuer: RIBLSARI
+                        currency_exchange: null
+                        creditor_account:
+                          name: PANDORA JEWELLERY RIYADH PARK
+                          scheme_name: null
+                          identification: SA8830000009876543210987
+                        creditor_agent:
+                          scheme_name: OTHER
+                          identification: KSAOB.SAOTHE
+                          name: Some Other Bank
+                          postal_address:
+                            address_type: BUSINESS
+                            address_line: Riyadh Park Mall, 13244, Riyadh
+                            building_number: '100'
+                            country: Saudi Arabia
+                            country_subdivision: North Ring Road
+                            post_code: '13244'
+                            street_name: Northern Ring Road
+                            town_name: Riyadh
+                        debtor_account:
+                          name: Ahmed Abdullah CURRENT Account
+                          scheme_name: null
+                          identification: SA4420000001234567891234
+                        debtor_agent:
+                          scheme_name: BICFI
+                          identification: RIBLSARI
+                          name: Riyad Bank
+                          postal_address:
+                            address_type: BUSINESS
+                            address_line: King Fahd Road, 11411, Riyadh
+                            building_number: '1234'
+                            country: Saudi Arabia
+                            country_subdivision: Al Olaya District
+                            post_code: '11411'
+                            street_name: King Fahd Road
+                            town_name: Riyadh
+                        local_time_zone: Asia/Riyadh
+                        transaction_type: POS
+                        sub_transaction_type: PURCHASE
+                        payment_modes: OFFLINE
+                        flags: []
+                      page:
+                        number: 0
+                        size: 100
+                        total_elements: 3
+                        total_pages: 1
+                    type: transactions
+                    refreshed_at: '2025-08-07T12:10:15.643Z'
+                BankIssueExample:
+                  summary: bank issue response
+                  value:
+                    status: FAILED
+                    results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+                    message: Your bank is currently experiencing technological problems. Please try again later.
+                    meta: null
+                    timestamp: '2025-09-12T05:13:49.739987382Z'
+                    status_detail:
+                      granular_status_code: BANK_ISSUE
+                      status_additional_info: Your bank is currently experiencing technological problems. Please try again later.
+                    data: null
+                    type: null
+                    refreshed_at: null
+        '202':
+          description: Accepted (Asynchronous request)
+          content:
+            application/json:
+              examples:
+                GetTransactionsAsyncExample:
+                  $ref: '#/components/examples/AsyncProcessingV2Example'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                InvalidParametersExample:
+                  $ref: '#/components/examples/InvalidParametersExample'
+        '404':
+          description: Account or entity not found
+          content:
+            application/json:
+              examples:
+                UnknownAccountExample:
+                  $ref: '#/components/examples/UnknownAccountExample'
+                UnknownEntityExample:
+                  $ref: '#/components/examples/UnknownEntityExample'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                InternalServerErrorExample:
+                  $ref: '#/components/examples/InternalServerErrorExample'
+      tags:
+      - Transactions Raw Data
+components:
+  schemas:
+    DataResult:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          refreshed_at:
+            description: The datetime of when the data was refreshed
+            type:
+            - string
+            - 'null'
+            format: date-time
+          type:
+            description: The endpoint the original request was made to.
+            type:
+            - string
+            - 'null'
+    Currency:
+      description: The ISO 3 letter currency code
+      type: string
+      examples:
+      - AED
+      pattern: ^[A-Z]{3}$
+    TransactionChargeAmount:
+      type: object
+      properties:
+        amount:
+          description: Amount of money charged for the transaction.
+          type: number
+          format: decimal
+        currency:
+          description: Currency in which the charge amount is expressed.
+          type: string
+        charge_included:
+          description: Indicates whether the charge is included in the transaction amount or is a separate charge.
+          type: boolean
+    PageMetadata:
+      description: Metadata about the current page of results
+      type: object
+      properties:
+        number:
+          description: The current page being returned by the API
+          type: integer
+          format: int32
+        size:
+          description: The page size requested
+          type: integer
+          format: int32
+        total_elements:
+          description: The total number of elements in all pages
+          type: integer
+          format: int64
+        total_pages:
+          description: The total number of pages retrievable
+          type: integer
+          format: int32
+        sort:
+          description: Sort parameters applied to the results
+          type: array
+          items:
+            type: string
+      required:
+      - number
+      - size
+      - total_elements
+      - total_pages
+    MerchantDetails:
+      type: object
+      properties:
+        merchant_category_code:
+          description: Category code conform to ISO 18245, related to the type of services or goods the merchant provides for the transaction.
+          type: string
+        merchant_name:
+          description: Name by which the merchant is known and which is usually used to identify that merchant.
+          type: string
+    TransactionBalance:
+      type: object
+      properties:
+        type:
+          description: The type of balance for the transaction
+          type: string
+        credit_debit_indicator:
+          $ref: '#/components/schemas/CreditDebitIndicator'
+        amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+      x-toBuilder: true
+    ProprietaryBankTransactionCode:
+      type: object
+      properties:
+        code:
+          description: Proprietary bank transaction code to identify the underlying transaction.
+          type: string
+        issuer:
+          description: Identification of the issuer of the proprietary bank transaction code.
+          type: string
+    Categorisation:
+      description: Category enriched information when insights parameter is set to true.
+      type: object
+      properties:
+        description_cleansed:
+          description: A cleaned and standardized version of the transaction description.
+          type: string
+        category:
+          description: High-level classification of the transaction including BANK_FEES_AND_CHARGES CHARITY EDUCATION ENTERTAINMENT GOVERNMENT GROCERIES HEALTH_AND_WELLBEING LOANS_AND_INVESTMENT RENT_AND_SERVICES RESTAURANTS_DINING RETAIL SALARY_AND_REVENUE TRANSFER TRANSPORT TRAVEL OTHER
+          type: string
+        category_confidence:
+          description: Confidence of category expressed as a percentage between 0 and 1.
+          type: number
+          format: decimal
+    PostalAddress:
+      type: object
+      properties:
+        address_type:
+          description: Identifies the nature of the postal address.
+          type: string
+        address_line:
+          description: Information that locates and identifies a specific address.
+          type: string
+        building_number:
+          description: Number that identifies the position of a building on a street.
+          type: string
+        country:
+          description: Nation with its own government.
+          type: string
+        country_subdivision:
+          description: Identifies a subdivision of a country such as state, region, county.
+          type: string
+        post_code:
+          description: Identifier consisting of a group of letters and/or numbers that is added to a postal address.
+          type: string
+        street_name:
+          description: Name of a street or thoroughfare.
+          type: string
+        town_name:
+          description: Name of a built-up area, with defined boundaries, and a local government.
+          type: string
+    CurrencyAmount:
+      type: object
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          description: The amount of money in the currency specified.
+          type: number
+      required:
+      - currency
+      - amount
+    FetchTransactionsResultV2:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/DataResult'
+      - properties:
+          data:
+            $ref: '#/components/schemas/TransactionsData'
+        type: object
+      x-toBuilder: true
+    TransactionsData:
+      type: object
+      properties:
+        type:
+          description: The endpoint the original request was made to.
+          type: string
+          default: transactions
+        transactions:
+          description: An array of transactions associated with the account.
+          type: array
+          items:
+            $ref: '#/components/schemas/Transaction'
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+      required:
+      - type
+      - page
+    TransactionMutability:
+      description: Specifies whether the transaction details may change after posting (e.g., pending transactions can update upon settlement).
+      type: string
+      enum:
+      - IMMUTABLE
+      - MUTABLE
+      - UNSUPPORTED
+    Result:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ResultStatus'
+        results_id:
+          description: The unique identifier for the request
+          type: string
+          format: uuid
+        message:
+          description: A message describing the status of the request
+          type: string
+        meta:
+          description: Meta information about the request
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: string
+        timestamp:
+          description: The datetime of when the request was made
+          type: string
+          format: date-time
+        status_detail:
+          description: Additional information about the status
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/StatusDetail'
+      required:
+      - status
+      - results_id
+      - message
+      - timestamp
+    BankTransactionCode:
+      type: object
+      properties:
+        code:
+          description: Bank transaction code used by the bank to categorize the transaction.
+          type: string
+        sub_code:
+          description: Sub-category of the bank transaction code providing further details.
+          type: string
+    TransactionAccountIdentifier:
+      type: object
+      properties:
+        name:
+          description: Name of the account, as assigned by the account servicing institution.
+          type: string
+        scheme_name:
+          description: Name of the identification scheme, in a coded form as published in an external list.
+          type: string
+        identification:
+          description: Identification assigned by an institution to identify an account.
+          type: string
+    CurrencyExchange:
+      type: object
+      properties:
+        source_currency:
+          description: Currency from which an amount is to be converted in a currency conversion.
+          type: string
+        target_currency:
+          description: Currency into which an amount is to be converted in a currency conversion.
+          type: string
+        unit_currency:
+          description: Currency in which the rate of exchange is expressed in a currency exchange.
+          type: string
+        exchange_rate:
+          description: Factor used to convert an amount from one currency into another.
+          type: number
+          format: decimal
+        contract_identification:
+          description: Unique identification to unambiguously identify the foreign exchange contract.
+          type: string
+        quotation_date:
+          description: Date and time at which an exchange rate is quoted.
+          type: string
+          format: date-time
+        instructed_amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+    CreditDebitIndicator:
+      description: Indicates whether the balance is a credit or debit balance
+      type: string
+      enum:
+      - CREDIT
+      - DEBIT
+      - UNSUPPORTED
+    ResultStatus:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - RECONNECT_REQUIRED
+      - PROCESSING_STARTED
+    Transaction:
+      type: object
+      properties:
+        entity_id:
+          description: The unique identifier for the entity. Provided as a UUID.
+          type: string
+          format: uuid
+        account_id:
+          description: The account_id this transaction is related to.
+          type: string
+        transaction_id:
+          description: A unique ID for the transaction used to help you tie data back to your systems
+          type: string
+        transaction_information:
+          description: Include the raw unparsed transaction description from the bank
+          type: string
+        transaction_reference:
+          description: A unique reference provided by the bank for the transaction when processed through a national payment system. As an example, it may be a reference code for the local payment scheme
+          type: string
+        credit_debit_indicator:
+          $ref: '#/components/schemas/CreditDebitIndicator'
+        amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+        transaction_mutability:
+          $ref: '#/components/schemas/TransactionMutability'
+        booking_date_time:
+          description: Date and time when a transaction entry is posted to an account.
+          type: string
+          format: date-time
+        insights:
+          $ref: '#/components/schemas/Categorisation'
+        balance:
+          $ref: '#/components/schemas/TransactionBalance'
+        status:
+          description: Status of the transaction (e.g., pending, booked).
+          type: string
+        statement_reference:
+          description: A list of references for the statement if available.
+          type: array
+          items:
+            type: string
+        value_date_time:
+          description: Date and time at which assets become available to the account owner (value date).
+          type: string
+          format: date-time
+        index:
+          description: Index position of the transaction in the sequence for the day.
+          type: integer
+        charge_amount:
+          $ref: '#/components/schemas/TransactionChargeAmount'
+        bank_transaction_code:
+          $ref: '#/components/schemas/BankTransactionCode'
+        card_instrument:
+          $ref: '#/components/schemas/CardInstrument'
+        merchant_details:
+          $ref: '#/components/schemas/MerchantDetails'
+        proprietary_bank_transaction_code:
+          $ref: '#/components/schemas/ProprietaryBankTransactionCode'
+        currency_exchange:
+          $ref: '#/components/schemas/CurrencyExchange'
+        creditor_account:
+          $ref: '#/components/schemas/TransactionAccountIdentifier'
+        creditor_agent:
+          $ref: '#/components/schemas/Agent'
+        debtor_account:
+          $ref: '#/components/schemas/TransactionAccountIdentifier'
+        debtor_agent:
+          $ref: '#/components/schemas/Agent'
+        local_time_zone:
+          description: Local time zone
+          type: string
+        transaction_type:
+          description: Transaction type
+          type: string
+          enum:
+          - POS
+          - E_COMMERCE
+          - ATM
+          - BILL_PAYMENTS
+          - LOCAL_BANK_TRANSFER
+          - SAME_BANK_TRANSFER
+          - INTERNATIONAL_TRANSFER
+          - TELLER
+          - CHEQUE
+          - OTHER
+          - UNSUPPORTED
+        sub_transaction_type:
+          description: Sub transaction type
+          type: string
+          enum:
+          - PURCHASE
+          - REVERSAL
+          - REFUND
+          - WITHDRAWAL
+          - WITHDRAWAL_REVERSAL
+          - DEPOSIT
+          - DEPOSIT_REVERSAL
+          - MONEY_TRANSFER
+          - NOT_APPLICABLE
+          - UNSUPPORTED
+          - REPAYMENTS
+          - INTEREST
+          - FEE
+          - CHARGES
+          - PROFIT
+          - DISBURSEMENT
+          - TAX
+          - ADJUSTMENT
+          - REWARDS
+          - LEASE_REPAYMENT
+        payment_modes:
+          description: Mode of the payment
+          type: string
+          enum:
+          - ONLINE
+          - OFFLINE
+          - BATCH
+          - UNSUPPORTED
+        flags:
+          description: The list of flags for a transaction by the bank e.g., CASHBACK
+          type: array
+          items:
+            type: string
+      required:
+      - account_id
+      - transaction_id
+      - amount
+      - status
+      x-toBuilder: true
+    Agent:
+      type: object
+      properties:
+        scheme_name:
+          description: Name of the identification scheme, in a coded form as published in an external list.
+          type: string
+        identification:
+          description: Unique and unambiguous identification of the agent.
+          type: string
+        name:
+          description: Name by which the agent is known and which is usually used to identify that agent.
+          type: string
+        postal_address:
+          $ref: '#/components/schemas/PostalAddress'
+    StatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        granular_status_code:
+          description: Granular status code
+          type:
+          - string
+          - 'null'
+        status_additional_info:
+          description: Additional information about the status
+          type:
+          - string
+          - 'null'
+    CardInstrument:
+      type: object
+      properties:
+        authorization_type:
+          description: Type of card authorization performed for the transaction.
+          type: string
+        card_scheme_name:
+          description: Name of the card scheme.
+          type: string
+        identification:
+          description: Identification assigned by an institution to identify the card instrument.
+          type: string
+        name:
+          description: Name of the cardholder using the card.
+          type: string
+  examples:
+    InternalServerErrorExample:
+      summary: Internal server error response
+      description: Response when an unexpected server error occurs
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-08-07T13:07:38.834977945Z'
+        status: INTERNAL_SERVER_ERROR
+        message: Something has gone wrong. If you continue to see this error, please get in touch with Lean.
+        metadata: null
+    UnknownAccountExample:
+      summary: Account not found error response
+      description: Response when the provided account_id does not match an account for the entity_id
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-11T18:55:42.579432745Z'
+        status: UNKNOWN_ACCOUNT
+        message: The account_id provided does not match an account with the entity_id provided.
+        metadata: null
+    UnknownEntityExample:
+      summary: Entity not found error response
+      description: Response when the provided entity_id is not found
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-10T21:03:05.413806605Z'
+        status: UNKNOWN_ENTITY
+        message: The entity_id provided did not match an account in our records.
+        metadata: null
+    InvalidParametersExample:
+      summary: Invalid parameters error response
+      description: Response when required parameters are missing or invalid
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-10T21:05:59.919233187Z'
+        status: INVALID_PARAMETERS
+        message: 'The request is badly formatted or a parameter of the wrong type has been provided, field: entity_id, value: e34d8e49-9af2-4252-a53e-bd2df855134.'
+        metadata: null
+    AsyncProcessingV2Example:
+      summary: Asynchronous processing response with async=true
+      description: Response to request with async=true
+      value:
+        status: PENDING
+        results_id: df73d596-7138-46df-af96-cbcbe9a8af59
+        message: Please wait for a webhook or try again later.
+        meta: null
+        timestamp: '2025-09-11T19:15:07.829993148Z'
+        status_detail: null
+        data: null
+        type: null
+        refreshed_at: null
+  parameters:
+    MetaParameter:
+      name: meta
+      description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
+      in: query
+      required: false
+      schema:
+        type: string
+    AccountIdParameter:
+      name: account_id
+      description: The account_id used to fetch requested data
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    SizeParameter:
+      name: size
+      description: The number of objects you want to return as a page size.
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 50
+        maximum: 100
+        minimum: 1
+    EntityIdParameter:
+      name: entity_id
+      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
+      in: query
+      required: false
+      schema:
+        type: string
+        format: uuid
+    AsyncParameter:
+      name: async
+      in: query
+      description: 'When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. **Note: it''s recommended to use the sync flow (async=false) for all requests by adapting the [data workflow](https://docs.leantech.me/docs/data-workflow) for connected entities.**'
+      required: false
+      schema:
+        type: boolean
+        default: false
+      deprecated: true
+    PageParameter:
+      name: page
+      in: query
+      description: The page you're requesting - returns page 0 of a response if not specified.
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

@@ -1,0 +1,43 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) KYC API
+  version: v0.2.3
+  description: Endpoints for retrieving KYC documents
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: KYC
+  description: Endpoints for retrieving KYC documents
+paths:
+  /files/kyc/poa/{document_id}.pdf:
+    get:
+      operationId: getPoaDocument
+      summary: Retrieve Proof of Address Document
+      description: Get proof of address document by ID.
+      parameters:
+      - name: document_id
+        in: path
+        description: The unique identifier of the proof of address document
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: PoA Document content
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+      tags:
+      - KYC
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

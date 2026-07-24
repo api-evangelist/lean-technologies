@@ -1,0 +1,517 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Beneficiaries Raw Data API
+  version: v0.2.3
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Beneficiaries Raw Data
+  x-displayName: Beneficiaries Raw Data
+paths:
+  /data/v2/accounts/{account_id}/beneficiaries:
+    servers: []
+    get:
+      operationId: fetchBeneficiariesV2
+      summary: Get Beneficiaries
+      description: "Get the beneficiaries for a specific account given an accountId. \nThe accountId can be found by making a call to the /accounts endpoint.\nThe accountId can be found by making a call to the /accounts endpoint. \nRequires the following permissions: `beneficiaries`\n"
+      parameters:
+      - $ref: '#/components/parameters/AccountIdParameter'
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/PageParameter'
+      - $ref: '#/components/parameters/SizeParameter'
+      - $ref: '#/components/parameters/EntityIdParameter'
+      - $ref: '#/components/parameters/MetaParameter'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FetchBeneficiariesResultV2'
+              examples:
+                Get_Beneficiaries_KSA_Example:
+                  summary: Successful get beneficiaries - KSA
+                  value:
+                    status: OK
+                    results_id: a1b2c3d4-5e6f-7890-abcd-ef1234567890
+                    message: Data successfully retrieved
+                    meta: null
+                    timestamp: '2025-09-13T10:30:15.123456789Z'
+                    status_detail: null
+                    type: beneficiaries
+                    refreshed_at: '2025-09-13T10:30:10.123456789Z'
+                    data:
+                      type: beneficiaries
+                      beneficiaries:
+                      - account_id: 550e8400-e29b-41d4-a716-446655440000
+                        account_holder_name: Ahmed Mohammed Al-Saud
+                        account_holder_short_name: Ahmed Al-Saud
+                        beneficiary_id: ben-001-ksa-2024
+                        beneficiary_type: TRUSTED
+                        creditor_agent:
+                          scheme_name: BICFI
+                          identification: NCBKSAJE
+                          name: The National Commercial Bank
+                          postal_address:
+                            street_name: King Fahd Road
+                            building_number: '1234'
+                            post_code: '11564'
+                            town_name: Riyadh
+                            country: SA
+                        creditor_account:
+                          scheme_name: IBAN
+                          identification: SA0380000000608010167519
+                          name: Ahmed Mohammed Al-Saud
+                        reference: REF-KSA-001
+                      - account_id: 550e8400-e29b-41d4-a716-446655440001
+                        account_holder_name: Fatima Abdullah Al-Rashid
+                        account_holder_short_name: Fatima Al-Rashid
+                        beneficiary_id: ben-002-ksa-2024
+                        beneficiary_type: ORDINARY
+                        creditor_agent:
+                          scheme_name: BICFI
+                          identification: RJHISARI
+                          name: Riyad Bank
+                          postal_address:
+                            street_name: Olaya Street
+                            building_number: '5678'
+                            post_code: '12211'
+                            town_name: Riyadh
+                            country: SA
+                        creditor_account:
+                          scheme_name: IBAN
+                          identification: SA0615000000000001234567
+                          name: Fatima Abdullah Al-Rashid
+                        reference: REF-KSA-002
+                      - account_id: 550e8400-e29b-41d4-a716-446655440002
+                        account_holder_name: Mohammed Khalid Al-Ghamdi
+                        account_holder_short_name: Mohammed Al-Ghamdi
+                        beneficiary_id: ben-003-ksa-2024
+                        beneficiary_type: TRUSTED
+                        creditor_agent:
+                          scheme_name: BICFI
+                          identification: ALBLSARI
+                          name: Al Rajhi Bank
+                          postal_address:
+                            street_name: King Abdulaziz Road
+                            building_number: '9012'
+                            post_code: '12611'
+                            town_name: Riyadh
+                            country: SA
+                        creditor_account:
+                          scheme_name: IBAN
+                          identification: SA1280000000608010167519
+                          name: Mohammed Khalid Al-Ghamdi
+                        reference: REF-KSA-003
+                      page:
+                        number: 0
+                        size: 20
+                        total_elements: 3
+                        total_pages: 1
+                BankIssueExample:
+                  summary: Example response for bank issue
+                  value:
+                    status: FAILED
+                    results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+                    message: Your bank is currently experiencing technological problems. Please try again later.
+                    meta: null
+                    timestamp: '2025-09-12T05:13:49.739987382Z'
+                    status_detail:
+                      granular_status_code: BANK_ISSUE
+                      status_additional_info: Your bank is currently experiencing technological problems. Please try again later.
+                    type: null
+                    refreshed_at: null
+        '202':
+          description: Accepted (Asynchronous request)
+          content:
+            application/json:
+              examples:
+                GetAsyncExample:
+                  $ref: '#/components/examples/AsyncProcessingV2Example'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                InvalidParametersExample:
+                  $ref: '#/components/examples/InvalidParametersExample'
+        '404':
+          description: Account or entity not found
+          content:
+            application/json:
+              examples:
+                UnknownAccountExample:
+                  $ref: '#/components/examples/UnknownAccountExample'
+                UnknownEntityExample:
+                  $ref: '#/components/examples/UnknownEntityExample'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                InternalServerErrorExample:
+                  $ref: '#/components/examples/InternalServerErrorExample'
+      tags:
+      - Beneficiaries Raw Data
+components:
+  schemas:
+    DataResult:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          refreshed_at:
+            description: The datetime of when the data was refreshed
+            type:
+            - string
+            - 'null'
+            format: date-time
+          type:
+            description: The endpoint the original request was made to.
+            type:
+            - string
+            - 'null'
+    OBPostalAddress:
+      type: object
+      properties:
+        address_line:
+          description: Full address line
+          type: string
+        address_type:
+          description: Type of address
+          type: string
+          enum:
+          - BUSINESS
+          - CORRESPONDENCE
+          - DELIVERY_TO
+          - MAIL_TO
+          - PO_BOX
+          - POSTAL
+          - RESIDENTIAL
+          - STATEMENT
+          - UNSUPPORTED
+        building_number:
+          description: Building number
+          type: string
+        country:
+          description: Country name or code
+          type: string
+        department:
+          description: Department within the address
+          type: string
+        post_code:
+          description: Postal or ZIP code
+          type: string
+        street_name:
+          description: Name of the street
+          type: string
+        sub_department:
+          description: Sub-department within the address
+          type: string
+        town_name:
+          description: Town or city name
+          type: string
+        country_sub_division:
+          description: Country subdivision such as state or province
+          type: string
+      x-toBuilder: true
+    AccountIdentifier:
+      type: object
+      properties:
+        scheme_name:
+          description: Indicates the type of identification being provided. For example,  IBAN | The `identification` field is returning the IBAN for the account.
+          enum:
+          - PAN
+          - MASKED_PAN
+          - IBAN
+          - BBAN
+          - UNSUPPORTED
+          - OTHER
+        identification:
+          description: The account identification value
+          type: string
+        name:
+          description: The name associated with the account
+          type: string
+    PageMetadata:
+      description: Metadata about the current page of results
+      type: object
+      properties:
+        number:
+          description: The current page being returned by the API
+          type: integer
+          format: int32
+        size:
+          description: The page size requested
+          type: integer
+          format: int32
+        total_elements:
+          description: The total number of elements in all pages
+          type: integer
+          format: int64
+        total_pages:
+          description: The total number of pages retrievable
+          type: integer
+          format: int32
+        sort:
+          description: Sort parameters applied to the results
+          type: array
+          items:
+            type: string
+      required:
+      - number
+      - size
+      - total_elements
+      - total_pages
+    Result:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ResultStatus'
+        results_id:
+          description: The unique identifier for the request
+          type: string
+          format: uuid
+        message:
+          description: A message describing the status of the request
+          type: string
+        meta:
+          description: Meta information about the request
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: string
+        timestamp:
+          description: The datetime of when the request was made
+          type: string
+          format: date-time
+        status_detail:
+          description: Additional information about the status
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/StatusDetail'
+      required:
+      - status
+      - results_id
+      - message
+      - timestamp
+    Beneficiary:
+      type: object
+      properties:
+        account_id:
+          description: Unique identifier for the account
+          type: string
+        account_holder_name:
+          description: Full name of the account holder
+          type: string
+        account_holder_short_name:
+          description: Short form of the name of the account holder
+          type: string
+        beneficiary_id:
+          description: Unique identifier for the beneficiary
+          type: string
+        beneficiary_type:
+          description: Type of beneficiary relationship
+          type: string
+          enum:
+          - TRUSTED
+          - ORDINARY
+          - OTHER
+          - UNSUPPORTED
+        creditor_agent:
+          $ref: '#/components/schemas/BeneficiaryCreditorAgent'
+        creditor_account:
+          $ref: '#/components/schemas/AccountIdentifier'
+        reference:
+          description: 'Unique reference in the context of the creditor, provided by the creditor to debtor, to unambiguously refer to the payment transaction. Usage: If available, the initiating party (i.e. Debtor) provides this reference in the structured remittance information, to enable reconciliation by the Creditor upon receipt of the amount of money. This field is populated by the User 1 (who is the initiating party of the payment e.g. the Debtor).'
+          type: string
+        supplementary_data:
+          description: Additional information that can not be captured in the structured fields and/or any other specific block.
+          type: object
+          additionalProperties:
+            type: string
+          properties: {}
+    FetchBeneficiariesResultV2:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/DataResult'
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/BeneficiariesData'
+    ResultStatus:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - RECONNECT_REQUIRED
+      - PROCESSING_STARTED
+    BeneficiaryCreditorAgent:
+      type: object
+      properties:
+        scheme_name:
+          $ref: '#/components/schemas/FinancialInstitutionIdentificationType'
+        identification:
+          description: Unique identification of the servicing institution.
+          type: string
+        name:
+          description: Name of the agent or institution
+          type: string
+        postal_address:
+          $ref: '#/components/schemas/OBPostalAddress'
+    StatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        granular_status_code:
+          description: Granular status code
+          type:
+          - string
+          - 'null'
+        status_additional_info:
+          description: Additional information about the status
+          type:
+          - string
+          - 'null'
+    FinancialInstitutionIdentificationType:
+      description: Type of financial institution identification scheme
+      type: string
+      enum:
+      - BICFI
+      - OTHER
+      - UNSUPPORTED
+    BeneficiariesData:
+      type: object
+      properties:
+        beneficiaries:
+          description: An array of beneficiaries associated with the account.
+          type: array
+          items:
+            $ref: '#/components/schemas/Beneficiary'
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+        type:
+          description: The endpoint the original request was made to.
+          type: string
+      required:
+      - type
+      x-toBuilder: true
+  examples:
+    InternalServerErrorExample:
+      summary: Internal server error response
+      description: Response when an unexpected server error occurs
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-08-07T13:07:38.834977945Z'
+        status: INTERNAL_SERVER_ERROR
+        message: Something has gone wrong. If you continue to see this error, please get in touch with Lean.
+        metadata: null
+    UnknownAccountExample:
+      summary: Account not found error response
+      description: Response when the provided account_id does not match an account for the entity_id
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-11T18:55:42.579432745Z'
+        status: UNKNOWN_ACCOUNT
+        message: The account_id provided does not match an account with the entity_id provided.
+        metadata: null
+    UnknownEntityExample:
+      summary: Entity not found error response
+      description: Response when the provided entity_id is not found
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-10T21:03:05.413806605Z'
+        status: UNKNOWN_ENTITY
+        message: The entity_id provided did not match an account in our records.
+        metadata: null
+    InvalidParametersExample:
+      summary: Invalid parameters error response
+      description: Response when required parameters are missing or invalid
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-10T21:05:59.919233187Z'
+        status: INVALID_PARAMETERS
+        message: 'The request is badly formatted or a parameter of the wrong type has been provided, field: entity_id, value: e34d8e49-9af2-4252-a53e-bd2df855134.'
+        metadata: null
+    AsyncProcessingV2Example:
+      summary: Asynchronous processing response with async=true
+      description: Response to request with async=true
+      value:
+        status: PENDING
+        results_id: df73d596-7138-46df-af96-cbcbe9a8af59
+        message: Please wait for a webhook or try again later.
+        meta: null
+        timestamp: '2025-09-11T19:15:07.829993148Z'
+        status_detail: null
+        data: null
+        type: null
+        refreshed_at: null
+  parameters:
+    MetaParameter:
+      name: meta
+      description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
+      in: query
+      required: false
+      schema:
+        type: string
+    AccountIdParameter:
+      name: account_id
+      description: The account_id used to fetch requested data
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    SizeParameter:
+      name: size
+      description: The number of objects you want to return as a page size.
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 50
+        maximum: 100
+        minimum: 1
+    EntityIdParameter:
+      name: entity_id
+      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
+      in: query
+      required: false
+      schema:
+        type: string
+        format: uuid
+    AsyncParameter:
+      name: async
+      in: query
+      description: 'When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. **Note: it''s recommended to use the sync flow (async=false) for all requests by adapting the [data workflow](https://docs.leantech.me/docs/data-workflow) for connected entities.**'
+      required: false
+      schema:
+        type: boolean
+        default: false
+      deprecated: true
+    PageParameter:
+      name: page
+      in: query
+      description: The page you're requesting - returns page 0 of a response if not specified.
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

@@ -1,0 +1,367 @@
+openapi: 3.1.0
+info:
+  title: Account Controls (New) Account Controls (New) Consents Account On File API
+  version: v0.2.3
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Consents Account On File
+  x-displayName: Consents Account On File
+paths:
+  /consents/v1/account-on-file:
+    servers: []
+    post:
+      operationId: createAccountOnFileConsent
+      summary: Create a new AoF consent
+      description: Creates a new Account-on-File consent that can be authorized later.
+      requestBody:
+        $ref: '#/components/requestBodies/CreateAccountOnFile'
+      responses:
+        '200':
+          description: Consent created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateAccountOnFileResponse'
+              examples:
+                minimal:
+                  summary: Minimal Response
+                  value:
+                    id: 123e4567-e89b-12d3-a456-426655440000
+                    application_id: 21ecf613-adaa-4c6b-8cd5-827de43bbe52
+                    start_date_time: '2025-07-11T16:58:03.559872Z'
+                    expiration_date_time: '2026-07-11T16:58:03.559872Z'
+                    status: AWAITING_AUTHORISATION
+                    customer_id: acc176ca-7716-4fbb-a735-d0e3dec24b40
+                    destination_account_id: 911f30d8-8fc8-4fe9-86a1-3f9fea11a674
+                    currency: AED
+                    reference: ACME-ACCOUNT-LINK-2025-001
+                    purpose: GDS
+                    control_parameters:
+                      type: VariableOnDemand
+                      period_type: Day
+                      max_individual_amount: 1000
+                complete:
+                  summary: Complete Response
+                  value:
+                    id: 123e4567-e89b-12d3-a456-426655440000
+                    application_id: 21ecf613-adaa-4c6b-8cd5-827de43bbe52
+                    status: AWAITING_AUTHORISATION
+                    customer_id: acc176ca-7716-4fbb-a735-d0e3dec24b40
+                    destination_account_id: 911f30d8-8fc8-4fe9-86a1-3f9fea11a674
+                    currency: AED
+                    reference: ACME-ACCOUNT-LINK-2025-001
+                    purpose: GDS
+                    start_date_time: '2025-07-11T16:58:03.559872Z'
+                    expiration_date_time: '2026-07-11T16:58:03.559872Z'
+                    control_parameters:
+                      type: VariableOnDemand
+                      period_type: Day
+                      max_individual_amount: 1000
+                      max_cumulative_amount: 10000
+                      max_cumulative_number_of_payments: 100
+                      max_cumulative_amount_per_period: 3000
+                      max_cumulative_number_of_payments_per_period: 10
+      security:
+      - OAuth2:
+        - api
+      tags:
+      - Consents Account On File
+components:
+  schemas:
+    ControlParameters:
+      type: object
+      discriminator:
+        propertyName: type
+        mapping:
+          VariableOnDemand: '#/components/schemas/AccountOnFileControlParameters'
+      oneOf:
+      - $ref: '#/components/schemas/AccountOnFileControlParameters'
+    PeriodType:
+      description: "Defines the time period used for applying limits on a long‑lived consent. \nThis value determines how consumption limits (e.g., maximum amounts or number of payments) are calculated within each period.\n\n**Supported values:**\n- `Day` – A single calendar day (00:00 to 23:59).\n- `Week` – Seven consecutive days.\n- `Month` – A full calendar month (from the 1st to the last day).\n- `Year` – A full calendar year (12 consecutive months)."
+      type: string
+      enum:
+      - Day
+      - Week
+      - Month
+      - Year
+      title: PeriodType
+    CreateAccountOnFileResponse:
+      type: object
+      properties:
+        id:
+          description: The unique identifier for the consent. Provided as a UUID.
+          type: string
+          format: uuid
+        application_id:
+          description: Application identifier owning this consent
+          type: string
+        start_date_time:
+          description: Date and time from when the consent will be active
+          type: string
+          format: date-time
+        expiration_date_time:
+          description: Date and time of the expiration of this consent
+          type: string
+          format: date-time
+        customer_id:
+          description: Id of a customer that this consent belongs to
+          type: string
+          format: uuid
+        status:
+          $ref: '#/components/schemas/ConsentStatus'
+        destination_account_id:
+          description: Account id that this consent allows payments to
+          type: string
+          format: uuid
+        reference:
+          description: A reason or reference in relation to a payment. Passed as a part of OF `creditor_reference`. This value will be used as default reference for payments made with this consent.
+          type: string
+        currency:
+          $ref: '#/components/schemas/Currency'
+        purpose:
+          $ref: '#/components/schemas/PaymentPurposeCode'
+        control_parameters:
+          $ref: '#/components/schemas/ControlParameters'
+        immediate_payment:
+          $ref: '#/components/schemas/ImmediatePayment'
+      required:
+      - id
+      - application_id
+      - start_date_time
+      - expiration_date_time
+      - customer_id
+      - status
+      - destination_account_id
+      - reference
+      - currency
+      - purpose
+      - control_parameters
+    Reference:
+      description: A reason or reference in relation to a payment. Maximum 64 chars
+      type: string
+      examples:
+      - 'Invoice #12345'
+      maxLength: 64
+      title: Reference
+    Currency:
+      description: The ISO 3 letter currency code
+      type: string
+      examples:
+      - AED
+      pattern: ^[A-Z]{3}$
+    ConsentStatus:
+      description: Current status of this consent.
+      type: string
+      enum:
+      - AWAITING_AUTHORISATION
+      - AUTHORISED
+      - REVOKED
+      - REJECTED
+      - EXPIRED
+      - CONSUMED
+      - SUSPENDED
+    ImmediatePayment:
+      description: 'Details of a payment that will be executed immediately after the user successfully authorizes the consent. If present, the payment is initiated automatically as part of the consent authorization flow.
+
+        '
+      type:
+      - object
+      - 'null'
+      properties:
+        amount:
+          description: The amount to be paid immediately upon consent authorization
+          type:
+          - number
+          format: decimal
+          examples:
+          - 123.45
+          minimum: 0.01
+        reference:
+          $ref: '#/components/schemas/Reference'
+        creditor_reference:
+          description: Clients identifier that can be used in their ERP systems
+          type:
+          - string
+          - 'null'
+      required:
+      - amount
+    GovernmentIdentifierRequest:
+      type: object
+      properties:
+        value:
+          description: The identifier value
+          type: string
+          minLength: 1
+          pattern: ^(?!\s*$).+
+        type:
+          description: The type of Government ID
+          type: string
+          enum:
+          - EMIRATES_ID
+          - TRADE_LICENSE_NUMBER
+      required:
+      - type
+      - value
+    PaymentPurposeCode:
+      description: "A category code that relates to the type of services or goods that corresponds to the underlying purpose of the payment.  \nThe code must conform to the payment purpose code list.  \n**Supported values:**  \n- `FIS` – Financial services\n- `TCS` – Telecommunication services\n- `MWP` – Mobile wallet card payments\n- `OAT` – Own account transfer\n- `IFS` – Information services\n- `RNT` – Rent payments\n- `LNC` – Loan charges\n- `PIN` – Personal investments\n- `GDS` – Goods bought or sold"
+      type: string
+      enum:
+      - FIS
+      - TCS
+      - MWP
+      - OAT
+      - IFS
+      - RNT
+      - LNC
+      - PIN
+      - GDS
+      title: PaymentPurposeCode
+    AccountOnFileControlParameters:
+      description: 'Defines the control parameters for a Account On File (AoF) consent.
+
+        These parameters specify the applicable limits for individual payments, cumulative amounts, and the number of payments allowed within a defined period or across the consent''s lifetime.
+
+        At least one of `max_individual_amount`, `max_cumulative_amount`, or `max_cumulative_number_of_payments` must be provided.'
+      type: object
+      properties:
+        type:
+          description: Discriminator type identifying the control parameters variant
+          type: string
+        period_type:
+          $ref: '#/components/schemas/PeriodType'
+        max_individual_amount:
+          description: Maximum amount allowed for a single payment
+          type: number
+          minimum: 0.01
+        max_cumulative_amount:
+          description: Maximum cumulative amount allowed across all payments
+          type: number
+          minimum: 0.01
+        max_cumulative_number_of_payments:
+          description: Maximum number of payments allowed in total
+          type: integer
+          minimum: 1
+        max_cumulative_amount_per_period:
+          description: Maximum cumulative amount allowed per period
+          type: number
+          minimum: 0.01
+        max_cumulative_number_of_payments_per_period:
+          description: Maximum number of payments allowed per period
+          type: integer
+          minimum: 1
+      required:
+      - type
+      - period_type
+      title: AccountOnFileControlParameters
+      x-class-extra-annotation: '@me.leantech.api.validation.AtLeastOneControlParameter @me.leantech.api.validation.WithinMaxIndividualAmountLimit'
+  requestBodies:
+    CreateAccountOnFile:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              customer_id:
+                description: The unique identifier of the customer for whom the consent is being created.
+                type: string
+                format: uuid
+                examples:
+                - acc176ca-7716-4fbb-a735-d0e3dec24b40
+              destination_account_id:
+                description: The unique identifier of the account acting as a consent beneficiary.
+                type: string
+                format: uuid
+                examples:
+                - 911f30d8-8fc8-4fe9-86a1-3f9fea11a674
+              currency:
+                $ref: '#/components/schemas/Currency'
+              reference:
+                $ref: '#/components/schemas/Reference'
+              purpose:
+                $ref: '#/components/schemas/PaymentPurposeCode'
+              control_parameters:
+                allOf:
+                - $ref: '#/components/schemas/ControlParameters'
+                x-field-extra-annotation: '@Valid'
+              government_identifier:
+                description: "Unique government identifier of the customer making the payment.  \nAs required by the UAE Open Finance standard, it ensures the debtor can be uniquely recognized.\nThis field supports providing or updating the identifier on-the-fly when creating a consent."
+                allOf:
+                - $ref: '#/components/schemas/GovernmentIdentifierRequest'
+              start_date_time:
+                description: "The date and time when the consent becomes active.  \n**Optional.** Defaults to the current date and time if not provided.\n"
+                type:
+                - string
+                - 'null'
+                format: date-time
+                examples:
+                - '2025-07-11T16:58:03.559872Z'
+              expiration_date_time:
+                description: "The date and time when the consent expires.  \n**Optional.** Defaults to one year after `start_date_time` if not provided.\n"
+                type:
+                - string
+                - 'null'
+                format: date-time
+                examples:
+                - '2026-07-11T16:58:03.559872Z'
+              immediate_payment:
+                $ref: '#/components/schemas/ImmediatePayment'
+            required:
+            - customer_id
+            - destination_account_id
+            - currency
+            - reference
+            - purpose
+            - control_parameters
+            x-class-extra-annotation: '@me.leantech.api.validation.ValidConsentDates'
+            x-toBuilder: true
+          examples:
+            minimal:
+              summary: Minimal Request
+              description: The minimum required fields to create a new Account On File consent.
+              value:
+                customer_id: acc176ca-7716-4fbb-a735-d0e3dec24b40
+                destination_account_id: 911f30d8-8fc8-4fe9-86a1-3f9fea11a674
+                currency: AED
+                reference: ACME-ACCOUNT-LINK-2025-001
+                purpose: GDS
+                control_parameters:
+                  type: VariableOnDemand
+                  period_type: Day
+                  max_individual_amount: 1000
+            complete:
+              summary: Complete Request
+              description: The complete set of fields to create a new Account On File consent.
+              value:
+                customer_id: acc176ca-7716-4fbb-a735-d0e3dec24b40
+                destination_account_id: 911f30d8-8fc8-4fe9-86a1-3f9fea11a674
+                currency: AED
+                reference: ACME-ACCOUNT-LINK-2025-001
+                purpose: GDS
+                control_parameters:
+                  type: VariableOnDemand
+                  period_type: Day
+                  max_individual_amount: 1000
+                  max_cumulative_amount: 10000
+                  max_cumulative_number_of_payments: 100
+                  max_cumulative_amount_per_period: 3000
+                  max_cumulative_number_of_payments_per_period: 10
+                government_identifier:
+                  type: EMIRATES_ID
+                  value: 784-1234-1234-1234
+                start_date_time: '2025-12-01T12:00:00.559872Z'
+                expiration_date_time: '2026-12-10T16:00:00.559872Z'
+                immediate_payment:
+                  amount: 123.45
+                  reference: ACME-ACCOUNT-LINK-2025-001-IMMEDIATE-PAYMENT
+      description: Request to create a new Account on File consent
+      required: true
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

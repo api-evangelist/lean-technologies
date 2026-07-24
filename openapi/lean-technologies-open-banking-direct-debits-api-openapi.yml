@@ -1,0 +1,413 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Open Banking Direct Debits API
+  version: v0.2.3
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Open Banking Direct Debits
+  x-displayName: Open Banking Direct Debits
+paths:
+  /open-banking/account-information/2022.11.01-final-errata2/accounts/{AccountId}/direct-debits:
+    servers: []
+    get:
+      operationId: GetAccountDirectDebitsV1
+      summary: Get Open Banking Account Direct Debits
+      description: 'Retrieves the direct debits for a bank account linked by a user via LinkSDK for the KSA Open Banking (SAMA) ecosystem.
+
+        Each direct debit object contains the mandate identification, status, frequency, and previous payment details.
+
+        Requires ReadDirectDebits consent permission.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/FapiInteractionId'
+      - $ref: '#/components/parameters/EntityId'
+      - $ref: '#/components/parameters/CustomerId'
+      - $ref: '#/components/parameters/OBPageParm'
+      - $ref: '#/components/parameters/OBSizeParam'
+      responses:
+        '200':
+          description: Direct Debits Read
+          headers:
+            x-fapi-interaction-id:
+              description: An RFC4122 UID used as a correlation id.
+              required: true
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OBGetDirectDebitsResponse'
+              examples:
+                GetDirectDebitsSuccess:
+                  summary: Successful direct debits response
+                  value:
+                    Status: OK
+                    Message: Data successfully retrieved
+                    Timestamp: '2026-04-09T10:30:00.000Z'
+                    RefreshedAt: '2026-04-09T10:25:00.000Z'
+                    StatusDetail: null
+                    Meta:
+                      TotalPages: 1
+                    Links:
+                      Self: https://api.leantech.me/open-banking/account-information/2022.11.01-final-errata2/accounts/7c8a9f12-3456-4abc-b123-9876543210ab/direct-debits
+                      First: https://api.leantech.me/open-banking/account-information/2022.11.01-final-errata2/accounts/7c8a9f12-3456-4abc-b123-9876543210ab/direct-debits
+                      Prev: null
+                      Next: null
+                      Last: https://api.leantech.me/open-banking/account-information/2022.11.01-final-errata2/accounts/7c8a9f12-3456-4abc-b123-9876543210ab/direct-debits
+                    Data:
+                      DirectDebit:
+                      - DirectDebitId: DD-00123456
+                        MandateIdentification: MANDATE-2024-001
+                        DirectDebitStatusCode: Active
+                        Name: Monthly Subscription
+                        Frequency: KSAOB.Monthly
+                        PreviousPaymentDateTime: '2026-03-01T09:00:00.000Z'
+                        PreviousPaymentAmount:
+                          Amount: '150.00'
+                          Currency: SAR
+                BankIssueExample:
+                  summary: Failed request due to bank technical issues
+                  value:
+                    Status: FAILED
+                    Message: Your bank is currently experiencing technological problems. Please try again later.
+                    Timestamp: '2026-04-09T10:30:00.000Z'
+                    RefreshedAt: null
+                    StatusDetail:
+                      GranularStatusCode: BANK_ISSUE
+                      StatusAdditionalInfo: Your bank is currently experiencing technological problems. Please try again later.
+                    Meta: null
+                    Links: null
+                    Data: null
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                MissingEntityId:
+                  summary: Missing or invalid entity_id
+                  value:
+                    Status: FAILED
+                    Message: entity_id is required and must be a valid UUID
+                    Timestamp: '2026-04-09T10:30:00.000Z'
+                    RefreshedAt: null
+                    StatusDetail:
+                      GranularStatusCode: INVALID_PARAMETERS
+                      StatusAdditionalInfo: The provided entity_id is not a valid UUID format
+                    Meta: null
+                    Links: null
+                    Data: null
+        '404':
+          description: Entity not found
+          content:
+            application/json:
+              examples:
+                EntityNotFound:
+                  summary: Entity not found
+                  value:
+                    Status: FAILED
+                    Message: Entity not found
+                    Timestamp: '2026-04-09T10:30:00.000Z'
+                    RefreshedAt: null
+                    StatusDetail:
+                      GranularStatusCode: ENTITY_NOT_FOUND
+                      StatusAdditionalInfo: No entity found for the provided entity_id
+                    Meta: null
+                    Links: null
+                    Data: null
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                BankIssue:
+                  summary: Bank technical issue
+                  value:
+                    Status: FAILED
+                    Message: Your bank is currently experiencing technological problems. Please try again later.
+                    Timestamp: '2025-09-12T05:13:49.739987382Z'
+                    RefreshedAt: null
+                    StatusDetail:
+                      GranularStatusCode: BANK_ISSUE
+                      StatusAdditionalInfo: Your bank is currently experiencing technological problems. Please try again later.
+                    Meta: null
+                    Links: null
+                    Data: null
+      tags:
+      - Open Banking Direct Debits
+components:
+  parameters:
+    AccountId:
+      name: AccountId
+      in: path
+      description: The Lean account identifier uniquely identifying the account within Lean.
+      required: true
+      schema:
+        type: string
+        format: uuid
+    OBPageParm:
+      name: Page
+      in: query
+      description: The page you're requesting - returns page 0 of a response if not specified.
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+    OBSizeParam:
+      name: Size
+      description: The number of objects you want to return as a page size.
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 50
+        maximum: 100
+        minimum: 1
+    FapiInteractionId:
+      name: x-fapi-interaction-id
+      in: header
+      description: An RFC4122 UID used as a correlation id.
+      required: false
+      schema:
+        type: string
+    CustomerId:
+      name: CustomerId
+      in: query
+      description: The customer_id of the connected customer.
+      required: false
+      schema:
+        type: string
+        format: uuid
+    EntityId:
+      name: EntityId
+      in: query
+      description: The entity_id of the connected customer.
+      required: false
+      schema:
+        type: string
+        format: uuid
+  schemas:
+    OBDirectDebitFrequency:
+      description: Regularity with which direct debit instructions are to be created and processed.
+      type: string
+      enum:
+      - KSAOB.Annual
+      - KSAOB.Daily
+      - KSAOB.Fortnightly
+      - KSAOB.HalfYearly
+      - KSAOB.Monthly
+      - KSAOB.NotKnown
+      - KSAOB.Quarterly
+      - KSAOB.Weekly
+    OBGetDirectDebitsResponse:
+      description: Response envelope for the Open Banking account direct debits.
+      type: object
+      properties:
+        Data:
+          description: Container for the list of Open Banking account direct debits. Null when the request fails.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBDirectDebitsData'
+        Status:
+          description: Status of the request.
+          type: string
+          enum:
+          - OK
+          - PENDING
+          - FAILED
+          - CONSENT_EXPIRED
+        Message:
+          description: Human-readable message describing the status of the request.
+          type: string
+        Timestamp:
+          description: Date and time when the response was generated.
+          type: string
+          format: date-time
+        RefreshedAt:
+          description: Date and time when the data was last refreshed from the bank.
+          type:
+          - string
+          - 'null'
+          format: date-time
+        StatusDetail:
+          description: Additional details about the request status.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBStatusDetail'
+        Meta:
+          description: Metadata relevant to the resource, including pagination information.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBMeta'
+        Links:
+          description: Links relevant to the resource for pagination navigation.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBLinks'
+      required:
+      - Data
+      - Status
+      - Message
+      - Timestamp
+    OBLinks:
+      description: Links relevant to the resource for pagination navigation.
+      type: object
+      properties:
+        Self:
+          description: A link to the current resource.
+          type: string
+          format: uri
+        First:
+          description: A link to the first page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+        Prev:
+          description: A link to the previous page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+        Next:
+          description: A link to the next page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+        Last:
+          description: A link to the last page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+      required:
+      - Self
+    OBMeta:
+      description: Metadata relevant to the resource.
+      type: object
+      properties:
+        TotalPages:
+          description: Total number of pages where a result set is paginated.
+          type:
+          - integer
+          - 'null'
+          format: int32
+          minimum: 0
+    OBDirectDebitStatusCode:
+      description: Indicates the status of the direct debit in code form.
+      type: string
+      enum:
+      - Active
+      - Inactive
+    OBAmount:
+      description: Active or historic currency and amount.
+      type: object
+      properties:
+        Amount:
+          description: A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.
+          type: string
+          pattern: ^\d{1,13}$|^\d{1,13}\.\d{1,5}$
+        Currency:
+          description: ISO 4217 currency code in which the amount is expressed.
+          type: string
+          examples:
+          - SAR
+          pattern: ^[A-Z]{3,3}$
+      required:
+      - Amount
+      - Currency
+    OBStatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        GranularStatusCode:
+          description: Granular status code providing additional information on the request status.
+          type:
+          - string
+          - 'null'
+        StatusAdditionalInfo:
+          description: Additional human-readable information about the status.
+          type:
+          - string
+          - 'null'
+    OBDirectDebit:
+      description: Account to or from which a cash entry is made.
+      type: object
+      properties:
+        DirectDebitId:
+          description: Unique and unambiguous identification for a direct debit mandate.
+          type: string
+          maxLength: 256
+          minLength: 1
+        MandateIdentification:
+          description: Unique and unambiguous identification of a financial institution or a branch of a financial institution.
+          type: string
+          maxLength: 35
+          minLength: 1
+        DirectDebitStatusCode:
+          $ref: '#/components/schemas/OBDirectDebitStatusCode'
+        Name:
+          description: Name of the direct debit mandate.
+          type: string
+          maxLength: 70
+          minLength: 1
+        Frequency:
+          $ref: '#/components/schemas/OBDirectDebitFrequency'
+        PreviousPaymentDateTime:
+          description: Date of the most recent direct debit collection for the account. ISO 8601 format.
+          type:
+          - string
+          - 'null'
+          format: date-time
+        PreviousPaymentAmount:
+          description: Amount of the most recent direct debit collection.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBAmount'
+      required:
+      - DirectDebitId
+      - MandateIdentification
+      - DirectDebitStatusCode
+      - Name
+      - Frequency
+    OBDirectDebitsData:
+      description: Container for the list of Open Banking account direct debits.
+      type: object
+      properties:
+        CustomerId:
+          description: Lean provided customer ID
+          type:
+          - string
+          - 'null'
+          format: uuid
+        DirectDebit:
+          description: List of direct debits for the account.
+          type: array
+          items:
+            $ref: '#/components/schemas/OBDirectDebit'
+      required:
+      - DirectDebit
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

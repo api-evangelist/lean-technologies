@@ -1,0 +1,292 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Payment Source API
+  version: v0.2.3
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Payment Source
+  x-displayName: Payment Source
+paths:
+  /customers/v1/{customer_id}/payment-sources:
+    servers: []
+    get:
+      operationId: getPaymentSources
+      summary: Get all Payment Sources for Customer
+      description: 'Payment Sources are created upon successful completion of the `.connect()` method in the LinkSDK when `payments` is set as a Permission. '
+      parameters:
+      - name: customer_id
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PaymentSource'
+              examples:
+                '1':
+                  summary: Success
+                  value:
+                  - id: d8d7a9b3-c401-49f6-81a4-386d8398aa2c
+                    customer_id: 6db94cb7-3a02-4a57-a03a-e2a92ce86406
+                    app_id: YOUR_APP_ID
+                    status: AWAITING_BENEFICIARY_COOL_OFF
+                    beneficiary_cool_off_expiry: '2021-02-13T13:20:57.674299Z'
+                    bank_identifier: ENBD_UAE
+                    beneficiaries:
+                    - id: 26891A75-9406-4E06-97BA-F4D6DA664F3C
+                      payment_destination_id: f044c18b-3a51-49a2-bd3f-a585679d8885
+                      status: AWAITING_BENEFICIARY_COOL_OFF
+                      beneficiary_cool_off_expiry: '2021-02-13T13:20:57.674299Z'
+                    accounts:
+                    - id: 9acde98e-9d19-495d-934c-b2ff966262c8
+                      account_id: aaadbc4e-96a4-420f-ba01-597fa63502ee
+                      account_name: CURRENT ACCOUNT
+                      account_number: '1015528734001'
+                      iban: AE340260001015528734001
+                      balance: 35681.15
+                      currency: AED
+                      balance_last_updated: '2021-02-12T13:20:23.83922Z'
+                    - id: 1457d23a-c1f8-4aee-bc6f-2a253b2e617f
+                      account_id: 69f22112-e95d-427e-8bd1-eb58b4db60ba
+                      account_name: CURRENCY PASSPORT SAVINGS AC
+                      account_number: 315528734002
+                      iban: AE790260000315528734002
+                      balance: 80871
+                      currency: USD
+                      balance_last_updated: '2021-02-12T13:20:57.370659Z'
+      tags:
+      - Payment Source
+  /customers/v1/{customer_id}/payment-sources/{payment_source_id}:
+    servers: []
+    get:
+      operationId: getPaymentSourceById
+      summary: Get Payment Source by ID
+      description: 'Payment Sources are created upon successful completion of the `.connect()` method in the LinkSDK when `payments` is set as a Permission. '
+      parameters:
+      - name: customer_id
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: payment_source_id
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentSource'
+              examples:
+                '1':
+                  summary: Success
+                  value:
+                    id: d8d7a9b3-c401-49f6-81a4-386d8398aa2c
+                    customer_id: 6db94cb7-3a02-4a57-a03a-e2a92ce86406
+                    app_id: YOUR_APP_ID
+                    status: AWAITING_BENEFICIARY_COOL_OFF
+                    beneficiary_cool_off_expiry: '2021-02-13T13:20:57.674299Z'
+                    bank_identifier: ENBD_UAE
+                    beneficiaries:
+                    - id: 26891A75-9406-4E06-97BA-F4D6DA664F3C
+                      payment_destination_id: f044c18b-3a51-49a2-bd3f-a585679d8885
+                      status: AWAITING_BENEFICIARY_COOL_OFF
+                      beneficiary_cool_off_expiry: '2021-02-13T13:20:57.674299Z'
+                    accounts:
+                    - id: 9acde98e-9d19-495d-934c-b2ff966262c8
+                      account_id: aaadbc4e-96a4-420f-ba01-597fa63502ee
+                      account_name: CURRENT ACCOUNT
+                      account_number: '1015528734001'
+                      iban: AE340260001015528734001
+                      currency: AED
+                    - id: 1457d23a-c1f8-4aee-bc6f-2a253b2e617f
+                      account_id: 69f22112-e95d-427e-8bd1-eb58b4db60ba
+                      account_name: CURRENCY PASSPORT SAVINGS AC
+                      account_number: 315528734002
+                      iban: AE790260000315528734002
+                      currency: USD
+      tags:
+      - Payment Source
+    delete:
+      operationId: deletePaymentSource
+      summary: Delete Payment Source
+      description: Delete a Payment Source to remove Customer credentials from the platform.
+      parameters:
+      - name: customer_id
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: payment_source_id
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: ''
+          x-lean-docs-discrepancy: response object
+      tags:
+      - Payment Source
+components:
+  schemas:
+    PaymentSource:
+      type: object
+      properties:
+        id:
+          description: The id of the Payment Source
+          type: string
+          format: uuid
+        customer_id:
+          description: The unique identifier for the Customer that owns the Payment Source
+          type: string
+          format: uuid
+        app_id:
+          description: The application associated with the Payment Source
+          type: string
+        status:
+          description: The current status of the beneficiary. Indicates whether the Payment Destination and Payment Source channel is chargeable.
+          type: string
+          enum:
+          - AWAITING_BENEFICIARY_COOL_OFF
+          - ACTIVE
+          deprecated: true
+        beneficiary_cool_off_expiry:
+          description: The time that the beneficiary cool down period will, or did, expire. After this time the beneficiary will be chargeable.
+          type: string
+          format: date-time
+          deprecated: true
+        bank_identifier:
+          description: Identifier that specifies the financial institution that holds the accounts
+          type: string
+        end_user_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+          x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY)'
+          x-lean-docs-discrepancy: omitted
+        beneficiaries:
+          description: 'An array of beneficiaries that have been added to the Payment Source.
+
+            A beneficiary is the representation of the connection between a Payment Source and a Payment Destination.
+
+            The beneficiary object belongs to the payment source object and is linked to a Payment Destination object.
+
+            A payment can only be initiated from a payment source to a Destination which is linked to one of the Payment Source''s beneficiaries.'
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                description: A unique identifier for the beneficiary
+                type: string
+                format: uuid
+              bank_identifier:
+                description: Identifier that specifies the financial institution that holds the accounts
+                type: string
+                x-lean-docs-discrepancy: omitted
+              payment_destination_id:
+                description: The identifier for the associated Payment Destination resource
+                type: string
+                format: uuid
+              status:
+                description: The current status of the beneficiary
+                type: string
+                enum:
+                - AWAITING_BENEFICIARY_COOL_OFF
+                - ACTIVE
+              beneficiary_cool_off_expiry:
+                description: The time that the beneficiary cool down period will, or did, expire. After this time the beneficiary will be chargeable.
+                type: string
+                format: date-time
+            required:
+            - id
+            - payment_destination_id
+            - status
+        accounts:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                description: The unique identifier for the account.
+                type: string
+                format: uuid
+                x-lean-docs-discrepancy: uuid format
+              account_id:
+                description: A secondary identifier for the account.
+                type: string
+                format: uuid
+                deprecated: true
+                x-lean-docs-discrepancy: uuid format
+              account_name:
+                description: The friendly name for the account - for example "Gold Savings Account".
+                type: string
+              account_number:
+                description: The bank account number for the account.
+                type: string
+              iban:
+                description: The IBAN number for the account.
+                type: string
+              balance:
+                description: The balance available on the account at the last payment.
+                type: number
+                format: double
+                deprecated: true
+              currency:
+                description: The currency that the account supports.
+                type: string
+              balance_last_updated:
+                description: The last date the balance was refreshed.
+                type: string
+                deprecated: true
+              application_id:
+                type: string
+                x-lean-docs-discrepancy: not sure why this exists in the codebase
+            required:
+            - id
+            - account_id
+            - account_name
+            - account_number
+            - iban
+            - balance
+            - currency
+            - balance_last_updated
+      required:
+      - id
+      - customer_id
+      - app_id
+      - status
+      - beneficiary_cool_off_expiry
+      - beneficiaries
+      - bank_identifier
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

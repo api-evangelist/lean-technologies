@@ -1,0 +1,787 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Report API
+  version: v0.2.3
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Report
+  x-displayName: Report
+paths:
+  /insights/v2/customers/{customer_id}/reports/verification-of-income:
+    servers: []
+    post:
+      operationId: createVerificationOfIncomeReport
+      summary: Create Verification of Income Report
+      description: Create a new verification of income report.
+      parameters:
+      - name: customer_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateVerificationOfIncomeReportRequestBody'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateReportResponseBody'
+              examples:
+                reportCreated:
+                  summary: Report creation request accepted
+                  value:
+                    report_id: 9db8634a-77fe-4e83-994d-40f1ba3ca7c5
+                    status: PENDING
+      tags:
+      - Report
+  /insights/v2/customers/{customer_id}/reports/verification-of-income/{report_id}:
+    servers: []
+    get:
+      operationId: getVerificationOfIncomeReport
+      summary: Get Verification of Income Report
+      description: Retrieve a verification of income report
+      parameters:
+      - name: customer_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: report_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetVerificationOfIncomeReportResponseBody'
+              examples:
+                successfulReport:
+                  summary: Successful verification of income report retrieval
+                  value:
+                    report_id: 9db8634a-77fe-4e83-994d-40f1ba3ca7c5
+                    status: OK
+                    created_at: '2026-01-08T10:30:00Z'
+                    report:
+                      properties:
+                        start_date: '2025-01-01'
+                        end_date: '2025-12-31'
+                      accounts:
+                      - nickname: Main Checking Account
+                        description: Primary salary account
+                        account_type: CHECKING
+                        account_sub_type: CURRENT
+                        account_holder_name: Ahmed Mohammed
+                        bank_identifier: RIYADBANK
+                        bank_name: Riyad Bank
+                        account:
+                        - scheme_name: IBAN
+                          identification: SA9380000000608010167519
+                      income_sources:
+                      - id: 1
+                        income_source_name: Lean Technologies
+                        income_source_type: EMPLOYMENT
+                        start_date: '2025-01-01'
+                        end_date: '2025-12-31'
+                        pay_frequency: MONTHLY
+                        total_amount:
+                          currency: AED
+                          amount: 180000
+                        transaction_count: 12
+                        predicted_next_payment_date: '2026-01-01'
+                        average_monthly_income:
+                          currency: AED
+                          amount: 15000
+                        average_monthly_received_value:
+                          currency: AED
+                          amount: 15000
+                        predicted_average_monthly_income:
+                          currency: AED
+                          amount: 15000
+                      income_summary:
+                        average_monthly_income:
+                          currency: AED
+                          amount: 17055.56
+                        average_monthly_received_value:
+                          currency: AED
+                          amount: 17312.5
+                        predicted_average_monthly_income:
+                          currency: AED
+                          amount: 17200
+                        annual_income:
+                          currency: AED
+                          amount: 204666.67
+                pendingReport:
+                  summary: Report generation still pending
+                  value:
+                    report_id: 9db8634a-77fe-4e83-994d-40f1ba3ca7c5
+                    status: PENDING
+                    created_at: '2026-01-08T10:30:00Z'
+                    report:
+                      properties:
+                        start_date: '2025-01-01'
+                        end_date: '2025-12-31'
+                      accounts: []
+                      income_sources: []
+                      income_summary:
+                        average_monthly_income:
+                          currency: AED
+                          amount: 0
+                        average_monthly_received_value:
+                          currency: AED
+                          amount: 0
+                        predicted_average_monthly_income:
+                          currency: AED
+                          amount: 0
+                        annual_income:
+                          currency: AED
+                          amount: 0
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+      tags:
+      - Report
+  /insights/v2/customers/{customer_id}/reports/bank-statements:
+    servers: []
+    post:
+      operationId: createBankStatementsReport
+      summary: Create Bank Statements Report
+      description: Create a new bank statements report.
+      parameters:
+      - name: customer_id
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBankStatementsReportRequestBody'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateReportResponseBody'
+              examples:
+                reportCreated:
+                  summary: Bank statements report creation request accepted
+                  value:
+                    report_id: 7a3c8f2b-45de-4c91-bb8a-5e2f1d9c4a6b
+                    status: PENDING
+      tags:
+      - Report
+  /insights/v2/customers/{customer_id}/reports/bank-statements/{report_id}:
+    servers: []
+    get:
+      operationId: getBankStatementsReport
+      summary: Get Bank Statements Report
+      description: Retrieve the bank statement report.
+      parameters:
+      - name: customer_id
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: report_id
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetBankStatementsReportResponseBody'
+              examples:
+                successfulReport:
+                  summary: Successful bank statements report retrieval
+                  value:
+                    report_id: 7a3c8f2b-45de-4c91-bb8a-5e2f1d9c4a6b
+                    status: OK
+                    created_at: '2026-01-08T10:30:00Z'
+                    report:
+                      properties:
+                        start_date: '2025-09-01'
+                        end_date: '2025-12-31'
+                        account_sub_types:
+                        - CURRENT
+                        - SAVINGS
+                      banks:
+                      - bank_identifier: RIYADBANK
+                        bank_name: Riyad Bank
+                        identity:
+                          full_name: Ahmed Mohammed Ali
+                          address_line: 123 King Fahd Road, Riyadh, Saudi Arabia
+                        accounts:
+                        - account:
+                            nickname: Main Checking
+                            description: Primary checking account
+                            account_type: CHECKING
+                            account_sub_type: CURRENT
+                            account_holder_name: Ahmed Mohammed Ali
+                            account:
+                            - scheme_name: IBAN
+                              identification: SA9380000000608010167519
+                          balance:
+                            type: CLOSING_AVAILABLE
+                            credit_debit_indicator: CREDIT
+                            amount:
+                              currency: AED
+                              amount: 45230.75
+                            credit_line: []
+                          transactions:
+                          - id: tx_001
+                            booking_date_time: '2025-12-15T14:30:00Z'
+                            amount:
+                              currency: AED
+                              amount: 15000
+                            credit_debit_indicator: CREDIT
+                            transaction_information: Salary Payment - December
+                            balance:
+                              type: CLOSING_AVAILABLE
+                              credit_debit_indicator: CREDIT
+                              amount:
+                                currency: AED
+                                amount: 45230.75
+                          - id: tx_002
+                            booking_date_time: '2025-12-10T09:15:00Z'
+                            amount:
+                              currency: AED
+                              amount: 2500
+                            credit_debit_indicator: DEBIT
+                            transaction_information: Rent Payment
+                            balance:
+                              type: CLOSING_AVAILABLE
+                              credit_debit_indicator: CREDIT
+                              amount:
+                                currency: AED
+                                amount: 32730.75
+                          - id: tx_003
+                            booking_date_time: '2025-11-15T14:30:00Z'
+                            amount:
+                              currency: AED
+                              amount: 15000
+                            credit_debit_indicator: CREDIT
+                            transaction_information: Salary Payment - November
+                            balance:
+                              type: CLOSING_AVAILABLE
+                              credit_debit_indicator: CREDIT
+                              amount:
+                                currency: AED
+                                amount: 35230.75
+                pendingReport:
+                  summary: Bank statements report generation still pending
+                  value:
+                    report_id: 7a3c8f2b-45de-4c91-bb8a-5e2f1d9c4a6b
+                    status: PENDING
+                    created_at: '2026-01-08T10:30:00Z'
+                    report:
+                      properties:
+                        start_date: '2025-11-01'
+                        end_date: '2025-12-31'
+                      banks: []
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+      tags:
+      - Report
+components:
+  schemas:
+    BankStatementAccount:
+      type: object
+      properties:
+        account:
+          $ref: '#/components/schemas/ReportAccount'
+        balances:
+          type: array
+          items:
+            $ref: '#/components/schemas/BankStatementAccountBalance'
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReportTransaction'
+      required:
+      - account
+      - balance
+      - transactions
+    VerificationOfIncomeReport:
+      type: object
+      properties:
+        properties:
+          allOf:
+          - $ref: '#/components/schemas/DateRange'
+          x-field-extra-annotation: '@me.leantech.api.validation.ValidDateRange'
+        accounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReportBankAccount'
+        income_sources:
+          type: array
+          items:
+            $ref: '#/components/schemas/IncomeSource'
+        income_summary:
+          $ref: '#/components/schemas/IncomeSummary'
+      required:
+      - properties
+      - accounts
+      - income_sources
+      - income_summary
+    BankStatementAccountBalance:
+      type: object
+      properties:
+        type:
+          description: Type of balance (OPENING, CLOSING, etc.)
+          type: string
+        credit_debit_indicator:
+          $ref: '#/components/schemas/CreditDebitIndicator'
+        amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+        credit_line:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreditLine'
+    Currency:
+      description: The ISO 3 letter currency code
+      type: string
+      examples:
+      - AED
+      pattern: ^[A-Z]{3}$
+    IncomeSourceType:
+      description: Classification of income source type (combined enum for all income sources)
+      type: string
+      enum:
+      - EMPLOYMENT
+      - RETIREMENT
+      - HOUSING_BENEFIT
+      - GIG_ECONOMY
+      - UNEMPLOYMENT
+      - RENTAL
+      - TRANSFER_FROM_OWN_APPLICATION
+      - STUDENT_STIPEND
+      - INVESTMENTS
+      - CITIZEN_ACCOUNT
+      - SOCIAL_SECURITY
+      - SIDE_BUSINESS
+      - BONUS
+      - CASH_DEPOSIT
+    ReportBankAccount:
+      allOf:
+      - $ref: '#/components/schemas/ReportAccount'
+      - type: object
+        properties:
+          bank_identifier:
+            type: string
+          bank_name:
+            type: string
+        required:
+        - bank_identifier
+        - bank_name
+    BankStatementIdentity:
+      type: object
+      properties:
+        full_name:
+          description: Full name of the account holder
+          type: string
+        address_line:
+          description: Address of the account holder
+          type: string
+    DateRange:
+      type: object
+      properties:
+        start_date:
+          description: Start date for transactions range
+          type: string
+          format: date
+        end_date:
+          description: End date for transactions range
+          type: string
+          format: date
+      required:
+      - start_date
+      - end_date
+    AccountIdentification:
+      type: object
+      properties:
+        scheme_name:
+          $ref: '#/components/schemas/SchemeName'
+        identification:
+          description: The identification value for the account assigned by the Bank based on the Account Scheme Name.
+          type: string
+        name:
+          description: Account name
+          type: string
+    CurrencyAmount:
+      type: object
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          description: The amount of money in the currency specified.
+          type: number
+      required:
+      - currency
+      - amount
+    GetBankStatementsReportResponseBody:
+      allOf:
+      - $ref: '#/components/schemas/GetReportResponseBody'
+      - type: object
+        properties:
+          report:
+            $ref: '#/components/schemas/BankStatementsReport'
+    SchemeName:
+      description: The scheme name of the account identification value
+      type: string
+      enum:
+      - PAN
+      - IBAN
+      - BBAN
+      - COMMERCIAL_REGISTRATION_NUMBER
+      - EMAIL
+      - MOBILE_NUMBER
+      - NATIONAL_ID
+      - IQAMA_NUMBER
+      - PASSPORT_NUMBER
+      - OTHER
+      - UNSUPPORTED
+    CreateReportResponseBody:
+      type: object
+      properties:
+        report_id:
+          description: Unique identifier for the created report
+          type: string
+          format: uuid
+        status:
+          description: Status of the report (PENDING, OK, FAILED)
+          type: string
+          const: PENDING
+      required:
+      - report_id
+      - status
+    BankStatementBank:
+      type: object
+      properties:
+        bank_identifier:
+          description: Bank identifier code
+          type: string
+        bank_name:
+          description: Name of the bank
+          type: string
+        identity:
+          $ref: '#/components/schemas/BankStatementIdentity'
+        accounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/BankStatementAccount'
+      required:
+      - bank_identifier
+      - bank_name
+      - identity
+      - accounts
+    CreditDebitIndicator:
+      description: Indicates whether the balance is a credit or debit balance
+      type: string
+      enum:
+      - CREDIT
+      - DEBIT
+      - UNSUPPORTED
+    CreateBankStatementsReportRequestBody:
+      type: object
+      properties:
+        start_date:
+          description: Start date for transactions range
+          type: string
+          format: date
+        end_date:
+          description: End date for transactions range
+          type: string
+          format: date
+        account_sub_types:
+          description: Account sub types to include in the statements, if undefined all sub types will be included
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+      required:
+      - start_date
+      - end_date
+    GetReportResponseBody:
+      type: object
+      properties:
+        report_id:
+          description: Unique identifier for the report
+          type: string
+          format: uuid
+        status:
+          $ref: '#/components/schemas/ReportStatus'
+        status_detail:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/StatusDetail'
+        created_at:
+          description: Timestamp when the report was created (ISO 8601)
+          type: string
+          format: date-time
+      required:
+      - report_id
+      - status
+      - created_at
+    CreditLineType:
+      description: The type of credit line
+      type: string
+      enum:
+      - AVAILABLE
+      - CREDIT
+      - EMERGENCY
+      - PRE_AGREED
+      - TEMPORARY
+      - UNSUPPORTED
+    GetVerificationOfIncomeReportResponseBody:
+      allOf:
+      - $ref: '#/components/schemas/GetReportResponseBody'
+      - type: object
+        properties:
+          report:
+            $ref: '#/components/schemas/VerificationOfIncomeReport'
+    ReportAccount:
+      type: object
+      properties:
+        nickname:
+          description: User-friendly name for the account
+          type: string
+        description:
+          description: Account description or purpose
+          type: string
+        account_type:
+          description: Type of account (CHECKING, SAVINGS, etc.)
+          type: string
+        account_sub_type:
+          description: Sub-type of account (CURRENT, SAVINGS, etc.)
+          type: string
+        account_holder_name:
+          description: Name of the account holder
+          type: string
+        account:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountIdentification'
+      required:
+      - nickname
+      - description
+      - account_type
+      - account_sub_type
+      - account_holder_name
+    ReportTransaction:
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the transaction
+          type: string
+        booking_date_time:
+          description: Date and time when the transaction was booked (ISO 8601)
+          type: string
+          format: date-time
+        amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+        credit_debit_indicator:
+          $ref: '#/components/schemas/CreditDebitIndicator'
+        transaction_information:
+          description: Description or details of the transaction
+          type: string
+        balance:
+          type: object
+          properties:
+            type:
+              description: Type of balance (OPENING, CLOSING, etc.)
+              type: string
+            credit_debit_indicator:
+              $ref: '#/components/schemas/CreditDebitIndicator'
+            amount:
+              $ref: '#/components/schemas/CurrencyAmount'
+      required:
+      - booking_date_time
+      - amount
+      - credit_debit_indicator
+      - transaction_information
+    CreateVerificationOfIncomeReportRequestBody:
+      type: object
+    StatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        granular_status_code:
+          description: Granular status code
+          type:
+          - string
+          - 'null'
+        status_additional_info:
+          description: Additional information about the status
+          type:
+          - string
+          - 'null'
+    ReportStatus:
+      description: Status of the report (PENDING, OK, FAILED)
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+    IncomeSummary:
+      description: Summary of all income sources (used in reports)
+      type: object
+      properties:
+        average_monthly_income:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_monthly_received_value:
+          description: The average received value calculated as total amount divided by the count of months that had income (excluding zero months)
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        predicted_average_monthly_income:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        annual_income:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+      required:
+      - average_monthly_income
+      - average_monthly_received_value
+      - predicted_average_monthly_income
+      - annual_income
+    IncomeSource:
+      description: Detailed information about a specific income source (used in reports)
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the income source
+          type: integer
+        income_source_name:
+          description: Name of the income source
+          type: string
+        income_source_type:
+          $ref: '#/components/schemas/IncomeSourceType'
+        start_date:
+          description: Date when income from this source started
+          type: string
+          format: date
+        end_date:
+          description: Date when income from this source ended
+          type: string
+          format: date
+        pay_frequency:
+          description: Frequency of payments from this source
+          type:
+          - string
+          - 'null'
+        total_amount:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        transaction_count:
+          description: Number of transactions from this income source
+          type: integer
+          minimum: 0
+        predicted_next_payment_date:
+          description: Predicted date of the next payment
+          type: string
+          format: date
+        average_monthly_income:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_monthly_received_value:
+          description: The average received value calculated as total amount divided by the count of months that had income (excluding zero months)
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        predicted_average_monthly_income:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+      required:
+      - id
+      - income_source_name
+      - income_source_type
+      - start_date
+      - end_date
+      - total_amount
+      - transaction_count
+      - predicted_next_payment_date
+      - average_monthly_income
+      - average_monthly_received_value
+      - predicted_average_monthly_income
+    CreditLine:
+      type: object
+      properties:
+        included:
+          description: 'Indicates whether or not a credit line is included in the balance of the account. Usage: If false, credit line is not included in the balance amount of the account'
+          type: boolean
+          default: false
+        amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+        type:
+          $ref: '#/components/schemas/CreditLineType'
+    BankStatementsReport:
+      type: object
+      properties:
+        properties:
+          type: object
+          properties:
+            account_sub_types:
+              type:
+              - array
+              - 'null'
+              items:
+                type: string
+              description: Account sub types to include in the statements, if undefined all sub types will be included
+            end_date:
+              type: string
+              format: date
+              description: End date for transactions range
+            start_date:
+              type: string
+              format: date
+              description: Start date for transactions range
+          required:
+          - start_date
+          - end_date
+        banks:
+          type: array
+          items:
+            $ref: '#/components/schemas/BankStatementBank'
+      required:
+      - properties
+      - banks
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

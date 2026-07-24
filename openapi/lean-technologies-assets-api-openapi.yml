@@ -1,0 +1,788 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Assets API
+  version: v0.2.3
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Assets
+  x-displayName: Assets
+paths:
+  /insights/v2/assets/cashflows:
+    servers: []
+    get:
+      operationId: getCashflows
+      summary: Get Cashflow
+      description: 'The Cashflow API provides access to **Personal** and **Business** cash flow data. For personal accounts, it offers insights into monthly cash inflows, outflows, and net cash flow. For business accounts, it offers detailed insights on revenue, expenses, and net cash flow.
+
+        You can use this API to evaluate financial stability, manage cash flow effectively, and assess the account holder''s ability to meet financial obligations.'
+      parameters:
+      - name: entity_id
+        in: query
+        description: The `entity_id` you're querying for.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: async
+        in: query
+        description: 'When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. Note: it''''s recommended to use the sync flow (async=false) for all requests by adapting the data workflow for connected entities.'
+        required: false
+        schema:
+          type: boolean
+          default: true
+        deprecated: true
+      - name: start_date
+        in: query
+        description: The start date in UTC (in the format YYYY-MM-DD) you want to query transactions for.
+        required: true
+        schema:
+          type: string
+          format: date
+        x-field-extra-annotation: '@jakarta.validation.constraints.PastOrPresent'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CashFlowResult'
+              examples:
+                successfulCashflow:
+                  summary: Successful cashflow retrieval with insights
+                  value:
+                    status: OK
+                    results_id: c4b9d9e1-6e1a-4f4b-8a71-1c7e3d9b2210
+                    message: Data successfully retrieved
+                    meta: null
+                    timestamp: '2026-01-08T12:03:41.912384901Z'
+                    status_detail: null
+                    type: cashflow
+                    insights:
+                      total:
+                        inwards:
+                        - category: inflow
+                          amount:
+                            currency: AED
+                            amount: 204000
+                          count: 120
+                        outwards:
+                        - category: outflow
+                          amount:
+                            currency: AED
+                            amount: 156000
+                          count: 845
+                        net:
+                          overall_amount:
+                            currency: AED
+                            amount: 48000
+                          net_cashflow:
+                            currency: AED
+                            amount: 48000
+                      monthly_totals:
+                      - month: 12
+                        year: 2024
+                        is_month_complete: true
+                        inwards:
+                        - category: inflow
+                          amount:
+                            currency: AED
+                            amount: 17200
+                          count: 10
+                        outwards:
+                        - category: outflow
+                          amount:
+                            currency: AED
+                            amount: 13500
+                          count: 72
+                        net:
+                          overall_amount:
+                            currency: AED
+                            amount: 3700
+                          net_cashflow:
+                            currency: AED
+                            amount: 3700
+                      - month: 11
+                        year: 2024
+                        is_month_complete: true
+                        inwards:
+                        - category: inflow
+                          amount:
+                            currency: AED
+                            amount: 18500
+                          count: 11
+                        outwards:
+                        - category: outflow
+                          amount:
+                            currency: AED
+                            amount: 12800
+                          count: 68
+                        net:
+                          overall_amount:
+                            currency: AED
+                            amount: 5700
+                          net_cashflow:
+                            currency: AED
+                            amount: 3700
+                      credit_debit_behaviour:
+                        periods:
+                        - period: P12M
+                          grand_average_credit_amount:
+                            currency: AED
+                            amount: 1700
+                          grand_average_credit_count: 10
+                          grand_average_debit_amount:
+                            currency: AED
+                            amount: 184.62
+                          grand_average_debit_count: 70
+                          grand_average_credit_debit_amount_ratio: 9.21
+                          grand_average_credit_debit_count_ratio: 0.14
+                          total_volume_of_credit:
+                            currency: AED
+                            amount: 204000
+                          total_volume_of_debit:
+                            currency: AED
+                            amount: 156000
+                          total_volume_of_credit_debit_ratio: 1.31
+                      big_payments:
+                        periods:
+                        - period: P12M
+                          average_max_monthly_credit_amount:
+                            currency: AED
+                            amount: 15000
+                          average_max_monthly_debit_amount:
+                            currency: AED
+                            amount: 3000
+                          average_max_monthly_credit_debit_amount_ratio: 5
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CashFlowResult'
+              examples:
+                pendingCashflow:
+                  summary: Request accepted and processing
+                  value:
+                    status: PENDING
+                    results_id: 97a23607-29b0-4ad6-9f26-3c1a5efa65da
+                    message: Please wait for a webhook or try again later.
+                    meta: null
+                    timestamp: '2026-01-08T11:57:14.909323921Z'
+                    status_detail: null
+                    insights: {}
+        '501':
+          $ref: '#/components/responses/UnsupportedByBankResponse'
+      tags:
+      - Assets
+  /insights/v2/assets/balances:
+    servers: []
+    get:
+      operationId: getBalances
+      summary: Get Cash Balances
+      description: 'The Cash Balances API provides a comprehensive view of both **Personal** or **Business** cash balances, offering insights into current, historical, and average balances.
+
+        The data in this API allows financial companies to monitor liquidity trends and assess the financial health of bank accounts over time. Additionally, it provides information on the frequency and amount of contributions. You can use these insights to evaluate repayment capacity.
+
+        > **"Supported for both retail and corporate accounts"**'
+      parameters:
+      - name: entity_id
+        in: query
+        description: The `entity_id` you're querying for.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: async
+        in: query
+        description: 'When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. Note: it''''s recommended to use the sync flow (async=false) for all requests by adapting the data workflow for connected entities.'
+        required: false
+        schema:
+          type: boolean
+          default: true
+        deprecated: true
+      - name: start_date
+        in: query
+        description: The start date in UTC (in the format YYYY-MM-DD) you want to query transactions for.
+        required: true
+        schema:
+          type: string
+          format: date
+        x-field-extra-annotation: '@jakarta.validation.constraints.PastOrPresent'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CashBalanceResult'
+              examples:
+                successfulBalance:
+                  summary: Successful balance retrieval with insights
+                  value:
+                    status: OK
+                    results_id: b7f2c8d4-3e1a-4c5b-9d8f-2a6e4b7c9d1e
+                    message: Data successfully retrieved
+                    meta: null
+                    timestamp: '2026-01-08T12:05:32.823456789Z'
+                    status_detail: null
+                    insights:
+                      total:
+                        average_balance:
+                          currency: AED
+                          amount: 74000
+                        initial_balance:
+                          currency: AED
+                          amount: 50000
+                        current_balance:
+                          currency: AED
+                          amount: 98000
+                        available_balance:
+                          currency: AED
+                          amount: 98000
+                        frequency_of_contributions: MONTHLY
+                      monthly_totals:
+                      - month: 12
+                        year: 2024
+                        is_month_complete: true
+                        monthly_growth_rate: 0.04
+                        contribution_amount:
+                          currency: AED
+                          amount: 3700
+                        average_balance:
+                          currency: AED
+                          amount: 96150
+                        initial_balance:
+                          currency: AED
+                          amount: 92450
+                      - month: 11
+                        year: 2024
+                        is_month_complete: true
+                        monthly_growth_rate: 0.07
+                        contribution_amount:
+                          currency: AED
+                          amount: 5700
+                        average_balance:
+                          currency: AED
+                          amount: 89600
+                        initial_balance:
+                          currency: AED
+                          amount: 83900
+                      balance_factors:
+                        balance_trend_average_month_on_month: 1.5
+                        current_balance: 98000
+                        periods:
+                        - period: P12M
+                          average_balance_variance: 0.12
+                          average_monthly_growth_rate: 0.08
+                          trend: INCREASING
+                        balance_trend: 10
+                        inflow_factors:
+                          median_transaction_amount: 653.52
+                          max_transaction_amount: 30000
+                          min_transaction_amount: 0.65
+                          weekday_transaction_count: 233
+                          weekend_transaction_count: 93
+                          average_time: 1.88
+                          percent_greater_than_x: 99
+                          recurring_average: 20000
+                          median_days: 1
+                          pct_salary: 85
+                        outflow_factors:
+                          median_transaction_amount: 307.18
+                          max_transaction_amount: 1750.35
+                          min_transaction_amount: 0.77
+                          weekday_transaction_count: 233
+                          weekend_transaction_count: 92
+                          average_time: 1.17
+                          percent_greater_than_x: 83
+                          recurring_average: 0
+                          median_days: 1
+                          spike_transactions:
+                          - month: 11
+                            year: 2024
+                            amount: 11247.68
+                          - month: 12
+                            year: 2024
+                            amount: 21235.74
+                          - month: 9
+                            year: 2025
+                            amount: 235114.03
+                        daily_net_cashflow_estimate: 1431
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CashBalanceResult'
+              examples:
+                pendingBalance:
+                  summary: Request accepted and processing
+                  value:
+                    status: PENDING
+                    results_id: 97a23607-29b0-4ad6-9f26-3c1a5efa65da
+                    message: Please wait for a webhook or try again later.
+                    meta: null
+                    timestamp: '2026-01-08T11:57:14.909323921Z'
+                    status_detail: null
+                    insights: {}
+        '501':
+          $ref: '#/components/responses/UnsupportedByBankResponse'
+      tags:
+      - Assets
+components:
+  schemas:
+    CashFlowNet:
+      type: object
+      properties:
+        overall_amount:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        net_cashflow:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+    CashBalanceTotal:
+      type: object
+      properties:
+        average_balance:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        initial_balance:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        current_balance:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        available_balance:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        frequency_of_contributions:
+          description: How often deposits are made to the account
+          type: string
+    CashFlowMonthlyTotal:
+      type: object
+      properties:
+        month:
+          description: The month of the reporting period
+          type: integer
+        year:
+          description: The year of the reporting period
+          type: integer
+        is_month_complete:
+          description: Indicates whether the data for this month is complete
+          type: boolean
+        inwards:
+          type: array
+          items:
+            $ref: '#/components/schemas/CashFlowCategoryAmountCount'
+        outwards:
+          type: array
+          items:
+            $ref: '#/components/schemas/CashFlowCategoryAmountCount'
+        net:
+          $ref: '#/components/schemas/CashFlowNet'
+    CashBalance:
+      type: object
+      properties:
+        total:
+          $ref: '#/components/schemas/CashBalanceTotal'
+        monthly_totals:
+          type: array
+          items:
+            $ref: '#/components/schemas/CashBalanceMonthlyTotal'
+        balance_factors:
+          $ref: '#/components/schemas/BalanceFactors'
+      additionalProperties: false
+    Currency:
+      description: The ISO 3 letter currency code
+      type: string
+      examples:
+      - AED
+      pattern: ^[A-Z]{3}$
+    BigPayments:
+      type: object
+      properties:
+        periods:
+          type: array
+          items:
+            $ref: '#/components/schemas/BigPaymentsPeriod'
+      required:
+      - periods
+    CreditDebitBehaviour:
+      type: object
+      properties:
+        periods:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreditDebitBehaviourPeriod'
+      required:
+      - periods
+    BaseInflowOutflowFactors:
+      type: object
+      properties:
+        median_transaction_amount:
+          description: Median of all transactions
+          type: number
+        max_transaction_amount:
+          description: Maximum of all transactions amount
+          type: number
+        min_transaction_amount:
+          description: Minimum of all transactions amount
+          type: number
+        weekday_transaction_count:
+          description: Count of all transactions on weekdays (Mon-Fri)
+          type: integer
+        weekend_transaction_count:
+          description: Count of all transactions on weekend (Sat, Sun)
+          type: integer
+        average_time:
+          description: Average of all transactions time
+          type: number
+        percent_greater_than_x:
+          description: Percentage of all transactions amount greater than X
+          type: number
+        recurring_average:
+          description: Average of all recurring transactions amount
+          type: number
+        median_days:
+          description: Median of difference between transaction dates
+          type: number
+          format: double
+      required:
+      - median_transaction_amount
+      - max_transaction_amount
+      - min_transaction_amount
+      - weekday_transaction_count
+      - weekend_transaction_count
+      - average_time
+      - percent_greater_than_x
+      - recurring_average
+      - median_days
+      x-parent: true
+    MonthlyAmount:
+      type: object
+      properties:
+        month:
+          description: The transaction month
+          type: integer
+          format: int32
+        year:
+          description: The transaction year
+          type: integer
+          format: int32
+        amount:
+          description: The transaction amount
+          type: number
+      x-class-extra-annotation: '@lombok.AllArgsConstructor'
+    CurrencyAmount:
+      type: object
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          description: The amount of money in the currency specified.
+          type: number
+      required:
+      - currency
+      - amount
+    BalanceFactors:
+      type: object
+      properties:
+        periods:
+          type: array
+          items:
+            $ref: '#/components/schemas/BalanceFactorsPeriod'
+        balance_trend_average_month_on_month:
+          description: Ratio of average percentage of positive balance trends to negative balance trends.
+          type: number
+        current_balance:
+          description: The current balance amount
+          type: number
+        balance_trend:
+          description: Number of times the balance increased month over month
+          type: integer
+        inflow_factors:
+          description: Factors corresponding to all inflow transactions
+          allOf:
+          - $ref: '#/components/schemas/CashBalanceInflowFactors'
+        outflow_factors:
+          description: Factors corresponding to all outflow transactions
+          allOf:
+          - $ref: '#/components/schemas/CashBalanceOutflowFactors'
+        daily_net_cashflow_estimate:
+          description: Total difference between inflows and outflows
+          type: number
+          format: double
+      required:
+      - periods
+      - balance_trend_average_month_on_month
+      - current_balance
+      - balance_trend
+      - inflow_factors
+      - outflow_factors
+      - daily_net_cashflow_estimate
+    BigPaymentsPeriod:
+      type: object
+      properties:
+        period:
+          description: The time period
+          type: string
+        average_max_monthly_credit_amount:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_max_monthly_debit_amount:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_max_monthly_credit_debit_amount_ratio:
+          description: The ratio of credit to debit amounts
+          type: number
+      required:
+      - period
+      - average_max_monthly_credit_amount
+      - average_max_monthly_debit_amount
+      - average_max_monthly_credit_debit_amount_ratio
+    CashFlowResult:
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          insights:
+            type:
+            - object
+            - 'null'
+            allOf:
+            - $ref: '#/components/schemas/CashFlow'
+    Result:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ResultStatus'
+        results_id:
+          description: The unique identifier for the request
+          type: string
+          format: uuid
+        message:
+          description: A message describing the status of the request
+          type: string
+        meta:
+          description: Meta information about the request
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: string
+        timestamp:
+          description: The datetime of when the request was made
+          type: string
+          format: date-time
+        status_detail:
+          description: Additional information about the status
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/StatusDetail'
+      required:
+      - status
+      - results_id
+      - message
+      - timestamp
+    CashBalanceOutflowFactors:
+      type: object
+      properties:
+        spike_transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/MonthlyAmount'
+      allOf:
+      - $ref: '#/components/schemas/BaseInflowOutflowFactors'
+      required:
+      - spike_transactions
+      x-child: true
+    CashFlowCategoryAmountCount:
+      type: object
+      properties:
+        category:
+          description: The category of the cash flow
+          type: string
+        amount:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        count:
+          description: The count of transactions in this category
+          type: integer
+    ResultStatus:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - RECONNECT_REQUIRED
+      - PROCESSING_STARTED
+    BalanceFactorsPeriod:
+      type: object
+      properties:
+        period:
+          description: The time period
+          type: string
+        average_balance:
+          description: The average balance for the period
+          type: number
+      x-class-extra-annotation: '@lombok.AllArgsConstructor'
+    CreditDebitBehaviourPeriod:
+      type: object
+      properties:
+        period:
+          description: The time period
+          type: string
+        grand_average_credit_amount:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        grand_average_credit_count:
+          description: The average credit transaction count
+          type: integer
+        grand_average_debit_amount:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        grand_average_debit_count:
+          description: The average debit transaction count
+          type: integer
+        grand_average_credit_debit_amount_ratio:
+          description: The ratio of credit to debit amounts
+          type: number
+        grand_average_credit_debit_count_ratio:
+          description: The ratio of credit to debit transaction counts
+          type: number
+        total_volume_of_credit:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        total_volume_of_debit:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        total_volume_of_credit_debit_ratio:
+          description: The ratio of total credit to debit volumes
+          type: number
+      required:
+      - period
+      - grand_average_credit_amount
+      - grand_average_credit_count
+      - grand_average_debit_amount
+      - grand_average_debit_count
+      - grand_average_credit_debit_amount_ratio
+      - grand_average_credit_debit_count_ratio
+      - total_volume_of_credit
+      - total_volume_of_debit
+      - total_volume_of_credit_debit_ratio
+    StatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        granular_status_code:
+          description: Granular status code
+          type:
+          - string
+          - 'null'
+        status_additional_info:
+          description: Additional information about the status
+          type:
+          - string
+          - 'null'
+    CashBalanceInflowFactors:
+      type: object
+      properties:
+        percent_salary_transaction:
+          description: Percentage of salary inflows
+          type: number
+      allOf:
+      - $ref: '#/components/schemas/BaseInflowOutflowFactors'
+      required:
+      - pct_salary
+      x-child: true
+    CashBalanceMonthlyTotal:
+      type: object
+      properties:
+        month:
+          description: The month of the reporting period
+          type: integer
+        year:
+          description: The year of the reporting period
+          type: integer
+        is_month_complete:
+          description: Indicates whether the data for this month is complete
+          type: boolean
+        monthly_growth_rate:
+          description: The growth rate for the month
+          type: number
+        contribution_amount:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_balance:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        initial_balance:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+    CashFlow:
+      type: object
+      properties:
+        total:
+          type: object
+          properties:
+            inwards:
+              type: array
+              items:
+                $ref: '#/components/schemas/CashFlowCategoryAmountCount'
+            outwards:
+              type: array
+              items:
+                $ref: '#/components/schemas/CashFlowCategoryAmountCount'
+            net:
+              $ref: '#/components/schemas/CashFlowNet'
+        monthly_totals:
+          type: array
+          items:
+            $ref: '#/components/schemas/CashFlowMonthlyTotal'
+        credit_debit_behaviour:
+          $ref: '#/components/schemas/CreditDebitBehaviour'
+        big_payments:
+          $ref: '#/components/schemas/BigPayments'
+      additionalProperties: false
+    CashBalanceResult:
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          insights:
+            type:
+            - object
+            - 'null'
+            allOf:
+            - $ref: '#/components/schemas/CashBalance'
+  responses:
+    UnsupportedByBankResponse:
+      description: Not Implemented
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Result'
+          examples:
+            unsupportedByBank:
+              summary: Sync requests not supported by bank
+              value:
+                results_id: 5e99047e-c45f-4aef-9cae-837e52aaa415
+                timestamp: '2026-01-08T12:54:57.100547167Z'
+                status: FAILED
+                message: Sync requests are not supported
+                metadata: null
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

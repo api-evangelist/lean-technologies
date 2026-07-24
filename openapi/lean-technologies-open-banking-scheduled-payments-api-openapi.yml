@@ -1,0 +1,583 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Open Banking Scheduled Payments API
+  version: v0.2.3
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Open Banking Scheduled Payments
+  x-displayName: Open Banking Scheduled Payments
+paths:
+  /open-banking/account-information/2022.11.01-final-errata2/accounts/{AccountId}/scheduled-payments:
+    servers: []
+    get:
+      operationId: GetAccountScheduledPaymentsV1
+      summary: Get Open Banking Account Scheduled Payments
+      description: 'Retrieves the scheduled payments for a bank account linked by a user via LinkSDK for the KSA Open Banking (SAMA) ecosystem.
+
+        Each scheduled payment object contains the schedule type, payment date/time, instructed amount, and creditor details.
+
+        Requires ReadScheduledPaymentsBasic or ReadScheduledPaymentsDetail consent permission.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/FapiInteractionId'
+      - $ref: '#/components/parameters/EntityId'
+      - $ref: '#/components/parameters/CustomerId'
+      - $ref: '#/components/parameters/OBPageParm'
+      - $ref: '#/components/parameters/OBSizeParam'
+      responses:
+        '200':
+          description: Scheduled Payments Read
+          headers:
+            x-fapi-interaction-id:
+              description: An RFC4122 UID used as a correlation id.
+              required: true
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OBGetScheduledPaymentsResponse'
+              examples:
+                GetScheduledPaymentsSuccess:
+                  summary: Successful scheduled payments response
+                  value:
+                    Status: OK
+                    Message: Data successfully retrieved
+                    Timestamp: '2026-04-09T10:30:00.000Z'
+                    RefreshedAt: '2026-04-09T10:25:00.000Z'
+                    StatusDetail: null
+                    Meta:
+                      TotalPages: 1
+                    Links:
+                      Self: https://api.leantech.me/open-banking/account-information/2022.11.01-final-errata2/accounts/7c8a9f12-3456-4abc-b123-9876543210ab/scheduled-payments
+                      First: https://api.leantech.me/open-banking/account-information/2022.11.01-final-errata2/accounts/7c8a9f12-3456-4abc-b123-9876543210ab/scheduled-payments
+                      Prev: null
+                      Next: null
+                      Last: https://api.leantech.me/open-banking/account-information/2022.11.01-final-errata2/accounts/7c8a9f12-3456-4abc-b123-9876543210ab/scheduled-payments
+                    Data:
+                      ScheduledPayment:
+                      - ScheduledPaymentId: SP-00789012
+                        AccountHolderName: Ahmed Abdullah Al-Rashidi
+                        AccountHolderShortName: Ahmed
+                        ScheduledType: KSAOB.Execution
+                        ScheduledPaymentDateTime: '2026-04-15T09:00:00.000Z'
+                        CreditorReference: RENT-APR-2026
+                        DebtorReference: null
+                        InstructedAmount:
+                          Amount: '3500.00'
+                          Currency: SAR
+                        CreditorAgent:
+                          IdentificationType: KSAOB.BICFI
+                          Identification: NCBKSAJE
+                          Name: null
+                          PostalAddress: null
+                        CreditorAccount:
+                        - IdentificationType: KSAOB.IBAN
+                          Identification: SA1260000004567890123456
+                          Name: Property Management Co.
+                BankIssueExample:
+                  summary: Failed request due to bank technical issues
+                  value:
+                    Status: FAILED
+                    Message: Your bank is currently experiencing technological problems. Please try again later.
+                    Timestamp: '2026-04-09T10:30:00.000Z'
+                    RefreshedAt: null
+                    StatusDetail:
+                      GranularStatusCode: BANK_ISSUE
+                      StatusAdditionalInfo: Your bank is currently experiencing technological problems. Please try again later.
+                    Meta: null
+                    Links: null
+                    Data: null
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                MissingEntityId:
+                  summary: Missing or invalid entity_id
+                  value:
+                    Status: FAILED
+                    Message: entity_id is required and must be a valid UUID
+                    Timestamp: '2026-04-09T10:30:00.000Z'
+                    RefreshedAt: null
+                    StatusDetail:
+                      GranularStatusCode: INVALID_PARAMETERS
+                      StatusAdditionalInfo: The provided entity_id is not a valid UUID format
+                    Meta: null
+                    Links: null
+                    Data: null
+        '404':
+          description: Entity not found
+          content:
+            application/json:
+              examples:
+                EntityNotFound:
+                  summary: Entity not found
+                  value:
+                    Status: FAILED
+                    Message: Entity not found
+                    Timestamp: '2026-04-09T10:30:00.000Z'
+                    RefreshedAt: null
+                    StatusDetail:
+                      GranularStatusCode: ENTITY_NOT_FOUND
+                      StatusAdditionalInfo: No entity found for the provided entity_id
+                    Meta: null
+                    Links: null
+                    Data: null
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                BankIssue:
+                  summary: Bank technical issue
+                  value:
+                    Status: FAILED
+                    Message: Your bank is currently experiencing technological problems. Please try again later.
+                    Timestamp: '2025-09-12T05:13:49.739987382Z'
+                    RefreshedAt: null
+                    StatusDetail:
+                      GranularStatusCode: BANK_ISSUE
+                      StatusAdditionalInfo: Your bank is currently experiencing technological problems. Please try again later.
+                    Meta: null
+                    Links: null
+                    Data: null
+      tags:
+      - Open Banking Scheduled Payments
+components:
+  parameters:
+    AccountId:
+      name: AccountId
+      in: path
+      description: The Lean account identifier uniquely identifying the account within Lean.
+      required: true
+      schema:
+        type: string
+        format: uuid
+    CustomerId:
+      name: CustomerId
+      in: query
+      description: The customer_id of the connected customer.
+      required: false
+      schema:
+        type: string
+        format: uuid
+    OBPageParm:
+      name: Page
+      in: query
+      description: The page you're requesting - returns page 0 of a response if not specified.
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+    OBSizeParam:
+      name: Size
+      description: The number of objects you want to return as a page size.
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 50
+        maximum: 100
+        minimum: 1
+    FapiInteractionId:
+      name: x-fapi-interaction-id
+      in: header
+      description: An RFC4122 UID used as a correlation id.
+      required: false
+      schema:
+        type: string
+    EntityId:
+      name: EntityId
+      in: query
+      description: The entity_id of the connected customer.
+      required: false
+      schema:
+        type: string
+        format: uuid
+  schemas:
+    OBGetScheduledPaymentsResponse:
+      description: Response envelope for the Open Banking account scheduled payments.
+      type: object
+      properties:
+        Data:
+          description: Container for the list of Open Banking account scheduled payments. Null when the request fails.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBScheduledPaymentsData'
+        Status:
+          description: Status of the request.
+          type: string
+          enum:
+          - OK
+          - PENDING
+          - FAILED
+          - CONSENT_EXPIRED
+        Message:
+          description: Human-readable message describing the status of the request.
+          type: string
+        Timestamp:
+          description: Date and time when the response was generated.
+          type: string
+          format: date-time
+        RefreshedAt:
+          description: Date and time when the data was last refreshed from the bank.
+          type:
+          - string
+          - 'null'
+          format: date-time
+        StatusDetail:
+          description: Additional details about the request status.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBStatusDetail'
+        Meta:
+          description: Metadata relevant to the resource, including pagination information.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBMeta'
+        Links:
+          description: Links relevant to the resource for pagination navigation.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBLinks'
+      required:
+      - Data
+      - Status
+      - Message
+      - Timestamp
+    OBMeta:
+      description: Metadata relevant to the resource.
+      type: object
+      properties:
+        TotalPages:
+          description: Total number of pages where a result set is paginated.
+          type:
+          - integer
+          - 'null'
+          format: int32
+          minimum: 0
+    OBCashAccountIdentificationType:
+      description: Name of the identification scheme for the cash account.
+      type: string
+      enum:
+      - KSAOB.IBAN
+      - KSAOB.MaskedPAN
+      - KSAOB.AccountNumber
+      - KSAOB.CommercialRegistrationNumber
+      - KSAOB.Email
+      - KSAOB.MobileNumber
+      - KSAOB.NationalID
+      - KSAOB.IqamaNumber
+      - KSAOB.PassportNumber
+    OBScheduledPayment:
+      description: Unambiguous identification of the scheduled payment.
+      type: object
+      properties:
+        ScheduledPaymentId:
+          description: Unique identification, as assigned by the creating institution, to unambiguously identify a scheduled payment.
+          type: string
+          maxLength: 40
+          minLength: 1
+        AccountHolderName:
+          description: Name or names of the account owner(s) represented at the account level.
+          type:
+          - string
+          - 'null'
+        AccountHolderShortName:
+          description: Short name or nickname of the account holder.
+          type:
+          - string
+          - 'null'
+        ScheduledType:
+          $ref: '#/components/schemas/OBScheduledTypeCode'
+        ScheduledPaymentDateTime:
+          description: The date on which the scheduled payment will be made. ISO 8601 format.
+          type: string
+          format: date-time
+        CreditorReference:
+          description: Unique reference, as assigned by the creditor, to unambiguously refer to the payment transaction.
+          type:
+          - string
+          - 'null'
+          maxLength: 35
+          minLength: 1
+        DebtorReference:
+          description: Unique reference, as assigned by the debtor, to unambiguously refer to the payment transaction.
+          type:
+          - string
+          - 'null'
+          maxLength: 35
+          minLength: 1
+        InstructedAmount:
+          description: Amount of money to be moved between the debtor and creditor.
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/OBAmount'
+        CreditorAgent:
+          description: Financial institution servicing an account for the creditor.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBCreditorAgent'
+        CreditorAccount:
+          description: List of cash accounts for the creditor.
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/OBCashAccount'
+      required:
+      - ScheduledPaymentId
+      - ScheduledType
+      - ScheduledPaymentDateTime
+      - InstructedAmount
+    OBLinks:
+      description: Links relevant to the resource for pagination navigation.
+      type: object
+      properties:
+        Self:
+          description: A link to the current resource.
+          type: string
+          format: uri
+        First:
+          description: A link to the first page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+        Prev:
+          description: A link to the previous page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+        Next:
+          description: A link to the next page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+        Last:
+          description: A link to the last page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+      required:
+      - Self
+    OBScheduledTypeCode:
+      description: Specifies the scheduled payment date type.
+      type: string
+      enum:
+      - KSAOB.Arrival
+      - KSAOB.Execution
+    OBCashAccount:
+      description: Details to identify a cash account for a creditor or debtor.
+      type: object
+      properties:
+        IdentificationType:
+          $ref: '#/components/schemas/OBCashAccountIdentificationType'
+        Identification:
+          description: Identification assigned by an institution to identify an account. This identification is known by the account owner.
+          type: string
+          maxLength: 400
+          minLength: 1
+        Name:
+          description: Name of the account, as assigned by the account servicing institution.
+          type:
+          - string
+          - 'null'
+          maxLength: 350
+          minLength: 1
+      required:
+      - IdentificationType
+      - Identification
+    OpenBankingPostalAddress:
+      description: Information that locates and identifies a specific address, as defined by postal services.
+      type: object
+      properties:
+        AddressType:
+          description: Identifies the nature of the postal address.
+          type:
+          - string
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBAddressTypeCode'
+        ShortAddress:
+          description: Short address (National Addressing System) of the location.
+          type:
+          - string
+          - 'null'
+          maxLength: 8
+          minLength: 1
+        BuildingNumber:
+          description: Number that identifies the position of a building on a street.
+          type:
+          - string
+          - 'null'
+          maxLength: 4
+          minLength: 4
+        UnitNumber:
+          description: Unit number within a building.
+          type:
+          - number
+          - 'null'
+        StreetName:
+          description: Name of a street or thoroughfare.
+          type:
+          - string
+          - 'null'
+          maxLength: 70
+          minLength: 1
+        SecondaryNumber:
+          description: Secondary number for the address (National Addressing System).
+          type:
+          - string
+          - 'null'
+          maxLength: 4
+          minLength: 4
+        District:
+          description: Identifies a subdivision of a city, town or country.
+          type:
+          - string
+          - 'null'
+          maxLength: 35
+          minLength: 1
+        PostalCode:
+          description: Identifier of a group of letters or numbers added to a postal address to assist the sorting of mail.
+          type:
+          - string
+          - 'null'
+          maxLength: 16
+          minLength: 1
+        City:
+          description: Name of a built-up area, with defined boundaries, and a local government.
+          type:
+          - string
+          - 'null'
+          maxLength: 35
+          minLength: 1
+        Country:
+          description: Nation with its own government (ISO 3166-1 alpha-2 country code).
+          type:
+          - string
+          - 'null'
+          pattern: ^[A-Z]{2,2}$
+    OBCreditorAgent:
+      description: Financial institution servicing an account for the creditor or debtor.
+      type: object
+      properties:
+        IdentificationType:
+          $ref: '#/components/schemas/OBCreditorAgentIdentificationType'
+        Identification:
+          description: Unique and unambiguous identification of the financial institution.
+          type: string
+          maxLength: 35
+          minLength: 1
+        Name:
+          description: Name by which an agent is known and which is usually used to identify that agent.
+          type:
+          - string
+          - 'null'
+          maxLength: 350
+          minLength: 1
+        PostalAddress:
+          description: Information that locates and identifies a specific address, as defined by postal services.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OpenBankingPostalAddress'
+      required:
+      - IdentificationType
+      - Identification
+    OBCreditorAgentIdentificationType:
+      description: Name of the identification scheme for the creditor or debtor agent.
+      type: string
+      enum:
+      - KSAOB.BICFI
+      - KSAOB.OTHER
+    OBAddressTypeCode:
+      description: Postal address type specifying the nature of the postal address.
+      type: string
+      enum:
+      - KSAOB.Business
+      - KSAOB.Correspondence
+      - KSAOB.DeliveryTo
+      - KSAOB.MailTo
+      - KSAOB.POBox
+      - KSAOB.Postal
+      - KSAOB.Residential
+      - KSAOB.Statement
+    OBStatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        GranularStatusCode:
+          description: Granular status code providing additional information on the request status.
+          type:
+          - string
+          - 'null'
+        StatusAdditionalInfo:
+          description: Additional human-readable information about the status.
+          type:
+          - string
+          - 'null'
+    OBAmount:
+      description: Active or historic currency and amount.
+      type: object
+      properties:
+        Amount:
+          description: A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.
+          type: string
+          pattern: ^\d{1,13}$|^\d{1,13}\.\d{1,5}$
+        Currency:
+          description: ISO 4217 currency code in which the amount is expressed.
+          type: string
+          examples:
+          - SAR
+          pattern: ^[A-Z]{3,3}$
+      required:
+      - Amount
+      - Currency
+    OBScheduledPaymentsData:
+      description: Container for the list of Open Banking account scheduled payments.
+      type: object
+      properties:
+        CustomerId:
+          description: Lean provided customer ID
+          type:
+          - string
+          - 'null'
+          format: uuid
+        ScheduledPayment:
+          description: List of scheduled payments for the account.
+          type: array
+          items:
+            $ref: '#/components/schemas/OBScheduledPayment'
+      required:
+      - ScheduledPayment
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

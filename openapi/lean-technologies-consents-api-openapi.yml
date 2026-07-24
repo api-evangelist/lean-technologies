@@ -1,0 +1,544 @@
+openapi: 3.1.0
+info:
+  title: Account On File Account Controls (New) Account Controls (New) Consents API
+  version: v0.2.3
+  description: The Consents API provides endpoints for retrieving consents and their associated data.
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Consents
+  description: The Consents API provides endpoints for retrieving consents and their associated data.
+  x-displayName: Consents
+paths:
+  /consents/v1/{consent_id}:
+    parameters:
+    - name: consent_id
+      in: path
+      description: The unique identifier for the consent. Provided as a UUID.
+      required: true
+      schema:
+        type: string
+        format: uuid
+        examples:
+        - 123e4567-e89b-12d3-a456-426655440000
+    get:
+      operationId: fetchConsent
+      summary: Retrieve consent details
+      description: Retrieves a payment consent and its consumption data. Consumption data is returned only for authorized consents.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetPaymentConsentResponse'
+              example:
+                consent_id: 123e4567-e89b-12d3-a456-426655440000
+                bank_identifier: ADCB_UAE
+                application_id: app_7f8d9e0a1b2c3d4e
+                start_date_time: '2025-03-09T10:00:00Z'
+                expiration_date_time: '2026-03-09T10:00:00Z'
+                customer_id: c9876543-21fe-dcba-9876-543210fedcba
+                status: AWAITING_AUTHORISATION
+                destination_account_id: c9876543-21fe-dcba-9876-543210fedcb1
+                sender_account_id: a1234567-89ab-cdef-0123-456789abcdef
+                reference: MONTHLY-SUBSCRIPTION-2025
+                consented_account:
+                  iban: AE070331234567890123456
+                  holder_name: John Doe
+                currency: AED
+                payment_purpose:
+                  code: FIS
+                  description: Financial services
+                control_parameters:
+                  type: VariableOnDemand
+                  period_type: Week
+                  maximum_individual_amount: 1000
+                  periodic_limits:
+                  - period_type: MONTH
+                    period_alignment: CONSENT
+                    maximum_amount: 5000
+                    maximum_number_of_payments: 10
+                payment_consumption:
+                  cumulative_number_of_payments: 3
+                  cumulative_value_of_payments: 2500
+                  cumulative_number_of_payments_in_current_period: 2
+                  cumulative_value_of_payments_in_current_period: 1800
+                immediate_payment:
+                  amount: 130.52
+                  reference: ACME-ACCOUNT-LINK-2025-001
+                  creditor_reference: INV-2025-004321
+      security:
+      - OAuth2:
+        - api
+      tags:
+      - Consents
+  /consents/v1/{consent_id}/balance:
+    parameters:
+    - name: consent_id
+      in: path
+      description: Unique identifier of the authorized consent.
+      required: true
+      schema:
+        type: string
+        format: uuid
+        examples:
+        - 123e4567-e89b-12d3-a456-426655440000
+    get:
+      operationId: fetchConsentBalance
+      summary: Retrieve balance of consent-linked account
+      description: Retrieves the balance of the account associated with the specified authorized consent.
+      responses:
+        '200':
+          description: OK - Account balance retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentBalanceResponse'
+              example:
+                currency: AED
+                balance: 2500
+        '409':
+          description: The specified consent is not authorized.
+      security:
+      - OAuth2:
+        - api
+      tags:
+      - Consents
+  /consents/v1:
+    get:
+      operationId: fetchConsents
+      summary: List customers consents
+      description: Retrieves a paginated list of payment consents for the specified customer.
+      parameters:
+      - name: customer_id
+        in: query
+        required: true
+        schema:
+          type: string
+          format: uuid
+          examples:
+          - 123e4567-e89b-12d3-a456-426655440000
+      - name: status
+        in: query
+        required: false
+        schema:
+          description: Optional list of consent statuses to filter by
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentStatus'
+          examples:
+          - - AUTHORISED
+      - $ref: '#/components/parameters/PageNumberParameter'
+      - $ref: '#/components/parameters/PageSizeParameter'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListPaymentConsentsResponse'
+      security:
+      - OAuth2:
+        - api
+      tags:
+      - Consents
+  /consents/v1/{consent_id}/revocation:
+    parameters:
+    - name: consent_id
+      in: path
+      description: The unique identifier of the consent to revoke. Provided as a UUID.
+      required: true
+      schema:
+        type: string
+        format: uuid
+        examples:
+        - 123e4567-e89b-12d3-a456-426655440000
+    post:
+      operationId: revokeConsent
+      summary: Revoke a consent
+      description: Revokes an authorised payment consent. The consent must be in `AUTHORISED` state.
+      requestBody:
+        $ref: '#/components/requestBodies/RevokeConsent'
+      responses:
+        '200':
+          description: Consent revoked successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+              example: {}
+        '400':
+          description: The consent is not in an `AUTHORISED` state and cannot be revoked.
+      security:
+      - OAuth2:
+        - api
+      tags:
+      - Consents
+components:
+  schemas:
+    ConsentBalanceResponse:
+      type: object
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        balance:
+          description: The current balance of the account associated with the specified consent.
+          type: number
+          format: decimal
+          examples:
+          - 2500
+      required:
+      - currency
+      - balance
+    PeriodType:
+      description: "Defines the time period used for applying limits on a long‑lived consent. \nThis value determines how consumption limits (e.g., maximum amounts or number of payments) are calculated within each period.\n\n**Supported values:**\n- `Day` – A single calendar day (00:00 to 23:59).\n- `Week` – Seven consecutive days.\n- `Month` – A full calendar month (from the 1st to the last day).\n- `Year` – A full calendar year (12 consecutive months)."
+      type: string
+      enum:
+      - Day
+      - Week
+      - Month
+      - Year
+      title: PeriodType
+    ConsentedAccount:
+      type: object
+      properties:
+        iban:
+          description: Consented account IBAN number.
+          type: string
+        holder_name:
+          description: Consented account holder name.
+          type: string
+    Reference:
+      description: A reason or reference in relation to a payment. Maximum 64 chars
+      type: string
+      examples:
+      - 'Invoice #12345'
+      maxLength: 64
+      title: Reference
+    Currency:
+      description: The ISO 3 letter currency code
+      type: string
+      examples:
+      - AED
+      pattern: ^[A-Z]{3}$
+    PaymentPurpose:
+      description: Indicates the reason for the payment using a standardized code and human-readable description.
+      type: object
+      properties:
+        code:
+          $ref: '#/components/schemas/PaymentPurposeCode'
+        description:
+          description: A human-readable description of payment purpose
+          type: string
+      required:
+      - code
+      - description
+      title: PaymentPurpose
+    ConsentStatus:
+      description: Current status of this consent.
+      type: string
+      enum:
+      - AWAITING_AUTHORISATION
+      - AUTHORISED
+      - REVOKED
+      - REJECTED
+      - EXPIRED
+      - CONSUMED
+      - SUSPENDED
+    PaymentPurposeCode:
+      description: "A category code that relates to the type of services or goods that corresponds to the underlying purpose of the payment.  \nThe code must conform to the payment purpose code list.  \n**Supported values:**  \n- `FIS` – Financial services\n- `TCS` – Telecommunication services\n- `MWP` – Mobile wallet card payments\n- `OAT` – Own account transfer\n- `IFS` – Information services\n- `RNT` – Rent payments\n- `LNC` – Loan charges\n- `PIN` – Personal investments\n- `GDS` – Goods bought or sold"
+      type: string
+      enum:
+      - FIS
+      - TCS
+      - MWP
+      - OAT
+      - IFS
+      - RNT
+      - LNC
+      - PIN
+      - GDS
+      title: PaymentPurposeCode
+    ConsentRevocationReason:
+      description: "The reason the consent is being revoked. Must be one of the predefined values:\n  - `END_USER_REQUESTED`: The end user has requested revocation of their consent through the Lean-provided consent management interface or via the client's customer support.\n  - `CONSENT_RENEWAL`: The consent is being revoked as part of a renewal flow, where a replacement consent has been authorized to supersede it.\n  - `KYC_VERIFICATION_FAILED`: The client's KYC or identity verification checks on the end user have failed or could not be completed.\n  - `REGULATORY_RESTRICTION`: A regulatory, compliance, or jurisdictional obligation requires the client to revoke the consent.\n  - `FRAUD_SUSPECTED`: Suspicious or potentially fraudulent activity has been detected on the end user's account or transactions.\n  - `CLIENT_TERMINATED_RELATIONSHIP`: The client has ended their commercial relationship with the end user.\n  - `ACCOUNT_CLOSED_BY_USER`: The end user has permanently closed their account with the client.\n  - `DUPLICATE_CONSENT`: A duplicate or superseding consent exists for the same end user and payment source, and this consent is being retired."
+      type: string
+      enum:
+      - END_USER_REQUESTED
+      - CONSENT_RENEWAL
+      - KYC_VERIFICATION_FAILED
+      - REGULATORY_RESTRICTION
+      - FRAUD_SUSPECTED
+      - CLIENT_TERMINATED_RELATIONSHIP
+      - ACCOUNT_CLOSED_BY_USER
+      - DUPLICATE_CONSENT
+    GetPaymentConsentResponse:
+      type: object
+      properties:
+        consent_id:
+          description: The unique identifier for the consent. Provided as a UUID.
+          type: string
+          format: uuid
+        bank_identifier:
+          description: The identifier of the bank used to authorize this consent. Returns null if the consent has not been authorized.
+          type:
+          - string
+          - 'null'
+        application_id:
+          description: The application associated with the consent
+          type: string
+        start_date_time:
+          description: Date and time from when the consent will be active
+          type: string
+          format: date-time
+        expiration_date_time:
+          description: Date and time of the expiration of this consent
+          type: string
+          format: date-time
+        customer_id:
+          description: Identifies which Customer owns the consent
+          type: string
+          format: uuid
+        status:
+          $ref: '#/components/schemas/ConsentStatus'
+        destination_account_id:
+          description: Account id that this consent allows payments to
+          type: string
+          format: uuid
+        sender_account_id:
+          description: Account id from which payments are made under this consent. Returns null if the consent has not been authorized.
+          type:
+          - string
+          - 'null'
+          format: uuid
+        reference:
+          description: A reason or reference in relation to a payment. Passed as a part of OF `creditor_reference`. This value will be used as default reference for payments made with this consent.
+          type: string
+        consented_account:
+          $ref: '#/components/schemas/ConsentedAccount'
+        currency:
+          $ref: '#/components/schemas/Currency'
+        payment_purpose:
+          $ref: '#/components/schemas/PaymentPurpose'
+        control_parameters:
+          $ref: '#/components/schemas/ControlParameters'
+        payment_consumption:
+          description: Current state of consent consumption (if available)
+          type:
+          - object
+          - 'null'
+          properties:
+            cumulative_number_of_payments:
+              description: The cumulative number of payment instructions initiated under the consent schedule, excluding instructions in a Rejected state.
+              type: integer
+              format: int64
+              examples:
+              - 10
+            cumulative_value_of_payments:
+              description: The cumulative value of payment instructions initiated under the consent schedule, excluding instructions in a Rejected state."
+              type: number
+              format: double
+              examples:
+              - 10000.05
+            cumulative_number_of_payments_in_current_period:
+              description: The cumulative number of payment instructions in the current period initiated under the consent schedule, excluding instructions in a Rejected state.
+              type: integer
+              format: int64
+              examples:
+              - 5
+            cumulative_value_of_payments_in_current_period:
+              description: The cumulative value of payment instructions in the current period initiated under the consent schedule, excluding instructions in a Rejected state.
+              type: number
+              format: double
+              examples:
+              - 5000.05
+        immediate_payment:
+          $ref: '#/components/schemas/ImmediatePayment'
+      required:
+      - consent_id
+      - application_id
+      - start_date_time
+      - expiration_date_time
+      - customer_id
+      - status
+      - destination_account_id
+      - reference
+      - currency
+      - payment_purpose
+      - control_parameters
+    PageMetadata:
+      description: Metadata about the current page of results
+      type: object
+      properties:
+        number:
+          description: The current page being returned by the API
+          type: integer
+          format: int32
+        size:
+          description: The page size requested
+          type: integer
+          format: int32
+        total_elements:
+          description: The total number of elements in all pages
+          type: integer
+          format: int64
+        total_pages:
+          description: The total number of pages retrievable
+          type: integer
+          format: int32
+        sort:
+          description: Sort parameters applied to the results
+          type: array
+          items:
+            type: string
+      required:
+      - number
+      - size
+      - total_elements
+      - total_pages
+    ImmediatePayment:
+      description: 'Details of a payment that will be executed immediately after the user successfully authorizes the consent. If present, the payment is initiated automatically as part of the consent authorization flow.
+
+        '
+      type:
+      - object
+      - 'null'
+      properties:
+        amount:
+          description: The amount to be paid immediately upon consent authorization
+          type:
+          - number
+          format: decimal
+          examples:
+          - 123.45
+          minimum: 0.01
+        reference:
+          $ref: '#/components/schemas/Reference'
+        creditor_reference:
+          description: Clients identifier that can be used in their ERP systems
+          type:
+          - string
+          - 'null'
+      required:
+      - amount
+    AccountOnFileControlParameters:
+      description: 'Defines the control parameters for a Account On File (AoF) consent.
+
+        These parameters specify the applicable limits for individual payments, cumulative amounts, and the number of payments allowed within a defined period or across the consent''s lifetime.
+
+        At least one of `max_individual_amount`, `max_cumulative_amount`, or `max_cumulative_number_of_payments` must be provided.'
+      type: object
+      properties:
+        type:
+          description: Discriminator type identifying the control parameters variant
+          type: string
+        period_type:
+          $ref: '#/components/schemas/PeriodType'
+        max_individual_amount:
+          description: Maximum amount allowed for a single payment
+          type: number
+          minimum: 0.01
+        max_cumulative_amount:
+          description: Maximum cumulative amount allowed across all payments
+          type: number
+          minimum: 0.01
+        max_cumulative_number_of_payments:
+          description: Maximum number of payments allowed in total
+          type: integer
+          minimum: 1
+        max_cumulative_amount_per_period:
+          description: Maximum cumulative amount allowed per period
+          type: number
+          minimum: 0.01
+        max_cumulative_number_of_payments_per_period:
+          description: Maximum number of payments allowed per period
+          type: integer
+          minimum: 1
+      required:
+      - type
+      - period_type
+      title: AccountOnFileControlParameters
+      x-class-extra-annotation: '@me.leantech.api.validation.AtLeastOneControlParameter @me.leantech.api.validation.WithinMaxIndividualAmountLimit'
+    ListPaymentConsentsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetPaymentConsentResponse'
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+      required:
+      - data
+      - page
+    ControlParameters:
+      type: object
+      discriminator:
+        propertyName: type
+        mapping:
+          VariableOnDemand: '#/components/schemas/AccountOnFileControlParameters'
+      oneOf:
+      - $ref: '#/components/schemas/AccountOnFileControlParameters'
+  parameters:
+    PageNumberParameter:
+      name: page_number
+      in: query
+      description: Indicator of which page of results to return, starts at 0
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+    PageSizeParameter:
+      name: page_size
+      description: Size of a single page of results to return
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 100
+        maximum: 100
+        minimum: 1
+  requestBodies:
+    RevokeConsent:
+      description: Revocation reason supplied with the request.
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              reason:
+                $ref: '#/components/schemas/ConsentRevocationReason'
+              additional_context:
+                description: Optional free-text context describing the circumstances of the revocation.
+                type:
+                - string
+                - 'null'
+                examples:
+                - End user reported losing access to the linked account.
+                maxLength: 500
+            required:
+            - reason
+            x-toBuilder: true
+          examples:
+            minimal:
+              summary: Minimal Request
+              description: Revoke a consent providing only the required reason.
+              value:
+                reason: END_USER_REQUESTED
+            withContext:
+              summary: Request with additional context
+              description: Revoke a consent providing both a reason and free-text context.
+              value:
+                reason: FRAUD_SUSPECTED
+                additional_context: Customer raised a fraud report on 2025-05-19.
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

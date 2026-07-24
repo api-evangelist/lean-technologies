@@ -1,0 +1,1264 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Enrichment API
+  version: v0.2.3
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Enrichment
+paths:
+  /insights/v2/income:
+    post:
+      summary: Get Income
+      deprecated: false
+      description: Provides insights on the salary and non-salary income received in the bank account.
+      operationId: getIncome
+      tags:
+      - Enrichment
+      parameters:
+      - name: async
+        in: query
+        description: When true the API will only return a results_id which can be fetched from the /results endpoint when ready.
+        required: false
+        schema:
+          type: boolean
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                estimated_monthly_income:
+                  type: number
+                  description: 'Monthly income for the user that you have gathered from another source (e.g.: reported by the user).'
+                start_date:
+                  type: string
+                  description: The start date in UTC (in the format YYYY-MM-DD) you want to query transactions for. If not provided, we will default to 6 months before now.
+                  format: date
+                entity_id:
+                  type: string
+                  description: The `entity_id` you are querying for. The entity needs to have permissions for `accounts` and `transactions`.
+                  format: uuid
+                income_type:
+                  type: string
+                  enum:
+                  - ALL
+                  - SALARY
+                  - NON-SALARY
+                  description: If you want to get salary or non-salary income or both. If you do not provide any value, it will default to ALL.
+              required:
+              - estimated_monthly_income
+              - start_date
+              - entity_id
+              - income_type
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - OK
+                    - PENDING
+                    - FAILED
+                    - CONSENT_EXPIRED
+                  message:
+                    type: string
+                  timestamp:
+                    type: string
+                  insights:
+                    type: object
+                    properties:
+                      salary:
+                        properties:
+                          currency:
+                            type: string
+                            description: The 3 Letter ISO code denominating the currency that the salary is provided in. This will be local currency.
+                          total:
+                            type: object
+                            properties:
+                              count:
+                                type: integer
+                                description: Number of salary payments since start_date.
+                              amount:
+                                type: number
+                                description: Total salary since start_date.
+                              first_date_time:
+                                type: string
+                                description: UTC datetime of first salary payment since start_date.
+                                format: date-time
+                              last_date_time:
+                                type: string
+                                description: UTC datetime of last salary payment.
+                                format: date-time
+                              average_monthly_count:
+                                type: number
+                                description: Average number of salary payments per month since start_date.
+                              average_monthly_amount:
+                                type: number
+                                description: Average salary amount received per month since start_date.
+                              minimum_monthly_amount:
+                                type: object
+                                properties:
+                                  month:
+                                    type: integer
+                                    description: 'Number of month within the year (e.g.: January is represented as 1 and December is represented as 12)'
+                                  year:
+                                    type: integer
+                                  amount:
+                                    type: number
+                                    description: Total salary for the month
+                                description: Minimum salary amount received in a month since start_date and month when this happened.
+                                required:
+                                - month
+                                - year
+                                - amount
+                              maximum_monthly_amount:
+                                type: object
+                                properties:
+                                  month:
+                                    type: integer
+                                  year:
+                                    type: integer
+                                  amount:
+                                    type: number
+                                    description: Total salary for the month
+                                description: Maximum salary amount received in a month since start_date and month when this happened.
+                                required:
+                                - month
+                                - year
+                                - amount
+                            description: Insights on the salaries received since `start_date`
+                            required:
+                            - count
+                            - amount
+                            - first_date_time
+                            - last_date_time
+                            - average_monthly_count
+                            - average_monthly_amount
+                            - minimum_monthly_amount
+                            - maximum_monthly_amount
+                          monthly_totals:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                month:
+                                  type: integer
+                                  description: 'Number of month within the year (e.g.: January is represented as 1 and December is represented as 12)'
+                                year:
+                                  type: integer
+                                amount:
+                                  type: number
+                                  description: Total salary for the month.
+                                count:
+                                  type: integer
+                                  description: Number of salary transaction detected within the month.
+                                is_month_complete:
+                                  type: boolean
+                                  description: Determines if Lean retrieved the data for all days for the month. This will always be `true`, except for the first and last month retrieved.
+                              required:
+                              - month
+                              - year
+                              - amount
+                              - count
+                              - is_month_complete
+                          transactions:
+                            type: string
+                        required:
+                        - currency
+                        - total
+                        - monthly_totals
+                        - transactions
+                        $ref: '#/components/schemas/IncomeResponse'
+                      non_salary:
+                        properties:
+                          currency:
+                            type: string
+                            description: The 3 Letter ISO code denominating the currency that the salary is provided in. This will be local currency.
+                          total:
+                            type: object
+                            properties:
+                              count:
+                                type: integer
+                                description: Number of salary payments since start_date.
+                              amount:
+                                type: number
+                                description: Total salary since start_date.
+                              first_date_time:
+                                type: string
+                                description: UTC datetime of first salary payment since start_date.
+                                format: date-time
+                              last_date_time:
+                                type: string
+                                description: UTC datetime of last salary payment.
+                                format: date-time
+                              average_monthly_count:
+                                type: number
+                                description: Average number of salary payments per month since start_date.
+                              average_monthly_amount:
+                                type: number
+                                description: Average salary amount received per month since start_date.
+                              minimum_monthly_amount:
+                                type: object
+                                properties:
+                                  month:
+                                    type: integer
+                                    description: 'Number of month within the year (e.g.: January is represented as 1 and December is represented as 12)'
+                                  year:
+                                    type: integer
+                                  amount:
+                                    type: number
+                                    description: Total salary for the month
+                                description: Minimum salary amount received in a month since start_date and month when this happened.
+                                required:
+                                - month
+                                - year
+                                - amount
+                              maximum_monthly_amount:
+                                type: object
+                                properties:
+                                  month:
+                                    type: integer
+                                  year:
+                                    type: integer
+                                  amount:
+                                    type: number
+                                    description: Total salary for the month
+                                description: Maximum salary amount received in a month since start_date and month when this happened.
+                                required:
+                                - month
+                                - year
+                                - amount
+                            description: Insights on the salaries received since `start_date`
+                            required:
+                            - count
+                            - amount
+                            - first_date_time
+                            - last_date_time
+                            - average_monthly_count
+                            - average_monthly_amount
+                            - minimum_monthly_amount
+                            - maximum_monthly_amount
+                          monthly_totals:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                month:
+                                  type: integer
+                                  description: 'Number of month within the year (e.g.: January is represented as 1 and December is represented as 12)'
+                                year:
+                                  type: integer
+                                amount:
+                                  type: number
+                                  description: Total salary for the month.
+                                count:
+                                  type: integer
+                                  description: Number of salary transaction detected within the month.
+                                is_month_complete:
+                                  type: boolean
+                                  description: Determines if Lean retrieved the data for all days for the month. This will always be `true`, except for the first and last month retrieved.
+                              required:
+                              - month
+                              - year
+                              - amount
+                              - count
+                              - is_month_complete
+                          transactions:
+                            type: string
+                        required:
+                        - currency
+                        - total
+                        - monthly_totals
+                        - transactions
+                        $ref: '#/components/schemas/IncomeResponse'
+                    required:
+                    - salary
+                    - non_salary
+                required:
+                - status
+                - message
+                - timestamp
+                - insights
+              example:
+                status: OK
+                message: Data successfully retrieved
+                timestamp: '2023-10-20T07:59:14.304154468Z'
+                insights:
+                  salary:
+                    currency: AED
+                    total:
+                      amount: 18000
+                      count: 1
+                      last_date_time: '2023-08-25T11:18:25Z'
+                      first_date_time: '2023-08-25T11:18:25Z'
+                      average_monthly_amount: 18000
+                      average_monthly_count: 1
+                      maximum_monthly_amount:
+                        month: 8
+                        year: 2023
+                        amount: 18000
+                      minimum_monthly_amount:
+                        month: 8
+                        year: 2023
+                        amount: 18000
+                    monthly_totals:
+                    - month: 10
+                      year: 2023
+                      amount: 0
+                      count: 0
+                      is_month_complete: false
+                    - month: 9
+                      year: 2023
+                      amount: 0
+                      count: 0
+                      is_month_complete: true
+                    - month: 8
+                      year: 2023
+                      amount: 18000
+                      count: 1
+                      is_month_complete: false
+                    transactions:
+                    - account_id: 571e3eec-35f3-4158-b54d-015a5c08474e
+                      transaction_id: 11747f8c-b6c9-47ca-afad-a651a2c912c9
+                      transaction_information: 'incoming inward TT REF: HFT2323772535 /REF/AUGSAL'
+                      booking_date_time: '2023-08-25T11:18:25Z'
+                      amount: 18000
+          headers: {}
+      security:
+      - bearer: []
+  /insights/v2/expenses:
+    get:
+      summary: Get Expenses
+      deprecated: false
+      description: Provides insights on the expenses from a bank account (only supported for retail bank accounts).
+      operationId: getExpenses
+      tags:
+      - Enrichment
+      parameters:
+      - name: async
+        in: query
+        description: When true the API will only return a results_id which can be fetched from the /results endpoint when ready.
+        required: false
+        example: 'false'
+        schema:
+          type: boolean
+      - name: start_date
+        in: query
+        description: The start date in UTC (in the format YYYY-MM-DD) you want to query expenses for.
+        required: false
+        example: '2023-05-01'
+        schema:
+          type: string
+          format: date
+      - name: entity_id
+        in: query
+        description: The entity_id you're querying for.
+        required: false
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - OK
+                    - PENDING
+                    - FAILED
+                    - CONSENT_EXPIRED
+                  message:
+                    type: string
+                  timestamp:
+                    type: string
+                  insights:
+                    type: object
+                    properties:
+                      currency:
+                        type: string
+                        description: The 3 Letter ISO code denominating the currency that the salary is provided in.
+                      total:
+                        type: object
+                        properties:
+                          amount:
+                            type: number
+                            description: Total expenses since start_date.
+                          count:
+                            type: integer
+                            description: Number of expenses transactions since start_date.
+                          last_date_time:
+                            type: string
+                            description: UTC datetime of last expense transaction.
+                          first_date_time:
+                            type: string
+                            description: UTC datetime of first expense transaction since start_date.
+                          average_monthly_amount:
+                            type: number
+                            description: Average expenses amount per month since start_date.
+                          average_monthly_count:
+                            type: number
+                            description: Average number of expenses transactions per month since start_date.
+                          maximum_monthly_amount:
+                            type: object
+                            properties:
+                              month:
+                                type: integer
+                              year:
+                                type: integer
+                              amount:
+                                type: number
+                            required:
+                            - month
+                            - year
+                            - amount
+                            description: Maximum expenses amount in a month since start_date and month when this happened.
+                          minimum_monthly_amount:
+                            type: object
+                            properties:
+                              month:
+                                type: integer
+                              year:
+                                type: integer
+                              amount:
+                                type: number
+                            required:
+                            - month
+                            - year
+                            - amount
+                            description: Minimum expenses amount in a month since start_date and month when this happened.
+                          breakdown:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                by:
+                                  type: string
+                                  description: Criteria by which we are breakdowning down the expenses.
+                                  enum:
+                                  - category
+                                breakdowns:
+                                  type: array
+                                  items:
+                                    type: object
+                                    properties:
+                                      category:
+                                        type: string
+                                        description: The category of the expenses.
+                                        enum:
+                                        - BANK_FEES_AND_CHARGES
+                                        - CHARITY
+                                        - EDUCATION
+                                        - ENTERTAINMENT
+                                        - GOVERNMENT
+                                        - GROCERIES
+                                        - HEALTH_AND_WELLBEING
+                                        - LOANS_AND_INVESTMENTS
+                                        - RENT_AND_SERVICES
+                                        - RESTAURANTS_DINING
+                                        - RETAIL
+                                        - TRANSFER
+                                        - TRANSPORT
+                                        - TRAVEL
+                                        - OTHER
+                                      amount:
+                                        type:
+                                        - number
+                                        - integer
+                                        description: Total expenses for the month.
+                                      count:
+                                        type: integer
+                                        description: Number of expenses transactions for the month.
+                                      fraction_of_total_expenses:
+                                        type: number
+                                        description: Fraction of the total expenses that this category represents for the month.
+                                      average_days_between_transactions:
+                                        type: number
+                                      last_date_time:
+                                        type: string
+                                      first_date_time:
+                                        type: string
+                                      average_monthly_amount:
+                                        type: number
+                                      average_monthly_count:
+                                        type:
+                                        - integer
+                                        - number
+                                      maximum_monthly_amount:
+                                        type: object
+                                        properties:
+                                          month:
+                                            type: integer
+                                          year:
+                                            type: integer
+                                          amount:
+                                            type:
+                                            - number
+                                            - integer
+                                        required:
+                                        - month
+                                        - year
+                                        - amount
+                                      minimum_monthly_amount:
+                                        type: object
+                                        properties:
+                                          month:
+                                            type: integer
+                                          year:
+                                            type: integer
+                                          amount:
+                                            type:
+                                            - number
+                                            - integer
+                                        required:
+                                        - month
+                                        - year
+                                        - amount
+                                    required:
+                                    - category
+                                    - amount
+                                    - count
+                                    - fraction_of_total_expenses
+                                    - average_days_between_transactions
+                                    - last_date_time
+                                    - first_date_time
+                                    - average_monthly_amount
+                                    - average_monthly_count
+                                    - maximum_monthly_amount
+                                    - minimum_monthly_amount
+                                  description: Breakdown of the expenses by category.
+                            description: Breakdown of expenses by category.
+                        required:
+                        - amount
+                        - count
+                        - last_date_time
+                        - first_date_time
+                        - average_monthly_amount
+                        - average_monthly_count
+                        - maximum_monthly_amount
+                        - minimum_monthly_amount
+                        - breakdown
+                        description: Insights on the expenses since start_date.
+                      monthly_totals:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            month:
+                              type: integer
+                            year:
+                              type: integer
+                            amount:
+                              type:
+                              - number
+                              - integer
+                            count:
+                              type: integer
+                            is_month_complete:
+                              type: boolean
+                            breakdown:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  by:
+                                    type: string
+                                  breakdowns:
+                                    type: array
+                                    items:
+                                      type: object
+                                      properties:
+                                        category:
+                                          type: string
+                                        amount:
+                                          type:
+                                          - number
+                                          - integer
+                                        count:
+                                          type: integer
+                                        fraction_of_total_expenses:
+                                          type:
+                                          - number
+                                          - integer
+                                      required:
+                                      - category
+                                      - amount
+                                      - count
+                                      - fraction_of_total_expenses
+                                required:
+                                - by
+                                - breakdowns
+                          required:
+                          - month
+                          - year
+                          - amount
+                          - count
+                          - is_month_complete
+                          - breakdown
+                    required:
+                    - currency
+                    - total
+                    - monthly_totals
+                required:
+                - status
+                - message
+                - timestamp
+                - insights
+              example:
+                status: OK
+                message: The request completed successfully.
+                timestamp: '2023-10-20T08:40:40.392167892Z'
+                meta: {}
+                insights:
+                  currency: AED
+                  total:
+                    amount: 327110.87
+                    count: 423
+                    last_date_time: '2023-10-18T16:26:26Z'
+                    first_date_time: '2023-05-01T17:22:17Z'
+                    average_monthly_amount: 54518.48
+                    average_monthly_count: 70.5
+                    maximum_monthly_amount:
+                      month: 6
+                      year: 2023
+                      amount: 124948.66
+                    minimum_monthly_amount:
+                      month: 7
+                      year: 2023
+                      amount: 3418.33
+                    breakdown:
+                    - by: category
+                      breakdowns:
+                      - category: OTHER
+                        amount: 64427.96
+                        count: 72
+                        fraction_of_total_expenses: 0.2
+                        average_days_between_transactions: 2.3661921296296295
+                        last_date_time: '2023-10-18T04:02:29Z'
+                        first_date_time: '2023-05-03T04:02:46Z'
+                        average_monthly_amount: 10737.99
+                        average_monthly_count: 12
+                        maximum_monthly_amount:
+                          month: 9
+                          year: 2023
+                          amount: 21265.28
+                        minimum_monthly_amount:
+                          month: 7
+                          year: 2023
+                          amount: 164.4
+                      - category: RESTAURANTS_DINING
+                        amount: 7964.15
+                        count: 49
+                        fraction_of_total_expenses: 0.02
+                        average_days_between_transactions: 3.4500462962962963
+                        last_date_time: '2023-10-14T07:50:12Z'
+                        first_date_time: '2023-05-01T17:22:17Z'
+                        average_monthly_amount: 1327.36
+                        average_monthly_count: 8.166666666666666
+                        maximum_monthly_amount:
+                          month: 5
+                          year: 2023
+                          amount: 2566.6
+                        minimum_monthly_amount:
+                          month: 10
+                          year: 2023
+                          amount: 222.81
+                      - category: TRANSPORT
+                        amount: 8288.46
+                        count: 141
+                        fraction_of_total_expenses: 0.03
+                        average_days_between_transactions: 1.2027893518518518
+                        last_date_time: '2023-10-18T04:14:01Z'
+                        first_date_time: '2023-05-02T18:50:50Z'
+                        average_monthly_amount: 1381.41
+                        average_monthly_count: 23.5
+                        maximum_monthly_amount:
+                          month: 5
+                          year: 2023
+                          amount: 2339.08
+                        minimum_monthly_amount:
+                          month: 7
+                          year: 2023
+                          amount: 181.5
+                      - category: LOAN
+                        amount: 90800
+                        count: 5
+                        fraction_of_total_expenses: 0.28
+                        average_days_between_transactions: 30.997974537037038
+                        last_date_time: '2023-09-25T00:09:44Z'
+                        first_date_time: '2023-05-24T00:21:23Z'
+                        average_monthly_amount: 15133.33
+                        average_monthly_count: 0.8333333333333334
+                        maximum_monthly_amount:
+                          month: 9
+                          year: 2023
+                          amount: 36320
+                        minimum_monthly_amount:
+                          month: 10
+                          year: 2023
+                          amount: 0
+                      - category: TRAVEL
+                        amount: 28186.18
+                        count: 16
+                        fraction_of_total_expenses: 0.09
+                        average_days_between_transactions: 9.801122685185184
+                        last_date_time: '2023-10-13T20:00:00Z'
+                        first_date_time: '2023-05-19T19:35:42Z'
+                        average_monthly_amount: 4697.7
+                        average_monthly_count: 2.6666666666666665
+                        maximum_monthly_amount:
+                          month: 6
+                          year: 2023
+                          amount: 16326.97
+                        minimum_monthly_amount:
+                          month: 7
+                          year: 2023
+                          amount: 262
+                      - category: ENTERTAINMENT
+                        amount: 619.71
+                        count: 17
+                        fraction_of_total_expenses: 0
+                        average_days_between_transactions: 10.16125
+                        last_date_time: '2023-10-14T23:31:26Z'
+                        first_date_time: '2023-05-05T09:36:13Z'
+                        average_monthly_amount: 103.29
+                        average_monthly_count: 2.8333333333333335
+                        maximum_monthly_amount:
+                          month: 9
+                          year: 2023
+                          amount: 379.33
+                        minimum_monthly_amount:
+                          month: 8
+                          year: 2023
+                          amount: 24.47
+                      - category: RETAIL
+                        amount: 5618.82
+                        count: 31
+                        fraction_of_total_expenses: 0.02
+                        average_days_between_transactions: 5.2353125
+                        last_date_time: '2023-10-18T16:26:26Z'
+                        first_date_time: '2023-05-14T15:00:36Z'
+                        average_monthly_amount: 936.47
+                        average_monthly_count: 5.166666666666667
+                        maximum_monthly_amount:
+                          month: 9
+                          year: 2023
+                          amount: 1842.49
+                        minimum_monthly_amount:
+                          month: 5
+                          year: 2023
+                          amount: 488.11
+                      - category: GROCERIES
+                        amount: 341.72
+                        count: 6
+                        fraction_of_total_expenses: 0
+                        average_days_between_transactions: 25.472175925925924
+                        last_date_time: '2023-10-08T18:40:19Z'
+                        first_date_time: '2023-06-03T10:00:36Z'
+                        average_monthly_amount: 56.95
+                        average_monthly_count: 1
+                        maximum_monthly_amount:
+                          month: 6
+                          year: 2023
+                          amount: 166.27
+                        minimum_monthly_amount:
+                          month: 5
+                          year: 2023
+                          amount: 0
+                      - category: TRANSFER
+                        amount: 95394.84
+                        count: 52
+                        fraction_of_total_expenses: 0.29
+                        average_days_between_transactions: 3.2032175925925928
+                        last_date_time: '2023-10-12T12:49:26.941Z'
+                        first_date_time: '2023-05-02T04:04:28Z'
+                        average_monthly_amount: 15899.14
+                        average_monthly_count: 8.666666666666666
+                        maximum_monthly_amount:
+                          month: 6
+                          year: 2023
+                          amount: 67480.75
+                        minimum_monthly_amount:
+                          month: 7
+                          year: 2023
+                          amount: 66.05
+                      - category: HEALTH_AND_WELLBEING
+                        amount: 3434
+                        count: 2
+                        fraction_of_total_expenses: 0.01
+                        average_days_between_transactions: 61.95715277777778
+                        last_date_time: '2023-08-17T05:24:22Z'
+                        first_date_time: '2023-06-16T06:26:04Z'
+                        average_monthly_amount: 572.33
+                        average_monthly_count: 0.3333333333333333
+                        maximum_monthly_amount:
+                          month: 8
+                          year: 2023
+                          amount: 3299
+                        minimum_monthly_amount:
+                          month: 5
+                          year: 2023
+                          amount: 0
+                      - category: RENT_AND_SERVICES
+                        amount: 22035.03
+                        count: 32
+                        fraction_of_total_expenses: 0.07
+                        average_days_between_transactions: 5.245995370370371
+                        last_date_time: '2023-10-16T09:30:33Z'
+                        first_date_time: '2023-05-06T18:29:15Z'
+                        average_monthly_amount: 3672.51
+                        average_monthly_count: 5.333333333333333
+                        maximum_monthly_amount:
+                          month: 8
+                          year: 2023
+                          amount: 12447.52
+                        minimum_monthly_amount:
+                          month: 5
+                          year: 2023
+                          amount: 861.06
+                  monthly_totals:
+                  - month: 10
+                    year: 2023
+                    amount: 43869.25
+                    count: 67
+                    is_month_complete: false
+                    breakdown:
+                    - by: category
+                      breakdowns:
+                      - category: OTHER
+                        amount: 16130.48
+                        count: 18
+                        fraction_of_total_expenses: 0.37
+                      - category: RESTAURANTS_DINING
+                        amount: 222.81
+                        count: 1
+                        fraction_of_total_expenses: 0.01
+                      - category: TRANSPORT
+                        amount: 1545.8
+                        count: 21
+                        fraction_of_total_expenses: 0.04
+                      - category: TRAVEL
+                        amount: 537
+                        count: 1
+                        fraction_of_total_expenses: 0.01
+                      - category: ENTERTAINMENT
+                        amount: 78.5
+                        count: 4
+                        fraction_of_total_expenses: 0
+                      - category: RETAIL
+                        amount: 1329.36
+                        count: 10
+                        fraction_of_total_expenses: 0.03
+                      - category: GROCERIES
+                        amount: 46
+                        count: 1
+                        fraction_of_total_expenses: 0
+                      - category: TRANSFER
+                        amount: 21184.1
+                        count: 4
+                        fraction_of_total_expenses: 0.48
+                      - category: RENT_AND_SERVICES
+                        amount: 2795.2
+                        count: 7
+                        fraction_of_total_expenses: 0.06
+                  - month: 9
+                    year: 2023
+                    amount: 76909.09
+                    count: 103
+                    is_month_complete: true
+                    breakdown:
+                    - by: category
+                      breakdowns:
+                      - category: OTHER
+                        amount: 21265.28
+                        count: 19
+                        fraction_of_total_expenses: 0.28
+                      - category: TRANSPORT
+                        amount: 1711.48
+                        count: 25
+                        fraction_of_total_expenses: 0.02
+                      - category: RESTAURANTS_DINING
+                        amount: 791.22
+                        count: 6
+                        fraction_of_total_expenses: 0.01
+                      - category: RETAIL
+                        amount: 1842.49
+                        count: 7
+                        fraction_of_total_expenses: 0.02
+                      - category: TRAVEL
+                        amount: 9638.09
+                        count: 3
+                        fraction_of_total_expenses: 0.13
+                      - category: ENTERTAINMENT
+                        amount: 379.33
+                        count: 5
+                        fraction_of_total_expenses: 0
+                      - category: LOAN
+                        amount: 36320
+                        count: 2
+                        fraction_of_total_expenses: 0.47
+                      - category: GROCERIES
+                        amount: 42.69
+                        count: 3
+                        fraction_of_total_expenses: 0
+                      - category: TRANSFER
+                        amount: 987.14
+                        count: 22
+                        fraction_of_total_expenses: 0.01
+                      - category: RENT_AND_SERVICES
+                        amount: 3931.37
+                        count: 11
+                        fraction_of_total_expenses: 0.05
+                  - month: 8
+                    year: 2023
+                    amount: 49553.54
+                    count: 56
+                    is_month_complete: true
+                    breakdown:
+                    - by: category
+                      breakdowns:
+                      - category: OTHER
+                        amount: 7319.6
+                        count: 6
+                        fraction_of_total_expenses: 0.15
+                      - category: RESTAURANTS_DINING
+                        amount: 2389.4
+                        count: 10
+                        fraction_of_total_expenses: 0.05
+                      - category: TRANSPORT
+                        amount: 1218.55
+                        count: 27
+                        fraction_of_total_expenses: 0.02
+                      - category: ENTERTAINMENT
+                        amount: 24.47
+                        count: 1
+                        fraction_of_total_expenses: 0
+                      - category: RETAIL
+                        amount: 527.24
+                        count: 4
+                        fraction_of_total_expenses: 0.01
+                      - category: TRAVEL
+                        amount: 1081
+                        count: 2
+                        fraction_of_total_expenses: 0.02
+                      - category: LOAN
+                        amount: 18160
+                        count: 1
+                        fraction_of_total_expenses: 0.37
+                      - category: GROCERIES
+                        amount: 86.76
+                        count: 1
+                        fraction_of_total_expenses: 0
+                      - category: TRANSFER
+                        amount: 3000
+                        count: 1
+                        fraction_of_total_expenses: 0.06
+                      - category: HEALTH_AND_WELLBEING
+                        amount: 3299
+                        count: 1
+                        fraction_of_total_expenses: 0.07
+                      - category: RENT_AND_SERVICES
+                        amount: 12447.52
+                        count: 2
+                        fraction_of_total_expenses: 0.25
+                  - month: 7
+                    year: 2023
+                    amount: 3418.33
+                    count: 23
+                    is_month_complete: true
+                    breakdown:
+                    - by: category
+                      breakdowns:
+                      - category: OTHER
+                        amount: 164.4
+                        count: 3
+                        fraction_of_total_expenses: 0.05
+                      - category: TRANSPORT
+                        amount: 181.5
+                        count: 4
+                        fraction_of_total_expenses: 0.05
+                      - category: RESTAURANTS_DINING
+                        amount: 957.73
+                        count: 6
+                        fraction_of_total_expenses: 0.28
+                      - category: ENTERTAINMENT
+                        amount: 40.47
+                        count: 2
+                        fraction_of_total_expenses: 0.01
+                      - category: TRAVEL
+                        amount: 262
+                        count: 1
+                        fraction_of_total_expenses: 0.08
+                      - category: RETAIL
+                        amount: 717.45
+                        count: 3
+                        fraction_of_total_expenses: 0.21
+                      - category: TRANSFER
+                        amount: 66.05
+                        count: 1
+                        fraction_of_total_expenses: 0.02
+                      - category: RENT_AND_SERVICES
+                        amount: 1028.73
+                        count: 3
+                        fraction_of_total_expenses: 0.3
+                  - month: 6
+                    year: 2023
+                    amount: 124948.66
+                    count: 73
+                    is_month_complete: true
+                    breakdown:
+                    - by: category
+                      breakdowns:
+                      - category: OTHER
+                        amount: 18625.44
+                        count: 12
+                        fraction_of_total_expenses: 0.15
+                      - category: TRANSPORT
+                        amount: 1292.05
+                        count: 26
+                        fraction_of_total_expenses: 0.01
+                      - category: RESTAURANTS_DINING
+                        amount: 1036.39
+                        count: 9
+                        fraction_of_total_expenses: 0.01
+                      - category: ENTERTAINMENT
+                        amount: 40.47
+                        count: 2
+                        fraction_of_total_expenses: 0
+                      - category: LOAN
+                        amount: 18160
+                        count: 1
+                        fraction_of_total_expenses: 0.15
+                      - category: RETAIL
+                        amount: 714.17
+                        count: 4
+                        fraction_of_total_expenses: 0.01
+                      - category: TRAVEL
+                        amount: 16326.97
+                        count: 6
+                        fraction_of_total_expenses: 0.13
+                      - category: GROCERIES
+                        amount: 166.27
+                        count: 1
+                        fraction_of_total_expenses: 0
+                      - category: TRANSFER
+                        amount: 67480.75
+                        count: 7
+                        fraction_of_total_expenses: 0.54
+                      - category: HEALTH_AND_WELLBEING
+                        amount: 135
+                        count: 1
+                        fraction_of_total_expenses: 0
+                      - category: RENT_AND_SERVICES
+                        amount: 971.15
+                        count: 4
+                        fraction_of_total_expenses: 0.01
+                  - month: 5
+                    year: 2023
+                    amount: 28412
+                    count: 101
+                    is_month_complete: true
+                    breakdown:
+                    - by: category
+                      breakdowns:
+                      - category: OTHER
+                        amount: 922.76
+                        count: 14
+                        fraction_of_total_expenses: 0.03
+                      - category: RESTAURANTS_DINING
+                        amount: 2566.6
+                        count: 17
+                        fraction_of_total_expenses: 0.09
+                      - category: TRANSPORT
+                        amount: 2339.08
+                        count: 38
+                        fraction_of_total_expenses: 0.08
+                      - category: ENTERTAINMENT
+                        amount: 56.47
+                        count: 3
+                        fraction_of_total_expenses: 0
+                      - category: LOAN
+                        amount: 18160
+                        count: 1
+                        fraction_of_total_expenses: 0.64
+                      - category: TRAVEL
+                        amount: 341.12
+                        count: 3
+                        fraction_of_total_expenses: 0.01
+                      - category: RETAIL
+                        amount: 488.11
+                        count: 3
+                        fraction_of_total_expenses: 0.02
+                      - category: TRANSFER
+                        amount: 2676.8
+                        count: 17
+                        fraction_of_total_expenses: 0.09
+                      - category: RENT_AND_SERVICES
+                        amount: 861.06
+                        count: 5
+                        fraction_of_total_expenses: 0.03
+          headers: {}
+      security:
+      - bearer: []
+components:
+  schemas:
+    IncomeResponse:
+      type: object
+      properties:
+        currency:
+          type: string
+          description: The 3 Letter ISO code denominating the currency that the salary is provided in. This will be local currency.
+        total:
+          type: object
+          properties:
+            count:
+              type: integer
+              description: Number of salary payments since start_date.
+            amount:
+              type: number
+              description: Total salary since start_date.
+            first_date_time:
+              type: string
+              description: UTC datetime of first salary payment since start_date.
+              format: date-time
+            last_date_time:
+              type: string
+              description: UTC datetime of last salary payment.
+              format: date-time
+            average_monthly_count:
+              type: number
+              description: Average number of salary payments per month since start_date.
+            average_monthly_amount:
+              type: number
+              description: Average salary amount received per month since start_date.
+            minimum_monthly_amount:
+              type: object
+              properties:
+                month:
+                  type: integer
+                  description: 'Number of month within the year (e.g.: January is represented as 1 and December is represented as 12)'
+                year:
+                  type: integer
+                amount:
+                  type: number
+                  description: Total salary for the month
+              description: Minimum salary amount received in a month since start_date and month when this happened.
+              required:
+              - month
+              - year
+              - amount
+            maximum_monthly_amount:
+              type: object
+              properties:
+                month:
+                  type: integer
+                year:
+                  type: integer
+                amount:
+                  type: number
+                  description: Total salary for the month
+              description: Maximum salary amount received in a month since start_date and month when this happened.
+              required:
+              - month
+              - year
+              - amount
+          description: Insights on the salaries received since `start_date`
+          required:
+          - count
+          - amount
+          - first_date_time
+          - last_date_time
+          - average_monthly_count
+          - average_monthly_amount
+          - minimum_monthly_amount
+          - maximum_monthly_amount
+        monthly_totals:
+          type: array
+          items:
+            type: object
+            properties:
+              month:
+                type: integer
+                description: 'Number of month within the year (e.g.: January is represented as 1 and December is represented as 12)'
+              year:
+                type: integer
+              amount:
+                type: number
+                description: Total salary for the month.
+              count:
+                type: integer
+                description: Number of salary transaction detected within the month.
+              is_month_complete:
+                type: boolean
+                description: Determines if Lean retrieved the data for all days for the month. This will always be `true`, except for the first and last month retrieved.
+            required:
+            - month
+            - year
+            - amount
+            - count
+            - is_month_complete
+        transactions:
+          type: array
+          items:
+            type: object
+            properties:
+              account_id:
+                type: string
+                description: The id of the account where the salary transaction was credited into.
+              transaction_id:
+                type: string
+                description: Unique identifier for a transaction.
+              amount:
+                type: object
+                properties:
+                  amount:
+                    type: string
+                    description: The value in the denominated currency.
+                  currency:
+                    type: string
+                    description: ISO 3 letter code for the currency the amount is returned in.
+                required:
+                - amount
+                - currency
+              transaction_information:
+                type: string
+                description: Description of the transaction
+              booking_date_time:
+                type: string
+                description: Date and time when the salary transaction is posted to the account.
+                format: date-time
+              income_source:
+                type:
+                - string
+                - 'null'
+                description: '[Not supported] Type and name of the source where the income comes from'
+            required:
+            - account_id
+            - transaction_id
+            - amount
+            - transaction_information
+            - booking_date_time
+      required:
+      - currency
+      - total
+      - monthly_totals
+      - transactions
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

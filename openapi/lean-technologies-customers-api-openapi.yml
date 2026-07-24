@@ -1,0 +1,254 @@
+openapi: 3.1.0
+info:
+  title: Consents Account On File Account Controls (New) Account Controls (New) Customers API
+  version: v0.2.3
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearerAuth: []
+tags:
+- name: Customers
+paths:
+  /customers/v1:
+    post:
+      summary: Create Customer
+      deprecated: false
+      description: Create a customer object on Lean given the app_user_id which is the identifier (or a hash of the identifier) you use to refer to a user in your own database. The customer object in Lean should map one to one with the user object in your database.
+      operationId: createCustomer
+      tags:
+      - Customers
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              examples:
+              - app_user_id: your_user_id
+              type: object
+              properties:
+                app_user_id:
+                  description: A unique value from your database, can be the corresponding User ID in your system, or any other string.
+                  maxLength: 255
+                  minLength: 1
+                  type: string
+                  examples:
+                  - sandbox_user_1
+              required:
+              - app_user_id
+            example:
+              app_user_id: test_user_1
+      responses:
+        '200':
+          description: Customer created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  customer_id:
+                    description: Unique identifier for the customer
+                    type: string
+                    examples:
+                    - 34c11087-b6bc-429b-9a91-725941b1a547
+                  app_user_id:
+                    description: An assigned user id value from your backend. This has a uniqueness constraint.
+                    type: string
+                    examples:
+                    - sandbox_user_1
+              example:
+                customer_id: 85863393-3b91-4a07-8b2f-1286bbf1480f
+                app_user_id: test_user_1
+          headers: {}
+      security:
+      - bearer: []
+    get:
+      summary: List Customers
+      deprecated: false
+      description: ''
+      operationId: getCustomers
+      tags:
+      - Customers
+      parameters:
+      - name: page_number
+        in: query
+        description: ''
+        required: true
+        schema:
+          type: integer
+      - name: page_size
+        in: query
+        description: ''
+        required: true
+        schema:
+          type: integer
+      - name: lean-app-token
+        in: header
+        description: ''
+        required: false
+        example: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List of customers
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        customer_id:
+                          type: string
+                        app_user_id:
+                          type: string
+                        payload:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            customer_id:
+                              type: string
+                            payment_source_id:
+                              type: string
+                            payment_destination_id:
+                              type: string
+                            status:
+                              type: string
+                          required:
+                          - id
+                          - customer_id
+                          - payment_source_id
+                          - payment_destination_id
+                          - status
+                        type:
+                          type: string
+                        message:
+                          type: string
+                        timestamp:
+                          type: string
+                        event_id:
+                          type: string
+                  page:
+                    type: object
+                    properties:
+                      number:
+                        type: integer
+                      size:
+                        type: integer
+                      total_elements:
+                        type: integer
+                      total_pages:
+                        type: integer
+                    required:
+                    - number
+                    - size
+                    - total_elements
+                    - total_pages
+                required:
+                - data
+                - page
+              example:
+                data:
+                - customer_id: 34c11087-b6bc-429b-9a91-725941b1a547
+                  app_user_id: sandbox_user_1
+                  payload:
+                    id: string
+                    customer_id: string
+                    payment_source_id: string
+                    payment_destination_id: string
+                    status: string
+                  type: string
+                  message: string
+                  timestamp: string
+                  event_id: string
+                page:
+                  number: 0
+                  size: 1
+                  total_elements: 46
+                  total_pages: 46
+          headers: {}
+      security:
+      - bearer: []
+  /customers/v1/{customer_id}:
+    get:
+      summary: Get Customer by ID
+      deprecated: false
+      description: ''
+      operationId: getCustomerById
+      tags:
+      - Customers
+      parameters:
+      - name: customer_id
+        in: path
+        description: ''
+        required: true
+        example: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerObject'
+          headers: {}
+      security:
+      - bearer: []
+  /customers/v1/app-user-id/{app_user_id}:
+    get:
+      summary: Get Customer by app_user_id
+      deprecated: false
+      description: ''
+      operationId: getCustomerByAppUserId
+      tags:
+      - Customers
+      parameters:
+      - name: app_user_id
+        in: path
+        description: ''
+        required: true
+        example: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Customer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerObject'
+          headers: {}
+      security:
+      - bearer: []
+components:
+  schemas:
+    CustomerObject:
+      title: Customer
+      description: ''
+      type: object
+      properties:
+        customer_id:
+          description: Unique identifier for the customer
+          type: string
+          examples:
+          - 34c11087-b6bc-429b-9a91-725941b1a547
+        app_user_id:
+          description: An assigned user id value from your backend. This has a uniqueness constraint.
+          type: string
+          examples:
+          - sandbox_user_1
+      examples:
+      - customer_id: 34c11087-b6bc-429b-9a91-725941b1a547
+        app_user_id: sandbox_user_1
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
