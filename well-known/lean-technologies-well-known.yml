@@ -1,0 +1,28 @@
+generated: '2026-07-20'
+method: searched
+host: https://auth.leantech.me
+documents:
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    file: lean-technologies-oauth-authorization-server.json
+  - path: /.well-known/openid-configuration
+    status: 200
+    file: lean-technologies-openid-configuration.json
+other_hosts:
+  - host: https://auth.sandbox.leantech.me
+    path: /.well-known/openid-configuration
+    status: 200
+  - host: https://leantech.me
+    path: /.well-known/security.txt
+    status: 404
+  - host: https://docs.leantech.me
+    path: /.well-known/ai-plugin.json
+    status: 404
+  - host: https://leantech.me
+    path: /.well-known/api-catalog
+    status: 404
+notes: >
+  Lean runs a FAPI-grade authorization server (Spring Authorization Server) at
+  auth.leantech.me: PAR, DPoP, device-code and token-exchange grants, mTLS
+  (tls_client_auth / self_signed_tls_client_auth) and certificate-bound access
+  tokens. No security.txt / api-catalog / ai-plugin.json published.

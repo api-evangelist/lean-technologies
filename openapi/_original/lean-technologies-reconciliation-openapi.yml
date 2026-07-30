@@ -1,0 +1,460 @@
+openapi: 3.1.0
+info:
+  title: UAE - V2
+  description: ''
+  version: 1.0.0
+tags:
+- name: Reconciliation
+paths:
+  /reconciliation/v1/payments:
+    post:
+      summary: Retrieve payments
+      deprecated: false
+      description: Retrieve payments with reconciliation information.
+      operationId: getReconciliationPayments
+      tags:
+      - Reconciliation
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                payment_initiation_date:
+                  type: object
+                  properties:
+                    from:
+                      type: string
+                      format: date
+                      description: first UTC date of range
+                    to:
+                      type: string
+                      format: date
+                      description: last UTC date of range
+                  required:
+                  - from
+                  - to
+                  description: Range of payment intiation dates of the payments that you want to fetch
+                customer_id:
+                  type: string
+                  description: Id of the customer you want to fetch payments for
+                pagination:
+                  type: object
+                  properties:
+                    page_number:
+                      type: integer
+                      description: Page to retrieve
+                    results_per_page:
+                      type: integer
+                      description: Number of objects per page
+                  required:
+                  - page_number
+                  - results_per_page
+                  description: Parameters describing pagination you would like for the response
+              required:
+              - payment_initiation_date
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  payments:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: The unique identifier for the payment
+                        customer_id:
+                          type: string
+                          description: Id of the customer who performed the payment
+                        payment_initiation_timestamp:
+                          type: string
+                          description: The UTC datetime the payment was initiated
+                          format: date-time
+                        reconciliation:
+                          type: object
+                          properties:
+                            status:
+                              type: string
+                              description: If the payment has been reconciled, not reconciled yet or not received
+                              enum:
+                              - RECONCILED
+                              - OUTSTANDING
+                              - UNRECEIVED
+                            reference:
+                              type: string
+                              description: Reference added when reconciling the payment
+                            amount:
+                              type: number
+                              description: Amount reconciled
+                            currency_code:
+                              type: string
+                              description: The 3 letter ISO code of currency of reconciliation
+                            deposit:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                  description: The unique identifier for the deposit.
+                                description:
+                                  type: string
+                                  description: The description for the deposit as provided by the bank.
+                                timestamp:
+                                  type: string
+                                  description: The UTC datetime the deposit was completed. Note that in the case the bank
+                                    only provides the date with no time, we assume the transaction ocurred at 00:00 in the
+                                    local timezone and then convert to UTC.
+                                  format: date-time
+                                amount:
+                                  type: number
+                                  description: The amount of the deposit
+                                currency_code:
+                                  type: string
+                                  description: The currency of the account where the deposit was received in
+                              required:
+                              - id
+                              - description
+                              - timestamp
+                              - amount
+                              - currency_code
+                              description: Information about the bank deposit that the payment was reconciled against
+                          required:
+                          - status
+                          - reference
+                          - amount
+                          - currency_code
+                          - deposit
+                          description: Reconciliation information for the payment
+                      required:
+                      - customer_id
+                      - payment_initiation_timestamp
+                    description: List of payments with reconciliation information
+                  pagination:
+                    type: object
+                    properties:
+                      page_number:
+                        type: integer
+                        description: Page retrieved
+                      results_per_page:
+                        type: integer
+                        description: Number of objects per page
+                      total_results:
+                        type: integer
+                        description: Total number of objects available to be retrieved
+                    required:
+                    - page_number
+                    - results_per_page
+                    - total_results
+                    description: Pagination information
+                required:
+                - payments
+                - pagination
+              example:
+                payments:
+                - id: f0bfcff8-42c6-4734-b872-b9dc8bcf7ef5
+                  reconciliation:
+                    status: RECONCILED
+                    reference: 123AA8390
+                    amount: 23.33
+                    currency_code: AED
+                    deposit:
+                      id: 32805cb8-ce2b-41a2-b1c6-2135ab8ab137
+                      description: 'TRANSFERIPI TT REF: 96OTT78379976075 LEAN FINANCIAL SERVICES 25-65156280-1-151 - AE0421541'
+                      timestamp: '2022-11-26T20:00:00Z'
+                      amount: 23.33
+                      currency_code: AED
+                pagination:
+                  page_number: 0
+                  results_per_page: 10
+                  total_results: 1
+          headers: {}
+      security:
+      - bearer: []
+  /reconciliation/v1/deposits/:
+    get:
+      summary: Retrieve Deposits
+      deprecated: false
+      description: Retrieve deposits from your connected bank accounts
+      operationId: getDeposits
+      tags:
+      - Reconciliation
+      parameters:
+      - name: page
+        in: query
+        description: Page to retrieve
+        required: false
+        example: 0
+        schema:
+          type: integer
+          default: 0
+      - name: size
+        in: query
+        description: Total number of items per page
+        required: false
+        example: 50
+        schema:
+          type: integer
+          default: 50
+          maximum: 100
+      - name: start_date
+        in: query
+        description: Start date to pull deposits from
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: end_date
+        in: query
+        description: End date to pull deposits from
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: local_timezone
+        in: query
+        description: Timezone to populate local_timezone. Always Continent/City pair
+        required: false
+        example: Asia/Dubai
+        schema:
+          type: string
+          default: Asia/Dubai
+      - name: reconciliation_status
+        in: query
+        description: Filter responses based on reconciliation status
+        required: false
+        example: NOT_RECONCILED
+        schema:
+          type: string
+          enum:
+          - RECONCILED
+          - NOT_RECONCILED
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: The unique identifier for the deposit (internal to Lean).
+                        description:
+                          type: string
+                          description: The description for the deposit as provided by the bank.
+                        amount:
+                          type: string
+                          description: The amount of the deposit
+                        currency_code:
+                          type: string
+                          description: The currency of the account where the deposit was received in
+                        timestamp:
+                          type: string
+                          description: The UTC datetime the deposit was completed. Note that in the case the bank only provides
+                            the date with no time, we assume the transaction ocurred at 00:00 in the local timezone and then
+                            convert to UTC.
+                        bank_deposit_reference:
+                          type: string
+                          description: Identifier provided by the bank
+                        beneficiary_account:
+                          type: string
+                          description: Account where the money is received. This will be your bank account.
+                        reconciliation:
+                          type: object
+                          properties:
+                            payment_id:
+                              type:
+                              - string
+                              - 'null'
+                              description: Identifier for the payment that this deposit has been reconciled against. Will
+                                be null if status is `NOT_RECONCILED`
+                            status:
+                              type: string
+                              description: Determines if the deposit has been reconciled against a payment
+                              enum:
+                              - RECONCILED
+                              - NOT_RECONCILED
+                          required:
+                          - status
+                          - payment_id
+                        local_timezone:
+                          type: string
+                          format: date-time
+                          description: Localized timestamp
+                  page:
+                    type: object
+                    properties:
+                      size:
+                        type: string
+                        description: Page size
+                      total_pages:
+                        type: string
+                        description: Total number of available pages
+                      total_elements:
+                        type: string
+                        description: Total number of elements in across all pages
+                      number:
+                        type: string
+                        description: Current page
+                    required:
+                    - size
+                    - total_pages
+                    - total_elements
+                    - number
+                required:
+                - data
+                - page
+              example:
+                data:
+                - id: 32805cb8-ce2b-41a2-b1c6-2135eb9ab137
+                  description: 'TRANSFERIPI TT REF: 99OTT08379977075 LEAN FINANCIAL SERVICES 45-62176280-1-151 - AE0361941'
+                  amount: '23.33'
+                  currency_code: AED
+                  timestamp: '2022-11-26T20:00:00Z'
+                  local_timezone: '2022-11-27T00:00:00+04:00'
+                  bank_deposit_reference: '1232133445553'
+                  beneficiary_account: df86877a-acd9-4ac6-9cd2-e80ee4372c00
+                  reconciliation:
+                    payment_id: df86877a-acd9-4ac6-9cd2-e80ee4372c00
+                    status: RECONCILED
+                page:
+                  size: '50'
+                  total_pages: '2'
+                  total_elements: '55'
+                  number: '0'
+          headers: {}
+      security:
+      - bearer: []
+  /reconciliation/v1/payments/{payment_id}:
+    get:
+      summary: Get Payment
+      deprecated: false
+      description: Retrieve a specific payment from your connected bank accounts
+      operationId: getReconciliationPaymentById
+      tags:
+      - Reconciliation
+      parameters:
+      - name: payment_id
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: The unique identifier for the payment
+                  customer_id:
+                    type: string
+                    description: ID of the customer who performed the payment
+                  payment_initiation_timestamp:
+                    type: string
+                    description: The UTC datetime the payment was initiated
+                  reconciliation:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        description: If the payment has been reconciled, not reconciled yet or not received
+                        enum:
+                        - RECONCILED
+                        - OUTSTANDING
+                        - UNRECEIVED
+                      reference:
+                        type: string
+                        description: Reference added when reconciling the payment
+                      amount:
+                        type: number
+                        description: Amount reconciled
+                      currency_code:
+                        type: string
+                        description: The 3 letter ISO code of currency of reconciliation
+                      deposit:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            description: The unique identifier for the deposit.
+                          description:
+                            type: string
+                            description: The description for the deposit as provided by the bank.
+                          timestamp:
+                            type: string
+                            description: The UTC datetime the deposit was completed. Note that in the case the bank only provides
+                              the date with no time, we assume the transaction ocurred at 00:00 in the local timezone and
+                              then convert to UTC.
+                            format: date-time
+                          amount:
+                            type: number
+                            description: The amount of the deposit
+                          currency_code:
+                            type: string
+                            description: The currency of the account where the deposit was received in
+                        required:
+                        - id
+                        - description
+                        - timestamp
+                        - amount
+                        - currency_code
+                        description: Information about the bank deposit that the payment was reconciled against
+                    required:
+                    - status
+                    - reference
+                    - amount
+                    - currency_code
+                    - deposit
+                    description: Reconciliation information for the payment
+                required:
+                - id
+                - customer_id
+                - payment_initiation_timestamp
+                - reconciliation
+              example:
+                id: f0bfcff8-42t6-4724-b872-b9dc8bcf7ef5
+                customer_id: 5215490e-a071-46a1-a637-523af80c1154
+                payment_initiation_timestamp: 2022-11-16T222:00:32Z
+                reconciliation:
+                  status: RECONCILED
+                  reference: 123AA8390
+                  amount: 23.33
+                  currency_code: AED
+                  deposit:
+                    id: 32805cb8-ce2b-41a2-b1c6-2135ab8ab137
+                    description: 'TRANSFERIPI TT REF: 96OTT78379976075 LEAN FINANCIAL SERVICES 25-65156280-1-151 - AE0421541'
+                    timestamp: '2022-11-26T20:00:00Z'
+                    amount: 23.33
+                    currency_code: AED
+          headers: {}
+      security:
+      - bearer: []
+components:
+  schemas: {}
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production / Pre-live
+security:
+- bearer: []

@@ -1,0 +1,21 @@
+generated: '2026-07-20'
+method: searched
+source: https://github.com/leantechnologies, https://docs.leantech.me/docs/web
+notes: >
+  Lean's embeddable surface is the LinkSDK: a client-side bank-connection / consent /
+  payment UI that hosts the bank login and OTP flow. It is distinct from server-side
+  integration and is shipped per platform. Also a hosted Payment Links checkout.
+families:
+  - name: LinkSDK
+    kind: embedded-connect-ui
+    description: Client SDK that renders the bank connect + consent + pay/checkout flow (.connect(), .pay(), .checkout(), .createBeneficiary()).
+    platforms:
+      - {platform: web, loader: LinkSDK Web, docs: https://docs.leantech.me/docs/web}
+      - {platform: ios, repo: https://github.com/leantechnologies/link-sdk-ios-distribution}
+      - {platform: android, docs: https://docs.leantech.me/docs/android}
+      - {platform: react-native, repo: https://github.com/leantechnologies/link-sdk-react-native}
+      - {platform: flutter, repo: https://github.com/leantechnologies/link-sdk-flutter}
+  - name: Payment Links
+    kind: hosted-checkout
+    description: Lean-hosted checkout pages to collect pay-by-bank payments without building UI.
+    docs: https://docs.leantech.me/docs/getting-started

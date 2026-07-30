@@ -1,5 +1,11 @@
-generated: '2026-07-19'
-method: derived
+generated: '2026-07-20'
+method: searched
+docs: https://docs.leantech.me/docs/authentication
+authorization_server: https://auth.leantech.me
+token_endpoint: https://auth.leantech.me/oauth2/token
+sandbox_token_endpoint: https://auth.sandbox.leantech.me/oauth2/token
+fapi_features: [PAR, DPoP, mTLS-client-auth, certificate-bound-tokens, token-exchange, device-code, PKCE-S256]
+scopes_documented: [api, "customer.<customer_id>"]
 source: openapi/lean-technologies-account-on-file-openapi.yml, openapi/lean-technologies-bank-data-openapi.yml,
   openapi/lean-technologies-banks-openapi.yml, openapi/lean-technologies-consents-openapi.yml,
   openapi/lean-technologies-core-resources-openapi.yml, openapi/lean-technologies-customers-openapi.yml,

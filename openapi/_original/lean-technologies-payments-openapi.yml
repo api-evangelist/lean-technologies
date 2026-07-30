@@ -1,0 +1,2244 @@
+openapi: 3.1.0
+info:
+  title: UAE - V2
+  description: ''
+  version: 1.0.0
+tags:
+- name: Payment Destination
+- name: Payment Source
+- name: Payment Intents
+- name: Payments
+- name: Account On File
+paths:
+  /payments/v1/destinations:
+    post:
+      summary: Create Payment Destination
+      deprecated: false
+      description: 'Payment Destination defines the target account to which funds will be transferred.
+
+        It is used when creating a Beneficiary in the user''s bank via the LinkSDK, either through the `.connect()` flow or
+        the `.createBeneficiary()` method.
+
+        In Open Finance flows, the Payment Destination represents the consent beneficiary i.e. the account explicitly authorised
+        to receive funds under the granted consent.'
+      operationId: createPaymentDestination
+      tags:
+      - Payment Destination
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                branch_address:
+                  type: string
+                  description: The address of the branch that holds the account - required for all beneficiaries outside of
+                    ARE. This should be a single string with commas separating lines.
+                name:
+                  type: string
+                  description: The name of the legal entity that owns the account.
+                iban:
+                  type: string
+                  description: 'The IBAN of the account.
+
+                    This is required for all countries except for the US.'
+                display_name:
+                  type: string
+                  description: The friendly display name for the account. This is rendered in the LinkSDK when referencing
+                    the Destination.
+                address:
+                  type: string
+                  description: The address of the owner of the destination bank account has registered with the bank.
+                city:
+                  type: string
+                  description: The city that the holding financial institution is located in.
+                country:
+                  type: string
+                  description: The three letter ISO code for the holding financial institution's country.
+                swift_code:
+                  type: string
+                  description: The SWIFT Code for the bank account - required for most international destinations
+                account_number:
+                  type: string
+                  description: The account number for the account.
+                customer_id:
+                  type: string
+                  description: The Customer object associated with this account. This field is optional, and will designate
+                    the Destination as owned by the application if not provided.
+                ifsc:
+                  type: string
+                  description: The IFSC number for the bank account - required for international destinations in India.
+                transit_number:
+                  type: string
+                  description: The Transit Number for the bank account - required for international destinations in Canada
+                sort_code:
+                  type: string
+                  description: The Sort Code for the bank account - required for international destinations in the UK
+                routing_number:
+                  type: string
+                  description: The Routing Number for the bank account - required for international destinations in the US.
+                postal_code:
+                  type: string
+                  description: The Postal Code of the owner of the destination bank account has registered with the bank -
+                    required for international destinations in the UK or the US
+                currency:
+                  type: string
+                  description: The currency of the destination bank account - required for international destinations in the
+                    UK or the US
+                bank_type:
+                  type: string
+                  description: Defines the banking segment of the merchant’s account
+                  enum:
+                  - RETAIL
+                  - SME
+                  - CORPORATE
+                government_identifier:
+                  description: 'A government‑issued identifier for the merchant.
+
+                    This is **required by the UAE Open Finance specification** to uniquely identify the merchant.'
+                  allOf:
+                  - $ref: '#/components/schemas/GovernmentIdentifierRequest'
+              required:
+              - name
+              - display_name
+              - address
+              - city
+              - country
+              - account_number
+              - bank_type
+              - government_identifier
+            example:
+              branch_address: 45 Lansing Street, Dubai, United Arab Emirates
+              name: Fulani Al Fulani
+              iban: AE760260001015000000601
+              display_name: Al Fulani
+              address: 1234 Sky Bldg.
+              city: Abu Dhabi
+              country: ARE
+              swift_code: EBILAEADXXX
+              account_number: '1015000000601'
+              bank_type: SME
+              government_identifier:
+                type: TRADE_LICENSE_NUMBER
+                value: CN-2947664
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentDestination'
+              example:
+                id: 88c71f16-2af3-4b06-979d-92b5354a9174
+                status: ACTIVE
+                default: false
+                branch_address: 45 Lansing Street, Dubai, United Arab Emirates
+                name: Fulani Al Fulani
+                iban: AE760260001015000000601
+                display_name: Al Fulani
+                address: 1234 Sky Bldg.
+                city: Abu Dhabi
+                country: ARE
+                swift_code: EBILAEADXXX
+                account_number: '1015000000601'
+          headers: {}
+      security:
+      - bearer: []
+    get:
+      summary: List Payment Destinations
+      deprecated: false
+      description: Retrieve a list of all Payment Destinations you have in stored with Lean.
+      operationId: getPaymentDestinations
+      tags:
+      - Payment Destination
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PaymentDestination'
+              example:
+              - id: 6910fddc-417c-f7fd-6e4b-4d7de3d0bc06
+                status: CONFIRMED
+                default: false
+                name: Fake Corp.
+                iban: AE27LSWP9X25E4883A13998
+                display_name: Fake Corp. - AED
+                address: 1234 Sky Bldg.
+                city: Abu Dhabi
+                country: ARE
+                swift_code: EBILEADXXX
+                account_number: '000120203'
+                currency: AED
+              - id: 432150ea-99d1-5bd8-aed3-35d4c7a2b4b4
+                status: CONFIRMED
+                default: false
+                name: Fake Corp.
+                iban: AE27LSWP9X25E4883A139K7
+                display_name: Fake Corp. - USD
+                address: 1234 Sky Bldg.
+                city: Abu Dhabi
+                country: ARE
+                swift_code: EBILEADXXX
+                account_number: '000120202'
+                currency: USD
+          headers: {}
+      security:
+      - bearer: []
+  /customers/v1/{customer_id}/destinations:
+    get:
+      summary: Get Payment Destinations for Customer
+      deprecated: false
+      description: Retrieve a list of all Payment Destinations associated with a given Customer.
+      operationId: getPaymentDestinationsByCustomerId
+      tags:
+      - Payment Destination
+      parameters:
+      - name: customer_id
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PaymentDestination'
+              example:
+              - id: 6910fddc-417c-f7fd-6e4b-4d7de3d0bc06
+                status: CONFIRMED
+                default: false
+                name: Fake Corp.
+                iban: AE27LSWP9X25E4883A13998
+                display_name: Fake Corp. - AED
+                address: 1234 Sky Bldg.
+                city: Abu Dhabi
+                country: ARE
+                swift_code: EBILEADXXX
+                account_number: '000120203'
+                customer_id: 5f76dc1f-a013-4bc0-afad-984c66d50f6d
+                currency: AED
+              - id: 432150ea-99d1-5bd8-aed3-35d4c7a2b4b4
+                status: CONFIRMED
+                default: false
+                name: Fake Corp.
+                iban: AE27LSWP9X25E4883A139K7
+                display_name: Fake Corp. - USD
+                address: 1234 Sky Bldg.
+                city: Abu Dhabi
+                country: ARE
+                swift_code: EBILEADXXX
+                account_number: '000120202'
+                customer_id: 5f76dc1f-a013-4bc0-afad-984c66d50f6d
+                currency: USD
+          headers: {}
+      security:
+      - bearer: []
+  /payments/v1/destinations/{payment_destination_id}:
+    get:
+      summary: Get Payment Destination by ID
+      deprecated: false
+      description: Retrieve the details of a single Payment Destination stored by Lean.
+      operationId: getPaymentDestinationById
+      tags:
+      - Payment Destination
+      parameters:
+      - name: payment_destination_id
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentDestination'
+              example:
+                id: 6910fddc-417c-f7fd-6e4b-4d7de3d0bc06
+                status: CONFIRMED
+                default: false
+                name: Fake Corp.
+                iban: AE27LSWP9X25E4883A13998
+                display_name: Fake Corp. - AED
+                address: 1234 Sky Bldg.
+                city: Abu Dhabi
+                country: ARE
+                swift_code: EBILEADXXX
+                account_number: '000120203'
+                currency: AED
+          headers: {}
+      security:
+      - bearer: []
+  /customers/v1/{customer_id}/payment-sources:
+    get:
+      summary: Get all Payment Sources for Customer
+      deprecated: false
+      description: 'Payment Sources are created upon successful completion of the `.connect()` method in the LinkSDK when
+        `payments` is set as a Permission. '
+      operationId: getPaymentSources
+      tags:
+      - Payment Source
+      parameters:
+      - name: customer_id
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PaymentSource'
+              example:
+              - id: d8d7a9b3-c401-49f6-81a4-386d8398aa2c
+                customer_id: 6db94cb7-3a02-4a57-a03a-e2a92ce86406
+                app_id: YOUR_APP_ID
+                status: AWAITING_BENEFICIARY_COOL_OFF
+                beneficiary_cool_off_expiry: '2021-02-13T13:20:57.674299Z'
+                bank_identifier: ENBD_UAE
+                beneficiaries:
+                - id: 26891A75-9406-4E06-97BA-F4D6DA664F3C
+                  payment_destination_id: f044c18b-3a51-49a2-bd3f-a585679d8885
+                  status: AWAITING_BENEFICIARY_COOL_OFF
+                  beneficiary_cool_off_expiry: '2021-02-13T13:20:57.674299Z'
+                accounts:
+                - id: 9acde98e-9d19-495d-934c-b2ff966262c8
+                  account_id: aaadbc4e-96a4-420f-ba01-597fa63502ee
+                  account_name: CURRENT ACCOUNT
+                  account_number: '1015528734001'
+                  iban: AE340260001015528734001
+                  balance: 35681.15
+                  currency: AED
+                  balance_last_updated: '2021-02-12T13:20:23.83922Z'
+                - id: 1457d23a-c1f8-4aee-bc6f-2a253b2e617f
+                  account_id: 69f22112-e95d-427e-8bd1-eb58b4db60ba
+                  account_name: CURRENCY PASSPORT SAVINGS AC
+                  account_number: 0315528734002
+                  iban: AE790260000315528734002
+                  balance: 80871
+                  currency: USD
+                  balance_last_updated: '2021-02-12T13:20:57.370659Z'
+          headers: {}
+      security:
+      - bearer: []
+  /customers/v1/{customer_id}/payment-sources/{payment_source_id}:
+    get:
+      summary: Get Payment Source by ID
+      deprecated: false
+      description: 'Payment Sources are created upon successful completion of the `.connect()` method in the LinkSDK when
+        `payments` is set as a Permission. '
+      operationId: getPaymentSourceById
+      tags:
+      - Payment Source
+      parameters:
+      - name: customer_id
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+      - name: payment_source_id
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentSource'
+              example:
+                id: d8d7a9b3-c401-49f6-81a4-386d8398aa2c
+                customer_id: 6db94cb7-3a02-4a57-a03a-e2a92ce86406
+                app_id: YOUR_APP_ID
+                status: AWAITING_BENEFICIARY_COOL_OFF
+                beneficiary_cool_off_expiry: '2021-02-13T13:20:57.674299Z'
+                bank_identifier: ENBD_UAE
+                beneficiaries:
+                - id: 26891A75-9406-4E06-97BA-F4D6DA664F3C
+                  payment_destination_id: f044c18b-3a51-49a2-bd3f-a585679d8885
+                  status: AWAITING_BENEFICIARY_COOL_OFF
+                  beneficiary_cool_off_expiry: '2021-02-13T13:20:57.674299Z'
+                accounts:
+                - id: 9acde98e-9d19-495d-934c-b2ff966262c8
+                  account_id: aaadbc4e-96a4-420f-ba01-597fa63502ee
+                  account_name: CURRENT ACCOUNT
+                  account_number: '1015528734001'
+                  iban: AE340260001015528734001
+                  currency: AED
+                - id: 1457d23a-c1f8-4aee-bc6f-2a253b2e617f
+                  account_id: 69f22112-e95d-427e-8bd1-eb58b4db60ba
+                  account_name: CURRENCY PASSPORT SAVINGS AC
+                  account_number: 0315528734002
+                  iban: AE790260000315528734002
+                  currency: USD
+          headers: {}
+      security:
+      - bearer: []
+    delete:
+      summary: Delete Payment Source
+      deprecated: false
+      description: Delete a Payment Source to remove Customer credentials from the platform.
+      operationId: deletePaymentSource
+      tags:
+      - Payment Source
+      parameters:
+      - name: customer_id
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+      - name: payment_source_id
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+                  enum:
+                  - USER_REQUESTED
+                  - TPP_REQUESTED
+                  description: Who is requesting deletion
+              required:
+              - reason
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+      security:
+      - bearer: []
+  /payments/v1/intents:
+    post:
+      summary: Create Payment Intent
+      deprecated: false
+      description: The Payment intent is the contract between your backend and Lean to certify that you will request a payment
+        from your customer of a specified amount and currency. In order to initiate a payment, the `payment_intent_id` must
+        be provided into the `pay()` or `checkout()` method of the LinkSDK.
+      operationId: createPaymentIntent
+      tags:
+      - Payment Intents
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                customer_id:
+                  type: string
+                  format: uuid
+                  description: The Customer you want to make a payment.
+                amount:
+                  type: number
+                  description: The amount that should be charged to the customer.
+                  format: float
+                  examples:
+                  - 120.43
+                currency:
+                  type: string
+                  minLength: 3
+                  maxLength: 3
+                  description: The currency that the customer will make the payment in.
+                description:
+                  type: string
+                  description: The description submitted to the bank as a reference when initiating a payment. Can be used
+                    for reconciliation. By default this value is a the Payment Intent UUID without hyphens but you can also
+                    specify the description upon creation of a payment intent.
+                payment_destination_id:
+                  type: string
+                  description: Payment destination for where funds are settled into.
+                purpose_code:
+                  type: string
+                  description: "A category code that relates to the type of services or goods that corresponds to the underlying\
+                    \ purpose of the payment. The code must conform to the payment purpose code list.  \n**Supported values:**\
+                    \  \n- `FIS` – Financial services\n- `TCS` – Telecommunication services\n- `MWP` – Mobile wallet card\
+                    \ payments\n- `OAT` – Own account transfer\n- `IFS` – Information services\n- `RNT` – Rent payments\n\
+                    - `LNC` – Loan charges\n- `PIN` – Personal investments\n- `GDS` – Goods bought or sold"
+                  enum:
+                  - FIS
+                  - TCS
+                  - MWP
+                  - OAT
+                  - IFS
+                  - RNT
+                  - LNC
+                  - PIN
+                  - GDS
+              required:
+              - customer_id
+              - amount
+              - currency
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentIntent'
+              example:
+                payment_intent_id: 77f0c07e-7b7b-4677-bb05-6261f9eead0c
+                customer_id: 89bf7bf8-89cb-42e5-8332-eeef869a2524
+                amount: 61.4
+                currency: AED
+                description: 77f0c07e7b7b4677bb056261f9eead0c
+                payments: []
+                payment_destination:
+                  id: 95c29647-c568-40d7-8710-3e330de1b5f2
+                  bank_identifier: HSBC_UAE
+                  name: Acme Corp.
+                  iban: AE870200000XXXXXXXXXXXX
+                  display_name: Acme Corp.
+                  account_number: XXXXXXXXXXXX
+                  swift_code: BBMEAEAD
+                  status: CONFIRMED
+                  address: Acme Towers, 51st Floor
+                  country: ARE
+                  city: Dubai
+                  default: true
+                  owner_type: APPLICATION
+          headers: {}
+      security:
+      - bearer: []
+    get:
+      summary: List Payment Intents
+      deprecated: false
+      description: List all Payment Intents
+      operationId: listPaymentIntents
+      tags:
+      - Payment Intents
+      parameters:
+      - name: page
+        in: query
+        description: Set which page to fetch (indexed to 0)
+        required: true
+        example: 0
+        schema:
+          type: integer
+      - name: size
+        in: query
+        description: Set the page size to be returned
+        required: true
+        example: 50
+        schema:
+          type: integer
+      - name: customer_id
+        in: query
+        description: Filter Payment Intents by Customer
+        required: false
+        schema:
+          type: string
+          format: uuid
+      - name: from
+        in: query
+        description: Fetch Payment Intents created after this date-time
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: to
+        in: query
+        description: Fetch Payment Intents created before this date-time
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: status
+        in: query
+        description: Filter the results to a specific status
+        required: false
+        schema:
+          type: string
+          enum:
+          - CREDENTIALS_UPDATE_REQUIRED
+          - AWAITING_END_USER_AUTHORIZATION
+          - AWAITING_LOGIN_MFA_TOKEN
+          - AWAITING_APP_AUTH
+          - AWAITING_PAYMENT_MFA_TOKEN
+          - AWAITING_PAYMENT_SECURITY_QUESTIONS
+          - INVALID_CREDENTIALS
+          - INVALID_LOGIN_MFA
+          - INVALID_PAYMENT_MFA
+          - BENEFICIARY_NOT_FOUND
+          - MFA_ATTEMPTS_EXHAUSTED
+          - SECURITY_QUESTION_ANSWER_ATTEMPTS_EXHAUSTED
+          - PENDING_WITH_BANK
+          - AWAITING_AUTHORIZATION
+          - FAILED
+          - AWAITING_AUTHORIZATION_LOGIN_MFA
+          - INVALID_AUTHORIZATION_LOGIN_MFA
+          - AWAITING_AUTHORIZATION_LOGIN_SECURITY_QUESTION
+          - AWAITING_AUTHORIZATION_LOGIN_SECURITY_QUESTION_ANSWER
+          - INVALID_AUTHORIZATION_LOGIN_SECURITY_QUESTION_ANSWER
+          - AUTHORIZATION_LOGIN_SECURITY_QUESTION_ANSWER_ATTEMPTS_EXHAUSTED
+          - AUTHORIZATION_FAILED
+          - AWAITING_AUTHORIZATION_PAYMENT_MFA
+          - INVALID_AUTHORIZATION_PAYMENT_MFA
+          - PARTIAL_ACCEPTED_BY_BANK
+          - AUTHORIZATION_MFA_ATTEMPTS_EXHAUSTED
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PaymentIntent'
+                  page:
+                    $ref: '#/components/schemas/Pagination'
+                required:
+                - data
+                - page
+              example:
+                data:
+                - payment_intent_id: 77f0c07e-7b7b-4677-bb05-6261f9eead0c
+                  customer_id: 89bf7bf8-89cb-42e5-8332-eeef869a2524
+                  amount: 61.4
+                  currency: AED
+                  description: 77f0c07e7b7b4677bb056261f9eead0c
+                  payments:
+                  - id: 25c90cc6-67dc-4193-a6e9-a7c875fcc0af
+                    payment_intent_id: 77f0c07e-7b7b-4677-bb05-6261f9eead0c
+                    payment_source_id: b6fba7da-1054-5e82-8a9a-afd3ab4d1710
+                    sender_details:
+                      account_number: XXXXXXXXXXXX
+                      iban: AE940030011XXXXXXXXXXXX
+                      name: John Doe
+                    recipient_details:
+                      account_number: XXXXXXXXXXXX
+                      iban: AE870200000XXXXXXXXXXXX
+                      name: Al Fulani
+                    amount: 61.4
+                    currency: AED
+                    description: 77f0c07e7b7b4677bb056261f9eead0c
+                    submission_timestamp: '2021-05-18T13:58:03.427045Z'
+                    initiation_timestamp: '2021-05-18T13:58:42.445103Z'
+                    status: ACCEPTED_BY_BANK
+                    bank_transaction_reference: 0492981211381081
+                  payment_destination:
+                    id: 95c29647-c568-40d7-8710-3e330de1b5f2
+                    bank_identifier: HSBC_UAE
+                    name: Acme Corp.
+                    iban: AE870200000XXXXXXXXXXXX
+                    display_name: Acme Corp.
+                    account_number: XXXXXXXXXXXX
+                    swift_code: BBMEAEAD
+                    status: CONFIRMED
+                    address: Acme Towers, 51st Floor
+                    country: ARE
+                    city: Dubai
+                    default: true
+                    owner_type: APPLICATION
+                page:
+                  number: 0
+                  size: 50
+                  total_elements: 1
+                  total_pages: 1
+          headers: {}
+      security:
+      - bearer: []
+  /payments/v1/intents/{payment_intent_id}:
+    get:
+      summary: Get Payment Intent
+      deprecated: false
+      description: The Payment intent is the contract between your backend and Lean to certify that you will request a payment
+        from your customer of a specified amount and currency. In order to initiate a payment, the `payment_intent_id` must
+        be provided into the `pay()` method of the LinkSDK.
+      operationId: getPaymentIntentById
+      tags:
+      - Payment Intents
+      parameters:
+      - name: payment_intent_id
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentIntent'
+              example:
+                payment_intent_id: 77f0c07e-7b7b-4677-bb05-6261f9eead0c
+                customer_id: 89bf7bf8-89cb-42e5-8332-eeef869a2524
+                amount: 61.4
+                currency: AED
+                description: 77f0c07e7b7b4677bb056261f9eead0c
+                payments:
+                - id: 25c90cc6-67dc-4193-a6e9-a7c875fcc0af
+                  payment_intent_id: 77f0c07e-7b7b-4677-bb05-6261f9eead0c
+                  payment_source_id: b6fba7da-1054-5e82-8a9a-afd3ab4d1710
+                  sender_details:
+                    account_number: XXXXXXXXXXXX
+                    iban: AE940030011XXXXXXXXXXXX
+                    name: John Doe
+                  recipient_details:
+                    account_number: XXXXXXXXXXXX
+                    iban: AE870200000XXXXXXXXXXXX
+                    name: Al Fulani
+                  amount: 61.4
+                  currency: AED
+                  description: 77f0c07e7b7b4677bb056261f9eead0c
+                  submission_timestamp: '2021-05-18T13:58:03.427045Z'
+                  initiation_timestamp: '2021-05-18T13:58:42.445103Z'
+                  status: ACCEPTED_BY_BANK
+                  bank_transaction_reference: 0492981211381081
+                payment_destination:
+                  id: 95c29647-c568-40d7-8710-3e330de1b5f2
+                  bank_identifier: HSBC_UAE
+                  name: Acme Corp.
+                  iban: AE870200000XXXXXXXXXXXX
+                  display_name: Acme Corp.
+                  account_number: XXXXXXXXXXXX
+                  swift_code: BBMEAEAD
+                  status: CONFIRMED
+                  address: Acme Towers, 51st Floor
+                  country: ARE
+                  city: Dubai
+                  default: true
+                  owner_type: APPLICATION
+          headers: {}
+      security:
+      - bearer: []
+  /payments/v1/{payment_id}:
+    get:
+      summary: Get Payment
+      deprecated: false
+      description: Fetch a single payment
+      operationId: getPaymentById
+      tags:
+      - Payments
+      parameters:
+      - name: payment_id
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+              example:
+                id: 88c4d3e8-b80c-cd46-ac56-f084879744d6
+                payment_intent_id: 30caf494-d6e0-d83e-907b-9393361c3895
+                payment_source_id: 8d98c54d-b11f-4f39-52bb-6065dc0f4749
+                sender_details:
+                  account_number: 0101929293
+                  iban: AE132353311P10164V8R3
+                  name: Dwight Schrute
+                recipient_details:
+                  account_number: 0192929827
+                  iban: AE23QQWD1004305268319738
+                  name: Michael Gary Scott
+                amount: 3448.38
+                currency: AED
+                description: 30caf494d6e0d83e907b9393361c3895
+                submission_timestamp: '2024-09-19T11:43:08.933Z'
+                initiation_timestamp: '2024-09-19T11:43:17.683Z'
+                status: ACCEPTED_BY_BANK
+                bank_transaction_reference: WD100430526831
+          headers: {}
+      security:
+      - bearer: []
+  /consents/account-on-file:
+    post:
+      summary: Create a new non-authorized AoF consent
+      description: This operation will result in creation of non-authorized consent of Account-On-File type.
+      operationId: createAccountOnFileConsent
+      tags:
+      - Account On File
+      security:
+      - OAuth2:
+        - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - customer_id
+              - destination_account_id
+              - currency
+              - reference
+              - purpose
+              - control_parameters
+              properties:
+                customer_id:
+                  type: string
+                  format: uuid
+                  description: The unique identifier of the customer for whom the consent is being created.
+                  example: acc176ca-7716-4fbb-a735-d0e3dec24b40
+                destination_account_id:
+                  type: string
+                  format: uuid
+                  description: The unique identifier of the account acting as a consent beneficiary.
+                  example: 911f30d8-8fc8-4fe9-86a1-3f9fea11a674
+                currency:
+                  $ref: '#/components/schemas/Currency'
+                reference:
+                  $ref: '#/components/schemas/Reference'
+                purpose:
+                  $ref: '#/components/schemas/PaymentPurposeCode'
+                control_parameters:
+                  $ref: '#/components/schemas/AccountOnFileControlParameters'
+                government_identifier:
+                  description: "Unique government identifier of the customer making the payment.  \nAs required by the UAE\
+                    \ Open Finance standard, it ensures the debtor can be uniquely recognized.\nThis field supports providing\
+                    \ or updating the identifier on-the-fly when creating a consent."
+                  allOf:
+                  - $ref: '#/components/schemas/GovernmentIdentifierRequest'
+                start_date_time:
+                  type: string
+                  format: date-time
+                  nullable: true
+                  example: '2025-07-11T16:58:03.559872Z'
+                  description: "The date and time when the consent becomes active.  \n**Optional.** Defaults to the current\
+                    \ date and time if not provided.\n"
+                expiration_date_time:
+                  type: string
+                  format: date-time
+                  nullable: true
+                  example: '2026-07-11T16:58:03.559872Z'
+                  description: "The date and time when the consent expires.  \n**Optional.** Defaults to one year after `start_date_time`\
+                    \ if not provided.\n"
+            examples:
+              minimal:
+                summary: Minimal Request
+                description: The minimum required fields to create a new Account On File consent.
+                value:
+                  customer_id: acc176ca-7716-4fbb-a735-d0e3dec24b40
+                  destination_account_id: 911f30d8-8fc8-4fe9-86a1-3f9fea11a674
+                  currency: AED
+                  reference: ACME-ACCOUNT-LINK-2025-001
+                  purpose: GDS
+                  control_parameters:
+                    period_type: Day
+                    max_individual_amount: '1000.00'
+              complete:
+                summary: Complete Request
+                description: The complete set of fields to create a new Account On File consent.
+                value:
+                  customer_id: acc176ca-7716-4fbb-a735-d0e3dec24b40
+                  destination_account_id: 911f30d8-8fc8-4fe9-86a1-3f9fea11a674
+                  currency: AED
+                  reference: ACME-ACCOUNT-LINK-2025-001
+                  purpose: GDS
+                  control_parameters:
+                    period_type: Day
+                    max_individual_amount: '1000.00'
+                    max_cumulative_amount: '10000.00'
+                    max_cumulative_number_of_payments: 100
+                    max_cumulative_amount_per_period: '3000.00'
+                    max_cumulative_number_of_payments_per_period: 10
+                  government_identifier:
+                    type: EMIRATES_ID
+                    value: 784-1234-1234-1234
+                  start_date_time: '2025-12-01T12:00:00.559872Z'
+                  expiration_date_time: '2026-12-10T16:00:00.559872Z'
+        description: Request to create a new Account on File consent
+        required: true
+      responses:
+        '200':
+          description: Consent created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - id
+                - application_id
+                - start_date_time
+                - expiration_date_time
+                - customer_id
+                - status
+                - destination_account_id
+                - reference
+                - currency
+                - payment_purpose
+                - control_parameters
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    description: The unique identifier for the consent. Provided as a UUID.
+                  application_id:
+                    type: string
+                    description: Application identifier owning this consent
+                  start_date_time:
+                    type: string
+                    format: date-time
+                    description: Date and time from when the consent will be active
+                  expiration_date_time:
+                    type: string
+                    format: date-time
+                    description: Date and time of the expiration of this consent
+                  customer_id:
+                    type: string
+                    format: uuid
+                    description: Id of a customer that this consent belongs to
+                  status:
+                    type: string
+                    enum:
+                    - AWAITING_AUTHORISATION
+                    - AUTHORISED
+                    - REVOKED
+                    - REJECTED
+                    - EXPIRED
+                    - CONSUMED
+                    - SUSPENDED
+                    description: Current status of this consent.
+                  destination_account_id:
+                    type: string
+                    format: uuid
+                    description: Account id that this consent allows payments to
+                  reference:
+                    type: string
+                    description: A reason or reference in relation to a payment. Passed as a part of OF `creditor_reference`.
+                      This value will be used as default reference for payments made with this consent.
+                  currency:
+                    $ref: '#/components/schemas/Currency'
+                  purpose:
+                    $ref: '#/components/schemas/PaymentPurposeCode'
+                  control_parameters:
+                    $ref: '#/components/schemas/AccountOnFileControlParameters'
+              examples:
+                minimal:
+                  summary: Minimal Response
+                  value:
+                    id: 123e4567-e89b-12d3-a456-426655440000
+                    status: AWAITING_AUTHORISATION
+                    customer_id: acc176ca-7716-4fbb-a735-d0e3dec24b40
+                    destination_account_id: 911f30d8-8fc8-4fe9-86a1-3f9fea11a674
+                    currency: AED
+                    reference: ACME-ACCOUNT-LINK-2025-001
+                    purpose: GDS
+                    control_parameters:
+                      period_type: Day
+                      max_individual_amount: '1000.00'
+                complete:
+                  summary: Complete Response
+                  value:
+                    id: 123e4567-e89b-12d3-a456-426655440000
+                    status: AWAITING_AUTHORISATION
+                    customer_id: acc176ca-7716-4fbb-a735-d0e3dec24b40
+                    destination_account_id: 911f30d8-8fc8-4fe9-86a1-3f9fea11a674
+                    currency: AED
+                    reference: ACME-ACCOUNT-LINK-2025-001
+                    purpose: GDS
+                    start_date_time: '2025-07-11T16:58:03.559872Z'
+                    expiration_date_time: '2026-07-11T16:58:03.559872Z'
+                    control_parameters:
+                      period_type: Day
+                      max_individual_amount: '1000.00'
+                      max_cumulative_amount: '10000.00'
+                      max_cumulative_number_of_payments: 100
+                      max_cumulative_amount_per_period: '3000.00'
+                      max_cumulative_number_of_payments_per_period: 10
+  /payments/account-on-file:
+    post:
+      summary: Initiate a AoF payment
+      description: Endpoint responsible for initiating a AoF payment against an existing, authorized consent
+      tags:
+      - Account On File
+      security:
+      - OAuth2:
+        - api
+      parameters:
+      - name: Idempotency-Key
+        in: header
+        required: true
+        description: 'Unique key used to ensure idempotency of requests.
+
+          Must be unique per operation.
+
+          '
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: Request to initiate a new account on file payment
+              type: object
+              required:
+              - consent_id
+              - amount
+              - risk_details
+              properties:
+                consent_id:
+                  type: string
+                  format: uuid
+                  description: An id of an authorized consent that should be used to authorize this payment
+                amount:
+                  type: number
+                  format: double
+                  description: The amount to be paid.
+                purpose:
+                  $ref: '#/components/schemas/PaymentPurposeCode'
+                risk_details:
+                  allOf:
+                  - $ref: '#/components/schemas/RiskDetails'
+                reference:
+                  type: string
+                  nullable: true
+                  description: The reference submitted to the bank as a reference when initiating a payment. Can be used for
+                    reconciliation.
+              example:
+                consent_id: 123e4567-e89b-12d3-a456-426655440000
+                amount: 130.52
+                purpose: GDS
+                reference: INV-2025-004321
+                risk_details:
+                  transaction_indicators:
+                    channel: WEB
+                  debtor_indicators:
+                    geo_location:
+                      latitude: 25.2048
+                      longitude: 55.2708
+      responses:
+        '200':
+          description: "Indicates that request was processed and payment initiation request was sent to the bank. \nThis does\
+            \ not mean that the payment was successful!"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payments20InitiateAccountOnFilePaymentResponse'
+              examples:
+                minimal:
+                  summary: Minimal Response
+                  value:
+                    id: 341c3308-408d-48d9-ae44-c98eb1aa9a6f
+                    account_id: 911f30d8-8fc8-4fe9-86a1-3f9fea11a674
+                    application_id: 21ecf613-adaa-4c6b-8cd5-827de43bbe52
+                    consent_id: 123e4567-e89b-12d3-a456-426655440000
+                    status: CREATED
+                    reference: ACME-ACCOUNT-LINK-2025-001
+                    amount:
+                      currency: AED
+                      value: 130.52
+                    type: ACCOUNT_ON_FILE
+                    sender_customer_id: acc176ca-7716-4fbb-a735-d0e3dec24b40
+                complete:
+                  summary: Complete Response
+                  value:
+                    id: 341c3308-408d-48d9-ae44-c98eb1aa9a6f
+                    account_id: 911f30d8-8fc8-4fe9-86a1-3f9fea11a674
+                    application_id: 21ecf613-adaa-4c6b-8cd5-827de43bbe52
+                    consent_id: 123e4567-e89b-12d3-a456-426655440000
+                    status: FAILED
+                    reference: ACME-ACCOUNT-LINK-2025-001
+                    amount:
+                      currency: AED
+                      value: 130.52
+                    type: ACCOUNT_ON_FILE
+                    sender_customer_id: acc176ca-7716-4fbb-a735-d0e3dec24b40
+                    failure_details:
+                      code: BANK_ISSUE
+                      details: The banks is having a technical issues. Please try again later.
+components:
+  schemas:
+    PaymentDestination:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The unique identifier for the Payment Destination object.
+        status:
+          type: string
+          enum:
+          - CONFIRMED
+          - PENDING
+          description: The status of the Destination
+        default:
+          type: string
+          description: When `true` this Destination is automatically populated into Payment Intents where an alternative `payment_destination_id`
+            is not provided.
+        branch_address:
+          type: string
+          description: The address of the branch that holds the account - required for all beneficiaries outside of ARE. This
+            should be a single string with commas separating lines.
+        name:
+          type: string
+          description: The name of the legal entity that owns the account.
+        iban:
+          type: string
+          description: 'The IBAN of the account.
+
+            This is required for all countries except for the US.'
+        display_name:
+          type: string
+          description: The friendly display name for the account. This is rendered in the LinkSDK when referencing the Destination.
+        address:
+          type: string
+          description: The address of the owner of the destination bank account has registered with the bank.
+        city:
+          type: string
+          description: The city that the holding financial institution is located in.
+        country:
+          type: string
+          description: The three letter ISO code for the holding financial institution's country.
+        swift_code:
+          type: string
+          description: The SWIFT Code for the bank account - required for most international destinations
+        account_number:
+          type: string
+          description: The account number for the account.
+        customer_id:
+          type: string
+          description: The Customer object associated with this account. This field is optional, and will designate the Destination
+            as owned by the application if not provided.
+        ifsc:
+          type: string
+          description: The IFSC number for the bank account - required for international destinations in India.
+        transit_number:
+          type: string
+          description: The Transit Number for the bank account - required for international destinations in Canada
+        sort_code:
+          type: string
+          description: The Sort Code for the bank account - required for international destinations in the UK
+        routing_number:
+          type: string
+          description: The Routing Number for the bank account - required for international destinations in the US.
+        postal_code:
+          type: string
+          description: The Postal Code of the owner of the destination bank account has registered with the bank - required
+            for international destinations in the UK or the US
+        currency:
+          type: string
+          description: The currency of the destination bank account - required for international destinations in the UK or
+            the US
+      required:
+      - id
+      - status
+      - default
+      - name
+      - display_name
+      - address
+      - city
+      - country
+      - account_number
+    Pagination:
+      type: object
+      properties:
+        number:
+          type: integer
+          description: The current page being returned by the API
+        size:
+          type: integer
+          description: The page size requested
+        total_elements:
+          type: integer
+          description: The total number of elements in all pages
+        total_pages:
+          type: integer
+          description: The total number of pages retrievable
+      required:
+      - number
+      - size
+      - total_elements
+      - total_pages
+    PaymentSource:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The id of the Payment Source
+          format: uuid
+        customer_id:
+          type: string
+          description: The unique identifier for the Customer that owns the Payment Source
+          format: uuid
+        app_id:
+          type: string
+          description: The application associated with the Payment Source
+        status:
+          type: string
+          description: The current status of the beneficiary. Indicates whether the Payment Destination and Payment Source
+            channel is chargeable.
+          deprecated: true
+          enum:
+          - AWAITING_BENEFICIARY_COOL_OFF
+          - ACTIVE
+        beneficiary_cool_off_expiry:
+          type: string
+          deprecated: true
+          format: date-time
+          description: The time that the beneficiary cool down period will, or did, expire. After this time the beneficiary
+            will be chargeable.
+        bank_identifier:
+          type: string
+          description: Identifier that specifies the financial institution that holds the accounts
+        beneficiaries:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+                description: A unique identifier for the beneficiary
+              payment_destination_id:
+                type: string
+                format: uuid
+                description: The identifier for the associated Payment Destination resource
+              status:
+                type: string
+                description: The current status of the beneficiary
+                enum:
+                - AWAITING_BENEFICIARY_COOL_OFF
+                - ACTIVE
+              beneficiary_cool_off_expiry:
+                type: string
+                description: The time that the beneficiary cool down period will, or did, expire. After this time the beneficiary
+                  will be chargeable.
+                format: date-time
+            required:
+            - id
+            - payment_destination_id
+            - status
+          description: 'An array of beneficiaries that have been added to the Payment Source.
+
+            A beneficiary is the representation of the connection between a Payment Source and a Payment Destination.
+
+            The beneficiary object belongs to the payment source object and is linked to a Payment Destination object.
+
+            A payment can only be initiated from a payment source to a Destination which is linked to one of the Payment Source''s
+            beneficiaries.'
+        accounts:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: The unique identifier for the account.
+              account_id:
+                type: string
+                description: A secondary identifier for the account.
+                deprecated: true
+              account_name:
+                type: string
+                description: The friendly name for the account - for example "Gold Savings Account".
+              account_number:
+                type: string
+                description: The bank account number for the account.
+              iban:
+                type: string
+                description: The IBAN number for the account.
+              balance:
+                type: number
+                deprecated: true
+                format: double
+                description: The balance available on the account at the last payment.
+              currency:
+                type: string
+                description: The currency that the account supports.
+              balance_last_updated:
+                type: string
+                description: The last date the balance was refreshed.
+                deprecated: true
+            required:
+            - id
+            - account_id
+            - account_name
+            - account_number
+            - iban
+            - balance
+            - currency
+            - balance_last_updated
+      required:
+      - id
+      - customer_id
+      - app_id
+      - status
+      - beneficiary_cool_off_expiry
+      - beneficiaries
+      - bank_identifier
+    Payment:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier for this payment.
+          format: uuid
+        payment_intent_id:
+          type: string
+          description: The Payment Intent identifier responsible for generating the Payment.
+          format: uuid
+        payment_source_id:
+          type: string
+          description: The identifier for the payment source object from which the payment was initiatied.
+          format: uuid
+        sender_details:
+          type: object
+          properties:
+            account_number:
+              type: string
+            iban:
+              type: string
+            name:
+              type: string
+          required:
+          - account_number
+          - iban
+          - name
+          description: The account details for the customer sending the payment. Includes account number, name of the account
+            holder and IBAN.
+        recipient_details:
+          type: object
+          properties:
+            account_number:
+              type: string
+            iban:
+              type: string
+            name:
+              type: string
+          required:
+          - account_number
+          - iban
+          - name
+          description: Details for the recipient of the Payment, generated from the details available in the payment_destination.
+        amount:
+          type: number
+          description: The amount the charge was initiated for.
+        currency:
+          type: string
+          description: The currency the payment was initiated with.
+        description:
+          type: string
+          description: The description submitted to the bank as a reference when initiating a payment. Can be used for reconciliation.
+            By default this value is a the Payment Intent UUID without hyphens but you can also specify the description upon
+            creation of a payment intent.
+        submission_timestamp:
+          type: string
+          description: The time the Payment Initiation was submitted.
+        initiation_timestamp:
+          type: string
+          description: The time the Payment Initiation was started.
+        status:
+          type: string
+          enum:
+          - AWAITING_LOGIN_MFA
+          - AWAITING_PAYMENT_MFA
+          - AWAITING_APP_AUTH
+          - FAILED
+          - PENDING_WITH_BANK
+          - ACCEPTED_BY_BANK
+          description: 'The current status of the payment - see Payments Errors for a list of available MFAs. '
+        bank_transaction_reference:
+          type: string
+          description: The transaction reference number supplied by the initiating bank on successful initiation of a transfer.
+            Can be used for reconciliation.
+      required:
+      - id
+      - payment_intent_id
+      - payment_source_id
+      - sender_details
+      - recipient_details
+      - amount
+      - currency
+      - description
+      - submission_timestamp
+      - initiation_timestamp
+      - status
+      - bank_transaction_reference
+    PaymentIntent:
+      type: object
+      properties:
+        payment_intent_id:
+          type: string
+          format: uuid
+          description: The unique identifier for the Payment Intent.
+        customer_id:
+          type: string
+          description: The Customer object associated with the Payment Intent.
+        amount:
+          type: number
+          description: The amount that should be charged to the customer.
+          format: float
+        currency:
+          type: string
+          minLength: 3
+          maxLength: 3
+          examples:
+          - AED
+          - USD
+          description: The currency that the customer will make the payment in.
+        description:
+          type: string
+          description: The description submitted to the bank as a reference when initiating a payment. Can be used for reconciliation.
+            By default this value is a the Payment Intent UUID without hyphens but you can also specify the description upon
+            creation of a payment intent.
+        payments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Payment'
+          description: An array of Payment Initiation(s) - currently there will only ever be one Payment object within the
+            array once a user has started to complete a payment.
+        payment_destination:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+              description: The unique identifier for the Payment Destination object.
+            status:
+              type: string
+              enum:
+              - CONFIRMED
+              - PENDING
+              description: The status of the Destination
+            default:
+              type: string
+              description: When `true` this Destination is automatically populated into Payment Intents where an alternative
+                `payment_destination_id` is not provided.
+            name:
+              type: string
+              description: The name of the legal entity that owns the account.
+            iban:
+              type: string
+              description: 'The IBAN of the account.
+
+                This is required for all countries except for the US.'
+            display_name:
+              type: string
+              description: The friendly display name for the account. This is rendered in the LinkSDK when referencing the
+                Destination.
+            address:
+              type: string
+              description: The address of the owner of the destination bank account has registered with the bank.
+            city:
+              type: string
+              description: The city that the holding financial institution is located in.
+            country:
+              type: string
+              description: The three letter ISO code for the holding financial institution's country.
+            swift_code:
+              type: string
+              description: The SWIFT Code for the bank account - required for most international destinations
+            account_number:
+              type: string
+              description: The account number for the account.
+            customer_id:
+              type: string
+              description: The Customer object associated with this account. This field is optional, and will designate the
+                Destination as owned by the application if not provided.
+            owner_type:
+              type: string
+              description: Establishes the ownership of the Destination
+              enum:
+              - APPLICATION
+              - CUSTOMER
+          required:
+          - id
+          - status
+          - default
+          - name
+          - display_name
+          - address
+          - city
+          - country
+          - account_number
+      required:
+      - payment_intent_id
+      - customer_id
+      - amount
+      - currency
+      - description
+      - payments
+      - payment_destination
+    GovernmentIdentifierRequest:
+      type: object
+      required:
+      - type
+      - value
+      properties:
+        value:
+          type: string
+          description: The identifier value
+          minLength: 1
+          pattern: ^(?!\s*$).+
+        type:
+          type: string
+          description: The type of Government ID
+          enum:
+          - EMIRATES_ID
+          - TRADE_LICENSE_NUMBER
+    Currency:
+      type: string
+      pattern: ^[A-Z]{3}$
+      description: The ISO 3 letter currency code.
+      example: AED
+    CurrencyAmount:
+      type: object
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          type: number
+      required:
+      - currency
+      - amount
+    PaymentPurpose:
+      type: object
+      title: PaymentPurpose
+      description: Indicates the reason for the payment using a standardized code and human-readable description.
+      required:
+      - code
+      - description
+      properties:
+        code:
+          $ref: '#/components/schemas/PaymentPurposeCode'
+        description:
+          type: string
+          description: A human-readable description of payment purpose
+    PaymentPurposeCode:
+      type: string
+      title: PaymentPurposeCode
+      description: "A category code that relates to the type of services or goods that corresponds to the underlying purpose\
+        \ of the payment.  \nThe code must conform to the payment purpose code list.  \n**Supported values:**  \n- `FIS` –\
+        \ Financial services\n- `TCS` – Telecommunication services\n- `MWP` – Mobile wallet card payments\n- `OAT` – Own account\
+        \ transfer\n- `IFS` – Information services\n- `RNT` – Rent payments\n- `LNC` – Loan charges\n- `PIN` – Personal investments\n\
+        - `GDS` – Goods bought or sold"
+      enum:
+      - FIS
+      - TCS
+      - MWP
+      - OAT
+      - IFS
+      - RNT
+      - LNC
+      - PIN
+      - GDS
+    PeriodType:
+      type: string
+      title: PeriodType
+      description: "Defines the time period used for applying limits on a long‑lived consent. \nThis value determines how\
+        \ consumption limits (e.g., maximum amounts or number of payments) are calculated within each period.\n\n**Supported\
+        \ values:**\n- `Day` – A single calendar day (00:00 to 23:59).\n- `Week` – Seven consecutive days.\n- `Month` – A\
+        \ full calendar month (from the 1st to the last day).\n- `Year` – A full calendar year (12 consecutive months)."
+      enum:
+      - Day
+      - Week
+      - Month
+      - Year
+    Reference:
+      title: Reference
+      description: A reason or reference in relation to a payment. Maximum 64 chars
+      type: string
+      maxLength: 64
+      example: 'Invoice #12345'
+    AccountOnFileControlParameters:
+      title: AccountOnFileControlParameters
+      description: "Defines the control parameters for a Account On File (AoF) consent.  \nThese parameters specify the applicable\
+        \ limits for individual payments, cumulative amounts, and the number of payments allowed within a defined period or\
+        \ across the consent's lifetime.\nAt least one of `max_individual_amount`, `max_cumulative_amount`, or `max_cumulative_number_of_payments`\
+        \ must be provided."
+      type: object
+      required:
+      - period_type
+      properties:
+        period_type:
+          $ref: '#/components/schemas/PeriodType'
+        max_individual_amount:
+          type: number
+          description: Maximum amount allowed for a single payment
+          minimum: 0.01
+        max_cumulative_amount:
+          type: number
+          description: Maximum cumulative amount allowed across all payments
+          minimum: 0.01
+        max_cumulative_number_of_payments:
+          type: integer
+          description: Maximum number of payments allowed in total
+          minimum: 1
+        max_cumulative_amount_per_period:
+          type: number
+          description: Maximum cumulative amount allowed per period
+          minimum: 0.01
+        max_cumulative_number_of_payments_per_period:
+          type: integer
+          description: Maximum number of payments allowed per period
+          minimum: 1
+    RiskDetails:
+      title: RiskDetails
+      type: object
+      description: The Risk section is used to specify additional details for risk/fraud scoring regarding Payments
+      properties:
+        debtor_indicators:
+          $ref: '#/components/schemas/DebtorIndicators'
+        destination_delivery_address:
+          $ref: '#/components/schemas/DestinationDeliveryAddress'
+        transaction_indicators:
+          $ref: '#/components/schemas/TransactionIndicators'
+    DebtorIndicators:
+      title: DebtorIndicators
+      type: object
+      description: Debtor (User) Indicators
+      properties:
+        authentication:
+          $ref: '#/components/schemas/Authentication'
+        user_name:
+          $ref: '#/components/schemas/Name'
+        geo_location:
+          $ref: '#/components/schemas/GeoLocation'
+        device_information:
+          $ref: '#/components/schemas/DeviceInformation'
+        biometric_capabilities:
+          $ref: '#/components/schemas/BiometricCapabilities'
+        app_information:
+          $ref: '#/components/schemas/AppInformation'
+        browser_information:
+          $ref: '#/components/schemas/BrowserInformation'
+        user_behavior:
+          $ref: '#/components/schemas/UserBehavior'
+        account_risk_indicators:
+          $ref: '#/components/schemas/AccountRiskIndicators'
+        supplementary_data:
+          type: object
+          description: Additional information that cannot be captured in the structured fields and/or any other specific block.
+            This may include information that is not available in the structured fields, such as a user's behavioural data
+            like their typing speed and typing patterns.
+    Name:
+      type: object
+      properties:
+        en:
+          type: string
+        ar:
+          type: string
+    ChannelType:
+      type: string
+      description: Where the payment has been initiated from
+      enum:
+      - WEB
+      - MOBILE
+    DeliveryTimeframe:
+      type: string
+      title: DeliveryTimeframe
+      description: Timeframe for the delivery of purchased items
+      enum:
+      - ELECTRONIC_DELIVERY
+      - SAME_DAY_SHIPPING
+      - OVERNIGHT_SHIPPING
+      - MORE_THAN_1_DAY_SHIPPING
+    ReorderItemsIndicator:
+      type: string
+      title: ReorderItemsIndicator
+      description: Indicates if the transaction is a reorder
+      enum:
+      - FIRST_TIME_ORDER
+      - REORDER
+    PreOrderPurchaseIndicator:
+      type: string
+      title: PreOrderPurchaseIndicator
+      description: Indicates if this is a pre-ordered item
+      enum:
+      - MERCHANDISE_AVAILABLE
+      - FUTURE_AVAILABILITY
+    AddressMatchLevel:
+      type: string
+      title: AddressMatchLevel
+      description: Level of match between delivery and billing addresses
+      enum:
+      - FULL_MATCH
+      - PARTIAL_MATCH
+      - NO_MATCH
+      - NOT_APPLICABLE
+    MerchantRisk:
+      title: MerchantRisk
+      type: object
+      required:
+      - delivery_timeframe
+      - reorder_items_indicator
+      - pre_order_purchase_indicator
+      - is_gift_card_purchase
+      - is_deliver_address_matching_billing
+      - address_match_level
+      properties:
+        delivery_timeframe:
+          $ref: '#/components/schemas/DeliveryTimeframe'
+        reorder_items_indicator:
+          $ref: '#/components/schemas/ReorderItemsIndicator'
+        pre_order_purchase_indicator:
+          $ref: '#/components/schemas/PreOrderPurchaseIndicator'
+        is_gift_card_purchase:
+          type: boolean
+          description: Indicates if the transaction includes a gift card
+        is_delivery_address_matching_billing:
+          type: boolean
+          description: Indicates if delivery address matches billing address
+        address_match_level:
+          $ref: '#/components/schemas/AddressMatchLevel'
+    Authentication:
+      title: Authentication
+      description: The authentication method used by the User to access their account
+      type: object
+      properties:
+        authentication_channel:
+          $ref: '#/components/schemas/ChannelType'
+        possession_factor:
+          $ref: '#/components/schemas/PossessionFactor'
+        knowledge_factor:
+          $ref: '#/components/schemas/KnowledgeFactor'
+        inherence_factor:
+          $ref: '#/components/schemas/InherenceFactor'
+        challenge_outcome:
+          type: string
+          enum:
+          - PASS
+          - FAIL
+          - NOT_PERFORMED
+        authentication_flow:
+          type: string
+          enum:
+          - MFA
+          - OTHER
+        authentication_value:
+          type: string
+          description: Cryptographic proof of authentication where supported by the device and protocol.
+        challenge_date_time:
+          type: string
+          format: date-time
+    PossessionFactor:
+      title: PossessionFactor
+      description: The User's possession, that only the User possesses
+      type: object
+      properties:
+        is_used:
+          type: boolean
+        type:
+          type: string
+          enum:
+          - FIDO2_SECURITY_KEY
+          - PASSKEY
+          - OTP_DEVICE
+          - OTP_APP
+          - SMS_OTP
+          - EMAIL_OTP
+          - PUSH_NOTIFICATION
+          - WEBAUTHN_TOKEN
+          - SECURE_ENCLAVE_KEY
+          - HARDWARE_OTP_KEY
+          - TRUSTED_DEVICE
+          - OTHER
+    KnowledgeFactor:
+      title: KnowledgeFactor
+      description: The User's knowledge, that only the User knows
+      type: object
+      properties:
+        is_used:
+          type: boolean
+        type:
+          type: string
+          enum:
+          - PIN
+          - PASSWORD
+          - SECURITY_QUESTION
+          - SMS_OTP
+          - EMAIL_OTP
+          - OTP_PUSH
+          - OTHER
+    InherenceFactor:
+      title: InherenceFactor
+      description: The User's inherence, that is unique to the User's physical characteristics
+      type: object
+      properties:
+        is_used:
+          type: boolean
+        type:
+          $ref: '#/components/schemas/InherenceType'
+    InherenceType:
+      type: string
+      title: InherenceType
+      enum:
+      - BIOMETRIC
+      - FINGERPRINT
+      - FACE_RECOGNITION
+      - IRIS_SCAN
+      - VOICE_RECOGNITION
+      - FIDO_BIOMETRIC
+      - DEVICE_BIOMETRICS
+      - OTHER
+    DeviceType:
+      type: string
+      title: DeviceType
+      enum:
+      - MOBILE
+      - DESKTOP
+      - TABLET
+      - WEARABLE
+      - OTHER
+    ConnectionType:
+      type: string
+      title: ConnectionType
+      enum:
+      - WIFI
+      - CELLULAR
+      - OTHER
+    DeviceInformation:
+      title: DeviceInformation
+      description: Detailed device information
+      properties:
+        device_id:
+          type: string
+          description: IMEISV number of the connected electronic device.
+        alternative_device_id:
+          type: string
+          description: Alternative identifier for the connected electronic device.
+        device_operating_system:
+          type: string
+          description: Device operating system.
+        device_operating_system_version:
+          type: string
+          description: Device operating system version.
+        device_binding_id:
+          type: string
+          description: An identifier that associates a device uniquely with a specific application.
+        last_binding_date_time:
+          type: string
+          format: date-time
+          description: Date and time when the device was last bound to the application.
+        binding_duration:
+          type: string
+          description: ISO 8601 duration since device was last bound (e.g., P30D for 30 days).
+        binding_status:
+          type: string
+          enum:
+          - ACTIVE
+          - EXPIRED
+          - REVOKED
+          - SUSPENDED
+        device_type:
+          $ref: '#/components/schemas/DeviceType'
+        device_manufacturer:
+          $ref: '#/components/schemas/DeviceManufacturer'
+        device_language:
+          type: string
+        device_local_date_time:
+          type: string
+        connection_type:
+          $ref: '#/components/schemas/ConnectionType'
+        screen_information:
+          $ref: '#/components/schemas/ScreenInformation'
+        battery_status:
+          $ref: '#/components/schemas/BatteryStatus'
+        touch_support:
+          $ref: '#/components/schemas/TouchSupport'
+        motion_sensors:
+          $ref: '#/components/schemas/MotionSensors'
+        device_environment_context:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeviceEnvironmentContext'
+    DeviceEnvironmentContext:
+      type: string
+      enum:
+      - VPN_DETECTED
+      - EMULATOR_DETECTED
+    DeviceManufacturer:
+      title: DeviceManufacturer
+      type: object
+      properties:
+        model:
+          type: string
+        manufacturer:
+          type: string
+    ScreenInformation:
+      title: ScreenInformation
+      type: object
+      properties:
+        pixel_density:
+          type: number
+          format: double
+        orientation:
+          type: string
+          enum:
+          - PORTRAIT
+          - LANDSCAPE
+    BatteryStatus:
+      title: BatteryStatus
+      type: object
+      properties:
+        level:
+          type: number
+          format: double
+        is_charging:
+          type: boolean
+    TouchSupport:
+      title: TouchSupport
+      type: object
+      properties:
+        supported:
+          type: boolean
+        max_touch_points:
+          type: integer
+    MotionSensors:
+      title: MotionSensors
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - IN_MOTION
+          - STATIONARY
+        accelerometer:
+          type: boolean
+        gyroscope:
+          type: boolean
+    BiometricType:
+      type: string
+      title: BiometricType
+      enum:
+      - FINGERPRINT
+      - FACIAL_RECOGNITION
+      - IRIS
+      - VOICE_PRINT
+      - OTHER
+    BiometricCapabilities:
+      title: BiometricCapabilities
+      properties:
+        supports_biometric:
+          type: boolean
+        biometric_types:
+          type: array
+          items:
+            $ref: '#/components/schemas/BiometricType'
+    AppInformation:
+      title: AppInformation
+      type: object
+      description: Mobile application specific information.
+      properties:
+        app_version:
+          type: string
+          description: Version of the mobile application.
+        package_name:
+          type: string
+          description: Application package identifier.
+        build_number:
+          type: string
+          description: Application build number.
+    BrowserInformation:
+      title: BrowserInformation
+      type: object
+      description: Browser-specific information
+      properties:
+        user_agent:
+          description: Complete browser user agent string
+          type: string
+        is_cookies_enabled:
+          description: Whether cookies are enabled in the browser.
+          type: boolean
+        available_fonts:
+          description: List of available fonts.
+          type: array
+          items:
+            type: string
+        plugins:
+          description: List of installed browser plugins.
+          type: array
+          items:
+            type: string
+        pixel_ratio:
+          description: Device pixel ratio for scaling.
+          type: number
+          format: double
+    UserBehavior:
+      title: UserBehavior
+      type: object
+      properties:
+        scroll_behavior:
+          $ref: '#/components/schemas/ScrollBehavior'
+    ScrollBehavior:
+      title: ScrollBehavior
+      type: object
+      properties:
+        direction:
+          type: string
+          enum:
+          - UP
+          - DOWN
+          - BOTH
+        speed:
+          description: Average scroll speed in pixels per second.
+          type: number
+          format: double
+        frequency:
+          description: Number of scroll events per minute
+          type: number
+          format: double
+    AccountRiskIndicators:
+      title: AccountRiskIndicators
+      description: Risk indicators related to the account.
+      type: object
+      properties:
+        user_onboarding_date_time:
+          type: string
+          format: date-time
+          description: The exact date and time when the User account was activated.
+        last_account_change_date:
+          type: string
+          description: Date that the User's account was last changed.
+        last_password_change_date:
+          type: string
+          description: Date of the last password change by the User.
+        suspicious_activity:
+          type: string
+          enum:
+          - NO_SUSPICIOUS_ACTIVITY
+          - SUSPICIOUS_ACTIVITY_DETECTED
+        transaction_history:
+          $ref: '#/components/schemas/TransactionHistory'
+    TransactionHistory:
+      title: TransactionHistory
+      type: object
+      properties:
+        last_day:
+          type: integer
+          description: Total transactions made by the account in the last 24 hours.
+        last_year:
+          type: integer
+          description: Total transactions made by the account in the past year.
+    GeoLocation:
+      title: GeoLocation
+      description: GPS to identify and track the whereabouts of the connected electronic device.
+      type: object
+      properties:
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+    DestinationDeliveryAddress:
+      title: DestinationDeliveryAddress
+      type: object
+      properties:
+        recipient_type:
+          type: string
+          enum:
+          - INDIVIDUAL
+          - CORPORATE
+        recipient_name:
+          $ref: '#/components/schemas/Name'
+        national_address:
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
+    Address:
+      title: Address
+      type: object
+      required:
+      - address_line
+      - country
+      properties:
+        address_type:
+          type: string
+          enum:
+          - BUSINESS
+          - CORRESPONDENCE
+          - RESIDENTIAL
+        address_line:
+          type: string
+        building_number:
+          type: string
+        building_name:
+          type: string
+        floor:
+          type: string
+        street_name:
+          type: string
+        district_name:
+          type: string
+        post_box:
+          type: string
+        town_name:
+          type: string
+        region:
+          type: string
+        country:
+          type: string
+    TransactionIndicators:
+      title: TransactionIndicators
+      type: object
+      required:
+      - channel
+      properties:
+        is_customer_present:
+          type: boolean
+          description: This field differentiates between automatic and manual initiation.
+        is_contract_present:
+          type: boolean
+          description: Indicates if the Creditor has a contractual relationship.
+        channel:
+          $ref: '#/components/schemas/ChannelType'
+        channel_type:
+          description: The channel through which the transaction is being conducted.
+          type: string
+          enum:
+          - ECOMMERCE
+          - IN_STORE
+          - IN_APP
+          - TELEPHONE
+          - MAIL
+          - RECURRING_PAYMENT
+          - OTHER
+        sub_channel_type:
+          description: More specific classification of the transaction channel.
+          type: string
+          enum:
+          - WEB_BROWSER
+          - MOBILE_APP
+          - SMART_TV
+          - WEARABLE_DEVICE
+          - POS_TERMINAL
+          - ATM
+          - KIOSK_TERMINAL
+          - OTHER
+        merchant_risk:
+          $ref: '#/components/schemas/MerchantRisk'
+        supplementary_data:
+          type: object
+          description: Additional information that cannot be captured in the structured fields and/or any other specific block.
+    Payments20InitiateAccountOnFilePaymentResponse:
+      type: object
+      required:
+      - id
+      - account_id
+      - application_id
+      - consent_id
+      - status
+      - amount
+      - sender_customer_id
+      - created_at
+      - last_modified_at
+      - type
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The unique identifier for the payment.
+        account_id:
+          type: string
+          format: uuid
+          description: The account id that the payment is being made to.
+        application_id:
+          type: string
+          format: uuid
+          description: The application id that the payment is being made to.
+        consent_id:
+          type: string
+          format: uuid
+          description: The consent id that the payment is being made under.
+        status:
+          type: string
+          description: "Reflects the latest known state of processing in Lean’s systems and bank.\n\n**Possible values:**\n\
+            \n- **`CREATED`** —  \n  An internal transaction record has been created, but **no interaction with the bank has\
+            \ occurred yet**.  \n  This includes any validation steps required before initiation.  \n  Detailed progress within\
+            \ the approval flow may be represented through *sub-statuses*.\n\n- **`PROCESSING`** —  \n  The transaction has\
+            \ been **submitted or is being attempted at the bank**.  \n  Multiple initiation attempts may occur under this\
+            \ state.  \n  More granular progress can be indicated by *sub-statuses*.\n\n- **`PROCESSED`** —  \n  The **final\
+            \ successful** state.  \n  The payment has been confirmed as completed by the payment status tracking process.\n\
+            \  Sub-statuses or other technology-specific codes may appear to indicate settlement details.\n\n- **`FAILED`**\
+            \ —  \n  The **final unsuccessful** state.  \n  Failure may occur:\n    - before any bank initiation (e.g. validation\
+            \ issues),\n    - after repeated unsuccessful initiation attempts (e.g. bank unavailable, other technical issues),\
+            \ or\n    - even after an initially successful initiation followed by a **reversal detected by payment status\
+            \ tracking** before final reporting.\n---\n**Notes:**\n- `CREATED` and `PROCESSING` are transitional states. \
+            \ \n- `PROCESSED` and `FAILED` are terminal states.  \n- Sub-statuses provide additional context.\n"
+          enum:
+          - CREATED
+          - PROCESSING
+          - PROCESSED
+          - FAILED
+        sub_status:
+          type: string
+          description: 'Provides additional detail about the current lifecycle stage of the payment.
+
+            It can represent intermediate workflow steps, bank-specific responses or system conditions that further qualify
+            the main status.'
+        reference:
+          type: string
+          description: A reason or reference in relation to a payment. Passed as a part of OF `creditor_reference`. This value
+            will be used as default reference for payments made with this consent.
+        amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+        type:
+          type: string
+          enum:
+          - ACCOUNT_ON_FILE
+        sender_customer_id:
+          type: string
+          format: uuid
+          description: The customer id of the sender.
+        created_at:
+          type: string
+          format: date-time
+          description: The date and time when the payment was created.
+        last_modified_at:
+          type: string
+          format: date-time
+          description: The date and time when the payment was last modified.
+        failure_details:
+          type: object
+          properties:
+            code:
+              type: string
+              description: The error code.
+            details:
+              type: string
+              description: The error details.
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production / Pre-live
+security:
+- bearer: []

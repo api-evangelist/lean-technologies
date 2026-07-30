@@ -1,0 +1,26 @@
+generated: '2026-07-20'
+method: searched
+type: Webhooks
+source: https://docs.leantech.me/docs/webhooks, https://docs.leantech.me/docs/webhook-library
+spec_type: none
+notes: >
+  Lean documents webhooks but publishes no AsyncAPI document. Events are delivered
+  to the webhook URL configured per application in the Lean Dashboard.
+signature:
+  header: lean-signature
+  algorithm: HMAC-SHA512
+  secret: per-application webhook secret (Dashboard > Integration)
+  verify_note: HMAC over the RAW request body (do not deserialize before verifying).
+envelope:
+  idempotency_field: event_id
+  retention: Events retrievable for the past 90 days via the Events API (getEvents).
+event_surface:
+  - domain: payments
+    detail: Payment / payment-intent / consent status transitions delivered asynchronously.
+  - domain: data
+    detail: Async data results (results_id) signalled via webhook for PENDING requests.
+  - domain: connection
+    detail: Entity connection / reconnection lifecycle events.
+reference:
+  events_api_operation: getEvents
+  webhook_library: https://docs.leantech.me/docs/webhook-library

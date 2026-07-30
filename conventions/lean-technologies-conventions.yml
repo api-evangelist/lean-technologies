@@ -1,0 +1,45 @@
+generated: '2026-07-20'
+method: searched
+source: https://docs.leantech.me/docs/authentication, openapi/lean-technologies-payments-openapi.yml, https://docs.leantech.me/docs/webhooks
+authentication:
+  style: oauth2-client-credentials
+  scheme: Bearer JWT
+  token_endpoint: https://auth.leantech.me/oauth2/token
+  sandbox_token_endpoint: https://auth.sandbox.leantech.me/oauth2/token
+  scopes: [api, "customer.<customer_id>"]
+  ref: authentication/lean-technologies-authentication.yml
+idempotency:
+  supported: true
+  mechanism: request-header
+  header: Idempotency-Key
+  required: true
+  scope: per-operation
+  detail: >
+    Payment / payout write operations require an Idempotency-Key header (unique per
+    operation) to guarantee at-most-once processing. Webhooks additionally carry an
+    event_id so consumers can dedupe redelivered events.
+  source: openapi/lean-technologies-payments-openapi.yml
+pagination:
+  style: page-based
+  detail: >
+    List endpoints (payments, refunds, entities, schedules, payment links) are
+    paginated with a default page size (e.g. 50) and support start/end date filtering
+    on several resources.
+request_tracing:
+  detail: Application/webhook identifiers (event_id) used for correlation and dedupe.
+webhooks:
+  signature_header: lean-signature
+  algorithm: HMAC-SHA512
+  secret: per-application webhook secret (Lean Dashboard > Integration)
+  note: Verify against the raw request body buffer, not the deserialized payload.
+  ref: asyncapi/lean-technologies-webhooks.yml
+versioning:
+  scheme: uri-path + docs branch
+  detail: URL path versions (v1/v2/v3) per product; docs versioned by branch (e.g. v3.0-UAE).
+  ref: lifecycle/lean-technologies-lifecycle.yml
+errors:
+  envelope: code + message (+ status field for resolution guidance)
+  ref: errors/lean-technologies-problem-types.yml
+regions:
+  - {code: ARE, name: United Arab Emirates, host: api2.leantech.me}
+  - {code: SAU, name: Saudi Arabia (KSA), host: api2.sa.leantech.me}

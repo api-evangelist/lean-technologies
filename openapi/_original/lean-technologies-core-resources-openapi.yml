@@ -1,0 +1,611 @@
+openapi: 3.1.0
+info:
+  title: UAE - V2
+  description: ''
+  version: 1.0.0
+tags:
+- name: Customer
+- name: Banks
+- name: Events
+- name: Pending & Asynchronous Requests
+paths:
+  /customers/v1/:
+    get:
+      summary: List Customers
+      deprecated: false
+      description: Fetch a list of all customers created
+      operationId: getCustomers
+      tags:
+      - Customer
+      parameters:
+      - name: page_number
+        in: query
+        description: ''
+        required: true
+        example: 0
+        schema:
+          type: integer
+      - name: page_size
+        in: query
+        description: ''
+        required: true
+        example: 50
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Customer'
+                  page:
+                    $ref: '#/components/schemas/Pagination'
+                required:
+                - data
+                - page
+              example:
+                data:
+                - customer_id: 49e8d23e-9b17-4ffe-a2ab-4c5fc1c02431
+                  app_user_id: '001'
+                - customer_id: 090e2390-bd5a-47d8-97a6-6d4dd1af35f0
+                  app_user_id: '002'
+                - customer_id: 8eeec6bd-332a-40ec-8de3-a5d064d107d6
+                  app_user_id: '003'
+                page:
+                  number: 0
+                  size: 50
+                  total_elements: 3
+                  total_pages: 1
+          headers: {}
+      security:
+      - bearer: []
+    post:
+      summary: Create Customer
+      deprecated: false
+      description: Create a customer object on Lean given the app_user_id which is the identifier (or a hash of the identifier)
+        you use to refer to a user in your own database. The customer object in Lean should map one to one with the user object
+        in your database.
+      operationId: createCustomer
+      tags:
+      - Customer
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                app_user_id:
+                  type: string
+                  description: A unique value from your database, can be the corresponding User ID in your system, or any
+                    other string.
+                  minLength: 1
+                  maxLength: 255
+                government_identifiers:
+                  type: array
+                  description: "A government‑issued identifier for the debtor (the account holder making the payment).  \n\
+                    This is **required by the UAE Open Finance specification** to uniquely identify the customer in any long\
+                    \ lived consent authorization journey."
+                  items:
+                    allOf:
+                    - $ref: '#/components/schemas/GovernmentIdentifierRequest'
+              required:
+              - app_user_id
+              examples:
+              - app_user_id: my_first_customer
+                government_identifier:
+                - type: EMIRATES_ID
+                  value: 784-1232-1232-1232
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+              example:
+                customer_id: 49e8d23e-9b17-4ffe-a2ab-4c5fc1c02431
+                app_user_id: '001'
+          headers: {}
+      security:
+      - bearer: []
+  /customers/v1/{customer_id}/:
+    get:
+      summary: Get Customer by ID
+      deprecated: false
+      description: Fetch a Customer object by the customer_id associated
+      operationId: getCustomerById
+      tags:
+      - Customer
+      parameters:
+      - name: customer_id
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+              example:
+                customer_id: 49e8d23e-9b17-4ffe-a2ab-4c5fc1c02431
+                app_user_id: '001'
+          headers: {}
+      security:
+      - bearer: []
+    put:
+      summary: Update Customer
+      deprecated: false
+      description: 'This endpoint allows you to update the government identifiers associated with an existing customer.
+
+        Government identifiers are required by the UAE Open Finance specification to uniquely identify the customer and must
+        reflect the latest, valid information for the account holder.'
+      operationId: updateCustomer
+      tags:
+      - Customer
+      parameters:
+      - name: customer_id
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                government_identifiers:
+                  type: array
+                  description: "A government‑issued identifier for the debtor (the account holder making the payment).  \n\
+                    This is **required by the UAE Open Finance specification** to uniquely identify the customer."
+                  items:
+                    allOf:
+                    - $ref: '#/components/schemas/GovernmentIdentifierRequest'
+              required:
+              - government_identifiers
+              examples:
+              - government_identifier:
+                - type: EMIRATES_ID
+                  value: 784-1232-1232-1232
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+              example:
+                customer_id: 49e8d23e-9b17-4ffe-a2ab-4c5fc1c02431
+                app_user_id: '001'
+          headers: {}
+  /customers/v1/app-user-id/{app_user_id}:
+    get:
+      summary: Get Customer by app_user_id
+      deprecated: false
+      description: Fetch a Customer object by the associated `app_user_id` value
+      operationId: getCustomerByUserId
+      tags:
+      - Customer
+      parameters:
+      - name: app_user_id
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+              example:
+                customer_id: 34c11087-b6bc-429b-9a91-725941b1a547
+                app_user_id: '001'
+          headers: {}
+      security:
+      - bearer: []
+  /banks/v1:
+    get:
+      summary: List Banks
+      deprecated: false
+      description: Fetch a list of all supported Banks for your application, includes status and configuration information.
+      operationId: getBanks
+      tags:
+      - Banks
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Bank'
+              example:
+              - identifier: MOCK_ARE
+                name: Mock Bank
+                arabic_name: بنك
+                logo: https://cdn.leantech.me/img/bank-assets/sau/glyphs/bilad/mock.png
+                logo_alt: https://cdn.leantech.me/img/bank-assets/sau/glyphs/bilad/mockDark.png
+                main_color: '#CF202E'
+                background_color: '#FFFFFF'
+                theme: light
+                country_code: SAU
+                active: true
+                mock: false
+                bank_type: RETAIL
+                traits:
+                - auth-redirect
+                - decoupled-auth-redirect
+                supported_account_types:
+                - CREDIT
+                - SAVINGS
+                - CURRENT
+                transfer_limits: []
+                international_transfer_limits: []
+                international_destinations: []
+                account_type: PERSONAL
+                supported_account_sub_types:
+                - CURRENT
+                - SAVINGS
+                - CREDIT
+                availability:
+                  active:
+                    payments: true
+                    data: true
+                  enabled:
+                    payments: true
+                    data: true
+          headers: {}
+      security:
+      - bearer: []
+  /events/v1:
+    get:
+      summary: Get all Events
+      deprecated: false
+      description: List all events created by Lean and sent over webhooks in the past 90 days.
+      operationId: getEvents
+      tags:
+      - Events
+      parameters:
+      - name: page
+        in: query
+        description: Page number
+        required: true
+        schema:
+          type: integer
+      - name: size
+        in: query
+        description: Number of items per page
+        required: true
+        schema:
+          type: integer
+      - name: from
+        in: query
+        description: Filter events that have been created after specific DateTime
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: to
+        in: query
+        description: Filter events that have been created before specific DateTime
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: type
+        in: query
+        description: Filter events that are of a specific type. If this field is not populated no filtering will be applied
+          on the event type.
+        required: false
+        schema:
+          type: string
+          enum:
+          - results.ready
+          - entity.created
+          - entity.updated
+          - entity.reconnected
+          - payment.created
+          - payment.updated
+          - payment_intent.created
+          - payment_intent.expired
+          - payment_source.created
+          - payment_source.updated
+          - payment_source.beneficiary.created
+          - payment_source.beneficiary.updated
+          - bank.availability.updated
+          - payment.reconciliation.updated
+          - bulk_payment_intent.created
+          - bulk_payment_intent.updated
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        payload:
+                          type: object
+                          properties: {}
+                          description: Webhook payload
+                        type:
+                          type: string
+                          description: The type of webhook sent
+                        message:
+                          type: string
+                          description: A plain description of the event
+                        timestamp:
+                          type: string
+                          description: The timestamp for the first attempt of the webhook
+                          format: date-time
+                        event_id:
+                          type: string
+                          description: The unique ID for the webhook event
+                      required:
+                      - payload
+                      - type
+                      - message
+                      - timestamp
+                      - event_id
+                  page:
+                    $ref: '#/components/schemas/Pagination'
+                required:
+                - data
+                - page
+              example:
+                data:
+                - payload:
+                    id: cdd8c617-0dd6-4cf7-b374-e244d2735678
+                    customer_id: 61760f96-a382-4f37-aec2-956ede4f3865
+                    payment_source_id: 4e86c5b5-459f-4aa5-8f62-f26b8726639c
+                    payment_destination_id: 902cb198-d1c7-4f00-8597-e54e41beff0f
+                    status: ACTIVE
+                  type: payment_source.beneficiary.created
+                  message: A beneficiary was added for a payment source.
+                  timestamp: '2022-08-10T10:18:39.182841Z'
+                  event_id: 823a6f3c-8a24-4e95-9654-bfec21660c75
+                page:
+                  number: 0
+                  size: 1
+                  total_elements: 46
+                  total_pages: 46
+          headers: {}
+      security:
+      - bearer: []
+  /data/v2/results/{results_id}: {}
+components:
+  schemas:
+    Customer:
+      type: object
+      properties:
+        customer_id:
+          type: string
+          format: uuid
+          description: Customer ID
+        app_user_id:
+          type: string
+        government_identifiers:
+          type: array
+          description: "A government‑issued identifier for the debtor (the account holder making the payment).  \nThis is\
+            \ **required by the UAE Open Finance specification** to uniquely identify the customer."
+          items:
+            allOf:
+            - $ref: '#/components/schemas/GovernmentIdentifierRequest'
+      required:
+      - customer_id
+      - app_user_id
+    Pagination:
+      type: object
+      properties:
+        number:
+          type: integer
+          description: The current page being returned by the API
+        size:
+          type: integer
+          description: The page size requested
+        total_elements:
+          type: integer
+          description: The total number of elements in all pages
+        total_pages:
+          type: integer
+          description: The total number of pages retrievable
+      required:
+      - number
+      - size
+      - total_elements
+      - total_pages
+    TransferLimit:
+      type: object
+      properties:
+        currency:
+          type: string
+          description: The ISO 4217 currency code for the currency.
+        min:
+          type: integer
+          description: The minimum supported transfer amount.
+        max:
+          type: integer
+          description: The maximum supported transfer amount.
+      required:
+      - currency
+      - min
+      - max
+    Bank:
+      type: object
+      properties:
+        identifier:
+          type: string
+          description: The unique identifier for the bank.
+        name:
+          type: string
+          description: The user-friendly name of the bank.
+        arabic_name:
+          type: string
+          description: Arabic string for the bank name
+        logo:
+          type: string
+          description: A black logo for the bank.
+        logo_alt:
+          type: string
+          description: A white logo for the bank
+        main_color:
+          type: string
+          description: The hex code for the main brand colour for the bank.
+        background_color:
+          type: string
+          description: The hex code for the secondary brand colour for the bank.
+        theme:
+          type: string
+          description: Indicates the color for any overlayed text to ensure contrast
+          enum:
+          - dark
+          - light
+        country_code:
+          type: string
+          description: The 3 letter ISO for the country the bank is located in.
+        active:
+          type: boolean
+          description: Whether the Bank is currently operational.
+        traits:
+          type: array
+          items:
+            type: string
+          description: An array of traits that are used internally to determine the type of bank connection.
+        supported_account_types:
+          type: string
+          description: 'Indicates the account types Lean supports for this bank. '
+          enum:
+          - CURRENT
+          - SAVINGS
+          - CREDIT
+        transfer_limits:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransferLimit'
+          description: An array of key-value pairs for supported currencies and their associated transfer limits with the
+            bank.
+        international_transfer_limits:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransferLimit'
+          description: A list of objects representing the limits for transactions to international destinations. These limits
+            apply to all transfers to international payments.
+        international_destinations:
+          type: array
+          items:
+            type: object
+            properties:
+              country_iso_code:
+                type: string
+                description: The alpha-3 (3 character) ISO 3166 country code for the destination country the bank can initiate
+                  transactions to.
+              country_name:
+                type: string
+                description: The name of the destination country the bank can initiate transactions to.
+              supported_currencies:
+                type: array
+                items:
+                  type: string
+                description: A list of supported currencies the bank can initiate transactions to that destination
+          description: A list of objects representing international destinations to where Lean can initiate international
+            payments for this bank.
+        availability:
+          type: object
+          properties:
+            active:
+              type: object
+              properties:
+                payments:
+                  type: boolean
+                data:
+                  type: boolean
+              required:
+              - payments
+              - data
+              description: Whether Lean has enabled the or disabled the Bank for Payments and Data functionality. When this
+                is false, Lean has taken the bank offline due to stability, maintenance or regulatory reasons.
+            enabled:
+              type: object
+              properties:
+                payments:
+                  type: boolean
+                data:
+                  type: boolean
+              required:
+              - payments
+              - data
+              description: Whether the bank has been enabled in the application dashboard or not. If you want to hide a bank
+                or disable it from use for any reason - you can log in to the [Application Dashboard](https://dev.leantech.me)
+                to enable and disable visibility and functionality of a bank on your platform.
+          required:
+          - active
+          - enabled
+          description: Whether the Bank is currently available for use with the Payments and Data API. Changes to this status
+            trigger banks.availability.updated webhooks.
+      required:
+      - identifier
+      - name
+      - logo
+      - logo_alt
+      - main_color
+      - background_color
+      - theme
+      - country_code
+      - active
+      - traits
+      - supported_account_types
+      - transfer_limits
+      - international_transfer_limits
+      - international_destinations
+      - availability
+      - arabic_name
+    GovernmentIdentifierRequest:
+      type: object
+      required:
+      - type
+      - value
+      properties:
+        value:
+          type: string
+          description: The identifier value
+          minLength: 1
+          pattern: ^(?!\s*$).+
+        type:
+          type: string
+          description: The type of Government ID
+          enum:
+          - EMIRATES_ID
+          - TRADE_LICENSE_NUMBER
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production / Pre-live
+security:
+- bearer: []

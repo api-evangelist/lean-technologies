@@ -1,0 +1,1798 @@
+openapi: 3.1.0
+info:
+  title: UAE - V2
+  description: Payouts API for UAE V2
+  version: 1.0.0
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+security:
+- bearer: []
+- bearerAuth: []
+tags:
+- name: Payouts
+paths:
+  /payouts/v1/payment:
+    post:
+      summary: 'Create Payout Payment '
+      deprecated: false
+      description: Create a payout payment
+      operationId: createPayout
+      tags:
+      - Payouts
+      parameters:
+      - name: idempotency-key
+        in: header
+        description: The Idempotency Key used to mark the transaction call to the API.
+        required: false
+        example: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                payment_details:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      account_id:
+                        type: string
+                        description: Defines the `account_id` to send the money from
+                      destination_details:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            payment_destination_id:
+                              type: string
+                              format: uuid
+                              description: The Destination object to initiate the payment to
+                            amount:
+                              type: number
+                              description: The amount to be transferred
+                            currency:
+                              type: string
+                              description: Defines the `currency` of the payment
+                              default: AED
+                            external_reference:
+                              type: string
+                              description: Useful for tracking and reporting the transaction on your end. e.g You can enter
+                                transaction ID of this payment maintained in your system
+                            description:
+                              type: string
+                              description: Payment reference information
+                              maxLength: 32
+                            authorize_payment:
+                              type: boolean
+                              description: When set to `true` the payment will be automatically authorized by the authorizer
+                                credentials in Payouts (requires an authorizer account to be set up in Payouts)
+                              default: false
+                          required:
+                          - payment_destination_id
+                          - amount
+                          - description
+                          - authorize_payment
+                        description: Defines the payee account for the payment
+                    required:
+                    - account_id
+                    - destination_details
+                    - currency
+                  description: An array of payments to be queued and authorized
+              required:
+              - payment_details
+            example:
+              payment_details:
+              - account_id: string
+                currency: AED
+                destination_details:
+                - payment_destination_id: 5fd95d40-9ea5-4678-8ffb-6b597f21965b
+                  amount: 100
+                  currency: AED
+                  description: string
+                  authorize_payment: false
+      responses:
+        '200':
+          description: Payment initiated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  end_user_id:
+                    type: string
+                    description: Internal ID of the credentials used to queue the payment, for audit purposes.
+                  payouts_payment_details:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        payment_intent_id:
+                          type: string
+                          description: The related Payment Intent
+                        payment_id:
+                          type: string
+                          nullable: true
+                          description: The related Payment
+                        initiate_payment_task_id:
+                          type: string
+                          description: Informative ID for tracing a payout in Lean. Used when debugging a payout with your
+                            support representative.
+                        account_number:
+                          type: string
+                          description: Account number which is performing the payment
+                        iban:
+                          type: string
+                          description: IBAN of the sending account
+                        destination_details:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              destination_id:
+                                type: string
+                                description: The unique identifier for the destination
+                              amount:
+                                type: integer
+                                description: Amount paid out
+                              currency:
+                                type: string
+                                description: Currency of the transaction
+                              payment_status:
+                                type: string
+                                description: Status of the payment
+                              recipient_details:
+                                type: object
+                                properties:
+                                  account_number:
+                                    type: string
+                                    description: Account number of the destination
+                                  iban:
+                                    type: string
+                                    description: Full IBAN of the destination
+                                  name:
+                                    type: string
+                                    description: Associated name of the destination
+                                required:
+                                - account_number
+                                - iban
+                                - name
+                                description: Account details of the receiving account
+                            required:
+                            - destination_id
+                            - amount
+                            - currency
+                            - payment_status
+                            - recipient_details
+                          description: Details of the receiving account
+                        bank_identifier:
+                          type: string
+                          description: Bank Identifier of the sender's account
+                      required:
+                      - payment_intent_id
+                      - bank_identifier
+                required:
+                - end_user_id
+                - payouts_payment_details
+              example:
+                end_user_id: 560d6943-fa8e-4dd9-9717-50025bf2feae
+                payouts_payment_details:
+                - payment_intent_id: c97ccfea-b828-4850-bfe4-a06acfbb024b
+                  initiate_payment_task_id: c4d5d3a9-f1bd-4361-9aff-42d4c7a9c3d0
+                  account_number: '338247974759251'
+                  iban: AE480484338247974759251
+                  destination_details:
+                  - destination_id: 2dac22a7-e168-454d-960b-7dfaddab6a54
+                    amount: 100
+                    currency: AED
+                    payment_status: CREATED
+                    recipient_details:
+                      account_number: '1015000000601'
+                      iban: AE760260001015000000601
+                      name: Al Fulani
+                  bank_identifier: LEAN_SME_MB1_UAE
+          headers: {}
+      security:
+      - bearer: []
+  /payouts/v1/payments:
+    get:
+      summary: List Payouts
+      deprecated: false
+      description: List payout payments
+      operationId: getPayouts
+      tags:
+      - Payouts
+      parameters:
+      - name: page_number
+        in: query
+        description: The page number.
+        required: false
+        schema:
+          type: integer
+          default: 0
+      - name: page_size
+        in: query
+        description: The number of Payout payments to return per page.
+        required: false
+        schema:
+          type: integer
+          default: 50
+      - name: amount_min
+        in: query
+        description: The lower bound limit on the amount value for Payout payments.
+        required: false
+        schema:
+          type: number
+          format: double
+      - name: amount_max
+        in: query
+        description: The upper bound limit on the amount value for Payout payments.
+        required: false
+        schema:
+          type: number
+          format: double
+      - name: from
+        in: query
+        description: A DateTime in ISO-8601 format as the lower bound limit on the created_at value for Payout payments.
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: to
+        in: query
+        description: A DateTime in ISO-8601 format as the upper bound limit on the created_at value for Payout payments.
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: from_updated_at
+        in: query
+        description: A DateTime in ISO-8601 format as the lower bound limit on the updated_at value for Payout payments.
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: to_updated_at
+        in: query
+        description: A DateTime in ISO-8601 format as the upper bound limit on the updated_at value for Payout payments.
+        required: false
+        schema:
+          type: string
+          format: date-time
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        recipient_name:
+                          type: string
+                        recipient_bank_name:
+                          type: string
+                        recipient_iban:
+                          type: string
+                        description:
+                          type: string
+                        currency:
+                          type: string
+                        amount:
+                          type: number
+                        created_at:
+                          type: string
+                        payment_intent_id:
+                          type: string
+                        payment_id:
+                          type: string
+                        auto_authorized:
+                          type: boolean
+                        status:
+                          type: string
+                          enum:
+                          - AWAITING_AUTHORIZATION
+                          - PENDING_WITH_BANK
+                          - ACCEPTED_BY_BANK
+                          - FAILED
+                      required:
+                      - recipient_name
+                      - recipient_bank_name
+                      - recipient_iban
+                      - description
+                      - currency
+                      - amount
+                      - created_at
+                      - payment_intent_id
+                      - auto_authorized
+                      - status
+                      - payment_id
+                  number:
+                    type: integer
+                    description: Current page number
+                  size:
+                    type: integer
+                    description: Size of the page
+                  total_elements:
+                    type: integer
+                    description: Total number of elements across all pages
+                  pageable:
+                    type: object
+                    properties:
+                      sort:
+                        type: object
+                        properties:
+                          empty:
+                            type: boolean
+                            description: Response is empty
+                          sorted:
+                            type: boolean
+                            description: Response is sorted
+                          unsorted:
+                            type: boolean
+                            description: Response is unsorted
+                        required:
+                        - empty
+                        - sorted
+                        - unsorted
+                        description: Sorting information
+                      offset:
+                        type: integer
+                      page_size:
+                        type: integer
+                        description: Maximum size of a page of results
+                      page_number:
+                        type: integer
+                        description: Current page number
+                      paged:
+                        type: boolean
+                        description: Response is paged
+                      unpaged:
+                        type: boolean
+                        description: Response is not paged
+                    required:
+                    - sort
+                    - offset
+                    - page_size
+                    - page_number
+                    - paged
+                    - unpaged
+                  last:
+                    type: boolean
+                    description: Is this the last page of the response
+                  total_pages:
+                    type: integer
+                    description: Total number of available pages
+                  first:
+                    type: boolean
+                    description: Is this the first page of the response
+                  number_of_elements:
+                    type: integer
+                    description: Number of elements in the response
+                  empty:
+                    type: boolean
+                    description: Is the response empty
+                required:
+                - content
+                - number
+                - size
+                - total_elements
+                - pageable
+                - last
+                - total_pages
+                - first
+                - number_of_elements
+                - empty
+              example:
+                content:
+                - recipient_name: SHINRA ELECTRICITY
+                  recipient_bank_name: SHINRA LTD.
+                  recipient_iban: AE04033000001XXXXXXXXXX
+                  description: INV001
+                  currency: AED
+                  amount: 21.18
+                  created_at: '2023-08-21T14:11:35.882645Z'
+                  payment_intent_id: 7d496fab-4ff5-4221-85d7-43e5af28efdb
+                  payment_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                  auto_authorized: false
+                  status: ACCEPTED_BY_BANK
+                number: 0
+                size: 20
+                total_elements: 1
+                pageable:
+                  sort:
+                    empty: true
+                    sorted: false
+                    unsorted: true
+                  offset: 0
+                  page_size: 20
+                  page_number: 0
+                  paged: true
+                  unpaged: false
+                last: true
+                total_pages: 1
+                first: true
+                number_of_elements: 1
+                empty: false
+          headers: {}
+      security:
+      - bearer: []
+  /payouts/v1/payments/{intent_id}/history:
+    get:
+      summary: Get Payment History
+      deprecated: false
+      description: Get payment history for a payment intent
+      operationId: getPaymentHistory
+      tags:
+      - Payouts
+      parameters:
+      - name: intent_id
+        in: path
+        description: Payment intent ID
+        required: true
+        example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        payment_id:
+                          type: string
+                          description: The Payment ID
+                        events:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              event:
+                                type: string
+                                description: Either `payment.created` or `payment.updated`
+                              status:
+                                type: string
+                                description: The status at the time of the event
+                                enum:
+                                - PENDING_WITH_BANK
+                                - AWAITING_AUTHORIZATION
+                                - FAILED
+                                - ACCEPTED_BY_BANK
+                              post_initiation_status:
+                                type: string
+                                description: The current post-initiation status of the payment
+                              published_at:
+                                type: string
+                                description: Timestamp the event was published
+                            required:
+                            - event
+                            - status
+                            - published_at
+                      required:
+                      - payment_id
+                      - events
+                  page:
+                    type: object
+                    properties:
+                      number:
+                        type: integer
+                        example: 0
+                      size:
+                        type: integer
+                        example: 10
+                      total_elements:
+                        type: integer
+                        example: 1
+                      total_pages:
+                        type: integer
+                        example: 1
+                      sort:
+                        type: object
+                        nullable: true
+                        description: Sorting information, may be null
+                required:
+                - content
+                - page
+              example:
+                content:
+                - payment_id: a5a10ac9-c714-4f17-a74f-1a28152c2837
+                  events:
+                  - event: payment.updated
+                    status: ACCEPTED_BY_BANK
+                    published_at: '2025-10-30T07:18:51.859454Z'
+                    post_initiation_status: PROCESSED
+                  - event: payment.created
+                    status: AWAITING_AUTHORIZATION
+                    published_at: '2025-10-30T07:15:02.507872Z'
+                    post_initiation_status: 'null'
+                page:
+                  number: 0
+                  size: 10
+                  total_elements: 1
+                  total_pages: 1
+                  sort: null
+      security:
+      - bearer: []
+  /payouts/v1/{payment_id}:
+    get:
+      summary: Get Payouts
+      deprecated: false
+      description: Fetch a single payment
+      operationId: getPaymentById
+      tags:
+      - Payouts
+      parameters:
+      - name: payment_id
+        in: path
+        description: The unique identifier of the payment
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: The unique identifier for this payment.
+                    format: uuid
+                  payment_intent_id:
+                    type: string
+                    description: The Payment Intent identifier responsible for generating the Payment.
+                    format: uuid
+                  payment_source_id:
+                    type: string
+                    description: The identifier for the payment source object from which the payment was initiatied.
+                    format: uuid
+                  sender_details:
+                    type: object
+                    properties:
+                      account_number:
+                        type: string
+                      iban:
+                        type: string
+                      name:
+                        type: string
+                    required:
+                    - account_number
+                    - iban
+                    - name
+                    description: The account details for the customer sending the payment. Includes account number, name of
+                      the account holder and IBAN.
+                  recipient_details:
+                    type: object
+                    properties:
+                      account_number:
+                        type: string
+                      iban:
+                        type: string
+                      name:
+                        type: string
+                    required:
+                    - account_number
+                    - iban
+                    - name
+                    description: Details for the recipient of the Payment, generated from the details available in the payment_destination.
+                  amount:
+                    type: number
+                    description: The amount the charge was initiated for.
+                  currency:
+                    type: string
+                    description: The currency the payment was initiated with.
+                  description:
+                    type: string
+                    description: The description submitted to the bank as a reference when initiating a payment. Can be used
+                      for reconciliation. By default this value is a the Payment Intent UUID without hyphens but you can also
+                      specify the description upon creation of a payment intent.
+                  submission_timestamp:
+                    type: string
+                    description: The time the Payment Initiation was submitted.
+                  initiation_timestamp:
+                    type: string
+                    description: The time the Payment Initiation was started.
+                  status:
+                    type: string
+                    description: 'The current status of the payment - see Payments Errors for a list of available MFAs. '
+                    enum:
+                    - AUTHORISATION_FAILED
+                    - FAILED
+                    - PENDING_WITH_BANK
+                    - ACCEPTED_BY_BANK
+                  post_initiation_status:
+                    type: string
+                    description: The current post-initiation status of the payment
+                  bank_transaction_reference:
+                    type: string
+                    description: The transaction reference number supplied by the initiating bank on successful initiation
+                      of a transfer. Can be used for reconciliation.
+                  granular_status_code:
+                    type: string
+                    description: Detailed status code of the payment.
+                  status_additional_details:
+                    type: string
+                    description: Additional details about the status of the payment.
+                required:
+                - id
+                - payment_intent_id
+                - payment_source_id
+                - sender_details
+                - recipient_details
+                - amount
+                - currency
+                - description
+                - submission_timestamp
+                - initiation_timestamp
+                - status
+                - post_initiation_status
+                - bank_transaction_reference
+                - granular_status_code
+                - status_additional_details
+              example:
+                id: 88c4d3e8-b80c-cd46-ac56-f084879744d6
+                payment_intent_id: 30caf494-d6e0-d83e-907b-9393361c3895
+                payment_source_id: 8d98c54d-b11f-4f39-52bb-6065dc0f4749
+                sender_details:
+                  account_number: 0101929293
+                  iban: AE132353311P10164V8R3
+                  name: Dwight Schrute
+                recipient_details:
+                  account_number: 0192929827
+                  iban: AE23QQWD1004305268319738
+                  name: Michael Gary Scott
+                amount: 3448.38
+                currency: AED
+                description: 30caf494d6e0d83e907b9393361c3895
+                submission_timestamp: '2024-09-19T11:43:08.933Z'
+                initiation_timestamp: '2024-09-19T11:43:17.683Z'
+                status: ACCEPTED_BY_BANK
+                post_initiation_status: PROCESSED
+                bank_transaction_reference: WD100430526831
+                granular_status_code: SUCCESS
+                status_additional_details: Payment processed successfully
+          headers: {}
+      security:
+      - bearer: []
+  /payouts/v1/intents/{payment_intent_id}:
+    get:
+      summary: Get Payout Intent
+      deprecated: false
+      description: The Payment intent is the contract between your backend and Lean to certify that you will request a payment
+        from your customer of a specified amount and currency. In order to initiate a payment, the `payment_intent_id` must
+        be provided into the `pay()` method of the LinkSDK.
+      operationId: getPaymentIntentById
+      tags:
+      - Payouts
+      parameters:
+      - name: payment_intent_id
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  payment_intent_id:
+                    type: string
+                    format: uuid
+                    description: The unique identifier for the Payment Intent.
+                  customer_id:
+                    type: string
+                    description: The Customer object associated with the Payment Intent.
+                  amount:
+                    type: number
+                    description: The amount that should be charged to the customer.
+                    format: float
+                  currency:
+                    type: string
+                    minLength: 3
+                    maxLength: 3
+                    examples:
+                    - AED
+                    - USD
+                    description: The currency that the customer will make the payment in.
+                  description:
+                    type: string
+                    description: The description submitted to the bank as a reference when initiating a payment. Can be used
+                      for reconciliation. By default this value is a the Payment Intent UUID without hyphens but you can also
+                      specify the description upon creation of a payment intent.
+                  external_reference:
+                    type: string
+                    description: 'Useful for tracking and reporting the transaction on your end. '
+                  payment:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: The unique identifier for this payment.
+                        format: uuid
+                      payment_intent_id:
+                        type: string
+                        description: The Payment Intent identifier responsible for generating the Payment.
+                        format: uuid
+                      payment_source_id:
+                        type: string
+                        description: The identifier for the payment source object from which the payment was initiatied.
+                        format: uuid
+                      sender_details:
+                        type: object
+                        properties:
+                          account_number:
+                            type: string
+                          iban:
+                            type: string
+                          name:
+                            type: string
+                        required:
+                        - account_number
+                        - iban
+                        - name
+                        description: The account details for the customer sending the payment. Includes account number, name
+                          of the account holder and IBAN.
+                      recipient_details:
+                        type: object
+                        properties:
+                          account_number:
+                            type: string
+                          iban:
+                            type: string
+                          name:
+                            type: string
+                        required:
+                        - account_number
+                        - iban
+                        - name
+                        description: Details for the recipient of the Payment, generated from the details available in the
+                          payment_destination.
+                      amount:
+                        type: number
+                        description: The amount the charge was initiated for.
+                      currency:
+                        type: string
+                        description: The currency the payment was initiated with.
+                      description:
+                        type: string
+                        description: The description submitted to the bank as a reference when initiating a payment. Can be
+                          used for reconciliation. By default this value is a the Payment Intent UUID without hyphens but
+                          you can also specify the description upon creation of a payment intent.
+                      submission_timestamp:
+                        type: string
+                        description: The time the Payment Initiation was submitted.
+                      initiation_timestamp:
+                        type: string
+                        description: The time the Payment Initiation was started.
+                      status:
+                        type: string
+                        description: 'The current status of the payment - see Payments Errors for a list of available MFAs. '
+                        enum:
+                        - AUTHORISATION_FAILED
+                        - FAILED
+                        - PENDING_WITH_BANK
+                        - ACCEPTED_BY_BANK
+                      bank_transaction_reference:
+                        type: string
+                        description: The transaction reference number supplied by the initiating bank on successful initiation
+                          of a transfer. Can be used for reconciliation.
+                    required:
+                    - id
+                    - payment_intent_id
+                    - payment_source_id
+                    - sender_details
+                    - recipient_details
+                    - amount
+                    - currency
+                    - description
+                    - submission_timestamp
+                    - initiation_timestamp
+                    - status
+                    - bank_transaction_reference
+                  payment_destination:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                        description: The unique identifier for the Payment Destination object.
+                      status:
+                        type: string
+                        enum:
+                        - CONFIRMED
+                        - PENDING
+                        description: The status of the Destination
+                      default:
+                        type: string
+                        description: When `true` this Destination is automatically populated into Payment Intents where an
+                          alternative `payment_destination_id` is not provided.
+                      name:
+                        type: string
+                        description: The name of the legal entity that owns the account.
+                      iban:
+                        type: string
+                        description: 'The IBAN of the account.
+
+                          This is required for all countries except for the US.'
+                      display_name:
+                        type: string
+                        description: The friendly display name for the account. This is rendered in the LinkSDK when referencing
+                          the Destination.
+                      address:
+                        type: string
+                        description: The address of the owner of the destination bank account has registered with the bank.
+                      city:
+                        type: string
+                        description: The city that the holding financial institution is located in.
+                      country:
+                        type: string
+                        description: The three letter ISO code for the holding financial institution's country.
+                      swift_code:
+                        type: string
+                        description: The SWIFT Code for the bank account - required for most international destinations
+                      account_number:
+                        type: string
+                        description: The account number for the account.
+                      customer_id:
+                        type: string
+                        description: The Customer object associated with this account. This field is optional, and will designate
+                          the Destination as owned by the application if not provided.
+                      owner_type:
+                        type: string
+                        description: Establishes the ownership of the Destination
+                        enum:
+                        - APPLICATION
+                        - CUSTOMER
+                    required:
+                    - id
+                    - status
+                    - default
+                    - name
+                    - display_name
+                    - address
+                    - city
+                    - country
+                    - account_number
+                required:
+                - payment_intent_id
+                - customer_id
+                - amount
+                - currency
+                - description
+                - payment
+                - payment_destination
+              example:
+                payment_intent_id: 77f0c07e-7b7b-4677-bb05-6261f9eead0c
+                customer_id: 89bf7bf8-89cb-42e5-8332-eeef869a2524
+                amount: 61.4
+                currency: AED
+                description: 77f0c07e7b7b4677bb056261f9eead0c
+                payment:
+                  id: 25c90cc6-67dc-4193-a6e9-a7c875fcc0af
+                  payment_intent_id: 77f0c07e-7b7b-4677-bb05-6261f9eead0c
+                  payment_source_id: b6fba7da-1054-5e82-8a9a-afd3ab4d1710
+                  sender_details:
+                    account_number: XXXXXXXXXXXX
+                    iban: AE940030011XXXXXXXXXXXX
+                    name: John Doe
+                  recipient_details:
+                    account_number: XXXXXXXXXXXX
+                    iban: AE870200000XXXXXXXXXXXX
+                    name: Al Fulani
+                  amount: 61.4
+                  currency: AED
+                  description: 77f0c07e7b7b4677bb056261f9eead0c
+                  submission_timestamp: '2021-05-18T13:58:03.427045Z'
+                  initiation_timestamp: '2021-05-18T13:58:42.445103Z'
+                  status: ACCEPTED_BY_BANK
+                  bank_transaction_reference: 0492981211381081
+                payment_destination:
+                  id: 95c29647-c568-40d7-8710-3e330de1b5f2
+                  bank_identifier: HSBC_UAE
+                  name: Acme Corp.
+                  iban: AE870200000XXXXXXXXXXXX
+                  display_name: Acme Corp.
+                  account_number: XXXXXXXXXXXX
+                  swift_code: BBMEAEAD
+                  status: CONFIRMED
+                  address: Acme Towers, 51st Floor
+                  country: ARE
+                  city: Dubai
+                  default: 'true'
+                  owner_type: APPLICATION
+          headers: {}
+      security:
+      - bearer: []
+  /payouts/v1/payment/destinations:
+    post:
+      summary: Create Payouts Destination(s)
+      deprecated: false
+      description: Create payment destinations for use with Payouts. Destinations created with Payouts create a corresponding
+        beneficiary with your bank.
+      operationId: createPayoutDestination
+      tags:
+      - Payouts
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  bank_identifier:
+                    type: string
+                    description: Uniquely identifies the bank of the beneficiary account
+                  name:
+                    type: string
+                    description: The name of the legal entity associated with the account.
+                  iban:
+                    type: string
+                    description: The IBAN of the account
+                  display_name:
+                    type: string
+                    description: 'The friendly display name for the account. '
+                  account_number:
+                    type: string
+                    description: The account number for the account.
+                  swift_code:
+                    type: string
+                    description: The SWIFT Code for the bank account - required for most international destinations
+                  ifsc:
+                    type: string
+                    description: The IFSC number for the bank account - required for international destinations in India.
+                  sort_code:
+                    type: string
+                    description: The Sort Code for the bank account - required for international destinations in the UK
+                  routing_number:
+                    type: string
+                    description: The Routing Number for the bank account - required for international destinations in the
+                      US.
+                  transit_code:
+                    type: string
+                    description: The Transit Number for the bank account - required for international destinations in Canada
+                  address:
+                    type: string
+                    description: The address of the owner of the destination bank account has registered with the bank.
+                  branch_address:
+                    type: string
+                    description: The address of the branch that holds the account - required for all beneficiaries outside
+                      of ARE. This should be a single string with commas separating lines.
+                  country:
+                    type: string
+                    description: The country that the holding financial institution is located in as a 3 letter ISO code.
+                  city:
+                    type: string
+                    description: The city that the holding financial institution is located in.
+                  customer_id:
+                    type: string
+                    description: The associated Lean Customer
+                  currency_iso_code:
+                    type: string
+                    description: The currency of the payee account
+                  postal_code:
+                    type: string
+                    description: The postal code of the bank branch that holds the account
+                required:
+                - name
+                - iban
+                - address
+                - country
+                - city
+                - currency_iso_code
+            example:
+            - bank_identifier: LEAN_SME_MB1_UAE
+              name: Santiago Keebler
+              iban: AE123030303000
+              display_name: ABC CORP
+              account_number: '0303030'
+              swift_code: UCHZPL2OXXX
+              ifsc: HADBC0001234
+              sort_code: '89'
+              routing_number: '106519958'
+              transit_code: '9'
+              address: Texas Wisokystead Wayne County 802 Washington Street Apt. 205
+              branch_address: Idaho East Elmore Marion County 59966 E 4th Avenue Suite 288
+              country: ARE
+              city: Abu Dhabi
+              customer_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              currency_iso_code: AED
+              postal_code: '90710'
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                '200':
+                  value:
+                    add_beneficiary_task_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    destination_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    bank_identifier: LEAN_SME_MB1_UAE
+                    iban: AE123030303000
+                    account_number: '0303030'
+                    display_name: ABC CORP
+                    status: CONFIRMED
+                    error_message: string
+                  summary: ''
+              schema:
+                type: object
+                properties:
+                  add_beneficiary_task_id:
+                    type: string
+                    description: The unique ID to track the destination creation request. This is useful for debugging
+                  destination_id:
+                    type: string
+                    description: The unique identifier for the Payment Destination object.
+                  bank_identifier:
+                    type: string
+                  iban:
+                    type: string
+                    description: IBAN of the destination account
+                  account_number:
+                    type: string
+                    description: 'The account number for the account. '
+                  display_name:
+                    type: string
+                    description: The friendly display name for the account.
+                  status:
+                    type: string
+                    description: Specifies the status of the destination
+                    enum:
+                    - CONFIRMED
+                    - FAILED
+                  error_message:
+                    type: string
+                    description: Error message received from the bank
+          description: OK
+      security:
+      - bearer: []
+  /payouts/v1/payment/destinations/{destination_id}:
+    get:
+      summary: Get Payouts Destination
+      deprecated: false
+      description: Create payment destinations for use with Payouts. Destinations created with Payouts create a corresponding
+        beneficiary with your bank.
+      operationId: getPayoutDestinationById
+      tags:
+      - Payouts
+      parameters:
+      - name: destination_id
+        in: path
+        description: ''
+        required: true
+        example: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    description: The unique identifier for the Payment Destination object.
+                  status:
+                    type: string
+                    description: The status of the Destination
+                    enum:
+                    - AWAITING_BENEFICIARY_COOL_OFF
+                    - ACTIVE
+                    - NOT_PRESENT
+                    - REMOVED
+                  branch_address:
+                    type: string
+                    description: The address of the branch that holds the account - required for all beneficiaries outside
+                      of ARE. This should be a single string with commas separating lines.
+                  name:
+                    type: string
+                    description: The name of the legal entity that owns the account.
+                  iban:
+                    type: string
+                    description: 'The IBAN of the account.
+
+                      This is required for all countries except for the US.'
+                  display_name:
+                    type: string
+                    description: The friendly display name for the account. This is rendered in the LinkSDK when referencing
+                      the Destination.
+                  address:
+                    type: string
+                    description: The address of the owner of the destination bank account has registered with the bank.
+                  city:
+                    type: string
+                    description: The city that the holding financial institution is located in.
+                  country:
+                    type: string
+                    description: The three letter ISO code for the holding financial institution's country.
+                  swift_code:
+                    type: string
+                    description: The SWIFT Code for the bank account - required for most international destinations
+                  account_number:
+                    type: string
+                    description: The account number for the account.
+                  customer_id:
+                    type: string
+                    description: The Customer object associated with this account. This field is optional, and will designate
+                      the Destination as owned by the application if not provided.
+                  ifsc:
+                    type: string
+                    description: The IFSC number for the bank account - required for international destinations in India.
+                  transit_number:
+                    type: string
+                    description: The Transit Number for the bank account - required for international destinations in Canada
+                  sort_code:
+                    type: string
+                    description: The Sort Code for the bank account - required for international destinations in the UK
+                  routing_number:
+                    type: string
+                    description: The Routing Number for the bank account - required for international destinations in the
+                      US.
+                  postal_code:
+                    type: string
+                    description: The Postal Code of the owner of the destination bank account has registered with the bank
+                      - required for international destinations in the UK or the US
+                  currency_iso_code:
+                    type: string
+                    description: The currency of the destination bank account - required for international destinations in
+                      the UK or the US
+                required:
+                - id
+                - name
+                - display_name
+                - address
+                - city
+                - country
+                - account_number
+                - status
+                - currency_iso_code
+              example:
+                id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                name: Fulani Al Fulani
+                display_name: Fulani
+                iban: AE123030303000
+                account_number: '0303030'
+                swift_code: EBILEADXX
+                status: ACTIVE
+                address: 123. Fake Street
+                country: ARE
+                city: Abu Dhabi
+                currency_iso_code: AED
+          headers: {}
+      security:
+      - bearer: []
+  /payouts/v1/split-payments:
+    post:
+      summary: Split Payouts
+      deprecated: true
+      description: A split payout always divides the payout by either a fixed amount or a percentage split—depending on the
+        strategy provided in the request. In case no strategy is entered in the request, the split will fallback to the preconfigured
+        percentage (requires manual configuration). Additionally, any fee payment resulting from the split is directed to
+        a preconfigured destination.
+      operationId: splitPayout
+      tags:
+      - Payouts
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                payment_details:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      account_id:
+                        type: string
+                        description: Defines the account_id to send the money from
+                      destination_details:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            payment_destination_id:
+                              type: string
+                              description: The Destination object to initiate the payment to
+                            amount:
+                              type: integer
+                              description: The gross amount to be transferred. The commision amount will be deducted from
+                                this value
+                            description:
+                              type: string
+                              description: Optional payment reference information.
+                            authorize_payment:
+                              type: boolean
+                              description: When set to true the payment will be automatically authorized by the authorizer
+                                credentials in Payouts (requires an authorizer account to be set up in Payouts)
+                            commission:
+                              type: object
+                              properties:
+                                strategy:
+                                  type: string
+                                  enum:
+                                  - FIXED
+                                  - PERCENTAGE
+                                  default: PERCENTAGE
+                                  description: Defines the commission fee calculation strategy - either a fixed value or a
+                                    percentage
+                                amount:
+                                  type: integer
+                                  description: 'The commission amount corresponding to the strategy. For instance, if the
+                                    strategy is PERCENTAGE, this field represents the percentage of the payout charged as
+                                    a fee.. In case of FIXED strategy the amount must be less than payout amount.
+
+                                    '
+                              required:
+                              - strategy
+                              - amount
+                              description: Represents the commission configuration to be applied to the payout
+                          required:
+                          - payment_destination_id
+                          - amount
+                          - description
+                          - authorize_payment
+                          - commission
+                        description: Defines the payee account for the payment
+                    required:
+                    - account_id
+                    - destination_details
+              required:
+              - payment_details
+            example:
+              payment_details:
+              - account_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                destination_details:
+                - payment_destination_id: 7d9b3c2e-29f3-4b1e-bf93-8a3f2a5e3d2c
+                  amount: 1500
+                  description: Fixed fee strategy request
+                  authorize_payment: true
+                  commission:
+                    strategy: FIXED
+                    amount: 50
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  end_user_id:
+                    type: string
+                    description: Internal ID of the credentials used to queue the payment, for audit purposes.
+                  payouts_payment_details:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        payment_intent_id:
+                          type: string
+                          description: The related Payment Intent
+                        initiate_payment_task_id:
+                          type: string
+                          description: Informative ID for tracing a payout in Lean. Used when debugging a payout with your
+                            support representative.
+                        account_number:
+                          type: string
+                          description: Account number which is performing the payment
+                        iban:
+                          type: string
+                          description: IBAN of the sending account
+                        destination_details:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              destination_id:
+                                type: string
+                                description: The unique identifier for the destination
+                              amount:
+                                type: integer
+                                description: Amount paid out after fee deduction
+                              currency:
+                                type: string
+                                description: Currency of the transaction
+                              payment_status:
+                                type: string
+                                description: Status of the payment
+                              recipient_details:
+                                type: object
+                                properties:
+                                  account_number:
+                                    type: string
+                                    description: Account number of the destination
+                                  iban:
+                                    type: string
+                                    description: Full IBAN of the destination
+                                  name:
+                                    type: string
+                                    description: Associated name of the destination
+                                required:
+                                - account_number
+                                - iban
+                                - name
+                                description: Account details of the receiving account
+                          description: Details of the receiving account
+                        bank_identifier:
+                          type: string
+                          description: Bank Identifier to the sender's bank account
+                      required:
+                      - bank_identifier
+                required:
+                - end_user_id
+                - payouts_payment_details
+              example:
+                end_user_id: 560d6943-fa8e-4dd9-9717-50025bf2feae
+                payouts_payment_details:
+                - payment_intent_id: c97ccfea-b828-4850-bfe4-a06acfbb024b
+                  initiate_payment_task_id: c4d5d3a9-f1bd-4361-9aff-42d4c7a9c3d0
+                  account_number: '338247974759251'
+                  iban: AE480484338247974759251
+                  destination_details:
+                  - destination_id: 2dac22a7-e168-454d-960b-7dfaddab6a54
+                    amount: 1450
+                    currency: AED
+                    payment_status: CREATED
+                    recipient_details:
+                      account_number: '1015000000601'
+                      iban: AE760260001015000000601
+                      name: Al Fulani
+                  bank_identifier: LEAN_SME_MB1_UAE
+          headers: {}
+      security:
+      - bearer: []
+  /payouts/refunds:
+    post:
+      summary: 'Create Refund '
+      deprecated: false
+      description: Create a refund
+      operationId: createRefund
+      tags:
+      - Payouts
+      parameters:
+      - name: idempotency-key
+        in: header
+        description: The Idempotency Key used to mark the transaction call to the API.
+        required: false
+        example: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - payment_id
+              - currency
+              - amount
+              - reason_code
+              properties:
+                payment_id:
+                  type: string
+                  format: uuid
+                  example: 9beeb9c0-b899-4f5b-b870-085167c0c6b5
+                currency:
+                  type: string
+                  example: AED
+                  maxLength: 3
+                amount:
+                  type: number
+                  example: 100
+                reason_code:
+                  type: string
+                  enum:
+                  - CUSTOMER_REQUEST
+                  - DUPLICATED_PAYMENT
+                  - ORDER_CANCELLED
+                  - FRAUDULENT_PAYMENT
+                  example: DUPLICATED_PAYMENT
+                description:
+                  type: string
+                  example: Internal refund for duplicate txn
+                external_reference:
+                  type: string
+                  example: REF-12345
+                status:
+                  type: string
+                  example: APPROVED
+            example:
+              payment_id: 9beeb9c0-b899-4f5b-b870-085167c0c6b5
+              currency: AED
+              amount: 100
+              reason_code: DUPLICATED_PAYMENT
+              description: Internal refund for duplicate txn
+              external_reference: REF-12345
+              status: CREATED
+      responses:
+        '200':
+          description: Refund initiated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - refund_id
+                - payment_id
+                - status
+                - amount
+                - currency
+                properties:
+                  refund_id:
+                    type: string
+                    format: uuid
+                    example: 3496556d-c2ee-4c16-9973-91da59bd773a
+                  payment_id:
+                    type: string
+                    format: uuid
+                    example: 9beeb9c0-b899-4f5b-b870-085167c0c6b5
+                  status:
+                    type: string
+                    example: CREATED
+                  amount:
+                    type: number
+                    format: float
+                    example: 15.34
+                  currency:
+                    type: string
+                    example: AED
+                    maxLength: 3
+                  reason_code:
+                    type: string
+                    example: DUPLICATED_PAYMENT
+                  description:
+                    type: string
+                    example: QM@4&D[mZU
+                  external_reference:
+                    type: string
+                    example: zrjZrq
+                  beneficiary:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: Rolf Bogan
+                      iban:
+                        type: string
+                        example: AE280003008159427667010
+                      account_id:
+                        type: string
+                        format: uuid
+                        example: 4ed141cd-a564-41a4-acb0-3e773edb1bd1
+                      city:
+                        type: string
+                        example: Dubai
+          headers: {}
+      security:
+      - bearer: []
+    get:
+      summary: List Refunds
+      deprecated: false
+      description: List refunds payments
+      operationId: getRefunds
+      tags:
+      - Payouts
+      parameters:
+      - name: page_number
+        in: query
+        description: The page number.
+        required: false
+        schema:
+          type: integer
+          default: 0
+      - name: page_size
+        in: query
+        description: The number of Payout payments to return per page.
+        required: false
+        schema:
+          type: integer
+          default: 50
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        recipient_name:
+                          type: string
+                        recipient_bank_name:
+                          type: string
+                        recipient_iban:
+                          type: string
+                        description:
+                          type: string
+                        currency:
+                          type: string
+                        amount:
+                          type: number
+                        created_at:
+                          type: string
+                        payment_intent_id:
+                          type: string
+                        payment_id:
+                          type: string
+                        auto_authorized:
+                          type: boolean
+                        status:
+                          type: string
+                          enum:
+                          - AWAITING_AUTHORIZATION
+                          - PENDING_WITH_BANK
+                          - ACCEPTED_BY_BANK
+                          - FAILED
+                      required:
+                      - recipient_name
+                      - recipient_bank_name
+                      - recipient_iban
+                      - description
+                      - currency
+                      - amount
+                      - created_at
+                      - payment_intent_id
+                      - auto_authorized
+                      - status
+                      - payment_id
+                  number:
+                    type: integer
+                    description: Current page number
+                  size:
+                    type: integer
+                    description: Size of the page
+                  total_elements:
+                    type: integer
+                    description: Total number of elements across all pages
+                  pageable:
+                    type: object
+                    properties:
+                      sort:
+                        type: object
+                        properties:
+                          empty:
+                            type: boolean
+                            description: Response is empty
+                          sorted:
+                            type: boolean
+                            description: Response is sorted
+                          unsorted:
+                            type: boolean
+                            description: Response is unsorted
+                        required:
+                        - empty
+                        - sorted
+                        - unsorted
+                        description: Sorting information
+                      offset:
+                        type: integer
+                      page_size:
+                        type: integer
+                        description: Maximum size of a page of results
+                      page_number:
+                        type: integer
+                        description: Current page number
+                      paged:
+                        type: boolean
+                        description: Response is paged
+                      unpaged:
+                        type: boolean
+                        description: Response is not paged
+                    required:
+                    - sort
+                    - offset
+                    - page_size
+                    - page_number
+                    - paged
+                    - unpaged
+                  last:
+                    type: boolean
+                    description: Is this the last page of the response
+                  total_pages:
+                    type: integer
+                    description: Total number of available pages
+                  first:
+                    type: boolean
+                    description: Is this the first page of the response
+                  number_of_elements:
+                    type: integer
+                    description: Number of elements in the response
+                  empty:
+                    type: boolean
+                    description: Is the response empty
+                required:
+                - content
+                - number
+                - size
+                - total_elements
+                - pageable
+                - last
+                - total_pages
+                - first
+                - number_of_elements
+                - empty
+              example:
+                content:
+                - recipient_name: SHINRA ELECTRICITY
+                  recipient_bank_name: SHINRA LTD.
+                  recipient_iban: AE04033000001XXXXXXXXXX
+                  description: INV001
+                  currency: AED
+                  amount: 21.18
+                  created_at: '2023-08-21T14:11:35.882645Z'
+                  payment_intent_id: 7d496fab-4ff5-4221-85d7-43e5af28efdb
+                  payment_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                  auto_authorized: false
+                  status: ACCEPTED_BY_BANK
+                number: 0
+                size: 20
+                total_elements: 1
+                pageable:
+                  sort:
+                    empty: true
+                    sorted: false
+                    unsorted: true
+                  offset: 0
+                  page_size: 20
+                  page_number: 0
+                  paged: true
+                  unpaged: false
+                last: true
+                total_pages: 1
+                first: true
+                number_of_elements: 1
+                empty: false
+          headers: {}
+      security:
+      - bearer: []
+  /payouts/refunds/{refund_id}:
+    get:
+      description: Get refund details by refund ID
+      operationId: getPayoutsRefundsByRefundId
+      tags:
+      - Payouts
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  refund_id:
+                    type: string
+                    description: Unique identifier for the refund transaction.
+                  deposit_amount:
+                    type: number
+                    description: The deposit amount associated with the refund request.
+                  deposit_currency:
+                    type: string
+                    description: The ISO 3 letter currency code for the deposit amount
+                  payment_id:
+                    type: string
+                    description: Identifier of the payment transaction linked to this refund.
+                  status:
+                    type: string
+                    enum:
+                    - CREATED
+                    - APPROVED
+                    - REJECTED
+                    - ACCEPTED_BY_BANK
+                    - PENDING_WITH_BANK
+                    - FAILED
+                    description: Current status of the refund process.
+                  amount:
+                    type: number
+                    description: The amount that will be refunded
+                  currency:
+                    type: string
+                    description: The ISO 3 letter currency code for the refund amount
+                  reason_code:
+                    type: string
+                    enum:
+                    - CUSTOMER_REQUEST
+                    - DUPLICATED_PAYMENT
+                    - ORDER_CANCELLED
+                    - FRAUDULENT_PAYMENT
+                    description: Reason for the refund request
+                  description:
+                    type: string
+                    description: Additional notes about the refund being created. Can include order references/customer-id
+                      for the refund being generated.
+                  external_reference:
+                    type: string
+                    description: Useful for tracking and reporting the transaction on your end. e.g You can enter transaction
+                      ID of this refund maintained in your system
+                  beneficiary:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: Name of the beneficiary to which refund is being processed
+                      iban:
+                        type: string
+                        description: IBAN account details of beneficiary
+                      city:
+                        type: string
+                        description: City associated with the beneficiary account
+                  created_at:
+                    type: string
+                    format: date-time
+                    description: Timestamp when the refund was created
+                  created_by:
+                    type: string
+                    description: Identifier of the user that initiated the refund
+                  actioned_by:
+                    type: string
+                    description: Identifier of the user that confirmed or rejected the refund
+                  refund_intent_id:
+                    type: string
+              examples:
+                New Example:
+                  summary: New Example
+                  value:
+                    refund_id: 8161d683-88f7-4c13-b4f5-1e9cb13a49c1
+                    deposit_amount: 15.34
+                    deposit_currency: AED
+                    payment_id: b16b66fa-3cb0-433e-a8c8-5e0467e4c9d6
+                    status: ACCEPTED_BY_BANK
+                    amount: 15.34
+                    currency: AED
+                    reason_code: FRAUDULENT_PAYMENT
+                    description: 8N&[as39q_
+                    external_reference: x8VerE
+                    beneficiary:
+                      name: Rolf Bogan
+                      iban: AE280003008159427667010
+                      city: Dubai
+                    created_at: '2025-05-28T11:36:17.899660Z'
+                    created_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                    actioned_by: fe0f6434-4bf9-46eb-96ac-1a6e7396d27d
+                    refund_intent_id: f41b1b7a-bd15-432b-9fff-a621b68675a4
+      parameters:
+      - in: path
+        name: refund_id
+        schema:
+          type: string
+        required: true
+components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+    bearerAuth:
+      type: http
+      scheme: bearer

@@ -1,0 +1,23 @@
+generated: '2026-07-20'
+method: searched
+source: openapi/lean-technologies-payment-links-openapi.yml, openapi/lean-technologies-schedules-openapi.yml, openapi/lean-technologies-sessions-openapi.yml
+docs: https://docs.leantech.me/docs/authentication
+schemes:
+  - name: OAuth2
+    flows:
+      - flow: clientCredentials
+        tokenUrl: https://auth.leantech.me/oauth2/token
+        sandboxTokenUrl: https://auth.sandbox.leantech.me/oauth2/token
+    sources:
+      - openapi/lean-technologies-payment-links-openapi.yml
+      - openapi/lean-technologies-schedules-openapi.yml
+      - openapi/lean-technologies-sessions-openapi.yml
+scopes:
+  - scope: api
+    description: Backend access to Lean's APIs (server-to-server, client_credentials).
+    flows: [clientCredentials]
+    sources: [openapi/lean-technologies-payment-links-openapi.yml]
+  - scope: customer.<customer_id>
+    description: Customer-scoped access for the LinkSDK, minted per customer immediately before SDK invocation (>= 10 min validity).
+    flows: [clientCredentials]
+    sources: [docs]

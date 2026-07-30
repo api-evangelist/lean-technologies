@@ -1,0 +1,44 @@
+generated: '2026-07-20'
+method: searched
+source: https://docs.leantech.me/reference/payments-errors, https://docs.leantech.me/reference/data-errors
+format: code-message
+envelope:
+  fields: [code, message, status]
+  note: >
+    Lean does not use RFC 9457 application/problem+json. Errors return a machine
+    code plus a human message; a `status` field carries resolution guidance on some
+    responses.
+problems:
+  - code: AMOUNT_UNDER_MIN_VALUE
+    status: 400
+    title: Amount below minimum
+    remediation: Payment intent amount is lower than the minimum allowed.
+  - code: AMOUNT_OVER_MAX_VALUE
+    status: 400
+    title: Amount above maximum
+    remediation: Payment intent amount exceeds the maximum allowed.
+  - code: INVALID_AMOUNT
+    status: 400
+    title: Invalid amount
+    remediation: The amount specified for the payment intent is incorrectly formatted.
+  - code: INVALID_IBAN
+    status: 400
+    title: Invalid IBAN
+    remediation: The IBAN specified for the Payment Destination is invalid.
+  - code: INVALID_NAME
+    status: 400
+    title: Invalid name
+    remediation: The name specified for the Payment Destination is invalid.
+  - code: UNKNOWN_PAYMENT_DESTINATION
+    status: 404
+    title: Unknown payment destination
+    remediation: The payment destination does not exist.
+  - code: UNKNOWN_PAYMENT_INTENT
+    status: 404
+    title: Unknown payment intent
+    remediation: The payment intent does not exist.
+  - code: UNKNOWN_PAYMENT_SOURCE
+    status: 404
+    title: Unknown payment source
+    remediation: The payment_source specified in your request does not exist.
+see_also: errors/lean-technologies-decline-codes.yml

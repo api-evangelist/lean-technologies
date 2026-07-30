@@ -1,0 +1,18 @@
+generated: '2026-07-20'
+method: searched
+source: https://docs.leantech.me/docs/authentication, https://docs.leantech.me
+separation:
+  model: separate sandbox hosts + sandbox authorization server
+  live_vs_test: Distinct base hosts and auth issuer for sandbox vs production.
+environments:
+  - {name: sandbox-uae, api: https://sandbox.leantech.me, auth: https://auth.sandbox.leantech.me/oauth2/token}
+  - {name: sandbox-ksa, api: https://sandbox.sa.leantech.me / https://api.sandbox.sa.leantech.me}
+  - {name: production-uae, api: https://api2.leantech.me, auth: https://auth.leantech.me/oauth2/token}
+  - {name: production-ksa, api: https://api2.sa.leantech.me}
+dashboard: https://dev.leantech.me
+test_data:
+  note: >
+    Lean's sandbox uses mock banks with published test-bank credentials in the docs
+    testing guides; no fixed universal test card/IBAN constants are published here.
+    Use the sandbox bank credentials from the Getting Started / testing docs verbatim.
+  reference: https://docs.leantech.me/docs/find-your-use-case

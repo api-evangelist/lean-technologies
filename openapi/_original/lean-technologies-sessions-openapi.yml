@@ -1,0 +1,270 @@
+openapi: 3.1.0
+info:
+  title: Lean API - Sessions
+  description: "API for creating and managing payment sessions. \nA session represents a short-lived, secure context that\
+    \ guides a customer through a payment flow. \nSessions are created server-side and presented to your customer via a redirect\
+    \ URL."
+  version: v1.0.0
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+paths:
+  /sessions/v1:
+    post:
+      operationId: createSession
+      summary: Create Session
+      description: "Creates a new session that guides a customer through a payment flow.\nThe session begins in `CREATED`\
+        \ state and transitions to `ACTIVE` once the customer opens the redirect URL. \nRedirect your customer to the returned\
+        \ `session_url` to begin the flow.\nSessions expire after a fixed period if not completed."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSessionRequest'
+            example:
+              customer_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              flow:
+                type: PAY
+                payload:
+                  payment_intent_id: 7d4e2c19-8f2a-4b3c-9d1e-6f8a2b4c6d8e
+              redirect_url: https://example.com/checkout/complete?order_id=ord_1234
+      responses:
+        '201':
+          description: Session created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateSessionResponse'
+              example:
+                id: 9a1b3c5d-7e8f-4a2b-8c6d-0e1f2a3b4c5d
+                session_url: https://secure.leantech.me/9a1b3c5d-7e8f-4a2b-8c6d-0e1f2a3b4c5d
+                redirect_url: https://example.com/checkout/complete?order_id=ord_1234
+                expires_at: '2026-03-20T15:30:00Z'
+                flow:
+                  type: PAY
+      security:
+      - OAuth2:
+        - api
+      tags:
+      - Sessions
+  /sessions/v1/{session_id}:
+    get:
+      operationId: getSession
+      summary: Get Session
+      description: Retrieves the current state of a session by its identifier.
+      parameters:
+      - name: session_id
+        in: path
+        description: Unique identifier of the session
+        required: true
+        schema:
+          type: string
+          format: uuid
+          examples:
+          - 9a1b3c5d-7e8f-4a2b-8c6d-0e1f2a3b4c5d
+      responses:
+        '200':
+          description: OK - Session retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetPublicSessionResponse'
+              example:
+                id: 9a1b3c5d-7e8f-4a2b-8c6d-0e1f2a3b4c5d
+                state: COMPLETED
+                customer_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                type: PAY
+                session_url: https://secure.leantech.me/9a1b3c5d-7e8f-4a2b-8c6d-0e1f2a3b4c5d
+                redirect_url: https://example.com/checkout/complete?order_id=ord_1234
+      security:
+      - OAuth2:
+        - api
+      tags:
+      - Sessions
+components:
+  schemas:
+    CreateSessionRequest:
+      description: Configuration for a new session. Provide a customer, a flow type, and a redirect URL to receive the customer
+        after the flow completes.
+      type: object
+      properties:
+        customer_id:
+          description: The identifier of the customer this session is created for. All activity within the session will be
+            attributed to this customer.
+          type: string
+          format: uuid
+          examples:
+          - 3fa85f64-5717-4562-b3fc-2c963f66afa6
+        flow:
+          $ref: '#/components/schemas/Flow'
+        redirect_url:
+          description: 'The URL your customer is redirected to after completing or cancelling the session flow.
+
+            Must be an absolute URL. You can append query parameters to carry context (e.g., an order ID) back to your server
+            when the customer returns.'
+          type: string
+          format: uri
+          examples:
+          - https://example.com/checkout/complete?order_id=ord_1234
+      required:
+      - customer_id
+      - flow
+      - redirect_url
+    Flow:
+      description: Defines the session flow type and its associated configuration payload.
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/SessionType'
+        payload:
+          $ref: '#/components/schemas/FlowPayload'
+      required:
+      - type
+      - payload
+    FlowPayload:
+      description: Additional parameters for the selected flow type.
+      type: object
+      properties:
+        payment_intent_id:
+          description: The identifier of the payment intent to process. Required for `PAY` flow.
+          type:
+          - string
+          - 'null'
+          format: uuid
+          examples:
+          - 7d4e2c19-8f2a-4b3c-9d1e-6f8a2b4c6d8e
+    CreateSessionResponse:
+      description: The created session, including the session URL to redirect your customer to and the session's expiry time.
+      type: object
+      properties:
+        id:
+          description: The unique identifier of this session. Use this to retrieve the session state later.
+          type: string
+          format: uuid
+          examples:
+          - 9a1b3c5d-7e8f-4a2b-8c6d-0e1f2a3b4c5d
+        session_url:
+          description: The Lean-hosted URL to redirect your customer to in order to begin the session flow. Direct the customer
+            here immediately after creating the session.
+          type: string
+          format: uri
+          examples:
+          - https://secure.leantech.me/9a1b3c5d-7e8f-4a2b-8c6d-0e1f2a3b4c5d
+        redirect_url:
+          description: The final destination URL your customer is redirected to after completing or cancelling the session
+            flow. Echoed back from the request.
+          type: string
+          format: uri
+          examples:
+          - https://example.com/checkout/complete?order_id=ord_1234
+        expires_at:
+          description: 'The date and time at which this session expires, in ISO 8601 format.
+
+            After this time the session transitions to `EXPIRED` state and the redirect URL can no longer be used.'
+          type: string
+          format: date-time
+          examples:
+          - '2026-03-20T15:30:00Z'
+          x-java-type: java.time.Instant
+        flow:
+          $ref: '#/components/schemas/FlowInfo'
+      required:
+      - id
+      - session_url
+      - redirect_url
+      - expires_at
+      - flow
+    FlowInfo:
+      description: A summary of the flow associated with this session.
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/SessionType'
+      required:
+      - type
+    GetPublicSessionResponse:
+      description: The current state of a session, including its lifecycle state, associated customer, and flow type.
+      type: object
+      properties:
+        id:
+          description: The unique identifier of this session.
+          type: string
+          format: uuid
+          examples:
+          - 9a1b3c5d-7e8f-4a2b-8c6d-0e1f2a3b4c5d
+        state:
+          $ref: '#/components/schemas/SessionState'
+        customer_id:
+          description: The identifier of the customer this session belongs to.
+          type: string
+          format: uuid
+          examples:
+          - 3fa85f64-5717-4562-b3fc-2c963f66afa6
+        type:
+          $ref: '#/components/schemas/SessionType'
+        session_url:
+          description: The Lean-hosted URL used to begin this session flow.
+          type: string
+          format: uri
+          examples:
+          - https://secure.leantech.me/9a1b3c5d-7e8f-4a2b-8c6d-0e1f2a3b4c5d
+        redirect_url:
+          description: The URL your customer is redirected to after completing or cancelling the session flow.
+          type: string
+          format: uri
+          examples:
+          - https://example.com/checkout/complete?order_id=ord_1234
+      required:
+      - id
+      - state
+      - customer_id
+      - type
+      - session_url
+      - redirect_url
+    SessionType:
+      description: "The type of flow this session guides the customer through.\n\n- PAY: Starts a Lean-hosted Single Instant\
+        \ Payment session. The customer reviews\n  the payment details and authorizes the transaction directly through their\
+        \ bank.\n  `payment_intent_id` in the flow payload is required and determines the amount,\n  destination, and customer\
+        \ for the payment."
+      type: string
+      const: PAY
+    SessionState:
+      description: 'The lifecycle state of the session.
+
+
+        - CREATED: The session has been created but the customer has not yet opened the redirect URL.
+
+        - ACTIVE: The customer has opened the session and is in the middle of the flow.
+
+        - AUTHORIZED: The customer has authorized the payment. Processing may still be in progress.
+
+        - COMPLETED: The flow finished successfully. The customer has been redirected back to your `redirect_url`.
+
+        - EXPIRED: The session was not completed within its validity window and can no longer be used.'
+      type: string
+      enum:
+      - CREATED
+      - ACTIVE
+      - AUTHORIZED
+      - EXPIRED
+      - COMPLETED
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: /auth/token
+          scopes:
+            api: API access
+    bearerAuth:
+      type: http
+      scheme: bearer
+tags:
+- name: Sessions
+  description: "Create and inspect payment sessions. \nEach session has a limited lifetime and progresses through a defined\
+    \ lifecycle from `CREATED` to `COMPLETED` or `EXPIRED`."
+security:
+- bearerAuth: []

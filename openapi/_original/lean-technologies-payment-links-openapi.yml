@@ -1,0 +1,829 @@
+openapi: 3.1.0
+info:
+  title: Lean API - Payment Links
+  description: API for creating and managing reusable payment links
+  version: v1.0.0
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+paths:
+  /payment-links/v1:
+    post:
+      operationId: createPaymentLink
+      summary: Create Payment Link
+      description: "Creates a payment link that can be shared with customers to collect payments. \nThe link remains ACTIVE\
+        \ until it expires, reaches its usage limit, or is explicitly disabled."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePaymentLinkRequest'
+            example:
+              name: April Rent Collection
+              max_usages: 1
+              expires_at: '2026-04-30T23:59:59Z'
+              redirect_url: https://your.domain.com/payments/complete
+              customer_id: f47ac10b-58cc-4372-a567-0e02b2c3d479
+              payment_details:
+                destination_id: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
+                reference: RENT-APR-2024
+                currency: AED
+                amount: 1500
+                payment_purpose: RNT
+              identifiers:
+              - type: EMAIL
+                display_label: Your email address
+                required: true
+      responses:
+        '201':
+          description: Payment link created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentLinkResponse'
+              example:
+                id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+                link: https://secure.leantech.me/pay/bed3bf92-3b0a-4f75-8cf2-94355bbb915a
+                status: ACTIVE
+                current_usages: 0
+                name: April Rent Collection
+                max_usages: 1
+                expires_at: '2026-04-30T23:59:59Z'
+                redirect_url: https://your.domain.com/payments/complete
+                customer_id: f47ac10b-58cc-4372-a567-0e02b2c3d479
+                payment_details:
+                  destination_id: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
+                  reference: RENT-APR-2024
+                  currency: AED
+                  amount: 1500
+                  payment_purpose: RNT
+                identifiers:
+                - type: EMAIL
+                  display_label: Your email address
+                  required: true
+      security:
+      - OAuth2:
+        - api
+      tags:
+      - Payment Links
+    get:
+      operationId: getPaymentLinks
+      summary: List Payment Links
+      description: Returns a paginated list of all payment links created by your application.
+      parameters:
+      - $ref: '#/components/parameters/PageParameter'
+      - $ref: '#/components/parameters/SizeParameter'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentLinkListResponse'
+              example:
+                content:
+                - current_usages: 0
+                  customer_id: f47ac10b-58cc-4372-a567-0e02b2c3d479
+                  expires_at: '2026-04-30T23:59:59Z'
+                  id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+                  identifiers:
+                  - type: EMAIL
+                    display_label: Your email address
+                    required: true
+                  link: https://secure.leantech.me/pay/bed3bf92-3b0a-4f75-8cf2-94355bbb915a
+                  max_usages: 1
+                  name: April Rent Collection
+                  payment_details:
+                    destination_id: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
+                    reference: RENT-APR-2024
+                    currency: AED
+                    amount: 1500
+                    payment_purpose: RNT
+                  redirect_url: https://your.domain.com/payments/complete
+                  status: ACTIVE
+                page:
+                  size: 20
+                  number: 0
+                  total_elements: 1
+                  total_pages: 1
+      security:
+      - OAuth2:
+        - api
+      tags:
+      - Payment Links
+  /payment-links/v1/{payment_link_id}:
+    get:
+      operationId: getPaymentLink
+      summary: Get Payment Link
+      description: Retrieves the current state of a payment link, including its status, usage count, and configuration.
+      parameters:
+      - name: payment_link_id
+        in: path
+        description: Unique identifier of the payment link
+        required: true
+        schema:
+          type: string
+          format: uuid
+          examples:
+          - a1b2c3d4-e5f6-7890-abcd-ef1234567890
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentLinkResponse'
+              example:
+                id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+                link: https://secure.leantech.me/pay/bed3bf92-3b0a-4f75-8cf2-94355bbb915a
+                status: ACTIVE
+                current_usages: 0
+                name: April Rent Collection
+                max_usages: 1
+                expires_at: '2026-04-30T23:59:59Z'
+                redirect_url: https://your.domain.com/payments/complete
+                customer_id: f47ac10b-58cc-4372-a567-0e02b2c3d479
+                payment_details:
+                  destination_id: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
+                  reference: RENT-APR-2024
+                  currency: AED
+                  amount: 1500
+                  payment_purpose: RNT
+                identifiers:
+                - type: EMAIL
+                  display_label: Your email address
+                  required: true
+      security:
+      - OAuth2:
+        - api
+      tags:
+      - Payment Links
+    put:
+      operationId: updatePaymentLink
+      summary: Update Payment Link
+      description: "Changes the status of a payment link. \nSet status to `DISABLED` to immediately stop the link from accepting\
+        \ new payments, or `ACTIVE` to re-enable a previously disabled link. \nLinks in `EXPIRED` or `USED` status cannot\
+        \ be reactivated."
+      parameters:
+      - name: payment_link_id
+        in: path
+        description: Unique identifier of the payment link
+        required: true
+        schema:
+          type: string
+          format: uuid
+          examples:
+          - a1b2c3d4-e5f6-7890-abcd-ef1234567890
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePaymentLinkRequest'
+            example:
+              status: DISABLED
+      responses:
+        '200':
+          description: Payment link updated successfully
+      security:
+      - OAuth2:
+        - api
+      tags:
+      - Payment Links
+  /payment-links/v1/{payment_link_id}/usages:
+    get:
+      operationId: listPaymentLinkUsages
+      summary: List Payment Link Usages
+      description: Returns a paginated list of usages for a given payment link.
+      parameters:
+      - name: payment_link_id
+        in: path
+        description: The unique identifier of the payment link.
+        required: true
+        schema:
+          type: string
+          format: uuid
+          examples:
+          - d290f1ee-6c54-4b01-90e6-d701748f0851
+      - $ref: '#/components/parameters/PageParameter'
+      - $ref: '#/components/parameters/SizeParameter'
+      responses:
+        '200':
+          description: Paginated list of payment link usages returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentLinkUsageList'
+              example:
+                content:
+                - customer_id: a3bb189e-8bf9-3888-9912-ace4e6543002
+                  identifiers:
+                  - type: EMAIL
+                    display_label: Email address
+                    value: payer@example.com
+                  payment_id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+                  payment_link_id: d290f1ee-6c54-4b01-90e6-d701748f0851
+                  payment_status: PENDING
+                  usage_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                  usage_status: PAYMENT_CREATED
+                page:
+                  number: 0
+                  size: 20
+                  total_elements: 1
+                  total_pages: 1
+      security:
+      - OAuth2:
+        - api
+      tags:
+      - Payment Links
+  /payment-links/v1/{payment_link_id}/usages/{usage_id}:
+    get:
+      operationId: getPaymentLinkUsage
+      summary: Get Payment Link Usage
+      description: 'Returns the details of a single payment link usage, including its current status,
+
+        the identifiers collected from the payer during the payment flow, and the resulting
+
+        payment reference once the bank has processed the payment.
+
+
+        The `payment_id` and `payment_status` fields are populated asynchronously - they will
+
+        be `null` immediately after usage creation and will be set once the payment has
+
+        been processed by the bank.'
+      parameters:
+      - name: payment_link_id
+        in: path
+        description: The unique identifier of the payment link.
+        required: true
+        schema:
+          type: string
+          format: uuid
+          examples:
+          - d290f1ee-6c54-4b01-90e6-d701748f0851
+      - name: usage_id
+        in: path
+        description: The unique identifier of the payment link usage.
+        required: true
+        schema:
+          type: string
+          format: uuid
+          examples:
+          - 3fa85f64-5717-4562-b3fc-2c963f66afa6
+      responses:
+        '200':
+          description: OK - Payment link usage found and returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentLinkUsageDetails'
+              example:
+                usage_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                payment_link_id: d290f1ee-6c54-4b01-90e6-d701748f0851
+                usage_status: PAYMENT_CREATED
+                customer_id: a3bb189e-8bf9-3888-9912-ace4e6543002
+                payment_id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+                payment_status: PENDING
+                identifiers:
+                - type: EMAIL
+                  display_label: Email address
+                  value: payer@example.com
+                - type: MOBILE_PHONE
+                  display_label: Mobile number
+                  value: '+971501234567'
+      security:
+      - OAuth2:
+        - api
+      tags:
+      - Payment Links
+components:
+  parameters:
+    PageParameter:
+      name: page
+      in: query
+      description: The page you're requesting - returns page 0 of a response if not specified.
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+    SizeParameter:
+      name: size
+      description: The number of objects you want to return as a page size.
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 50
+        maximum: 100
+        minimum: 1
+  schemas:
+    CreatePaymentLinkRequest:
+      description: 'Configuration for a new payment link. Provide payment_details at minimum.
+
+        Use max_usages or expires_at to limit availability.'
+      type: object
+      properties:
+        name:
+          description: A label for your own reference. Not shown to payers. Useful for distinguishing links in list views.
+          type:
+          - string
+          - 'null'
+        max_usages:
+          description: 'The maximum number of successful payments this link will accept. Once reached, the link transitions
+            to USED status and will reject further payment attempts.
+
+            Defaults to 1000 if omitted.'
+          type:
+          - integer
+          - 'null'
+          format: int32
+          minimum: 1
+        expires_at:
+          description: "The date and time at which this link will automatically expire, in ISO 8601 format. \nAfter this time\
+            \ the link transitions to EXPIRED status. Omit to create a link with no expiry."
+          type:
+          - string
+          - 'null'
+          format: date-time
+          x-field-extra-annotation: '@jakarta.validation.constraints.Future'
+          x-java-type: java.time.Instant
+        redirect_url:
+          description: 'The URL your customer is redirected to after completing or cancelling a payment. Must be an absolute
+            URL.
+
+            You can use query parameters to carry context (e.g., an order ID) back to your application.
+
+            Optional - if omitted, the payer will see a confirmation screen on completion instead of being redirected.'
+          type:
+          - string
+          - 'null'
+        customer_id:
+          description: "Associates this link with a specific customer in your system. \nIf provided, all payments will be\
+            \ associated with that customer."
+          type:
+          - string
+          - 'null'
+          format: uuid
+        payment_details:
+          $ref: '#/components/schemas/PaymentDetailsRequest'
+        identifiers:
+          description: Additional fields to collect from each payer before they can complete the payment.
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/IdentifierRequest'
+      required:
+      - payment_details
+    PaymentDetailsRequest:
+      description: "The payment parameters that apply to every transaction made through this link. \nFixed at creation time\
+        \ and cannot be changed afterwards."
+      type: object
+      properties:
+        destination_id:
+          description: 'The ID of the bank account that will receive the funds.
+
+            If omitted, the payment is routed to your application''s default destination account.'
+          type:
+          - string
+          - 'null'
+          format: uuid
+        reference:
+          description: A reference string that appears on the bank statement for both sender and recipient.
+          type: string
+        currency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          description: The exact amount to charge, in the currency specified by the currency field. Must be greater than zero.
+          type: number
+          format: double
+          exclusiveMinimum: 0
+          x-java-type: java.math.BigDecimal
+        payment_purpose:
+          description: A standardized code that classifies the reason for this payment.
+          type:
+          - string
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/PaymentPurposeCode'
+      required:
+      - reference
+      - currency
+      - amount
+      x-field-extra-annotation: '@Valid'
+    IdentifierRequest:
+      description: An additional field to collect from the payer at payment time, such as an email address, phone number or
+        a custom reference.
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/IdentifierType'
+        display_label:
+          description: A label shown to the payer for this field. For example, "Your email address".
+          type:
+          - string
+          - 'null'
+          examples:
+          - Your email address
+        required:
+          description: "When true, the payer must fill in this field before they can complete the payment. \nWhen false or\
+            \ omitted, the field is presented but optional."
+          type:
+          - boolean
+          - 'null'
+        limit:
+          description: The maximum number of characters the payer can enter for this field.
+          type:
+          - integer
+          - 'null'
+          format: int32
+          maximum: 255
+          minimum: 1
+      examples:
+      - type: EMAIL
+        display_label: Your email address
+        required: true
+      required:
+      - type
+    UpdatePaymentLinkRequest:
+      description: Request payload for updating a payment link
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/UpdatePaymentLinkStatus'
+      required:
+      - status
+    PaymentLinkResponse:
+      description: The full state of a payment link, including its shareable URL, current status, usage counts, and configuration.
+      type: object
+      properties:
+        id:
+          description: The unique ID of this payment link. Use this to retrieve, update, or reference the link in other API
+            calls.
+          type: string
+          format: uuid
+        link:
+          description: 'The URL to share with your customer. Directing a customer to this URL begins the payment flow.
+
+            Anyone with this URL can initiate a payment.'
+          type: string
+          format: uri
+        status:
+          $ref: '#/components/schemas/PaymentLinkStatus'
+        current_usages:
+          description: "The number of successful payments completed through this link. Increments each time a payer completes\
+            \ a payment. \nCompare with `max_usages` to understand remaining capacity."
+          type: integer
+          format: int32
+        name:
+          description: The label you provided when creating the link, if any. For display purposes only.
+          type:
+          - string
+          - 'null'
+        max_usages:
+          description: "The maximum number of payments this link will accept before transitioning to USED status. \nNull indicates\
+            \ no limit."
+          type:
+          - integer
+          - 'null'
+          format: int32
+        expires_at:
+          description: "The expiry date and time for this link in ISO 8601 format. After this time the link cannot be used.\
+            \ \nNull means the link does not expire automatically."
+          type:
+          - string
+          - 'null'
+          format: date-time
+          x-java-type: java.time.Instant
+        redirect_url:
+          description: The URL your customer is redirected to after completing or cancelling a payment.
+          type: string
+          format: uri
+        customer_id:
+          description: "The ID of the customer associated with this link, if any. \nPayments through this link will be attributed\
+            \ to this customer."
+          type:
+          - string
+          - 'null'
+          format: uuid
+        payment_details:
+          $ref: '#/components/schemas/PaymentDetailsResponse'
+        identifiers:
+          description: "The list of additional fields configured to be collected from each payer. \nNull or empty means no\
+            \ extra information is collected."
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/IdentifierResponse'
+      required:
+      - id
+      - link
+      - status
+      - current_usages
+      - redirect_url
+      - payment_details
+    PaymentDetailsResponse:
+      description: The payment parameters attached to this link. These values are fixed for the lifetime of the link.
+      type: object
+      properties:
+        destination_id:
+          description: Identifier of the destination account for the payment
+          type:
+          - string
+          - 'null'
+          format: uuid
+        reference:
+          description: A reference string that appears on the bank statement for both sender and recipient.
+          type: string
+        currency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          description: The amount charged through this link, in the specified currency.
+          type: number
+          format: double
+          x-java-type: java.math.BigDecimal
+        payment_purpose:
+          description: The standardized code classifying the reason for this payment.
+          type:
+          - string
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/PaymentPurposeCode'
+      required:
+      - reference
+      - currency
+      - amount
+    IdentifierResponse:
+      description: An additional field configured to be collected from payers at payment time.
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/IdentifierType'
+        display_label:
+          description: The label shown to the payer for this field, if a custom one was set.
+          type:
+          - string
+          - 'null'
+        required:
+          description: Whether the payer must fill in this field before completing the payment.
+          type:
+          - boolean
+          - 'null'
+        limit:
+          description: The maximum number of characters allowed for this field's value.
+          type:
+          - integer
+          - 'null'
+          format: int32
+      required:
+      - type
+    PaymentLinkListResponse:
+      description: A single page of payment links. Use the page object for total counts and paginate with the page and size
+        query parameters.
+      type: object
+      properties:
+        content:
+          description: List of payment links for the current page
+          items:
+            $ref: '#/components/schemas/PaymentLinkResponse'
+          type: array
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+      required:
+      - content
+      - page
+    PaymentLinkUsageList:
+      description: "A single page of payment link usages. \nUse the page object for total counts and paginate with the page\
+        \ and size query parameters."
+      type: object
+      properties:
+        content:
+          description: List of payment link usages for the current page
+          items:
+            $ref: '#/components/schemas/PaymentLinkUsageDetails'
+          type: array
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+      required:
+      - content
+      - page
+    PaymentLinkUsageDetails:
+      description: Details of a payment link usage, including payer-provided identifiers and payment outcome.
+      type: object
+      properties:
+        usage_id:
+          description: Unique identifier of this usage.
+          type: string
+          format: uuid
+          examples:
+          - 3fa85f64-5717-4562-b3fc-2c963f66afa6
+        payment_link_id:
+          description: Identifier of the payment link that was used.
+          type: string
+          format: uuid
+          examples:
+          - d290f1ee-6c54-4b01-90e6-d701748f0851
+        usage_status:
+          $ref: '#/components/schemas/UsageStatus'
+        customer_id:
+          description: Identifier of the customer record created or matched for this payer.
+          type:
+          - string
+          - 'null'
+          format: uuid
+          examples:
+          - a3bb189e-8bf9-3888-9912-ace4e6543002
+        payment_id:
+          description: 'Identifier of the payment created for this usage.
+
+            `null` until the bank has confirmed or rejected the payment submission.'
+          type:
+          - string
+          - 'null'
+          format: uuid
+          examples:
+          - 7c9e6679-7425-40de-944b-e07fc1f90ae7
+        payment_status:
+          description: 'Status of the underlying payment as last reported by the bank.
+
+            `null` until the payment has been created. Refer to the Lean Payments
+
+            API documentation for the full list of payment status values.'
+          type:
+          - string
+          - 'null'
+          examples:
+          - PENDING
+        identifiers:
+          description: 'Identifiers collected from the payer during the payment flow, in the order
+
+            they were defined on the payment link. Empty when no identifiers were configured.'
+          type: array
+          items:
+            $ref: '#/components/schemas/CollectedIdentifier'
+      required:
+      - usage_id
+      - payment_link_id
+      - usage_status
+      - identifiers
+    CollectedIdentifier:
+      description: A single identifier value collected from the payer.
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/IdentifierType'
+        display_label:
+          description: Human-readable label shown to the payer when collecting this identifier.
+          type: string
+          examples:
+          - Email address
+        value:
+          description: The value entered by the payer.
+          type: string
+          examples:
+          - payer@example.com
+      required:
+      - type
+      - display_label
+      - value
+    IdentifierType:
+      description: 'The type of information to collect from the payer. Controls input validation and formatting in the payment
+        UI.
+
+
+        - EMAIL: Collects an email address. Input is validated against standard email format.
+
+        - MOBILE_PHONE: Collects a mobile phone number. Input is validated as a valid phone number.
+
+        - TEXT: Collects a free-form text value. Use the limit field to constrain length.'
+      type: string
+      enum:
+      - EMAIL
+      - MOBILE_PHONE
+      - TEXT
+    UpdatePaymentLinkStatus:
+      description: 'The target status to set on a payment link. Only ACTIVE and DISABLED transitions are permitted via the
+        update endpoint.
+
+
+        - ACTIVE: Re-enables a previously disabled link so it can accept payments again. Cannot be set on links with EXPIRED
+        or USED status.
+
+        - DISABLED: Immediately prevents the link from accepting new payments. Can be re-enabled by setting status back to
+        ACTIVE.'
+      type: string
+      enum:
+      - ACTIVE
+      - DISABLED
+    PaymentLinkStatus:
+      description: 'The lifecycle state of a payment link.
+
+
+        - ACTIVE: The link is live and will accept payments. This is the initial state after creation.
+
+        - EXPIRED: The link''s `expires_at` time has passed. It can no longer accept payments and cannot be reactivated.
+
+        - USED: The link has reached its `max_usages` limit. All permitted payments have been collected. Cannot be reactivated.
+
+        - DISABLED: The link was manually disabled via the update endpoint. It can be re-enabled by setting status to `ACTIVE`.'
+      type: string
+      enum:
+      - ACTIVE
+      - EXPIRED
+      - USED
+      - DISABLED
+    UsageStatus:
+      description: 'Lifecycle status of the payment link usage.
+
+
+        - `STARTED`: Payment flow initiated; payment intent created; waiting for bank confirmation.
+
+        - `PAYMENT_CREATED`: Bank confirmed the payment was accepted or is pending.
+
+        - `FAILED`: Bank rejected the payment or an error occurred during processing.
+
+        - `EXPIRED`: Usage remained in `STARTED` for more than 30 minutes and was cleaned up by the system.'
+      type: string
+      examples:
+      - PAYMENT_CREATED
+      enum:
+      - STARTED
+      - PAYMENT_CREATED
+      - FAILED
+      - EXPIRED
+    Currency:
+      description: The ISO 3 letter currency code
+      type: string
+      examples:
+      - AED
+      pattern: ^[A-Z]{3}$
+    PaymentPurposeCode:
+      description: "A category code that relates to the type of services or goods that corresponds to the underlying purpose\
+        \ of the payment.  \nThe code must conform to the payment purpose code list.  \n**Supported values:**  \n- `FIS` –\
+        \ Financial services\n- `TCS` – Telecommunication services\n- `MWP` – Mobile wallet card payments\n- `OAT` – Own account\
+        \ transfer\n- `IFS` – Information services\n- `RNT` – Rent payments\n- `LNC` – Loan charges\n- `PIN` – Personal investments\n\
+        - `GDS` – Goods bought or sold"
+      type: string
+      enum:
+      - FIS
+      - TCS
+      - MWP
+      - OAT
+      - IFS
+      - RNT
+      - LNC
+      - PIN
+      - GDS
+      title: PaymentPurposeCode
+    PageMetadata:
+      description: Metadata about the current page of results
+      type: object
+      properties:
+        number:
+          description: The current page being returned by the API
+          type: integer
+          format: int32
+        size:
+          description: The page size requested
+          type: integer
+          format: int32
+        total_elements:
+          description: The total number of elements in all pages
+          type: integer
+          format: int64
+        total_pages:
+          description: The total number of pages retrievable
+          type: integer
+          format: int32
+        sort:
+          description: Sort parameters applied to the results
+          type: array
+          items:
+            type: string
+      required:
+      - number
+      - size
+      - total_elements
+      - total_pages
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: /auth/token
+          scopes:
+            api: API access
+    bearerAuth:
+      type: http
+      scheme: bearer
+tags:
+- name: Payment Links
+  description: Payment link management operations
+security:
+- bearerAuth: []

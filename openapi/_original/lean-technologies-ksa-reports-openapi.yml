@@ -1,0 +1,394 @@
+openapi: 3.1.0
+info:
+  title: KSA
+  description: ''
+  version: 1.0.0
+tags:
+- name: Financial Insights Report
+- name: Bank Statements Report
+paths:
+  /reports/v2/customers:
+    post:
+      summary: Create Reports Customer
+      deprecated: false
+      description: Generates a HyperLink URL that you can share with your customer so they can connect their bank account.
+      operationId: createCustomerForReports
+      tags:
+      - Financial Insights Report
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReportsCustomersRequest'
+            example:
+              identifiers:
+              - value: '1106972886'
+                type: NATIONAL_ID
+              account_type: PERSONAL
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ReportsCustomersResponse'
+              example:
+                customer_id: dd64bba9-9446-4ca0-b9ed-bec2b2a49024
+                hyperlink: https://connect.sa.leantech.me/hyperlink/a059df39-d754-4cea-9901-4a357f9ac80e
+          headers: {}
+      security:
+      - bearer: []
+  /reports/v2/customers/{customer_id}/reports/{report_id}:
+    get:
+      summary: Get Report
+      deprecated: false
+      description: Get a report generated on Lean's platform via report_id.
+      operationId: getReport
+      tags:
+      - Financial Insights Report
+      parameters:
+      - name: customer_id
+        in: path
+        description: Id of the customer that the report was created from.
+        required: true
+        example: 4afb4b1e-db3f-43f7-88e5-19cf1eba22b8
+        schema:
+          type: string
+      - name: report_id
+        in: path
+        description: Id of the report that you want to retrieve.
+        required: true
+        example: a8e9bf82-245a-4f5c-b048-9024fd7910cb
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/pdf:
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+      security:
+      - bearer: []
+  /reports/v2/customers/{customer_id}/reports/:
+    get:
+      summary: Get Reports for Customer
+      deprecated: false
+      description: Get the list of report IDs for all reports generated on Lean's platform for a specific customer.
+      operationId: getReportsByCustomer
+      tags:
+      - Financial Insights Report
+      parameters:
+      - name: customer_id
+        in: path
+        description: Id of the customer that the report was created from.
+        required: true
+        example: 4afb4b1e-db3f-43f7-88e5-19cf1eba22b8
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: The page you're requesting - returns page 0 of a response if not specified.
+        required: false
+        schema:
+          format: int32
+          default: 0
+          type: integer
+      - name: size
+        in: query
+        description: The number of objects you want to return as a page size.
+        required: false
+        schema:
+          format: int32
+          default: 50
+          maximum: 100
+          type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportsReponse'
+              example:
+                reports:
+                  total_pages: 1
+                  total_elements: 1
+                  content:
+                  - id: dd64bba9-9446-4ca0-b9ed-bec2b2a49024
+                    timestamp: '2023-10-29T07:59:14.304154468Z'
+          headers: {}
+      security:
+      - bearer: []
+  /insights/v2/customers/{customer_id}/reports/bank-statements:
+    post:
+      summary: Create Bank Statements Report
+      deprecated: false
+      description: ''
+      operationId: createBankStatementsReport
+      tags:
+      - Bank Statements Report
+      parameters:
+      - name: customer_id
+        in: path
+        description: ''
+        required: true
+        example: ''
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBankStatementsReportRequestBody'
+            examples: {}
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateReportResponseBody'
+          headers: {}
+      security:
+      - bearer: []
+  /insights/v2/customers/{customer_id}/reports/bank-statements/{report_id}:
+    get:
+      summary: Get Bank Statements Report
+      deprecated: false
+      description: ''
+      operationId: getBankStatementsReport
+      tags:
+      - Bank Statements Report
+      parameters:
+      - name: customer_id
+        in: path
+        description: ''
+        required: true
+        example: ''
+        schema:
+          type: string
+          format: uuid
+      - name: report_id
+        in: path
+        description: ''
+        required: true
+        example: ''
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetBankStatementsReportResponseBody'
+          headers: {}
+      security:
+      - bearer: []
+webhooks: {}
+components:
+  schemas:
+    ReportStatus:
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+    CreateReportResponseBody:
+      type: object
+      properties:
+        report_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum:
+          - PENDING
+      required:
+      - report_id
+      - status
+    GetReportResponseBody:
+      type: object
+      properties:
+        report_id:
+          type: string
+          format: uuid
+        status:
+          $ref: '#/components/schemas/ReportStatus'
+        status_detail:
+          allOf:
+          - type: object
+            properties: {}
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - report_id
+      - status
+      - created_at
+    BankStatementsReport:
+      type: object
+      properties:
+        properties:
+          type: object
+          properties:
+            start_date:
+              type: string
+              format: date
+              description: Start date for transactions range
+            end_date:
+              type: string
+              format: date
+              description: End date for transactions range
+            account_sub_types:
+              type:
+              - array
+              - 'null'
+              items:
+                type: string
+              description: Account sub types to include in the statements, if undefined all sub types will be included
+          required:
+          - start_date
+          - end_date
+        banks:
+          type: array
+          items:
+            type: object
+            properties: {}
+      required:
+      - properties
+      - banks
+    CreateBankStatementsReportRequestBody:
+      type: object
+      properties:
+        start_date:
+          type: string
+          format: date
+          description: Start date for transactions range
+        end_date:
+          type: string
+          format: date
+          description: End date for transactions range
+        account_sub_types:
+          type:
+          - array
+          - 'null'
+          items:
+            type:
+            - string
+            - 'null'
+            enum:
+            - CHARGE_CARD
+            - CREDIT
+            - CURRENT
+            - EMONEY
+            - LOAN
+            - MORTGAGE
+            - PREPAID
+            - SAVINGS
+            - CALL
+          description: Account sub types to include in the statements, if undefined all sub types will be included
+      required:
+      - start_date
+      - end_date
+    GetBankStatementsReportResponseBody:
+      allOf:
+      - $ref: '#/components/schemas/GetReportResponseBody'
+      - type: object
+        properties:
+          report:
+            allOf:
+            - $ref: '#/components/schemas/BankStatementsReport'
+            type: 'null'
+    ReportsCustomersResponse:
+      type: object
+      properties:
+        customer_id:
+          description: The id that Lean assigns to the customer that you can use to identify the customer across the Lean
+            platform.
+          type: string
+        hyperlink:
+          description: URL that you can share with your customer so they can connect their bank account.
+          type: string
+    ReportsReponse:
+      type: object
+      properties:
+        reports:
+          $ref: '#/components/schemas/Reports'
+          description: Reports for customer
+    Reports:
+      type: object
+      properties:
+        total_pages:
+          description: Number of pages for this request.
+          type: integer
+        total_elements:
+          description: Number of reports available for this customer.
+          type: integer
+        content:
+          description: List of reports.
+          type: array
+          items:
+            $ref: '#/components/schemas/Report'
+    Report:
+      type: object
+      properties:
+        id:
+          description: ID of the report.
+          type: integer
+        timestamp:
+          format: date-time
+          description: Created date time.
+          type: string
+    ReportsCustomerIdentifier:
+      description: ''
+      required:
+      - type
+      - value
+      type: object
+      properties:
+        type:
+          description: the type of the identifier for the end user
+          enum:
+          - NATIONAL_ID
+          - COMMERCIAL_REGISTRATION
+          - UNIFIED_NUMBER
+          type: string
+        value:
+          description: the identifier for the end user
+          type: string
+    ReportsCustomersRequest:
+      required:
+      - account_type
+      type: object
+      properties:
+        identifiers:
+          description: Identifiers for a customer. Note that if account_type=PERSONAL, you will need to provide NATIONAL_ID
+            as the identifier; if account_type=BUSINESS, then you will need to provide both COMMERCIAL_REGISTRATION and UNIFIED_NUMBER
+            as identifiers
+          type: array
+          items:
+            $ref: '#/components/schemas/ReportsCustomerIdentifier'
+        account_type:
+          description: 'Indicates whether the account to be connected is a personal consumer account or a business account. '
+          enum:
+          - PERSONAL
+          - BUSINESS
+          type: string
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+servers:
+- url: https://sandbox.sa.leantech.me
+  description: Sandbox
+- url: https://api2.sa.leantech.me
+  description: Production / Pre-Live
+security:
+- bearer: []

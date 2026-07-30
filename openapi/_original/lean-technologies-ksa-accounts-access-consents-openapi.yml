@@ -1,0 +1,661 @@
+openapi: 3.1.0
+info:
+  title: Lean Connect API (Account Access Consent)
+  description: API for creating a Lean Connect Link URL for customer consent.
+  version: 1.0.0
+servers:
+- url: https://api.sandbox.sa.leantech.me
+  description: Sandbox
+- url: https://api2.sa.leantech.me
+  description: Production
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: API Access Token (JWT) for authentication.
+  schemas:
+    RedirectRequest:
+      type: object
+      properties:
+        customer_id:
+          type: string
+          format: uuid
+          description: The Lean unique identifier for the customer. Required if app_user_id is not provided.
+          examples:
+          - af06c326-9006-47f6-aac8-7a497dcc2408
+        app_user_id:
+          type: string
+          description: An assigned user id value from your backend. Required if customer_id is not provided.
+          examples:
+          - af06c326-9006-47f6-aac8-7a497dcc2408
+        bank_identifier:
+          type: string
+          description: The identifier for the bank.
+          examples:
+          - ALINMA_SAU
+        success_redirect_url:
+          type: string
+          format: uri
+          description: URL to redirect the user to on successful linking.
+          examples:
+          - https://www.leantech.me/
+        failure_redirect_url:
+          type: string
+          format: uri
+          description: URL to redirect the user to on failed linking.
+          examples:
+          - https://www.leantech.me/
+        permissions:
+          type: array
+          description: List of permissions to request from the user.
+          items:
+            $ref: '#/components/schemas/Permissions'
+        expiration_date_time:
+          type: string
+          format: date-time
+          description: The date and time when the link will expire. Default is now() + 24 hours. Must be an ISO 8601 date-time
+            string with offset (RFC 3339), e.g. `2025-08-31T11:28:16.667Z` or `2026-04-16T01:10:53+03:00`.
+          examples:
+          - '2025-08-31T11:28:16.667598655Z'
+        transaction_from_date_time:
+          type: string
+          format: date-time
+          description: The start date for transaction history. Default is now() - 1 year. Must be an ISO 8601 date-time string
+            with offset (RFC 3339), e.g. `2025-04-16T01:29:56.000Z` or `2026-04-16T01:10:53+03:00`.
+          examples:
+          - '2026-04-16T01:29:56.000Z'
+      required:
+      - bank_identifier
+      - success_redirect_url
+      - failure_redirect_url
+      - permissions
+    RedirectResponse:
+      type: object
+      properties:
+        redirect_url:
+          type: string
+          format: uri
+          description: The URL to redirect the user to the bank.
+          examples:
+          - https://m.alinma.com/landing/auth?request_uri=urn:ietf:params:oauth:request_uri:d8b574e3-417f-4571-b6b9-06b013fc7ade&response_type=code
+            id_token&client_id=422c1444-8d98-4d81-b7cb-5120d21101f4&scope=openid accounts:urn:INMASARI:kac-62ae9d98-f075-49da-9c13-fc4284e9d8a2&redirect_uri=https://obksabank.leantech.me/data/callback/ALINMA_SAU
+        bank_consent_id:
+          type: string
+          format: uuid
+          description: The unique identifier for the created consent on the bank side.
+          examples:
+          - 092c7001-bf84-439d-b3ef-a3014812c1b8
+        customer_id:
+          type: string
+          format: uuid
+          description: The Lean unique identifier for the customer.
+          examples:
+          - af06c326-9006-47f6-aac8-7a497dcc2408
+        app_user_id:
+          type: string
+          format: uuid
+          description: A unique identifier from your database, can be the corresponding User ID in your system, or any other
+            string.
+          examples:
+          - YOUR_IDENTIFIER_FOR_CUSTOMER
+    Permissions:
+      type: string
+      enum:
+      - identity
+      - accounts
+      - balance
+      - transactions
+      - identities
+      - scheduled_payments
+      - standing_orders
+      - direct_debits
+      - beneficiaries
+    ErrorResponse:
+      type: object
+      properties:
+        status_code:
+          type: integer
+          examples:
+          - 401
+        message:
+          type: string
+          examples:
+          - Authentication failed
+    ConsentStatus:
+      type: string
+      description: Internal consent lifecycle status.
+      enum:
+      - ACTIVE
+      - REVOKED
+      - REJECTED
+    StandardConsentStatus:
+      type: string
+      description: Standardised consent status across banks and providers.
+      enum:
+      - AWAITING_AUTHORISATION
+      - AUTHORISED
+      - REVOKED
+      - REJECTED
+      - EXPIRED
+      - CONSUMED
+      - SUSPENDED
+    ConsentPermissions:
+      type: object
+      description: Permissions granted for the consent. Each flag indicates whether the corresponding scope is included.
+      properties:
+        identity:
+          type: boolean
+          examples:
+          - true
+        accounts:
+          type: boolean
+          examples:
+          - true
+        balance:
+          type: boolean
+          examples:
+          - true
+        transactions:
+          type: boolean
+          examples:
+          - true
+        identities:
+          type: boolean
+          examples:
+          - false
+        scheduled_payments:
+          type: boolean
+          examples:
+          - false
+        standing_orders:
+          type: boolean
+          examples:
+          - false
+        direct_debits:
+          type: boolean
+          examples:
+          - false
+        beneficiaries:
+          type: boolean
+          examples:
+          - false
+    DataAccountIdentifier:
+      type: object
+      description: Account identifier associated with the consent.
+      properties:
+        scheme_name:
+          type: string
+          description: The identification scheme used for the account (e.g. IBAN, ACCOUNT_NUMBER).
+          examples:
+          - IBAN
+        identification:
+          type: string
+          description: The primary account identifier value (encrypted at rest).
+          examples:
+          - SA0380000000608010167519
+        secondary_identification:
+          type: string
+          description: Optional secondary identifier (e.g. account suffix).
+          examples:
+          - '001'
+        name:
+          type: string
+          description: Account holder name as reported by the bank.
+          examples:
+          - John Doe
+    EntityConsent:
+      type: object
+      description: Consent granted by a customer on a connected bank entity.
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The Lean unique identifier for the consent.
+          examples:
+          - f3b7a8a2-7e9b-4d2a-9b80-9f0fbd4f1c11
+        bank_consent_id:
+          type: string
+          description: The unique identifier for the consent on the bank side.
+          examples:
+          - urn:INMASARI:kac-30e0f1f2-ba31-49e4-9dab-91b62586e56f
+        consent_status:
+          $ref: '#/components/schemas/ConsentStatus'
+        standard_consent_status:
+          $ref: '#/components/schemas/StandardConsentStatus'
+        permissions:
+          $ref: '#/components/schemas/ConsentPermissions'
+        creation_date_time:
+          type: string
+          format: date-time
+          description: When the consent was created. ISO 8601 with offset.
+          examples:
+          - '2026-04-16T01:10:53+03:00'
+        status_update_date_time:
+          type: string
+          format: date-time
+          description: Last time the consent status changed. ISO 8601 with offset.
+          examples:
+          - '2026-04-20T09:15:00+03:00'
+        transaction_from_date_time:
+          type: string
+          format: date-time
+          description: Start of the transaction history window granted by the consent. ISO 8601 with offset.
+          examples:
+          - '2025-04-16T01:29:56.000Z'
+        transaction_to_date_time:
+          type: string
+          format: date-time
+          description: End of the transaction history window granted by the consent. ISO 8601 with offset.
+          examples:
+          - '2026-04-16T01:29:56.000Z'
+        expiration_date_time:
+          type: string
+          format: date-time
+          description: When the consent expires. ISO 8601 with offset.
+          examples:
+          - '2027-04-16T01:10:53+03:00'
+        accounts:
+          type: array
+          description: Accounts associated with the consent.
+          items:
+            $ref: '#/components/schemas/DataAccountIdentifier'
+        bank_identifier:
+          type: string
+          description: The identifier for the bank the consent belongs to.
+          examples:
+          - ALINMA_SAU
+    PageMetadata:
+      type: object
+      description: Pagination metadata for a paginated response.
+      properties:
+        number:
+          type: integer
+          description: Zero-based page number.
+          examples:
+          - 0
+        size:
+          type: integer
+          description: Page size.
+          examples:
+          - 20
+        total_elements:
+          type: integer
+          format: int64
+          description: Total number of items across all pages.
+          examples:
+          - 42
+        total_pages:
+          type: integer
+          description: Total number of pages.
+          examples:
+          - 3
+    PageableConsentsResponse:
+      type: object
+      description: Paginated response of customer consents.
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityConsent'
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+    TriggerDataRefreshRequestBody:
+      type: object
+      properties:
+        entity_id:
+          type: string
+          format: uuid
+        data_types:
+          type: array
+          description: List of data types to refresh.
+          items:
+            $ref: '#/components/schemas/Permissions'
+      required:
+      - entity_id
+    TriggerDataRefreshResponseBody:
+      type: object
+      properties:
+        refresh_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+        message:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+      required:
+      - refresh_id
+      - status
+      - message
+      - timestamp
+  examples:
+    InvalidParametersExample:
+      summary: Invalid parameters error response
+      description: Response when required parameters are missing or invalid
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-10T21:05:59.919233187Z'
+        status: INVALID_PARAMETERS
+        message: 'The request is badly formatted or a parameter of the wrong type has been provided, field: entity_id, value:
+          e34d8e49-9af2-4252-a53e-bd2df855134.'
+        metadata: null
+    UnknownEntityExample:
+      summary: Entity not found error response
+      description: Response when the provided entity_id is not found
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-10T21:03:05.413806605Z'
+        status: UNKNOWN_ENTITY
+        message: The entity_id provided did not match an account in our records.
+        metadata: null
+    InternalServerErrorExample:
+      summary: Internal server error response
+      description: Response when an unexpected server error occurs
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-08-07T13:07:38.834977945Z'
+        status: INTERNAL_SERVER_ERROR
+        message: Something has gone wrong. If you continue to see this error, please get in touch with Lean.
+        metadata: null
+paths:
+  /v2/accounts-access-consents:
+    post:
+      summary: Create Connect Link
+      description: Creates a redirect URL for a customer to provide consent on the bank.
+      operationId: createConnectLink
+      tags:
+      - Open Banking
+      security:
+      - BearerAuth: []
+      requestBody:
+        description: Payload to create the redirect link.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RedirectRequest'
+            example:
+              app_user_id: YOUR_IDENTIFIER_FOR_CUSTOMER
+              bank_identifier: ALINMA_SAU
+              success_redirect_url: https://www.leantech.me/?success=true
+              failure_redirect_url: https://www.leantech.me/?success=false
+              permissions:
+              - accounts
+              - identity
+              - balance
+              - transactions
+              - identities
+              - scheduled_payments
+              - standing_orders
+              - direct_debits
+              - beneficiaries
+              expiration_date_time: '2026-04-16T01:10:53+03:00'
+              transaction_from_date_time: '2025-04-16T01:29:56.000Z'
+      responses:
+        '200':
+          description: Redirect URL created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RedirectResponse'
+              example:
+                redirect_url: https://m.alinma.com/landing/auth?request_uri=urn:ietf:params:oauth:request_uri:1b859eb3-54e1-48b2-b067-6fca73682162&response_type=code
+                  id_token&client_id=422c1444-8d98-4d81-b7cb-5120d21101f4&scope=openid accounts:urn:INMASARI:kac-30e0f1f2-ba31-49e4-9dab-91b62586e56f&redirect_uri=https://obksabank.leantech.me/data/callback/ALINMA_SAU
+                bank_consent_id: urn:INMASARI:kac-30e0f1f2-ba31-49e4-9dab-91b62586e56f
+                customer_id: 7affbbf9-be53-433c-a598-c06449c2b4b0
+                app_user_id: YOUR_IDENTIFIER_FOR_CUSTOMER
+        '400':
+          description: Bad Request - Invalid input.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - Invalid or missing token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /customers/v1/{customerId}/consents:
+    get:
+      summary: List customer consents
+      description: Returns a paginated list of consents across all entities of the given customer. Supports optional filtering
+        by consent status and consent type.
+      operationId: getCustomerConsents
+      tags:
+      - Open Banking
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        description: The Lean unique identifier for the customer.
+        schema:
+          type: string
+          format: uuid
+      - name: pageNumber
+        in: query
+        required: false
+        description: Zero-based page number. Defaults to 0.
+        schema:
+          type: integer
+          default: 0
+          minimum: 0
+      - name: pageSize
+        in: query
+        required: false
+        description: Page size. Defaults to 20.
+        schema:
+          type: integer
+          default: 20
+          minimum: 1
+      responses:
+        '200':
+          description: Paginated consents for the customer.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageableConsentsResponse'
+              example:
+                data:
+                - id: f3b7a8a2-7e9b-4d2a-9b80-9f0fbd4f1c11
+                  bank_consent_id: urn:INMASARI:kac-30e0f1f2-ba31-49e4-9dab-91b62586e56f
+                  consent_status: ACTIVE
+                  standard_consent_status: AUTHORISED
+                  consent_type: ACCOUNT_ACCESS
+                  permissions:
+                    identity: true
+                    accounts: true
+                    balance: true
+                    transactions: true
+                    identities: false
+                    scheduled_payments: false
+                    standing_orders: false
+                    direct_debits: false
+                    beneficiaries: false
+                  creation_date_time: '2026-04-16T01:10:53+03:00'
+                  status_update_date_time: '2026-04-20T09:15:00+03:00'
+                  transaction_from_date_time: '2025-04-16T01:29:56.000Z'
+                  transaction_to_date_time: '2026-04-16T01:29:56.000Z'
+                  expiration_date_time: '2027-04-16T01:10:53+03:00'
+                  accounts:
+                  - scheme_name: IBAN
+                    identification: SA0380000000608010167519
+                    secondary_identification: '001'
+                    name: John Doe
+                  bank_identifier: ALINMA_SAU
+                page:
+                  number: 0
+                  size: 20
+                  total_elements: 1
+                  total_pages: 1
+        '401':
+          description: Unauthorized - Invalid or missing token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden - Customer does not belong to the authenticated client.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /customers/v1/{customerId}/consents/{consentId}:
+    get:
+      summary: Get consent by id
+      description: Returns the details of a single consent for the given customer. The consent must belong to one of the customer's
+        entities.
+      operationId: getCustomerConsentById
+      tags:
+      - Open Banking
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        description: The Lean unique identifier for the customer.
+        schema:
+          type: string
+          format: uuid
+      - name: consentId
+        in: path
+        required: true
+        description: The Lean unique identifier for the consent.
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Consent details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityConsent'
+              example:
+                id: f3b7a8a2-7e9b-4d2a-9b80-9f0fbd4f1c11
+                bank_consent_id: urn:INMASARI:kac-30e0f1f2-ba31-49e4-9dab-91b62586e56f
+                consent_status: ACTIVE
+                standard_consent_status: AUTHORISED
+                consent_type: ACCOUNT_ACCESS
+                permissions:
+                  identity: true
+                  accounts: true
+                  balance: true
+                  transactions: true
+                  identities: false
+                  scheduled_payments: false
+                  standing_orders: false
+                  direct_debits: false
+                  beneficiaries: false
+                creation_date_time: '2026-04-16T01:10:53+03:00'
+                status_update_date_time: '2026-04-20T09:15:00+03:00'
+                transaction_from_date_time: '2025-04-16T01:29:56.000Z'
+                transaction_to_date_time: '2026-04-16T01:29:56.000Z'
+                expiration_date_time: '2027-04-16T01:10:53+03:00'
+                accounts:
+                - scheme_name: IBAN
+                  identification: SA0380000000608010167519
+                  secondary_identification: '001'
+                  name: John Doe
+                bank_identifier: ALINMA_SAU
+        '401':
+          description: Unauthorized - Invalid or missing token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden - Customer does not belong to the authenticated client.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Consent not found, or it does not belong to the given customer.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /data/v2/refreshes:
+    post:
+      operationId: trigger_data_refresh_v2
+      summary: Trigger a Manual Data Refresh
+      description: Trigger on-demand data refresh for an entity that has an active consent
+      tags:
+      - Open Banking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TriggerDataRefreshRequestBody'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TriggerDataRefreshResponseBody'
+              examples:
+                Successful_Refresh_Example:
+                  summary: Successful data refresh trigger
+                  value:
+                    refresh_id: 79f89fa4-03aa-4beb-b31e-b4f18c953e79
+                    status: OK
+                    message: Data refresh triggered successfully
+                    timestamp: '2025-09-12T08:41:32.579538664Z'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                InvalidParametersExample:
+                  $ref: '#/components/examples/InvalidParametersExample'
+        '403':
+          description: Forbidden - Consent expired
+          content:
+            application/json:
+              examples:
+                ConsentExpiredExample:
+                  summary: Consent expired error
+                  value:
+                    timestamp: '2025-09-12T08:08:40.084979049Z'
+                    status: CONSENT_EXPIRED
+                    message: Consent was suspended, revoked, or expired. New consent is required, please connect the entity
+                      once again.
+                    metadata: null
+        '404':
+          description: Entity not found
+          content:
+            application/json:
+              examples:
+                UnknownEntityExample:
+                  $ref: '#/components/examples/UnknownEntityExample'
+        '429':
+          description: Too Many Requests - Duplicated request
+          content:
+            application/json:
+              examples:
+                DuplicatedRequestExample:
+                  summary: Duplicated data refresh request error
+                  value:
+                    timestamp: '2025-09-12T08:36:15.261673121Z'
+                    status: DUPLICATED_REQUEST
+                    message: Data refresh is already pending.
+                    metadata: null
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                InternalServerErrorExample:
+                  $ref: '#/components/examples/InternalServerErrorExample'
+security:
+- bearerAuth: []

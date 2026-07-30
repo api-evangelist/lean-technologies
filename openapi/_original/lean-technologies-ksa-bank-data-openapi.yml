@@ -1,0 +1,4749 @@
+openapi: 3.1.0
+info:
+  title: KSA
+  description: ''
+  version: 1.0.0
+tags:
+- name: Entities
+- name: Raw Data
+paths:
+  /customers/v1/entities:
+    get:
+      summary: List Entities
+      deprecated: false
+      description: ''
+      operationId: listEntities
+      tags:
+      - Entities
+      parameters:
+      - name: start_date
+        in: query
+        description: This is the starting date for which you want to retrieve entities created
+        required: true
+        example: '2025-03-01'
+        schema:
+          type: integer
+      - name: end_date
+        in: query
+        description: This is the end date for which you want to retrieve entities created
+        required: true
+        example: '2025-04-01'
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ListEntityResponse'
+                  page:
+                    $ref: '#/components/schemas/Page'
+                required:
+                - data
+                - page
+              example:
+                data:
+                - id: 1e700df1-991d-4b24-9b99-b3bc3a4f8742
+                  customer_id: a17358a5-c034-4efe-ac66-918e0da6bf21
+                  bank_identifier: LEA2_SAMAOB_SAU
+                  permissions:
+                    identity: true
+                    accounts: true
+                    balance: true
+                    transactions: true
+                    identities: true
+                    scheduled_payments: false
+                    standing_orders: false
+                    direct_debits: false
+                    beneficiaries: false
+                  bank_type: RETAIL
+                  created_at: '2025-03-20T10:58:38.399276Z'
+                  consents:
+                  - id: 2477aa02-88f9-4eb3-9fbc-7879e55d9919
+                    bank_consent_id: '83699'
+                    bank_identifier: null
+                    consent_type: null
+                    consent_status: ACTIVE
+                    standard_consent_status: null
+                    permissions:
+                      identity: true
+                      accounts: true
+                      balance: true
+                      transactions: true
+                      identities: true
+                      scheduled_payments: false
+                      standing_orders: false
+                      direct_debits: false
+                      beneficiaries: false
+                    creation_date_time: '2025-03-20T10:58:07.385726Z'
+                    status_update_date_time: '2025-03-20T10:58:07.385726Z'
+                    expiration_date_time: '2025-03-21T09:57:59.084Z'
+                    transaction_from_date_time: '2024-03-17T18:30:00.084Z'
+                    transaction_to_date_time: '2025-03-21T09:57:59.084Z'
+                    accounts:
+                    - scheme_name: IBAN
+                      identification: SA5345LVG2X0SI98L2TYOATQ
+                      name: Buford Torp CURRENT Account
+                      secondary_identification: null
+                    - scheme_name: NATIONAL_ID
+                      identification: '1372602407'
+                      name: null
+                      secondary_identification: null
+                    - scheme_name: IBAN
+                      identification: SA4330PH5L6EXIY9LNH1HD7Y
+                      name: Buford Torp SAVINGS Account
+                      secondary_identification: null
+                    - scheme_name: NATIONAL_ID
+                      identification: '1372602407'
+                      name: null
+                      secondary_identification: null
+                  status: ACTIVE
+                  updated_at: '2025-03-20T10:58:38.399276Z'
+                - id: bfe68209-e8e6-43e1-9831-8d60c477595d
+                  customer_id: f96d8945-4ef0-4b7f-8569-107ec943d891
+                  bank_identifier: LEA2_SAMAOB_SAU
+                  permissions:
+                    identity: true
+                    accounts: true
+                    balance: true
+                    transactions: true
+                    identities: true
+                    scheduled_payments: true
+                    standing_orders: true
+                    direct_debits: true
+                    beneficiaries: true
+                  bank_type: RETAIL
+                  created_at: '2025-03-07T11:43:16.269566Z'
+                  consents:
+                  - id: 4631f555-4f18-45d7-aa65-5908a509e1c1
+                    bank_consent_id: '81469'
+                    bank_identifier: null
+                    consent_type: null
+                    consent_status: ACTIVE
+                    standard_consent_status: null
+                    permissions:
+                      identity: true
+                      accounts: true
+                      balance: true
+                      transactions: true
+                      identities: true
+                      scheduled_payments: true
+                      standing_orders: true
+                      direct_debits: true
+                      beneficiaries: true
+                    creation_date_time: '2025-03-07T11:42:58.913517Z'
+                    status_update_date_time: '2025-03-07T11:42:58.913517Z'
+                    expiration_date_time: '2026-03-07T11:42:58.631Z'
+                    transaction_from_date_time: null
+                    transaction_to_date_time: null
+                    accounts:
+                    - scheme_name: IBAN
+                      identification: SA5345LVG2X0SI98L2TYOATQ
+                      name: Buford Torp CURRENT Account
+                      secondary_identification: null
+                    - scheme_name: NATIONAL_ID
+                      identification: '1372602407'
+                      name: null
+                      secondary_identification: null
+                  status: ACTIVE
+                  updated_at: '2025-03-07T11:43:16.269566Z'
+                - id: 1306c67a-2422-4185-a895-cce5a0a8d2fc
+                  customer_id: 57aa2a53-a827-4a2f-b3be-86ddcf3aa4bc
+                  bank_identifier: LEA1_SAMAOB_SAU
+                  permissions:
+                    identity: true
+                    accounts: true
+                    balance: true
+                    transactions: true
+                    identities: true
+                    scheduled_payments: true
+                    standing_orders: true
+                    direct_debits: true
+                    beneficiaries: true
+                  bank_type: RETAIL
+                  created_at: '2025-02-27T05:24:43.237577Z'
+                  consents:
+                  - id: 21d8cbfb-c886-4b1e-b04a-4f3b35ee492f
+                    bank_consent_id: '79891'
+                    bank_identifier: null
+                    consent_type: null
+                    consent_status: ACTIVE
+                    standard_consent_status: null
+                    permissions:
+                      identity: true
+                      accounts: true
+                      balance: true
+                      transactions: true
+                      identities: true
+                      scheduled_payments: true
+                      standing_orders: true
+                      direct_debits: true
+                      beneficiaries: true
+                    creation_date_time: '2025-02-27T05:24:18.485641Z'
+                    status_update_date_time: '2025-02-27T05:24:18.485641Z'
+                    expiration_date_time: '2026-02-27T05:24:18.183Z'
+                    transaction_from_date_time: null
+                    transaction_to_date_time: null
+                    accounts:
+                    - scheme_name: IBAN
+                      identification: SA5345LVG2X0SI98L2TYOATQ
+                      name: Buford Torp CURRENT Account
+                      secondary_identification: null
+                    - scheme_name: NATIONAL_ID
+                      identification: '1372602407'
+                      name: null
+                      secondary_identification: null
+                  status: ACTIVE
+                  updated_at: '2025-02-27T05:24:43.237577Z'
+                page:
+                  number: 0
+                  size: 100
+                  total_elements: 3
+                  total_pages: 1
+          headers: {}
+      security:
+      - bearer: []
+  /customers/v1/{customer_id}/entities:
+    get:
+      summary: Get Entities
+      deprecated: false
+      description: ''
+      operationId: getEntities
+      tags:
+      - Entities
+      parameters:
+      - name: customer_id
+        in: path
+        description: ''
+        required: true
+        example: beb7697d-d0f2-4ec7-b169-af3700822235
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EntityResponse'
+          headers: {}
+      security:
+      - bearer: []
+  /customers/v1/{customer_id}/entities/{entity_id}:
+    get:
+      summary: Get Entity by ID
+      deprecated: false
+      description: ''
+      operationId: getEntityById
+      tags:
+      - Entities
+      parameters:
+      - name: customer_id
+        in: path
+        description: ''
+        required: true
+        example: beb7697d-d0f2-4ec7-b169-af3700822235
+        schema:
+          type: string
+      - name: entity_id
+        in: path
+        description: ''
+        required: true
+        example: 9aeb067a-9c1a-3631-a6f3-e912c6f4354b
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityResponse'
+          headers: {}
+      security:
+      - bearer: []
+    delete:
+      summary: Delete Entity
+      deprecated: false
+      description: Marks the entity as deleted and revokes all permissions. It can be recreated later by intiating a new `.connect()`
+        flow from the `LinkSDK`
+      operationId: deleteEntity
+      tags:
+      - Entities
+      parameters:
+      - name: customer_id
+        in: path
+        description: ''
+        required: true
+        example: ''
+        schema:
+          type: string
+      - name: entity_id
+        in: path
+        description: ''
+        required: true
+        example: ''
+        schema:
+          type: string
+      - name: reason
+        in: query
+        description: ''
+        required: true
+        schema:
+          enum:
+          - USER_REQUESTED
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EntityDeleteRequest'
+            example:
+              reason: USER_REQUESTED
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+      security:
+      - bearer: []
+  /customers/v1/{customer_id}/entities/{entity_id}/consent/{consent_id}:
+    delete:
+      summary: Delete Consent
+      deprecated: false
+      description: Revokes a consent
+      operationId: deleteConsent
+      tags:
+      - Entities
+      parameters:
+      - name: customer_id
+        in: path
+        description: ''
+        required: true
+        example: ''
+        schema:
+          type: string
+      - name: entity_id
+        in: path
+        description: ''
+        required: true
+        example: ''
+        schema:
+          type: string
+      - name: consent_id
+        in: path
+        description: ''
+        required: true
+        example: ''
+        schema:
+          type: string
+      - name: reason
+        in: query
+        description: ''
+        required: true
+        schema:
+          enum:
+          - USER_REQUESTED
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+      security:
+      - bearer: []
+  /data/v2/accounts:
+    get:
+      summary: Get Accounts
+      deprecated: false
+      description: "The `Get Accounts` endpoint retrieves a list of bank accounts that have been linked by a user (or business)\
+        \ via LinkSDK, identified by their entity_id. \n\nEach account object contains fields such as `account_id`, `account\
+        \ status`, `currency`, `account_sub_type`, `account identifiers` (such as IBAN, ACCOUNT_NUMBER, and NATIONAL_ID) and\
+        \ other data points related accounts.\n\nYou can use the resulting account_ids to query additional financial data\
+        \ through other Lean APIs such as [transactions](https://docs.leantech.me/v2.0-KSA/reference/fetchtransactions#/),\
+        \ [balances](https://docs.leantech.me/v2.0-KSA/reference/fetchbalances#/), [beneficiaries](https://docs.leantech.me/v2.0-KSA/reference/fetchbeneficiaries#/),\
+        \ and other data APIs."
+      operationId: fetchAccounts
+      tags:
+      - Raw Data
+      parameters:
+      - name: entity_id
+        in: query
+        description: The `entity_id` you're querying for.
+        required: true
+        example: a2fca65a-8c9a-4623-a84b-b0b08403669d
+        schema:
+          type: string
+          format: uuid
+      - name: async
+        in: query
+        description: When `true` the API will only return a `results_id` which can be fetched from the `/results` endpoint
+          when ready.
+        required: false
+        example: 'false'
+        schema:
+          default: false
+          type: boolean
+      - name: page
+        in: query
+        description: The page you're requesting - returns page 0 of a response if not specified.
+        required: false
+        example: 0
+        schema:
+          type: integer
+          format: int32
+          maximum: 100
+      - name: size
+        in: query
+        description: The number of objects you want to return as a page size.
+        required: false
+        example: 50
+        schema:
+          type: integer
+          format: int32
+          maximum: 100
+      - name: force_refresh
+        in: query
+        description: 'Ignore Lean''s caching and force a call to the bank. This may have unwanted performance issues. '
+        required: false
+        example: 'false'
+        schema:
+          default: false
+          type: boolean
+      - name: verbose
+        in: query
+        description: Shows `regional_data` values in responses when true. Defaults to `false`.
+        required: false
+        example: 'false'
+        schema:
+          default: false
+          type: boolean
+      - name: meta
+        in: query
+        description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
+        required: false
+        example: ''
+        schema:
+          type: string
+      - name: lean-app-token
+        in: header
+        description: 'How Lean identifies your application. '
+        required: true
+        example: ''
+        schema:
+          type: string
+          format: uuid
+      - name: content-type
+        in: header
+        description: Language preference (e.g., ar for Arabic)
+        required: false
+        example: ''
+        schema:
+          type: string
+          examples:
+          - application/json
+      - name: lean-correlation-id
+        in: header
+        description: Optional ID to trace requests for debugging
+        required: false
+        example: ''
+        schema:
+          type: string
+      - name: accept-language
+        in: header
+        description: The reposnse by defalut will be in json format unless mentioned
+        required: false
+        example: ''
+        schema:
+          type: string
+      - name: customer-ip
+        in: header
+        description: IP Address of the customer. Required to indicate that the user is currently on-session. When this value
+          isn't supplied the request is treated as a background refresh. Banks may place limits on the number of background
+          refreshes can be performed over 24 hours.
+        required: false
+        example: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    description: The status of the results. For async requests, initially returns PENDING.
+                    enum:
+                    - OK
+                    - FAILED
+                    - PENDING
+                    - CONSENT_EXPIRED
+                    type: string
+                  results_id:
+                    type: string
+                    description: The ID for this result, this is used when retrieving results from the `/results` endpoint.
+                    format: uuid
+                  message:
+                    description: A message describing the status of the request.
+                    type: string
+                  meta:
+                    type:
+                    - string
+                    - 'null'
+                    description: Optional metadata associated with the result.
+                  timestamp:
+                    format: date-time
+                    description: The timestamp with timezone offset indicating when the response was generated.
+                    type: string
+                  status_detail:
+                    description: Further detail on the error if status=FAILED
+                    type: object
+                    properties:
+                      granular_status_code:
+                        description: Detailed error code
+                        type: string
+                      status_additional_info:
+                        description: Further detail on the encountered error
+                        type: string
+                  data:
+                    type: object
+                    properties:
+                      accounts:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            account_id:
+                              description: The unique identifier for the account. Provided as a UUID.
+                              type: string
+                            status:
+                              description: The current status of the account. Indicating whether it is in active use or not.
+                              enum:
+                              - DELETED
+                              - DISABLED
+                              - ENABLED
+                              - PENDING
+                              - PROFORMA
+                              - UNSUPPORTED
+                              type: string
+                            status_update_date_time:
+                              type:
+                              - string
+                              - 'null'
+                              description: The datetime that the status was last updated.
+                              format: date-time
+                            currency:
+                              description: The ISO 3 letter currency code that the account stores value in.
+                              type: string
+                            account_type:
+                              description: 'Indicates whether the account is a retail consumer account or a business account. '
+                              enum:
+                              - PERSONAL
+                              - BUSINESS
+                              - UNSUPPORTED
+                              type: string
+                            account_sub_type:
+                              type: string
+                              description: Indicates the type of account.
+                              enum:
+                              - CURRENT
+                              - CREDIT
+                              - SAVINGS
+                              - CHARGE_CARD
+                              - EMONEY
+                              - LOAN
+                              - MORTGAGE
+                              - PREPAID
+                              - CALL
+                              - UNSUPPORTED
+                            nickname:
+                              type:
+                              - string
+                              - 'null'
+                              description: The name for this account as set by the owner of the account. This name is known
+                                to the user.
+                            description:
+                              type:
+                              - string
+                              - 'null'
+                              description: Specifies the description of the account sub-type.
+                            opening_date:
+                              type:
+                              - string
+                              - 'null'
+                              description: The date and time the account was opened.
+                              format: date-time
+                              examples:
+                              - 2013-03-15 22:00:00.000 +0400
+                            maturity_date:
+                              type:
+                              - string
+                              - 'null'
+                              description: Maturity date of the account.
+                              format: date-time
+                            account:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  scheme_name:
+                                    type: string
+                                    description: Name of the identification scheme for the account.
+                                    enum:
+                                    - IBAN
+                                    - BBAN
+                                    - PAN
+                                    - OTHER
+                                    - UNSUPPORTED
+                                  identification:
+                                    type: string
+                                    description: Identification value for the account assigned by the bank based on the Account
+                                      Scheme Name
+                                  name:
+                                    type:
+                                    - string
+                                    - 'null'
+                                    description: The name of the account owner(s) represented at an account level
+                              description: Identification for the account assigned by the Bank based on the Account Scheme
+                                Name
+                            servicer:
+                              description: Party that manages the account on behalf of the account owner, that is manages
+                                the registration and booking of entries on the account, calculates balances on the account
+                                and provides information about the account.
+                              type: object
+                              properties:
+                                scheme_name:
+                                  type: string
+                                  description: The name of the identification scheme for the Bank
+                                  enum:
+                                  - BICFI
+                                  - OTHER
+                                  - UNSUPPORTED
+                                  examples:
+                                  - BICFI
+                                identification:
+                                  type: string
+                                  description: Unique and unambiguous identification of the Bank
+                            regional_data:
+                              type: object
+                              properties:
+                                data:
+                                  type: object
+                                  properties:
+                                    account_id:
+                                      format: uuid
+                                      description: The unique identifier for the account. Provided as a UUID.
+                                      type: string
+                                    status:
+                                      description: The current status of the account indicating whether it is in active use
+                                        or in some other state.
+                                      enum:
+                                      - ACTIVE
+                                      - NOT_ACTIVE
+                                      - DORMANT
+                                      - UNCLAIMED
+                                      - DECEASED
+                                      - SUSPENDED
+                                      - CLOSED
+                                      - UNSUPPORTED
+                                      type: string
+                                    status_update_date_time:
+                                      type:
+                                      - string
+                                      - 'null'
+                                      description: The datetime that the status was last updated.
+                                      format: date-time
+                                    currency:
+                                      description: The 3 Letter ISO code denominating the currency that the account stores
+                                        value in.
+                                      type: string
+                                    account_type:
+                                      description: Indicates whether the account is a retail consumer account or a corporate
+                                        account.
+                                      enum:
+                                      - RETAIL
+                                      - CORPORATE
+                                      - UNSUPPORTED
+                                      type: string
+                                    account_sub_type:
+                                      description: Indicates the type of account.
+                                      enum:
+                                      - CHARGE_CARD
+                                      - CREDIT_CARD
+                                      - CURRENT_ACCOUNT
+                                      - E_MONEY
+                                      - PRE_PAID_CARD
+                                      - SAVINGS
+                                      - OTHER
+                                      - UNSUPPORTED
+                                      type: string
+                                    description:
+                                      type:
+                                      - string
+                                      - 'null'
+                                      description: Specifies the description of the account sub-type.
+                                    nickname:
+                                      type:
+                                      - string
+                                      - 'null'
+                                      description: The nickname of the account, assigned by the owner of the account to provide
+                                        an additional and easier means of identification of the account.
+                                    opening_date:
+                                      type:
+                                      - string
+                                      - 'null'
+                                      description: The datetime that the account was opened.
+                                      format: date-time
+                                    maturity_date:
+                                      type:
+                                      - string
+                                      - 'null'
+                                      description: Maturity date of the account.
+                                      format: date-time
+                                    servicer:
+                                      description: Details on the organization that manages the account on behalf of the account
+                                        owner.
+                                      type: object
+                                      properties:
+                                        identification_type:
+                                          description: 'The type of identifier being provided.
+
+
+                                            | Value | Description |
+
+                                            |-|-|
+
+                                            | BICFI | The BIC/SWIFT code for the Financial Institution |
+
+                                            | OTHER | A combination of country code and 4 letter identifier for a financial
+                                            institution |'
+                                          enum:
+                                          - BICFI
+                                          - OTHER
+                                          - UNSUPPORTED
+                                          type: string
+                                        identification:
+                                          description: 'Provides either the BIC/SWIFT code for the Financial Institution or
+                                            a value from a coded list.
+
+
+                                            | Identifier | Institution |
+
+                                            |-|-|
+
+                                            | SAINMA | Alinma Bank |
+
+                                            | SARJHI | Al Rajhi Bank |
+
+                                            | SAARNB | Arab National Bank |
+
+                                            | SAALBI | Bank Al Bilad |
+
+                                            | SABJAZ | Bank Al-Jazira |
+
+                                            | SABMUS | Bank Muscat |
+
+                                            | SABSFR | Banque Saudi Fransi |
+
+                                            | SABNPA | BNP Paribas Saudi Arabia |
+
+                                            | SACRES | Credit Suisse Saudi Arabia |
+
+                                            | SADEUT | Deutsche Bank AG, Riyadh Branch |
+
+                                            | SAEBIL | Emirates NBD PJSC |
+
+                                            | SAGULF | Gulf International Bank B.S.C., Riyadh |
+
+                                            | SAICBK | Industrial and Commercial Bank of China, Riyadh Branch |
+
+                                            | SAISLD | Islamic Development Bank |
+
+                                            | SAJPMG | J.P. Morgan Saudi Arabia Ltd. |
+
+                                            | SACHAS | J.P. Morgan Chase Bank, N.A Riyadh |
+
+                                            | SAMLSA | Merill Lynch Kingdom of Saudi Arabia |
+
+                                            | SANBOB | National Bank of Bahrain |
+
+                                            | SANBOK | National Bank of Kuwait |
+
+                                            | SANBPA | National Bank of Pakistan |
+
+                                            | SANCBK | Saudi National Bank |
+
+                                            | SARIBL | Riyad Bank |
+
+                                            | SASAMA | Saudi Arabian Monetary Authority |
+
+                                            | SASABB | Saudi British Bank |
+
+                                            | SASIBC | Saudi Investment Bank |
+
+                                            | SASCBL | Standard Chartered Capital (Saudi Arabia) |
+
+                                            | SATCZB | T.C. Ziraat Bankasi A.S. |
+
+                                            | SASTCP | STC Pay |
+
+                                            | SANEOL | Neoleap |'
+                                          type: string
+                                    account_identifiers:
+                                      description: An array of identifiers for the account.
+                                      type: array
+                                      items:
+                                        type: object
+                                        properties:
+                                          identification_type:
+                                            description: Indicates the type of identification being provided.
+                                            enum:
+                                            - IBAN
+                                            - MASKED_PAN
+                                            - ACCOUNT_NUMBER
+                                            - COMMERCIAL_REGISTRATION_NUMBER
+                                            - EMAIL
+                                            - MOBILE_NUMBER
+                                            - NATIONAL_ID
+                                            - IQAMA_NUMBER
+                                            - PASSPORT_NUMBER
+                                            - UNSUPPORTED
+                                            type: string
+                                          identification:
+                                            description: Returns a value based on the `identification_type`.
+                                            type: string
+                                          name:
+                                            type:
+                                            - string
+                                            - 'null'
+                                            description: 'The account name is the name or names of the account owner(s) represented
+                                              at an account level. Note: The account name is not the product name or the nickname
+                                              of the account.'
+                                    account_holder_name:
+                                      type:
+                                      - string
+                                      - 'null'
+                                      description: Name of the account holder
+                                    account_holder_short_name:
+                                      type:
+                                      - string
+                                      - 'null'
+                                      description: Short form of the name of the account holder
+                              description: Region specific data response. Only provided when `verbose=true` in the originating
+                                request.
+                              required:
+                              - data
+                        description: An array of accounts associated with the Entity
+                      page:
+                        type: object
+                        properties:
+                          number:
+                            type: integer
+                            description: The page number of the current response.
+                          size:
+                            type: integer
+                            description: The number of objects in the response.
+                          total_elements:
+                            type: integer
+                            description: The total number of objects available.
+                          total_pages:
+                            type: integer
+                            description: The total number of pages to consume all of the elements.
+                      type:
+                        type: string
+                        description: The endpoint the original request was made to
+                        examples:
+                        - accounts
+                  type:
+                    type: string
+                    description: The endpoint the original request was made to
+                    examples:
+                    - accounts
+                required:
+                - status
+                - results_id
+                - message
+                - meta
+                - timestamp
+                - status_detail
+              example:
+                status: OK
+                results_id: 17c87743-1ss9-049r-b615-964ab66726a3
+                message: Data successfully retrieved
+                meta: null
+                timestamp: '2025-04-20T12:22:43.821847141Z'
+                status_detail: null
+                data:
+                  accounts:
+                  - account_id: 5551ed71-97c5-4dfa-bf5e-f786371a0ecc
+                    status: ENABLED
+                    status_update_date_time: '2025-03-10T09:46:27.576Z'
+                    currency: SAR
+                    account_type: PERSONAL
+                    account_sub_type: CURRENT
+                    nickname: Mohannad's Current Account
+                    description: Active
+                    opening_date: '2016-03-10'
+                    maturity_date: null
+                    account:
+                    - scheme_name: IBAN
+                      identification: SA7310Z530HMBTWCRYP4FJK6
+                      name: Mohannad Bin Hassan
+                    - scheme_name: BBAN
+                      identification: '45586131000108'
+                      name: Mohannad Bin Hassan
+                    - scheme_name: OTHER
+                      identification: '1110224845'
+                      name: Mohannad Bin Hassan
+                    servicer:
+                      scheme_name: BICFI
+                      identification: NCBKSAJE
+                    regional_data:
+                      standard: SAU.SAMA.V1
+                      data:
+                        account_id: 5551ed71-97c5-4dfa-bf5e-f786371a0ecc
+                        status: ACTIVE
+                        status_update_date_time: '2025-03-10T09:46:27.576Z'
+                        currency: SAR
+                        account_type: RETAIL
+                        account_sub_type: CURRENT_ACCOUNT
+                        description: Active
+                        nickname: Mohannad's Current Account
+                        opening_date: '2016-03-10'
+                        maturity_date: null
+                        servicer:
+                          identification_type: BICFI
+                          identification: NCBKSAJE
+                        account_identifiers:
+                        - identification_type: IBAN
+                          identification: SA6210000045586131000108
+                          name: Mohannad Bin Hassan
+                        - identification_type: ACCOUNT_NUMBER
+                          identification: '45586131000108'
+                          name: Mohannad Bin Hassan
+                        - identification_type: NATIONAL_ID
+                          identification: '1110224845'
+                          name: Mohannad Bin Hassan
+                        account_holder_name: Mohannad Bin Hassan Al-Hassan
+                        account_holder_short_name: Mohannad Bin Hassan Al-Hassan
+                  page:
+                    number: 0
+                    size: 1
+                    total_elements: 1
+                    total_pages: 1
+                  type: accounts
+                type: accounts
+          headers: {}
+      security:
+      - bearer: []
+  /data/v2/accounts/{account_id}/balances:
+    get:
+      summary: Get Balances
+      deprecated: false
+      description: 'The `Get Balances `endpoint retrieves a list of balances associated with a specific bank account that
+        has been linked by a user (or business) via LinkSDK, identified by both the `entity_id` and the `account_id` . The
+        accountId can be found by making a call to the /accounts endpoint.
+
+
+        Each balance object contains fields such as `balance type `(e.g., CLOSING_AVAILABLE, INTERIM_BOOKED, etc..), `amount`,
+        `currency`, `credit/debit indicator`, and *optional* `credit_line` details that indicate available or agreed credit
+        facilities tied to the account.
+
+
+
+        Balance types can vary based on the bank and the nature of the account, and multiple types of balances may be available
+        for the same account at the same time.
+
+
+        **Requires an active entity with the `balances` permission to use.**'
+      operationId: fetchBalances
+      tags:
+      - Raw Data
+      parameters:
+      - name: account_id
+        in: path
+        description: The unique identifier of the account to retrieve balances for. You can fetch account_id from the Get
+          Accounts API.
+        required: true
+        example: ''
+        schema:
+          type: string
+      - name: entity_id
+        in: query
+        description: The `entity_id` you're querying for.
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - name: async
+        in: query
+        description: When `true` the API will only return a `results_id` which can be fetched from the `/results` endpoint
+          when ready.
+        required: false
+        example: 'false'
+        schema:
+          default: false
+          type: boolean
+      - name: page
+        in: query
+        description: The page you're requesting - returns page 0 of a response if not specified.
+        required: false
+        example: 0
+        schema:
+          format: int32
+          default: 0
+          type: integer
+      - name: size
+        in: query
+        description: The number of objects you want to return as a page size.
+        required: false
+        example: 50
+        schema:
+          format: int32
+          default: 50
+          maximum: 100
+          type: integer
+      - name: verbose
+        in: query
+        description: Shows `regional_data` values in responses when true. Defaults to `false`.
+        required: false
+        example: 'false'
+        schema:
+          default: false
+          type: boolean
+      - name: force_refresh
+        in: query
+        description: 'Ignore Lean''s caching and force a call to the bank. This may have unwanted performance issues. '
+        required: false
+        example: 'true'
+        schema:
+          type: boolean
+          default: true
+      - name: meta
+        in: query
+        description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
+        required: false
+        schema:
+          type: string
+      - name: lean-app-token
+        in: header
+        description: 'How Lean identifies your application. '
+        required: true
+        example: ''
+        schema:
+          type: string
+      - name: content-type
+        in: header
+        description: Language preference (e.g., ar for Arabic)
+        required: false
+        example: ''
+        schema:
+          type: string
+          examples:
+          - application/json
+      - name: lean-correlation-id
+        in: header
+        description: Optional ID to trace requests for debugging
+        required: false
+        example: ''
+        schema:
+          type: string
+      - name: accept-language
+        in: header
+        description: The reposnse by defalut will be in json format unless mentioned
+        required: false
+        example: ''
+        schema:
+          type: string
+      - name: customer-ip
+        in: header
+        description: IP Address of the customer. Required to indicate that the user is currently on-session. When this value
+          isn't supplied the request is treated as a background refresh. Banks may place limits on the number of background
+          refreshes can be performed over 24 hours.
+        required: false
+        example: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    description: The status of the results. For async requests, initially returns PENDING.
+                    enum:
+                    - OK
+                    - FAILED
+                    - PENDING
+                    - CONSENT_EXPIRED
+                    type: string
+                  results_id:
+                    type: string
+                    description: The ID for this result, this is used when retrieving results from the `/results` endpoint.
+                    format: uuid
+                  message:
+                    description: A message describing the status of the request.
+                    type: string
+                  meta:
+                    type:
+                    - string
+                    - 'null'
+                    description: Optional metadata associated with the result.
+                  timestamp:
+                    format: date-time
+                    description: The timestamp with timezone offset indicating when the response was generated.
+                    type: string
+                  status_detail:
+                    description: Further detail on the error if status=FAILED
+                    $ref: '#/components/schemas/StatusDetailObject'
+                  data:
+                    type: object
+                    properties:
+                      balances:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            account_id:
+                              type: string
+                              description: The `account_id` this balance is related to.
+                            credit_debit_indicator:
+                              type: string
+                              description: Indicates whether the amount returned is a credit or a debit amount. A value of
+                                0 is returned as CREDIT.
+                              enum:
+                              - CREDIT
+                              - DEBIT
+                              - UNSUPPORTED
+                            amount:
+                              $ref: '#/components/schemas/CurrencyAmount'
+                            type:
+                              type: string
+                              description: 'The type of balance for the account.
+
+
+                                Note: Banks support different types for presenting account balance, so this list is used to
+                                support different Bank systems in KSA.'
+                              enum:
+                              - CLOSING_AVAILABLE
+                              - CLOSING_BOOKED
+                              - CLOSING_CLEARED
+                              - EXPECTED
+                              - FORWARD_AVAILABLE
+                              - INFORMATION
+                              - INTERIM_AVAILABLE
+                              - INTERIM_BOOKED
+                              - INTERIM_CLEARED
+                              - OPENING_AVAILABLE
+                              - OPENING_BOOKED
+                              - OPENING_CLEARED
+                              - PREVIOUSLY_CLOSED
+                            date_time:
+                              type: string
+                              description: The date and time that this balance object was generated.
+                            credit_line:
+                              type:
+                              - array
+                              - 'null'
+                              items:
+                                type: object
+                                properties:
+                                  included:
+                                    type:
+                                    - boolean
+                                    - 'null'
+                                    description: 'Boolean flag to Indicate whether or not a credit line is included in the
+                                      balance of the account. Usage: If not present, credit line is not included in the balance
+                                      amount of the account.'
+                                  amount:
+                                    anyOf:
+                                    - $ref: '#/components/schemas/CurrencyAmount'
+                                    - type: 'null'
+                                  type:
+                                    type:
+                                    - string
+                                    - 'null'
+                                    description: 'Type of credit line provided to the account.
+
+
+                                      Note: Banks support different types of credit lines on accounts, so this list is used
+                                      to support different banking systems in KSA.'
+                                    enum:
+                                    - AVAILABLE
+                                    - CREDIT
+                                    - EMERGENCY
+                                    - "PRE-AGREED\t"
+                                    - TEMPORARY
+                              description: Information on any credit available to the balance of this account. Returned as
+                                an array.
+                            regional_data:
+                              type:
+                              - object
+                              - 'null'
+                              properties:
+                                standard:
+                                  type: string
+                                  description: A description of the standard the regional data is returned in formatted as
+                                    `"{ISO 3 Letter Country Code}.{Standard}.{Version}"`. In the KSA V2 API this will always
+                                    return as `"SAU.SAMA.V1"`
+                                data:
+                                  type: object
+                                  properties:
+                                    account_id:
+                                      type: string
+                                      description: The `account_id` this balance is related to.
+                                    credit_debit_indicator:
+                                      type: string
+                                      enum:
+                                      - CREDIT
+                                      - DEBIT
+                                      description: Indicates whether the amount returned is a credit or a debit amount. A
+                                        value of 0 is returned as CREDIT.
+                                    amount:
+                                      $ref: '#/components/schemas/CurrencyAmount'
+                                    type:
+                                      type: string
+                                      enum:
+                                      - CLOSING_AVAILABLE
+                                      - CLOSING_BOOKED
+                                      - CLOSING_CLEARED
+                                      - EXPECTED
+                                      - FORWARD_AVAILABLE
+                                      - INFORMATION
+                                      - INTERIM_AVAILABLE
+                                      - INTERIM_BOOKED
+                                      - INTERIM_CLEARED
+                                      - OPENING_AVAILABLE
+                                      - OPENING_BOOKED
+                                      - OPENING_CLEARED
+                                      - PREVIOUSLY_CLOSED
+                                      description: 'The type of balance for the account.
+
+
+                                        Note: Banks support different types for presenting account balance, so this list is
+                                        used to support different Bank systems in KSA.'
+                                    date_time:
+                                      type: string
+                                      description: The date and time that this balance object was generated.
+                                    credit_line:
+                                      type:
+                                      - array
+                                      - 'null'
+                                      items:
+                                        type:
+                                        - object
+                                        - 'null'
+                                        properties:
+                                          included:
+                                            type:
+                                            - boolean
+                                            - 'null'
+                                            description: 'Boolean flag to Indicate whether or not a credit line is included
+                                              in the balance of the account. Usage: If not present, credit line is not included
+                                              in the balance amount of the account.'
+                                          amount:
+                                            anyOf:
+                                            - $ref: '#/components/schemas/CurrencyAmount'
+                                            - type: 'null'
+                                          type:
+                                            type:
+                                            - string
+                                            - 'null'
+                                            description: 'Type of credit line provided to the account.
+
+
+                                              Note: Banks support different types of credit lines on accounts, so this list
+                                              is used to support different banking systems in KSA.'
+                                            enum:
+                                            - AVAILABLE
+                                            - CREDIT
+                                            - EMERGENCY
+                                            - "PRE-AGREED\t"
+                                            - TEMPORARY
+                                      description: Information on any credit available to the balance of this account. Returned
+                                        as an array.
+                              description: Region specific data response. Only provided when `verbose=true` in the originating
+                                request.
+                      page:
+                        $ref: '#/components/schemas/Page'
+                      type:
+                        type: string
+                        description: The endpoint the original request was made to
+                        examples:
+                        - balances
+                  type:
+                    type: string
+                    description: The endpoint the original request was made to
+                    examples:
+                    - balances
+                required:
+                - status
+                - results_id
+                - message
+                - meta
+                - timestamp
+                - status_detail
+              example:
+                status: OK
+                results_id: 69841643-76d8-4fd1-ad73-be650fe9f47a
+                message: Data successfully retrieved
+                meta: null
+                timestamp: '2025-03-25T04:54:55.901476049Z'
+                status_detail: null
+                data:
+                  balances:
+                  - account_id: 5551ed71-97c5-4dfa-bf5e-f786371a0ecc
+                    credit_debit_indicator: CREDIT
+                    amount:
+                      amount: 221362.58
+                      currency: SAR
+                    type: CLOSING_AVAILABLE
+                    date_time: '2025-03-10T09:46:27.62Z'
+                    credit_line: []
+                    regional_data: null
+                  - account_id: 5551ed71-97c5-4dfa-bf5e-f786371a0ecc
+                    credit_debit_indicator: CREDIT
+                    amount:
+                      amount: 221396.24
+                      currency: SAR
+                    type: CLOSING_BOOKED
+                    date_time: '2025-03-10T09:46:27.621Z'
+                    credit_line:
+                    - included: true
+                      amount:
+                        amount: 649.89
+                        currency: SAR
+                      type: CREDIT
+                    regional_data: null
+                  - account_id: 5551ed71-97c5-4dfa-bf5e-f786371a0ecc
+                    credit_debit_indicator: CREDIT
+                    amount:
+                      amount: 221309.73
+                      currency: SAR
+                    type: CLOSING_CLEARED
+                    date_time: '2025-03-10T09:46:27.637Z'
+                    credit_line: []
+                    regional_data: null
+                  - account_id: 5551ed71-97c5-4dfa-bf5e-f786371a0ecc
+                    credit_debit_indicator: CREDIT
+                    amount:
+                      amount: 221369.53
+                      currency: SAR
+                    type: EXPECTED
+                    date_time: '2025-03-10T09:46:27.639Z'
+                    credit_line: []
+                    regional_data: null
+                  - account_id: 5551ed71-97c5-4dfa-bf5e-f786371a0ecc
+                    credit_debit_indicator: CREDIT
+                    amount:
+                      amount: 221469.84
+                      currency: SAR
+                    type: FORWARD_AVAILABLE
+                    date_time: '2025-03-10T09:46:27.64Z'
+                    credit_line:
+                    - included: true
+                      amount:
+                        amount: 358
+                        currency: SAR
+                      type: CREDIT
+                    regional_data: null
+                  - account_id: 5551ed71-97c5-4dfa-bf5e-f786371a0ecc
+                    credit_debit_indicator: CREDIT
+                    amount:
+                      amount: 221441.16
+                      currency: SAR
+                    type: INFORMATION
+                    date_time: '2025-03-10T09:46:27.645Z'
+                    credit_line: []
+                    regional_data: null
+                  - account_id: 5551ed71-97c5-4dfa-bf5e-f786371a0ecc
+                    credit_debit_indicator: CREDIT
+                    amount:
+                      amount: 221481.03
+                      currency: SAR
+                    type: INTERIM_AVAILABLE
+                    date_time: '2025-03-10T09:46:27.646Z'
+                    credit_line: []
+                    regional_data: null
+                  - account_id: 5551ed71-97c5-4dfa-bf5e-f786371a0ecc
+                    credit_debit_indicator: CREDIT
+                    amount:
+                      amount: 221310.81
+                      currency: SAR
+                    type: INTERIM_BOOKED
+                    date_time: '2025-03-10T09:46:27.647Z'
+                    credit_line:
+                    - included: true
+                      amount:
+                        amount: 676.64
+                        currency: SAR
+                      type: PRE_AGREED
+                    regional_data: null
+                  - account_id: 5551ed71-97c5-4dfa-bf5e-f786371a0ecc
+                    credit_debit_indicator: CREDIT
+                    amount:
+                      amount: 221366.7
+                      currency: SAR
+                    type: INTERIM_CLEARED
+                    date_time: '2025-03-10T09:46:27.65Z'
+                    credit_line: []
+                    regional_data: null
+                  - account_id: 5551ed71-97c5-4dfa-bf5e-f786371a0ecc
+                    credit_debit_indicator: CREDIT
+                    amount:
+                      amount: 221421.54
+                      currency: SAR
+                    type: OPENING_AVAILABLE
+                    date_time: '2025-03-10T09:46:27.651Z'
+                    credit_line: []
+                    regional_data: null
+                  - account_id: 5551ed71-97c5-4dfa-bf5e-f786371a0ecc
+                    credit_debit_indicator: CREDIT
+                    amount:
+                      amount: 221429.01
+                      currency: SAR
+                    type: OPENING_BOOKED
+                    date_time: '2025-03-10T09:46:27.653Z'
+                    credit_line:
+                    - included: false
+                      amount:
+                        amount: 121.52
+                        currency: SAR
+                      type: AVAILABLE
+                    regional_data: null
+                  - account_id: 5551ed71-97c5-4dfa-bf5e-f786371a0ecc
+                    credit_debit_indicator: CREDIT
+                    amount:
+                      amount: 221408.27
+                      currency: SAR
+                    type: OPENING_CLEARED
+                    date_time: '2025-03-10T09:46:27.655Z'
+                    credit_line:
+                    - included: false
+                      amount:
+                        amount: 249.65
+                        currency: SAR
+                      type: PRE_AGREED
+                    - included: false
+                      amount:
+                        amount: 710.63
+                        currency: SAR
+                      type: TEMPORARY
+                    regional_data: null
+                  - account_id: 5551ed71-97c5-4dfa-bf5e-f786371a0ecc
+                    credit_debit_indicator: CREDIT
+                    amount:
+                      amount: 221356.56
+                      currency: SAR
+                    type: PREVIOUSLY_CLOSED_BOOKED
+                    date_time: '2025-03-10T09:46:27.658Z'
+                    credit_line:
+                    - included: true
+                      amount:
+                        amount: 819.35
+                        currency: SAR
+                      type: CREDIT
+                    - included: false
+                      amount:
+                        amount: 833.84
+                        currency: SAR
+                      type: PRE_AGREED
+                    regional_data: null
+                  page:
+                    number: 0
+                    size: 13
+                    total_elements: 13
+                    total_pages: 1
+                  type: balances
+          headers: {}
+      security:
+      - bearer: []
+  /data/v2/accounts/{account_id}/transactions:
+    get:
+      summary: Get Transactions
+      deprecated: false
+      description: 'The `Get Transactions `endpoint retrieves a list of historical transactions associated with a specific
+        bank account linked by a user (or business) via LinkSDK, identified by both the entity_id and the account_id.
+
+
+
+        Each transaction object contains fields such as amount, status, balance after each transaction, transaction category
+        and type, and merchant information.
+
+
+        Requires an active entity with the transactions permission to use.
+
+        '
+      operationId: fetchTransactions
+      tags:
+      - Raw Data
+      parameters:
+      - name: account_id
+        in: path
+        description: The unique identifier of the account to retrieve transactions for. You can fetch account_id from the
+          Get Accounts API.
+        required: true
+        example: ''
+        schema:
+          type: string
+      - name: entity_id
+        in: query
+        description: The `entity_id` you're querying for.
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - name: start_date
+        in: query
+        description: The start date in UTC (in the format YYYY-MM-DD) you want to query transactions for.
+        required: false
+        schema:
+          format: date
+          type: string
+      - name: end_date
+        in: query
+        description: The end date in UTC (in the format YYYY-MM-DD) you want to query transactions for.
+        required: false
+        schema:
+          format: date
+          type: string
+      - name: async
+        in: query
+        description: When `true` the API will only return a `results_id` which can be fetched from the `/results` endpoint
+          when ready.
+        required: false
+        schema:
+          default: false
+          type: boolean
+      - name: page
+        in: query
+        description: The page you're requesting - returns page 0 of a response if not specified.
+        required: false
+        schema:
+          format: int32
+          default: 0
+          type: integer
+      - name: size
+        in: query
+        description: The number of objects you want to return as a page size.
+        required: false
+        schema:
+          format: int32
+          default: 50
+          maximum: 100
+          type: integer
+      - name: verbose
+        in: query
+        description: Shows `regional_data` values in responses when true. Defaults to `false`.
+        required: false
+        schema:
+          default: false
+          type: boolean
+      - name: meta
+        in: query
+        description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
+        required: false
+        schema:
+          type: string
+      - name: lean-app-token
+        in: header
+        description: 'How Lean identifies your application. '
+        required: true
+        example: ''
+        schema:
+          type: string
+      - name: lean-correlation-id
+        in: header
+        description: Optional ID to trace requests for debugging
+        required: false
+        example: ''
+        schema:
+          type: string
+      - name: accept-language
+        in: header
+        description: The reposnse by defalut will be in json format unless mentioned
+        required: false
+        example: ''
+        schema:
+          type: string
+      - name: content-type
+        in: header
+        description: Language preference (e.g., ar for Arabic)
+        required: false
+        example: ''
+        schema:
+          type: string
+      - name: customer-ip
+        in: header
+        description: IP Address of the customer. Required to indicate that the user is currently on-session. When this value
+          isn't supplied the request is treated as a background refresh. Banks may place limits on the number of background
+          refreshes can be performed over 24 hours.
+        required: false
+        example: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  status:
+                    description: The status of the results. For async requests, initially returns PENDING.
+                    enum:
+                    - OK
+                    - FAILED
+                    - PENDING
+                    - CONSENT_EXPIRED
+                    type: string
+                  results_id:
+                    type: string
+                    description: The ID for this result, this is used when retrieving results from the `/results` endpoint.
+                    format: uuid
+                  message:
+                    description: A message describing the status of the request.
+                    type: string
+                  meta:
+                    type:
+                    - string
+                    - 'null'
+                    description: Optional metadata associated with the result.
+                  timestamp:
+                    format: date-time
+                    description: The timestamp with timezone offset indicating when the response was generated.
+                    type: string
+                  status_detail:
+                    description: Further detail on the error if status=FAILED
+                    $ref: '#/components/schemas/StatusDetailObject'
+                  data:
+                    type: object
+                    properties:
+                      transactions:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Transaction'
+                      page:
+                        $ref: '#/components/schemas/Page'
+                      type:
+                        type: string
+                        description: The endpoint the original request was made to
+                        examples:
+                        - transactions
+                  type:
+                    type: string
+                    description: The endpoint the original request was made to
+                    examples:
+                    - transactions
+                required:
+                - status
+                - results_id
+                - message
+                - meta
+                - timestamp
+                - status_detail
+              example:
+                status: OK
+                results_id: 3f8c92a4-6d15-47fb-9e3c-abc12def345
+                message: Data successfully retrieved
+                meta: null
+                timestamp: '2025-04-27T10:50:24.846544306Z'
+                status_detail: null
+                data:
+                  transactions:
+                  - account_id: b0b2da69-c50b-480c-836a-918552855a8e
+                    transaction_id: '127018131'
+                    transaction_information: string
+                    transaction_reference: '127018131'
+                    credit_debit_indicator: DEBIT
+                    amount:
+                      amount: 6
+                      currency: SAR
+                    transaction_mutability: IMMUTABLE
+                    booking_date_time: '2025-02-25T15:25:28Z'
+                    insights:
+                      description_cleansed: string
+                      category: string
+                      category_confidence: 1
+                    balance:
+                      type: CLOSING_AVAILABLE
+                      credit_debit_indicator: CREDIT
+                      amount:
+                        amount: 509.11
+                        currency: string
+                    regional_data:
+                      data:
+                        account_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                        transaction_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                        index: 0
+                        transaction_date_time: '2025-04-27T08:31:32.618Z'
+                        local_time_zone: '2025-04-27T08:31:32.618Z'
+                        transaction_reference: string
+                        statement_reference: string
+                        transaction_type: POS
+                        sub_transaction_type: PURCHASE
+                        terminal_id: string
+                        flags:
+                        - string
+                        payment_modes: ONLINE
+                        credit_debit_indicator: CREDIT
+                        status: BOOKED
+                        transaction_mutability: IMMUTABLE
+                        booking_date_time: '2025-04-27T08:31:32.618Z'
+                        value_date_time: '2025-04-27T08:31:32.618Z'
+                        transaction_information: string
+                        amount:
+                          amount: 0
+                          currency: string
+                        charge_amount:
+                          amount: 0
+                          currency: string
+                          charge_included: true
+                        charge_amount_vat:
+                          amount: 0
+                          currency: string
+                        currency_exchange:
+                          source_currency: string
+                          target_currency: string
+                          unit_currency: string
+                          exchange_rate: 0
+                          contract_identification: string
+                          quotation_date: '2025-04-27T08:31:32.618Z'
+                          instructed_amount:
+                            amount: 0
+                            currency: string
+                        bank_transaction_code:
+                          domain: string
+                          domain_code: string
+                          family: string
+                          family_code: string
+                          sub_family: string
+                          sub_family_code: string
+                        proprietary_bank_transaction_code:
+                          code: string
+                          issuer: string
+                        balance:
+                          credit_debit_indicator: CREDIT
+                          type: CLOSING_AVAILABLE
+                          amount:
+                            amount: 0
+                            currency: string
+                        merchant_details:
+                          merchant_id: 0
+                          merchant_name: string
+                          merchant_category_code: string
+                        creditor_agent:
+                          identification_type: BICFI
+                          identification: string
+                          name: string
+                          postal_address:
+                            address_type: BUSINESS
+                            short_address: string
+                            building_number: string
+                            unit_number: string
+                            street_name: string
+                            secondary_number: string
+                            district: string
+                            postal_code: string
+                            city: string
+                            country: string
+                        creditor_account:
+                        - identification_type: IBAN
+                          identification: string
+                          name: string
+                        debtor_agent:
+                          identification_type: BICFI
+                          identification: string
+                          name: string
+                          postal_address:
+                            address_type: BUSINESS
+                            short_address: string
+                            building_number: string
+                            unit_number: string
+                            street_name: string
+                            secondary_number: string
+                            district: string
+                            postal_code: string
+                            city: string
+                            country: string
+                        debtor_account:
+                          identification_type: IBAN
+                          identification: string
+                          name: string
+                        card_instrument:
+                          card_scheme_name: AMERICAN_EXPRESS
+                          instrument_type: APPLE_PAY
+                          identification: string
+                          name: string
+                        bill_details:
+                          biller_id: 0
+                          bill_number: string
+                          bill_payment_type: POST_PAID
+                        supplementary_data:
+                          additionalProp: string
+                      standard: SAU.SAMA.V1
+                    status: BOOKED
+                    statement_reference:
+                    - string
+                    value_date_time: '2025-02-25T15:25:28Z'
+                    index: 0
+                    charge_amount:
+                      amount: 0
+                      currency: string
+                      charge_included: true
+                    charge_amount_vat:
+                      amount: 0
+                      currency: string
+                    bank_transaction_code:
+                      code: string
+                      sub_code: string
+                    card_instrument:
+                      card_scheme_name: AMERICAN_EXPRESS
+                      authorization_type: CONSUMER_DEVICE
+                      identification: string
+                      name: string
+                    merchant_details:
+                      merchant_name: string
+                      merchant_category_code: string
+                    proprietary_bank_transaction_code:
+                      code: string
+                      issuer: string
+                    currency_exchange:
+                      source_currency: string
+                      target_currency: string
+                      unit_currency: string
+                      exchange_rate: 0
+                      contract_identification: string
+                      quotation_date: '2025-04-27T08:31:32.618Z'
+                      instructed_amount:
+                        amount: 0
+                        currency: string
+                    creditor_agent:
+                      scheme_name: BICFI
+                      identification: string
+                      name: string
+                      postal_address:
+                        address_type: BUSINESS
+                        address_line: string
+                        building_number: string
+                        street_name: string
+                        secondary_number: string
+                        country_subdivison: string
+                        post_code: string
+                        town_name: string
+                        country: string
+                    creditor_account:
+                      scheme_name: IBAN
+                      identification: string
+                      name: string
+                    debtor_agent:
+                      scheme_name: BICFI
+                      identification: string
+                      name: string
+                      postal_address:
+                        address_type: BUSINESS
+                        address_line: string
+                        building_number: string
+                        street_name: string
+                        secondary_number: string
+                        country_subdivison: string
+                        post_code: string
+                        town_name: string
+                        country: string
+                    debtor_account:
+                      scheme_name: IBAN
+                      identification: string
+                      name: string
+                  page:
+                    number: 35
+                    size: 10
+                    total_elements: 2012
+                    total_pages: 202
+                  type: transactions
+                type: transactions
+          headers: {}
+      security:
+      - bearer: []
+  /data/v2/identity:
+    get:
+      summary: Get current user's Identity
+      deprecated: false
+      description: Get the identity of the person that has provided the consent.
+      operationId: fetchCurrentIdentity
+      tags:
+      - Raw Data
+      parameters:
+      - name: entity_id
+        in: query
+        description: The `entity_id` you're querying for.
+        required: true
+        example: ''
+        schema:
+          format: uuid
+          type: string
+      - name: async
+        in: query
+        description: When `true` the API will only return a `results_id` which can be fetched from the `/results` endpoint
+          when ready.
+        required: false
+        example: 'false'
+        schema:
+          default: false
+          type: boolean
+      - name: page
+        in: query
+        description: The page you're requesting - returns page 0 of a response if not specified.
+        required: false
+        example: 0
+        schema:
+          format: int32
+          default: 0
+          type: integer
+      - name: size
+        in: query
+        description: The number of objects you want to return as a page size.
+        required: false
+        example: 50
+        schema:
+          format: int32
+          default: 50
+          maximum: 100
+          type: integer
+      - name: force_refresh
+        in: query
+        description: 'Ignore Lean''s caching and force a call to the bank. This may have unwanted performance issues. '
+        required: false
+        example: 'true'
+        schema:
+          default: false
+          type: boolean
+      - name: verbose
+        in: query
+        description: Shows `regional_data` values in responses when true. Defaults to `false`.
+        required: false
+        example: 'false'
+        schema:
+          default: false
+          type: boolean
+      - name: meta
+        in: query
+        description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
+        required: false
+        example: ''
+        schema:
+          type: string
+      - name: customer-ip
+        in: header
+        description: IP Address of the customer. Required to indicate that the user is currently on-session. When this value
+          isn't supplied the request is treated as a background refresh. Banks may place limits on the number of background
+          refreshes can be performed over 24 hours.
+        required: false
+        example: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/IdentityResponse'
+              example:
+                data:
+                  type: individual
+                  page:
+                    number: 1
+                    size: 1
+                    total_elements: 1
+                    total_pages: 1
+                  identities:
+                  - full_legal_name: Fahad Mohammed Al-Saud
+                    name: Fahad Al-Saud
+                    phone: '+966112345678'
+                    email_address: fahad.alsaud@example.sa
+                    legal_structure: INDIVIDUAL
+                    mobile_number: '+966501234567'
+                    address:
+                      address_line: Building 24, Al Olaya District
+                      address_type: BUSINESS
+                      country: SA
+                      post_code: '11564'
+                      town_name: Riyadh
+                      street_address: King Fahd Road
+                      region: Riyadh
+                    account_role: ADMINISTRATOR
+                    party_type: SOLE
+                    party_id: P-000123456
+                    party_number: PN-987654321
+                    regional_data:
+                      data:
+                        party_id: P-000123456
+                        party_number: PN-987654321
+                        party_type: DELEGATE
+                        account_role: ADMINISTRATOR
+                        verified_claims:
+                        - verification:
+                            trust_framework: SAMA
+                            assurance_level: HIGH
+                            assurance_process:
+                              policy: KYC-SA-2023
+                              procedure: Document Verification
+                              assurance_details:
+                              - assurance_type: IDENTITY
+                                assurance_classification: GOVERNMENT_ISSUED
+                                evidence_ref:
+                                - txn: TXN123456789
+                                  evidence_metadata: {}
+                            time: '2024-12-01T10:00:00.000Z'
+                            verification_process: Biometric and Document Verification
+                            evidence:
+                            - type: DOCUMENT
+                              verifier:
+                                organization: Saudi National ID Authority
+                                txn: VER123456789
+                              time: '2024-12-01T10:00:00.000Z'
+                              document_details:
+                                type: NATIONAL_ID
+                                document_number: '1029384756'
+                                personal_number: '19850915234567'
+                                serial_number: SN123456789
+                                calendar_type: ISLAMIC_CALENDAR
+                                date_of_issuance: '1445-01-01'
+                                date_of_expiry: '1450-01-01'
+                                issuer:
+                                  name: Saudi Civil Affairs
+                                  address:
+                                    formatted: Ministry of Interior, Riyadh, Saudi Arabia
+                                    street_address: King Fahd Road
+                                    locality: Riyadh
+                                    region: Riyadh
+                                    postal_code: '11564'
+                                    country: SA
+                                  country_code: SA
+                                  jurisdiction: SA
+                              check_details:
+                              - check_method: FACIAL_RECOGNITION
+                                organization: Saudi Biometric Center
+                                txn: BIO123456789
+                                time: '2024-12-01T10:05:00.000Z'
+                              attachments:
+                              - desc: Scanned National ID
+                                content_type: image/jpeg
+                                content: base64encodedimage==
+                                txn: DOCATTACH123456789
+                          claims:
+                            sub: fahad.alsaud
+                            name: Fahad Mohammed Al-Saud
+                            given_name: Fahad
+                            family_name: Al-Saud
+                            middle_name: Mohammed
+                            nickname: Fahad
+                            preferred_username: fahad.alsaud
+                            profile: https://example.sa/users/fahad.alsaud
+                            picture: https://example.sa/images/fahad.jpg
+                            website: https://fahad.sa
+                            email: fahad.alsaud@example.sa
+                            email_verified: true
+                            gender: male
+                            birth_date: '1985-09-15'
+                            zone_info: Asia/Riyadh
+                            locale: ar-SA
+                            phone_number: '+966501234567'
+                            phone_number_verified: true
+                            salutation: Mr.
+                            title: Engineer
+                            msisdn: '+966501234567'
+                            birth_family_name: Al-Saud
+                            birth_given_name: Fahad
+                            birth_middle_name: Mohammed
+                            also_known_as: Fahad Al Riyadhi
+                            place_of_birth:
+                              region: Riyadh
+                              locality: Riyadh
+                              country: SA
+                            nationalities:
+                            - SA
+                            address:
+                              formatted: Building 24, King Fahd Road, Al Olaya, Riyadh 11564, Saudi Arabia
+                              street_address: King Fahd Road
+                              locality: Riyadh
+                              region: Riyadh
+                              postal_code: '11564'
+                              country: SA
+                            updated_at: 1717000000
+                      standard: SAU.SAMA.V1
+                status: OK
+                results_id: 4e502214-e9c1-49d6-84ac-3cea3d356a1f
+                message: Identity verification successful
+                timestamp: '2025-05-29T12:00:00.000Z'
+                meta: {}
+                status_detail:
+                  granular_status_code: string
+                  status_additional_info: string
+          headers: {}
+      security:
+      - bearer: []
+  /data/v2/accounts/{account_id}/identities:
+    get:
+      summary: Get Identities
+      deprecated: false
+      description: Get the identities of all the people associated to an account given an accountId. The accountId can be
+        found by making a call to the /accounts endpoint.
+      operationId: fetchAllIdentities
+      tags:
+      - Raw Data
+      parameters:
+      - name: account_id
+        in: path
+        description: ''
+        required: true
+        example: ''
+        schema:
+          type: string
+      - name: async
+        in: query
+        description: When `true` the API will only return a `results_id` which can be fetched from the `/results` endpoint
+          when ready.
+        required: false
+        schema:
+          default: false
+          type: boolean
+      - name: page
+        in: query
+        description: The page you're requesting - returns page 0 of a response if not specified.
+        required: false
+        schema:
+          format: int32
+          default: 0
+          type: integer
+      - name: size
+        in: query
+        description: The number of objects you want to return as a page size.
+        required: false
+        schema:
+          format: int32
+          default: 50
+          maximum: 100
+          type: integer
+      - name: entity_id
+        in: query
+        description: The `entity_id` you're querying for.
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - name: meta
+        in: query
+        description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
+        required: false
+        schema:
+          type: string
+      - name: force_refresh
+        in: query
+        description: 'Ignore Lean''s caching and force a call to the bank. This may have unwanted performance issues. '
+        required: false
+        schema:
+          default: false
+          type: boolean
+      - name: verbose
+        in: query
+        description: Shows `regional_data` values in responses when true. Defaults to `false`.
+        required: false
+        schema:
+          default: false
+          type: boolean
+      - name: customer-ip
+        in: header
+        description: IP Address of the customer. Required to indicate that the user is currently on-session. When this value
+          isn't supplied the request is treated as a background refresh. Banks may place limits on the number of background
+          refreshes can be performed over 24 hours.
+        required: false
+        example: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/IdentitiesResponse'
+              example:
+                data:
+                  type: identities
+                  page:
+                    number: 1
+                    size: 2
+                    total_elements: 2
+                    total_pages: 1
+                  account_id: c4624ca6-f1b7-4455-a68d-cb4ada03f805
+                  identities:
+                  - full_legal_name: Abdullah Khaled Al-Mutairi
+                    name: Abdullah Al-Mutairi
+                    phone: '+966112223334'
+                    email_address: abdullah.mutairi@example.sa
+                    legal_structure: INDIVIDUAL
+                    mobile_number: '+966501122334'
+                    address:
+                      address_line: Villa 12, Al Yasmin District
+                      address_type: RESIDENTIAL
+                      country: SA
+                      post_code: '13322'
+                      town_name: Riyadh
+                      street_address: Prince Mohammed Bin Salman Road
+                      region: Riyadh
+                    account_role: ADMINISTRATOR
+                    party_type: JOINT
+                    party_id: 491cb575-307b-4b81-8a60-3ea5c924b3d1
+                    party_number: string
+                    regional_data:
+                      data:
+                        party_id: 491cb575-307b-4b81-8a60-3ea5c924b3d1
+                        party_number: string
+                        party_type: JOINT
+                        account_role: ADMINISTRATOR
+                        verified_claims:
+                        - verification:
+                            trust_framework: SAMA
+                            assurance_level: HIGH
+                            assurance_process:
+                              policy: KYC-SA-2024
+                              procedure: ID & Biometric Verification
+                              assurance_details:
+                              - assurance_type: IDENTITY
+                                assurance_classification: GOVERNMENT_ISSUED
+                                evidence_ref:
+                                - txn: TXN-AB-123456
+                                  evidence_metadata: {}
+                            time: '2025-01-10T10:00:00.000Z'
+                            verification_process: Document Scan & Face Match
+                            evidence:
+                            - type: DOCUMENT
+                              verifier:
+                                organization: Saudi National ID Authority
+                                txn: VER-AB-001
+                              time: '2025-01-10T10:00:00.000Z'
+                              document_details:
+                                type: NATIONAL_ID
+                                document_number: '1045678901'
+                                personal_number: '19840214234567'
+                                serial_number: SN-AB-98765
+                                calendar_type: ISLAMIC_CALENDAR
+                                date_of_issuance: '1444-06-01'
+                                date_of_expiry: '1449-06-01'
+                                issuer:
+                                  name: Saudi Civil Affairs
+                                  address:
+                                    formatted: Ministry of Interior, Riyadh, Saudi Arabia
+                                    street_address: King Fahd Road
+                                    locality: Riyadh
+                                    region: Riyadh
+                                    postal_code: '11564'
+                                    country: SA
+                                  country_code: SA
+                                  jurisdiction: SA
+                              check_details:
+                              - check_method: FACIAL_RECOGNITION
+                                organization: Saudi Biometric Center
+                                txn: BIO-AB-001
+                                time: '2025-01-10T10:05:00.000Z'
+                              attachments:
+                              - desc: National ID Scan
+                                content_type: image/jpeg
+                                content: base64imageAB==
+                                txn: ATTACH-AB-001
+                          claims:
+                            sub: abdullah.almutairi
+                            name: Abdullah Khaled Al-Mutairi
+                            given_name: Abdullah
+                            family_name: Al-Mutairi
+                            middle_name: Khaled
+                            nickname: Abdullah
+                            preferred_username: abdullah.almutairi
+                            profile: https://example.sa/users/abdullah
+                            picture: https://example.sa/images/abdullah.jpg
+                            website: https://abdullah.sa
+                            email: abdullah.mutairi@example.sa
+                            email_verified: true
+                            gender: male
+                            birth_date: '1984-02-14'
+                            zone_info: Asia/Riyadh
+                            locale: ar-SA
+                            phone_number: '+966501122334'
+                            phone_number_verified: true
+                            salutation: Mr.
+                            title: Engineer
+                            msisdn: '+966501122334'
+                            birth_family_name: Al-Mutairi
+                            birth_given_name: Abdullah
+                            birth_middle_name: Khaled
+                            also_known_as: ''
+                            place_of_birth:
+                              region: Qassim
+                              locality: Buraydah
+                              country: SA
+                            nationalities:
+                            - SA
+                            address:
+                              formatted: Villa 12, Al Yasmin, Riyadh 13322, Saudi Arabia
+                              street_address: Prince Mohammed Bin Salman Road
+                              locality: Riyadh
+                              region: Riyadh
+                              postal_code: '13322'
+                              country: SA
+                            updated_at: 1717000000
+                      standard: SAU.SAMA.V1
+                  - full_legal_name: Noura Faisal Al-Qahtani
+                    name: Noura Al-Qahtani
+                    phone: '+966113334455'
+                    email_address: noura.qahtani@example.sa
+                    legal_structure: INDIVIDUAL
+                    mobile_number: '+966502233445'
+                    address:
+                      address_line: Apartment 9B, Al Malaz District
+                      address_type: RESIDENTIAL
+                      country: SA
+                      post_code: '12836'
+                      town_name: Riyadh
+                      street_address: Imam Shafi'i Street
+                      region: Riyadh
+                    account_role: ADMINISTRATOR
+                    party_type: JOINT
+                    party_id: 3c759c91-e140-440a-8359-07f39d3aef8d
+                    party_number: string
+                    regional_data:
+                      data:
+                        party_id: 3c759c91-e140-440a-8359-07f39d3aef8d
+                        party_number: string
+                        party_type: JOINT
+                        account_role: ADMINISTRATOR
+                        verified_claims:
+                        - verification:
+                            trust_framework: SAMA
+                            assurance_level: HIGH
+                            assurance_process:
+                              policy: KYC-SA-2024
+                              procedure: ID & Biometric Verification
+                              assurance_details:
+                              - assurance_type: IDENTITY
+                                assurance_classification: GOVERNMENT_ISSUED
+                                evidence_ref:
+                                - txn: TXN-NR-789012
+                                  evidence_metadata: {}
+                            time: '2025-01-11T11:00:00.000Z'
+                            verification_process: Document Scan & Face Match
+                            evidence:
+                            - type: DOCUMENT
+                              verifier:
+                                organization: Saudi National ID Authority
+                                txn: VER-NR-002
+                              time: '2025-01-11T11:00:00.000Z'
+                              document_details:
+                                type: NATIONAL_ID
+                                document_number: '1098765432'
+                                personal_number: '19901208234567'
+                                serial_number: SN-NR-45678
+                                calendar_type: ISLAMIC_CALENDAR
+                                date_of_issuance: '1444-07-10'
+                                date_of_expiry: '1449-07-10'
+                                issuer:
+                                  name: Saudi Civil Affairs
+                                  address:
+                                    formatted: Ministry of Interior, Riyadh, Saudi Arabia
+                                    street_address: King Fahd Road
+                                    locality: Riyadh
+                                    region: Riyadh
+                                    postal_code: '11564'
+                                    country: SA
+                                  country_code: SA
+                                  jurisdiction: SA
+                              check_details:
+                              - check_method: FACIAL_RECOGNITION
+                                organization: Saudi Biometric Center
+                                txn: BIO-NR-002
+                                time: '2025-01-11T11:05:00.000Z'
+                              attachments:
+                              - desc: National ID Scan
+                                content_type: image/jpeg
+                                content: base64imageNR==
+                                txn: ATTACH-NR-002
+                          claims:
+                            sub: noura.qahtani
+                            name: Noura Faisal Al-Qahtani
+                            given_name: Noura
+                            family_name: Al-Qahtani
+                            middle_name: Faisal
+                            nickname: Noura
+                            preferred_username: noura.qahtani
+                            profile: https://example.sa/users/noura
+                            picture: https://example.sa/images/noura.jpg
+                            website: https://noura.sa
+                            email: noura.qahtani@example.sa
+                            email_verified: true
+                            gender: female
+                            birth_date: '1990-12-08'
+                            zone_info: Asia/Riyadh
+                            locale: ar-SA
+                            phone_number: '+966502233445'
+                            phone_number_verified: true
+                            salutation: Ms.
+                            title: Doctor
+                            msisdn: '+966502233445'
+                            birth_family_name: Al-Qahtani
+                            birth_given_name: Noura
+                            birth_middle_name: Faisal
+                            also_known_as: ''
+                            place_of_birth:
+                              region: Eastern Province
+                              locality: Dammam
+                              country: SA
+                            nationalities:
+                            - SA
+                            address:
+                              formatted: Apt 9B, Imam Shafi'i St, Al Malaz, Riyadh 12836, Saudi Arabia
+                              street_address: Imam Shafi'i Street
+                              locality: Riyadh
+                              region: Riyadh
+                              postal_code: '12836'
+                              country: SA
+                            updated_at: 1717000001
+                      standard: SAU.SAMA.V1
+                status: OK
+                results_id: 4e502214-e9c1-49d6-84ac-3cea3d356a1f
+                message: Joint account ownership data loaded successfully
+                timestamp: '2025-05-29T12:00:00.000Z'
+                meta: SAMA-compliant
+                status_detail:
+                  granular_status_code: '200'
+                  status_additional_info: Both parties verified as joint account holders
+          headers: {}
+      security:
+      - bearer: []
+  /data/v2/accounts/{account_id}/beneficiaries:
+    get:
+      summary: Get Beneficiaries
+      deprecated: false
+      description: Get the beneficiaries for a specific account given an accountId. The accountId can be found by making a
+        call to the /accounts endpoint.
+      operationId: fetchBeneficiaries
+      tags:
+      - Raw Data
+      parameters:
+      - name: account_id
+        in: path
+        description: ''
+        required: true
+        example: ''
+        schema:
+          type: string
+      - name: async
+        in: query
+        description: When `true` the API will only return a `results_id` which can be fetched from the `/results` endpoint
+          when ready.
+        required: false
+        schema:
+          default: false
+          type: boolean
+      - name: page
+        in: query
+        description: The page you're requesting - returns page 0 of a response if not specified.
+        required: false
+        schema:
+          format: int32
+          default: 0
+          type: integer
+      - name: size
+        in: query
+        description: The number of objects you want to return as a page size.
+        required: false
+        schema:
+          format: int32
+          default: 50
+          maximum: 100
+          type: integer
+      - name: entity_id
+        in: query
+        description: The `entity_id` you're querying for.
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - name: meta
+        in: query
+        description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
+        required: false
+        schema:
+          type: string
+      - name: force_refresh
+        in: query
+        description: 'Ignore Lean''s caching and force a call to the bank. This may have unwanted performance issues. '
+        required: false
+        schema:
+          default: false
+          type: boolean
+      - name: verbose
+        in: query
+        description: Shows `regional_data` values in responses when true. Defaults to `false`.
+        required: false
+        schema:
+          default: false
+          type: boolean
+      - name: customer-ip
+        in: header
+        description: IP Address of the customer. Required to indicate that the user is currently on-session. When this value
+          isn't supplied the request is treated as a background refresh. Banks may place limits on the number of background
+          refreshes can be performed over 24 hours.
+        required: false
+        example: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BeneficiariesResponse'
+          headers: {}
+      security:
+      - bearer: []
+  /data/v2/accounts/{account_id}/direct-debits:
+    get:
+      summary: Get Direct Debits
+      deprecated: false
+      description: Get the direct debits for a specific account given an accountId. The accountId can be found by making a
+        call to the /accounts endpoint.
+      operationId: fetchDirectDebits
+      tags:
+      - Raw Data
+      parameters:
+      - name: account_id
+        in: path
+        description: ''
+        required: true
+        example: ''
+        schema:
+          type: string
+      - name: async
+        in: query
+        description: When `true` the API will only return a `results_id` which can be fetched from the `/results` endpoint
+          when ready.
+        required: false
+        schema:
+          default: false
+          type: boolean
+      - name: page
+        in: query
+        description: The page you're requesting - returns page 0 of a response if not specified.
+        required: false
+        schema:
+          format: int32
+          default: 0
+          type: integer
+      - name: size
+        in: query
+        description: The number of objects you want to return as a page size.
+        required: false
+        schema:
+          format: int32
+          default: 50
+          maximum: 100
+          type: integer
+      - name: entity_id
+        in: query
+        description: The `entity_id` you're querying for.
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - name: meta
+        in: query
+        description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
+        required: false
+        schema:
+          type: string
+      - name: force_refresh
+        in: query
+        description: 'Ignore Lean''s caching and force a call to the bank. This may have unwanted performance issues. '
+        required: false
+        schema:
+          default: false
+          type: boolean
+      - name: verbose
+        in: query
+        description: Shows `regional_data` values in responses when true. Defaults to `false`.
+        required: false
+        schema:
+          default: false
+          type: boolean
+      - name: customer-ip
+        in: header
+        description: IP Address of the customer. Required to indicate that the user is currently on-session. When this value
+          isn't supplied the request is treated as a background refresh. Banks may place limits on the number of background
+          refreshes can be performed over 24 hours.
+        required: false
+        example: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/DirectDebitsResponse'
+          headers: {}
+      security:
+      - bearer: []
+  /data/v2/accounts/{account_id}/scheduled-payments:
+    get:
+      summary: Get Scheduled Payments
+      deprecated: false
+      description: Get the scheduled payments for a specific account given an accountId. The accountId can be found by making
+        a call to the /accounts endpoint.
+      operationId: fetchScheduledPayments
+      tags:
+      - Raw Data
+      parameters:
+      - name: account_id
+        in: path
+        description: ''
+        required: true
+        example: ''
+        schema:
+          type: string
+      - name: async
+        in: query
+        description: When `true` the API will only return a `results_id` which can be fetched from the `/results` endpoint
+          when ready.
+        required: false
+        schema:
+          default: false
+          type: boolean
+      - name: page
+        in: query
+        description: The page you're requesting - returns page 0 of a response if not specified.
+        required: false
+        schema:
+          format: int32
+          default: 0
+          type: integer
+      - name: size
+        in: query
+        description: The number of objects you want to return as a page size.
+        required: false
+        schema:
+          format: int32
+          default: 50
+          maximum: 100
+          type: integer
+      - name: entity_id
+        in: query
+        description: The `entity_id` you're querying for.
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - name: meta
+        in: query
+        description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
+        required: false
+        schema:
+          type: string
+      - name: force_refresh
+        in: query
+        description: 'Ignore Lean''s caching and force a call to the bank. This may have unwanted performance issues. '
+        required: false
+        schema:
+          default: false
+          type: boolean
+      - name: verbose
+        in: query
+        description: Shows `regional_data` values in responses when true. Defaults to `false`.
+        required: false
+        schema:
+          default: false
+          type: boolean
+      - name: customer-ip
+        in: header
+        description: IP Address of the customer. Required to indicate that the user is currently on-session. When this value
+          isn't supplied the request is treated as a background refresh. Banks may place limits on the number of background
+          refreshes can be performed over 24 hours.
+        required: false
+        example: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ScheduledPaymentsResponse'
+          headers: {}
+      security:
+      - bearer: []
+  /data/v2/accounts/{account_id}/standing-orders:
+    get:
+      summary: Get Standing Orders
+      deprecated: false
+      description: Get the standing orders for a specific account given an accountId. The accountId can be found by making
+        a call to the /accounts endpoint.
+      operationId: getStandingOrders
+      tags:
+      - Raw Data
+      parameters:
+      - name: account_id
+        in: path
+        description: ''
+        required: true
+        example: ''
+        schema:
+          type: string
+      - name: async
+        in: query
+        description: When `true` the API will only return a `results_id` which can be fetched from the `/results` endpoint
+          when ready.
+        required: false
+        schema:
+          default: false
+          type: boolean
+      - name: page
+        in: query
+        description: The page you're requesting - returns page 0 of a response if not specified.
+        required: false
+        schema:
+          format: int32
+          default: 0
+          type: integer
+      - name: size
+        in: query
+        description: The number of objects you want to return as a page size.
+        required: false
+        schema:
+          format: int32
+          default: 50
+          maximum: 100
+          type: integer
+      - name: entity_id
+        in: query
+        description: The `entity_id` you're querying for.
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - name: meta
+        in: query
+        description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
+        required: false
+        schema:
+          type: string
+      - name: force_refresh
+        in: query
+        description: 'Ignore Lean''s caching and force a call to the bank. This may have unwanted performance issues. '
+        required: false
+        schema:
+          default: false
+          type: boolean
+      - name: verbose
+        in: query
+        description: Shows `regional_data` values in responses when true. Defaults to `false`.
+        required: false
+        schema:
+          default: false
+          type: boolean
+      - name: customer-ip
+        in: header
+        description: IP Address of the customer. Required to indicate that the user is currently on-session. When this value
+          isn't supplied the request is treated as a background refresh. Banks may place limits on the number of background
+          refreshes can be performed over 24 hours.
+        required: false
+        example: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/StandingOrdersResponse'
+          headers: {}
+      security:
+      - bearer: []
+webhooks: {}
+components:
+  schemas:
+    Transaction:
+      required:
+      - account_id
+      - transaction_id
+      - booking_date_time
+      - credit_debit_indicator
+      - amount
+      type: object
+      properties:
+        account_id:
+          type: string
+          description: The `account_id` this transaction is related to
+        transaction_id:
+          description: A unique ID for the transaction used to help you tie data back to your systems
+          type: string
+        transaction_information:
+          description: Include the raw unparsed transaction description from the bank
+          type: string
+        transaction_reference:
+          type: string
+          description: 'A unique reference provided by the bank for the transaction.
+
+
+            As an example, it may be a reference code for the local payment scheme e.g. mada, SARIE.'
+        credit_debit_indicator:
+          enum:
+          - CREDIT
+          - DEBIT
+          - UNSUPPORTED
+          type: string
+          description: Indicates whether the transaction represents a credit (inflow) or debit (outflow) to the account.
+        amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+          description: The settled value of the transaction, denominated in the transactions's currency
+        transaction_mutability:
+          enum:
+          - IMMUTABLE
+          - MUTABLE
+          - UNSUPPORTED
+          type: string
+          description: Specifies whether the transaction details may change after posting (e.g., pending transactions can
+            update upon settlement).
+        booking_date_time:
+          format: date-time
+          type: string
+          description: Date and time when a transaction entry is posted to an account.
+        insights:
+          type:
+          - object
+          - 'null'
+          properties:
+            description_cleansed:
+              type: string
+              description: A cleaned and standardized version of the transaction description.
+            category:
+              enum:
+              - BANK_FEES_AND_CHARGES
+              - CHARITY
+              - EDUCATION
+              - ENTERTAINMENT
+              - GOVERNMENT
+              - GROCERIES
+              - HEALTH_AND_WELLBEING
+              - LOANS_AND_INVESTMENT
+              - RENT_AND_SERVICES
+              - RESTAURANTS_DINING
+              - RETAIL
+              - SALARY_AND_REVENUE
+              - TRANSFER
+              - TRANSPORT
+              - TRAVEL
+              - OTHER
+              type: string
+              description: High-level classification of the transaction
+            category_confidence:
+              type: number
+              description: Confidence of category expressed as a percentage between 0 and 1.
+          description: Value-added insights including transaction categorization, cleansed descriptions, and category confidence
+            scores based on transaction enrichment.
+        balance:
+          $ref: '#/components/schemas/TransactionBalance'
+          description: The account balance after applying the transaction, where available.
+        regional_data:
+          description: Region specific data response. Only provided when `verbose=true` in the originating request.
+          anyOf:
+          - $ref: '#/components/schemas/TransactionRegionalData'
+            description: Region specific data response. Only provided when `verbose=true` in the originating request.
+          - type: 'null'
+    ListEntityResponse:
+      title: ''
+      description: ''
+      type: object
+      properties:
+        id:
+          description: The unique entity identifier
+          type: string
+        customer_id:
+          description: The Customer object that owns the entity
+          type: string
+        bank_identifier:
+          description: The identifier signifies which bank the user's entity is linked with.
+          type: string
+        permissions:
+          $ref: '#/components/schemas/Permissions'
+          description: Indicates which permissions have been granted by the user, this corresponds with the Data API calls
+            you can make using the entity.
+        bank_type:
+          description: The bank type of the connected entity
+          enum:
+          - RETAIL
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          description: When the entity was created
+        consents:
+          description: Record of all historical consents. Note that only 1 consent can be ACTIVE at the same time
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityConsent'
+        status:
+          type: string
+          description: Entity status
+        updated_at:
+          type: string
+          description: When the entity was last updated
+    AgentIdentifier:
+      type: object
+      properties:
+        scheme_name:
+          type: string
+          description: The name of the identification scheme for the Bank
+          enum:
+          - BICFI
+          - OTHER
+          - UNSUPPORTED
+          examples:
+          - BICFI
+        identification:
+          type: string
+          description: Unique and unambiguous identification of the Bank
+    AttachmentSau:
+      type: object
+      properties:
+        desc:
+          type: string
+        content_type:
+          type: string
+        content:
+          type: string
+        txn:
+          type: string
+    BeneficiaryCreditorAgent:
+      required:
+      - identification
+      - scheme_name
+      type: object
+      properties:
+        scheme_name:
+          enum:
+          - BICFI
+          - OTHER
+          - UNSUPPORTED
+          type: string
+        identification:
+          type: string
+        name:
+          type: string
+        postal_address:
+          $ref: '#/components/schemas/PostalAddress'
+    ChargeCurrencyAmountSau:
+      required:
+      - amount
+      - currency
+      type: object
+      properties:
+        amount:
+          type: number
+        currency:
+          type: string
+        charge_included:
+          type: boolean
+    CurrencyAmountSau:
+      required:
+      - amount
+      - currency
+      type: object
+      properties:
+        amount:
+          type: number
+        currency:
+          type: string
+    Frequency:
+      type: object
+      properties:
+        frequency_type:
+          enum:
+          - NOT_KNOWN
+          - EVERY_DAY
+          - EVERY_WORKING_DAY
+          - INTERVAL_DAY
+          - INTERVAL_WEEK_DAY
+          - WEEK_IN_MONTH_DAY
+          - INTERVAL_MONTH_DAY
+          - QUARTER_DAY
+          - OTHER
+          - UNSUPPORTED
+          type: string
+        interval:
+          type: string
+    IssuerSau:
+      type: object
+      properties:
+        name:
+          type: string
+        address:
+          $ref: '#/components/schemas/AddressShortSau'
+        country_code:
+          type: string
+        jurisdiction:
+          type: string
+    PlaceOfBirthSau:
+      type: object
+      properties:
+        region:
+          type: string
+        locality:
+          type: string
+        country:
+          type: string
+    BeneficiariesResponse:
+      allOf:
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/BeneficiariesData'
+      - $ref: '#/components/schemas/DataResponse'
+    BeneficiariesData:
+      allOf:
+      - $ref: '#/components/schemas/PageAndType'
+      - type: object
+        properties:
+          beneficiaries:
+            type: array
+            items:
+              $ref: '#/components/schemas/Beneficiary'
+    Page:
+      type: object
+      properties:
+        number:
+          format: int32
+          description: The page number of the current response.
+          type: integer
+        size:
+          format: int32
+          description: The number of objects in the response.
+          type: integer
+        total_elements:
+          format: int32
+          description: The total number of objects available.
+          type: integer
+        total_pages:
+          format: int32
+          description: The total number of pages to consume all of the elements.
+          type: integer
+    ScheduledPaymentsResponse:
+      allOf:
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/ScheduledPaymentsData'
+      - $ref: '#/components/schemas/DataResponse'
+    StandingOrdersResponse:
+      allOf:
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/StandingOrdersData'
+      - $ref: '#/components/schemas/DataResponse'
+    DirectDebitsData:
+      allOf:
+      - $ref: '#/components/schemas/PageAndType'
+      - type: object
+        properties:
+          direct_debits:
+            type: array
+            items:
+              $ref: '#/components/schemas/DirectDebit'
+    ScheduledPaymentsData:
+      allOf:
+      - $ref: '#/components/schemas/PageAndType'
+      - type: object
+        properties:
+          scheduled_payments:
+            type: array
+            items:
+              $ref: '#/components/schemas/ScheduledPayment'
+    StandingOrdersData:
+      allOf:
+      - $ref: '#/components/schemas/PageAndType'
+      - type: object
+        properties:
+          standing_orders:
+            type: array
+            items:
+              $ref: '#/components/schemas/StandingOrder'
+    Beneficiary:
+      required:
+      - account_id
+      - beneficiary_id
+      - beneficiary_type
+      type: object
+      properties:
+        account_id:
+          type: string
+        beneficiary_id:
+          type: string
+        beneficiary_type:
+          enum:
+          - TRUSTED
+          - ORDINARY
+          - OTHER
+          - UNSUPPORTED
+          type: string
+        creditor_agent:
+          $ref: '#/components/schemas/BeneficiaryCreditorAgent'
+        creditor_account:
+          $ref: '#/components/schemas/AccountIdentifier'
+        supplementary_data:
+          type: object
+          additionalProperties:
+            type: string
+          properties: {}
+        regional_data:
+          $ref: '#/components/schemas/BeneficiaryRegionalData'
+          description: Region specific data response. Only provided when `verbose=true` in the originating request.
+    BeneficiaryRegionalData:
+      allOf:
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/BeneficiarySau'
+      - $ref: '#/components/schemas/StandardSau'
+    DirectDebit:
+      required:
+      - account_id
+      - direct_debit_id
+      - frequency
+      - mandate_identification
+      - name
+      - status_code
+      type: object
+      properties:
+        account_id:
+          type: string
+        direct_debit_id:
+          type: string
+        status_code:
+          enum:
+          - ACTIVE
+          - INACTIVE
+          - UNSUPPORTED
+          type: string
+        frequency:
+          enum:
+          - MONTHLY
+          - QUARTERLY
+          - BI_ANNUAL
+          - ANNUAL
+          - FORTNIGHT
+          - DAILY
+          - WEEKLY
+          - NOT_KNOWN
+          - UNSUPPORTED
+          type: string
+        mandate_identification:
+          type: string
+        name:
+          type: string
+        previous_payment_date_time:
+          format: date-time
+          type: string
+        previous_payment_amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+        regional_data:
+          $ref: '#/components/schemas/DirectDebitRegionalData'
+          description: Region specific data response. Only provided when `verbose=true` in the originating request.
+    DirectDebitsResponse:
+      allOf:
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/DirectDebitsData'
+      - $ref: '#/components/schemas/DataResponse'
+    IdentitiesResponse:
+      allOf:
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/IdentitiesData'
+      - $ref: '#/components/schemas/DataResponse'
+    BeneficiarySau:
+      required:
+      - account_id
+      - beneficiary_id
+      - beneficiary_type
+      type: object
+      properties:
+        account_id:
+          type: string
+        account_holder_name:
+          description: Name of the account holder
+          type: string
+        account_holder_short_name:
+          description: Short form of the name of the account holder
+          type: string
+        beneficiary_id:
+          type: string
+        beneficiary_type:
+          enum:
+          - ACTIVATED
+          - NOT_ACTIVATED
+          - UNSUPPORTED
+          type: string
+        reference:
+          type: string
+        creditor_agent:
+          $ref: '#/components/schemas/AgentIdentifierWithAddressRequiredSau'
+        creditor_account:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountIdentifierSau'
+        supplementary_data:
+          type: object
+          additionalProperties:
+            type: string
+          properties: {}
+    DirectDebitSau:
+      required:
+      - frequency
+      - direct_debit_status_code
+      - direct_debit_id
+      - account_id
+      - mandate_identification
+      - name
+      type: object
+      properties:
+        account_id:
+          type: string
+        direct_debit_id:
+          type: string
+        direct_debit_status_code:
+          type: string
+        frequency:
+          type: string
+        mandate_identification:
+          type: string
+        name:
+          type: string
+        previous_payment_date_time:
+          format: date-time
+          type: string
+        previous_payment_amount:
+          $ref: '#/components/schemas/CurrencyAmountSau'
+    DirectDebitRegionalData:
+      allOf:
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/DirectDebitSau'
+      - $ref: '#/components/schemas/StandardSau'
+    IdentityRegionalData:
+      allOf:
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/IdentitySau'
+      - $ref: '#/components/schemas/StandardSau'
+    IdentityVerifiedClaimsSau:
+      required:
+      - claims
+      - verification
+      type: object
+      properties:
+        verification:
+          $ref: '#/components/schemas/IdentityVerificationSau'
+        claims:
+          $ref: '#/components/schemas/IdentityClaimsSau'
+    IdentityClaimsSau:
+      type: object
+      properties:
+        sub:
+          type: string
+        name:
+          type: string
+        given_name:
+          type: string
+        family_name:
+          type: string
+        middle_name:
+          type: string
+        nickname:
+          type: string
+        preferred_username:
+          type: string
+        profile:
+          type: string
+        picture:
+          type: string
+        website:
+          type: string
+        email:
+          type: string
+        email_verified:
+          type: boolean
+        gender:
+          type: string
+        birth_date:
+          format: date
+          type: string
+        zone_info:
+          type: string
+        locale:
+          type: string
+        phone_number:
+          type: string
+        phone_number_verified:
+          type: boolean
+        salutation:
+          type: string
+        title:
+          type: string
+        msisdn:
+          type: string
+        birth_family_name:
+          type: string
+        birth_given_name:
+          type: string
+        birth_middle_name:
+          type: string
+        also_known_as:
+          type: string
+        place_of_birth:
+          $ref: '#/components/schemas/PlaceOfBirthSau'
+        nationalities:
+          type: array
+          items:
+            type: string
+        address:
+          $ref: '#/components/schemas/AddressShortSau'
+        updated_at:
+          format: int64
+          type: integer
+    IdentityAssuranceProcessSau:
+      type: object
+      properties:
+        policy:
+          type: string
+        procedure:
+          type: string
+        assurance_details:
+          type: array
+          items:
+            $ref: '#/components/schemas/IdentityAssuranceDetailsSau'
+    IdentityEvidenceRefSau:
+      required:
+      - txn
+      type: object
+      properties:
+        txn:
+          type: string
+        evidence_metadata:
+          $ref: '#/components/schemas/IdentityEvidenceMetadataSau'
+    IdentityEvidenceMetadataSau:
+      type: object
+      properties:
+        evidence_classification:
+          type: string
+    PageAndType:
+      title: Data Object
+      description: ''
+      type: object
+      properties:
+        type:
+          description: The endpoint the original request was made to
+          type: string
+        page:
+          $ref: '#/components/schemas/Page'
+    IdentityEvidenceSau:
+      anyOf:
+      - $ref: '#/components/schemas/IdentityEvidenceDocumentSau'
+      - $ref: '#/components/schemas/IdentityEvidenceElectronicRecordSau'
+    IdentityCheckDetailsSau:
+      type: object
+      properties:
+        check_method:
+          type: string
+        organization:
+          type: string
+        txn:
+          type: string
+        time:
+          format: date-time
+          type: string
+    AddressShortSau:
+      type: object
+      properties:
+        formatted:
+          type: string
+        street_address:
+          type: string
+        locality:
+          type: string
+        region:
+          type: string
+        postal_code:
+          type: string
+        country:
+          type: string
+    ScheduledPayment:
+      required:
+      - account_id
+      - scheduled_payment_id
+      - scheduled_type
+      - scheduled_payment_date_time
+      - instructed_amount
+      type: object
+      properties:
+        account_id:
+          type: string
+        scheduled_payment_id:
+          type: string
+        scheduled_type:
+          enum:
+          - ARRIVAL
+          - EXECUTION
+          - UNSUPPORTED
+          type: string
+        scheduled_payment_date_time:
+          format: date-time
+          type: string
+        debtor_reference:
+          type: string
+        reference:
+          type: string
+        instructed_amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+        creditor_agent:
+          $ref: '#/components/schemas/AgentIdentifier'
+        creditor_account:
+          $ref: '#/components/schemas/AccountIdentifier'
+        regional_data:
+          $ref: '#/components/schemas/ScheduledPaymentRegionalData'
+          description: Region specific data response. Only provided when `verbose=true` in the originating request.
+    StandardSau:
+      type: object
+      properties:
+        standard:
+          description: A description of the standard the regional data is returned in formatted as `"{ISO 3 Letter Country
+            Code}.{Standard}.{Version}"`. In the KSA V2 API this will always return as `"SAU.SAMA.V1"`
+          type: string
+          examples:
+          - SAU.SAMA.V1
+    ScheduledPaymentSau:
+      required:
+      - scheduled_payment_id
+      - scheduled_type
+      - instructed_amount
+      - scheduled_payment_date_time
+      - account_id
+      type: object
+      properties:
+        account_id:
+          type: string
+        account_holder_name:
+          type: string
+        account_holder_shortname:
+          type: string
+        scheduled_payment_id:
+          type: string
+        scheduled_type:
+          type: string
+        scheduled_payment_date_time:
+          format: date-time
+          type: string
+        creditor_reference:
+          type: string
+        debtor_reference:
+          type: string
+        instructed_amount:
+          $ref: '#/components/schemas/CurrencyAmountSau'
+        creditor_agent:
+          $ref: '#/components/schemas/AgentIdentifierSau'
+        creditor_account:
+          $ref: '#/components/schemas/AccountIdentifierSau'
+    ScheduledPaymentRegionalData:
+      allOf:
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/ScheduledPaymentSau'
+      - $ref: '#/components/schemas/StandardSau'
+    IdentityAssuranceDetailsSau:
+      type: object
+      properties:
+        assurance_type:
+          type: string
+        assurance_classification:
+          type: string
+        evidence_ref:
+          type: array
+          items:
+            $ref: '#/components/schemas/IdentityEvidenceRefSau'
+    TransactionProprietaryBankTransactionCodeStructureSau:
+      required:
+      - code
+      type: object
+      properties:
+        code:
+          type: string
+        issuer:
+          type: string
+    TransactionMerchantDetailsSau:
+      type: object
+      properties:
+        merchant_id:
+          format: int32
+          type: integer
+        merchant_name:
+          type: string
+        merchant_category_code:
+          type: string
+    CurrencyExchangeSau:
+      required:
+      - instructed_amount
+      - source_currency
+      - target_currency
+      - unit_currency
+      - exchange_rate
+      type: object
+      properties:
+        source_currency:
+          type: string
+        target_currency:
+          type: string
+        unit_currency:
+          type: string
+        exchange_rate:
+          type: number
+        contract_identification:
+          type: string
+        quotation_date:
+          format: date-time
+          type: string
+        instructed_amount:
+          $ref: '#/components/schemas/CurrencyAmountSau'
+    TransactionRegionalData:
+      allOf:
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/TransactionSau'
+      - $ref: '#/components/schemas/StandardSau'
+    StandingOrderRegionalData:
+      allOf:
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/StandingOrderSau'
+      - $ref: '#/components/schemas/StandardSau'
+    IdentitiesData:
+      allOf:
+      - $ref: '#/components/schemas/PageAndType'
+      - type: object
+        properties:
+          account_id:
+            type: string
+          identities:
+            type: array
+            items:
+              $ref: '#/components/schemas/Identity'
+    IdentityData:
+      allOf:
+      - $ref: '#/components/schemas/PageAndType'
+      - type: object
+        properties:
+          identities:
+            type: array
+            items:
+              $ref: '#/components/schemas/Identity'
+    IdentityResponse:
+      allOf:
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/IdentityData'
+      - $ref: '#/components/schemas/DataResponse'
+    EntityDeleteRequest:
+      title: EntityDeleteRequest
+      description: ''
+      required:
+      - reason
+      type: object
+      properties:
+        reason:
+          description: Please always pass in the value `USER_REQUESTED`.
+          type: string
+          examples:
+          - USER_REQUESTED
+      examples:
+      - reason: USER_REQUESTED
+    Permissions:
+      title: PermissionsObject
+      description: ''
+      type: object
+      properties:
+        identity:
+          description: Indicates access to read identity data
+          type: boolean
+        accounts:
+          description: Indicates access to read accounts data
+          type: boolean
+        balance:
+          description: Indicates access to read balance data
+          type: boolean
+        transactions:
+          description: Indicates access to read transactions data
+          type: boolean
+        identities:
+          description: Indicates access to read identities data. Only relevant in KSA.
+          type: boolean
+        scheduled_payments:
+          description: Indicates access to read scheduled payments data. Only relevant in KSA.
+          type: boolean
+        standing_orders:
+          description: Indicates access to read standing orders data. Only relevant in KSA.
+          type: boolean
+        direct_debits:
+          description: Indicates access to read direct debits data. Only relevant in KSA.
+          type: boolean
+        beneficiaries:
+          description: Indicates access to read beneficiares data. Only relevant in KSA.
+          type: boolean
+      examples:
+      - identity: true
+        accounts: true
+        balance: true
+        transactions: true
+        identities: true
+        scheduled_payments: true
+        standing_orders: true
+        direct_debits: true
+        beneficiaries: true
+    EntityConsent:
+      type: object
+      properties:
+        id:
+          description: Lean internal id for the consent.
+          type: string
+        bank_consent_id:
+          description: Id provided by the bank for the consent.
+          type: string
+        bank_identifier:
+          type: string
+          description: Code which identifies the connected bank
+        consent_type:
+          type: string
+          description: The type of consent granted by the customer. Account access or multi payments
+        consent_status:
+          description: Status of the consent.
+          enum:
+          - ACTIVE
+          - REVOKED
+          - REJECTED
+          type: string
+        standard_consent_status:
+          type: string
+          description: Status of the consent, returning either REVOKED, EXPIRED or AUTHORISED
+        creation_date_time:
+          format: date-time
+          description: When the consent was created.
+          type: string
+        status_update_date_time:
+          format: date-time
+          description: Last update for the consent.
+          type: string
+        expiration_date_time:
+          format: date-time
+          description: When the consent is or will no longer be valid.
+          type: string
+        transaction_from_date_time:
+          format: date-time
+          description: For consents that include a `permission` for `transactions`, the first date of the transactions you
+            can request for.
+          type: string
+        transaction_to_date_time:
+          format: date-time
+          description: For consents that include a `permission` for `transactions`, the last date of the transactions you
+            can request for.
+          type: string
+        permissions:
+          $ref: '#/components/schemas/Permissions'
+          description: List of permissions for this consent.
+        accounts:
+          description: Accounts the end user has consented to share.
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountIdentifierWithSecondarySau'
+    AccountIdentifierWithSecondarySau:
+      type: object
+      properties:
+        identification_type:
+          description: 'Indicates the type of identification being provided.
+
+
+            | Value | Description |
+
+            |-|-|
+
+            | IBAN | The `identification` field is returning the IBAN for the account. |
+
+            | MASKED_PAN | The `identification` field is returning a masked Primary Account Number (PAN) for a card attached
+            to the account. |'
+          enum:
+          - IBAN
+          - MASKED_PAN
+          type: string
+        scheme_name:
+          type: string
+        identification:
+          description: Returns a value based on the `identification_type`.
+          type: string
+        name:
+          description: 'The account name is the name or names of the account owner(s) represented at an account level. Note:
+            The account name is not the product name or the nickname of the account.'
+          type: string
+        secondary_identification:
+          description: Additional form of identification for the account
+          type: string
+    EntityResponse:
+      title: EntityResponse
+      description: ''
+      type: object
+      properties:
+        id:
+          description: The unique entity identifier
+          type: string
+        customer_id:
+          description: The Customer object that owns the entity
+          type: string
+        bank_identifier:
+          description: The identifier signifies which bank the user's entity is linked with.
+          type: string
+        permissions:
+          $ref: '#/components/schemas/Permissions'
+          description: Indicates which permissions have been granted by the user, this corresponds with the Data API calls
+            you can make using the entity.
+        bank_type:
+          description: The bank type of the connected entity
+          enum:
+          - RETAIL
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          description: When the entity was created
+        consents:
+          description: Record of all historical consents. Note that only 1 consent can be ACTIVE at the same time
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityConsent'
+    TransactionBankTransactionCodeSau:
+      type: object
+      properties:
+        domain:
+          type: string
+        domain_code:
+          type: string
+        family:
+          type: string
+        family_code:
+          type: string
+        sub_family:
+          type: string
+        sub_family_code:
+          type: string
+    StatusDetailObject:
+      description: Status Details
+      type: object
+      properties:
+        granular_status_code:
+          description: Detailed error code
+          type: string
+        status_additional_info:
+          description: Further detail on the encountered error
+          type: string
+    DataResponse:
+      type: object
+      properties:
+        status:
+          description: The status of the results. For async requests, initially returns PENDING.
+          enum:
+          - OK
+          - FAILED
+          - PENDING
+          - CONSENT_EXPIRED
+          type: string
+        results_id:
+          type: string
+          description: The ID for this result, this is used when retrieving results from the `/results` endpoint.
+          format: uuid
+        message:
+          description: A message describing the status of the request.
+          type: string
+        meta:
+          type:
+          - string
+          - 'null'
+          description: Optional metadata associated with the result.
+        timestamp:
+          format: date-time
+          description: The timestamp with timezone offset indicating when the response was generated.
+          type: string
+        status_detail:
+          description: Further detail on the error if status=FAILED
+          $ref: '#/components/schemas/StatusDetailObject'
+      required:
+      - status
+      - results_id
+      - message
+      - meta
+      - timestamp
+      - status_detail
+    AccountIdentifier:
+      type: object
+      properties:
+        scheme_name:
+          type: string
+          description: Name of the identification scheme for the account.
+          enum:
+          - IBAN
+          - BBAN
+          - PAN
+          - OTHER
+          - UNSUPPORTED
+        identification:
+          type: string
+          description: Identification value for the account assigned by the bank based on the Account Scheme Name
+        name:
+          type:
+          - string
+          - 'null'
+          description: The name of the account owner(s) represented at an account level
+    AccountIdentifierSau:
+      required:
+      - identification
+      - identification_type
+      type: object
+      properties:
+        identification_type:
+          enum:
+          - IBAN
+          - MASKED_PAN
+          - ACCOUNT_NUMBER
+          - COMMERCIAL_REGISTRATION_NUMBER
+          - EMAIL
+          - MOBILE_NUMBER
+          - NATIONAL_ID
+          - IQAMA_NUMBER
+          - PASSPORT_NUMBER
+          - UNSUPPORTED
+          type: string
+        identification:
+          type: string
+    AgentIdentifierSau:
+      type: object
+      properties:
+        identification_type:
+          description: 'The type of identifier being provided.
+
+
+            | Value | Description |
+
+            |-|-|
+
+            | BICFI | The BIC/SWIFT code for the Financial Institution |
+
+            | OTHER | A combination of country code and 4 letter identifier for a financial institution |'
+          enum:
+          - BICFI
+          - OTHER
+          - UNSUPPORTED
+          type: string
+        identification:
+          description: 'Provides either the BIC/SWIFT code for the Financial Institution or a value from a coded list.
+
+
+            | Identifier | Institution |
+
+            |-|-|
+
+            | SAINMA | Alinma Bank |
+
+            | SARJHI | Al Rajhi Bank |
+
+            | SAARNB | Arab National Bank |
+
+            | SAALBI | Bank Al Bilad |
+
+            | SABJAZ | Bank Al-Jazira |
+
+            | SABMUS | Bank Muscat |
+
+            | SABSFR | Banque Saudi Fransi |
+
+            | SABNPA | BNP Paribas Saudi Arabia |
+
+            | SACRES | Credit Suisse Saudi Arabia |
+
+            | SADEUT | Deutsche Bank AG, Riyadh Branch |
+
+            | SAEBIL | Emirates NBD PJSC |
+
+            | SAGULF | Gulf International Bank B.S.C., Riyadh |
+
+            | SAICBK | Industrial and Commercial Bank of China, Riyadh Branch |
+
+            | SAISLD | Islamic Development Bank |
+
+            | SAJPMG | J.P. Morgan Saudi Arabia Ltd. |
+
+            | SACHAS | J.P. Morgan Chase Bank, N.A Riyadh |
+
+            | SAMLSA | Merill Lynch Kingdom of Saudi Arabia |
+
+            | SANBOB | National Bank of Bahrain |
+
+            | SANBOK | National Bank of Kuwait |
+
+            | SANBPA | National Bank of Pakistan |
+
+            | SANCBK | Saudi National Bank |
+
+            | SARIBL | Riyad Bank |
+
+            | SASAMA | Saudi Arabian Monetary Authority |
+
+            | SASABB | Saudi British Bank |
+
+            | SASIBC | Saudi Investment Bank |
+
+            | SASCBL | Standard Chartered Capital (Saudi Arabia) |
+
+            | SATCZB | T.C. Ziraat Bankasi A.S. |
+
+            | SASTCP | STC Pay |
+
+            | SANEOL | Neoleap |'
+          type: string
+    TransactionBalance:
+      required:
+      - credit_debit_indicator
+      - amount
+      - type
+      type: object
+      properties:
+        type:
+          enum:
+          - CLOSING_AVAILABLE
+          - CLOSING_BOOKED
+          - CLOSING_CLEARED
+          - EXPECTED
+          - FORWARD_AVAILABLE
+          - INFORMATION
+          - INTERIM_AVAILABLE
+          - INTERIM_BOOKED
+          - INTERIM_CLEARED
+          - OPENING_AVAILABLE
+          - OPENING_BOOKED
+          - OPENING_CLEARED
+          - PREVIOUSLY_CLOSED_BOOKED
+          - UNSUPPORTED
+          type: string
+        credit_debit_indicator:
+          enum:
+          - CREDIT
+          - DEBIT
+          - UNSUPPORTED
+          type: string
+        amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+    TransactionBalanceSau:
+      required:
+      - credit_debit_indicator
+      - amount
+      - type
+      type: object
+      properties:
+        credit_debit_indicator:
+          enum:
+          - CREDIT
+          - DEBIT
+          - UNSUPPORTED
+          type: string
+        type:
+          enum:
+          - CLOSING_AVAILABLE
+          - CLOSING_BOOKED
+          - CLOSING_CLEARED
+          - EXPECTED
+          - FORWARD_AVAILABLE
+          - INFORMATION
+          - INTERIM_AVAILABLE
+          - INTERIM_BOOKED
+          - INTERIM_CLEARED
+          - OPENING_AVAILABLE
+          - OPENING_BOOKED
+          - OPENING_CLEARED
+          - PREVIOUSLY_CLOSED_BOOKED
+          - UNSUPPORTED
+          type: string
+        amount:
+          $ref: '#/components/schemas/CurrencyAmountSau'
+    TransactionBillDetailsSau:
+      type: object
+      properties:
+        biller_id:
+          type: number
+        bill_number:
+          type: string
+        bill_payment_type:
+          enum:
+          - POST_PAID
+          - ADVANCE_PAYMENT_FOR_ROAMING
+          - RECHARGE
+          - RENEWAL
+          - ROAMING_DEPOSIT
+          - ONE_OFF
+          - RECURRING_PAYMENT
+          - UNSUPPORTED
+          type: string
+    TransactionCardInstrumentSau:
+      required:
+      - instrument_type
+      - card_scheme_name
+      type: object
+      properties:
+        card_scheme_name:
+          enum:
+          - AMERICAN_EXPRESS
+          - MASTER_CARD
+          - VISA
+          - DINERS
+          - MADA
+          - GCC
+          - UPI
+          - UNSUPPORTED
+          type: string
+        instrument_type:
+          enum:
+          - APPLE_PAY
+          - MADA_PAY
+          - CONTACTLESS
+          - CHIP
+          - MAG_STRIPE
+          - OTHER
+          - UNSUPPORTED
+          type: string
+        identification:
+          type: string
+        name:
+          type: string
+    AddressLongSau:
+      type: object
+      properties:
+        address_type:
+          enum:
+          - BUSINESS
+          - DELIVERY_TO
+          - MAIL_TO
+          - PO_BOX
+          - RESIDENTIAL
+          - CORRESPONDENCE
+          - STATEMENT
+          - UNSUPPORTED
+          type: string
+        short_address:
+          type: string
+        building_number:
+          type: string
+        unit_number:
+          type: string
+        street_name:
+          type: string
+        secondary_number:
+          type: string
+        district:
+          type: string
+        postal_code:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+    IdentitySau:
+      required:
+      - party_id
+      - party_type
+      - verified_claims
+      - account_role
+      type: object
+      properties:
+        party_id:
+          type: string
+        party_number:
+          type: string
+        party_type:
+          enum:
+          - DELEGATE
+          - JOINT
+          - SOLE
+          - UNSUPPORTED
+          type: string
+        account_role:
+          enum:
+          - ADMINISTRATOR
+          - BENEFICIARY
+          - CUSTODIAN_FOR_MINOR
+          - GRANTER
+          - LEGAL_GUARDIAN
+          - OTHER_PARTY
+          - POWER_OF_ATTORNEY
+          - PRINCIPAL
+          - PROTECTOR
+          - REGISTERED_SHAREHOLDER
+          - SECONDARY_OWNER
+          - SENIOR_MANAGING_OFFICIAL
+          - SETTLOR
+          - SUCCESSOR_ON_DEATH
+          - UNSUPPORTED
+          type: string
+        verified_claims:
+          type: array
+          items:
+            $ref: '#/components/schemas/IdentityVerifiedClaimsSau'
+    IdentityDocumentDetailsSau:
+      type: object
+      properties:
+        type:
+          enum:
+          - PASSPORT
+          - DRIVING_PERMIT
+          - ID_CARD
+          - RESIDENCE_PERMIT
+          - UNSUPPORTED
+          type: string
+        document_number:
+          type: string
+        personal_number:
+          type: string
+        serial_number:
+          type: string
+        calendar_type:
+          enum:
+          - ISLAMIC_CALENDAR
+          - GREGORIAN_CALENDAR
+          - UNSUPPORTED
+          type: string
+        date_of_issuance:
+          format: date
+          type: string
+        date_of_expiry:
+          format: date
+          type: string
+        issuer:
+          $ref: '#/components/schemas/IssuerSau'
+    IdentityEvidenceElectronicRecordSau:
+      type: object
+      properties:
+        type:
+          enum:
+          - ELECTRONIC_RECORD
+          - UNSUPPORTED
+          type: string
+        time:
+          format: date-time
+          type: string
+        record:
+          $ref: '#/components/schemas/IdentityRecordDetailsSau'
+        check_details:
+          type: array
+          items:
+            $ref: '#/components/schemas/IdentityCheckDetailsSau'
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttachmentSau'
+    IdentityEvidenceDocumentSau:
+      type: object
+      properties:
+        type:
+          enum:
+          - DOCUMENT
+          - UNSUPPORTED
+          type: string
+        verifier:
+          $ref: '#/components/schemas/VerifierSau'
+        time:
+          format: date-time
+          type: string
+        document_details:
+          $ref: '#/components/schemas/IdentityDocumentDetailsSau'
+        check_details:
+          type: array
+          items:
+            $ref: '#/components/schemas/IdentityCheckDetailsSau'
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttachmentSau'
+    IdentityRecordDetailsSau:
+      type: object
+      properties:
+        type:
+          enum:
+          - BANK_ACCOUNT
+          - MORTGAGE_ACCOUNT
+          - LOAN_ACCOUNT
+          - UNSUPPORTED
+          type: string
+        personal_number:
+          type: string
+        calendar_type:
+          enum:
+          - ISLAMIC_CALENDAR
+          - GREGORIAN_CALENDAR
+          - UNSUPPORTED
+          type: string
+        created_at:
+          format: date-time
+          type: string
+        date_of_expiry:
+          format: date-time
+          type: string
+        source:
+          $ref: '#/components/schemas/IssuerSau'
+    IdentityVerificationSau:
+      required:
+      - trust_framework
+      type: object
+      properties:
+        trust_framework:
+          type: string
+        assurance_level:
+          type: string
+        assurance_process:
+          $ref: '#/components/schemas/IdentityAssuranceProcessSau'
+        time:
+          format: date-time
+          type: string
+        verification_process:
+          type: string
+        evidence:
+          type: array
+          items:
+            $ref: '#/components/schemas/IdentityEvidenceSau'
+    AgentIdentifierWithAddressRequiredSau:
+      required:
+      - identification
+      - identification_type
+      type: object
+      properties:
+        identification_type:
+          enum:
+          - BICFI
+          - OTHER
+          - UNSUPPORTED
+          type: string
+        identification:
+          type: string
+        name:
+          type: string
+        postal_address:
+          $ref: '#/components/schemas/AddressLongSau'
+    AgentIdentifierWithAddressSau:
+      type: object
+      properties:
+        identification_type:
+          enum:
+          - BICFI
+          - OTHER
+          - UNSUPPORTED
+          type: string
+        identification:
+          type: string
+        name:
+          type: string
+        postal_address:
+          $ref: '#/components/schemas/AddressLongSau'
+    FrequencySau:
+      required:
+      - frequency_type
+      type: object
+      properties:
+        frequency_type:
+          enum:
+          - NOT_KNOWN
+          - EVERY_DAY
+          - EVERY_WORKING_DAY
+          - INTERVAL_DAY
+          - INTERVAL_WEEK_DAY
+          - WEEK_IN_MONTH_DAY
+          - INTERVAL_MONTH_DAY
+          - QUARTER_DAY
+          - BI_ANNUAL
+          - ANNUAL
+          - UNSUPPORTED
+          type: string
+        interval:
+          type: string
+    Identity:
+      required:
+      - party_id
+      - party_type
+      - account_role
+      type: object
+      properties:
+        full_legal_name:
+          type: string
+        name:
+          type: string
+        phone:
+          type: string
+        email_address:
+          type: string
+        legal_structure:
+          type: string
+        mobile_number:
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
+        account_role:
+          enum:
+          - ADMINISTRATOR
+          - BENEFICIARY
+          - CUSTODIAN_FOR_MINOR
+          - GRANTER
+          - LEGAL_GUARDIAN
+          - OTHER_PARTY
+          - POWER_OF_ATTORNEY
+          - PRINCIPAL
+          - PROTECTOR
+          - REGISTERED_SHAREHOLDER
+          - SECONDARY_OWNER
+          - SENIOR_MANAGING_OFFICIAL
+          - SETTLOR
+          - SUCCESSOR_ON_DEATH
+          - UNSUPPORTED
+          type: string
+        party_type:
+          enum:
+          - DELEGATE
+          - JOINT
+          - SOLE
+          - UNSUPPORTED
+          type: string
+        party_id:
+          type: string
+        party_number:
+          type: string
+        regional_data:
+          $ref: '#/components/schemas/IdentityRegionalData'
+    Address:
+      type: object
+      properties:
+        address_line:
+          type: string
+          description: Full address as retrieved from bank
+        address_type:
+          enum:
+          - BUSINESS
+          - DELIVERY_TO
+          - MAIL_TO
+          - PO_BOX
+          - RESIDENTIAL
+          - CORRESPONDENCE
+          - STATEMENT
+          - UNSUPPORTED
+          type: string
+          description: The type of address
+        street_address:
+          type: string
+          description: 'Street address which may include house number, street name and PO Box '
+        post_code:
+          type: string
+          description: Zip or postal code
+        town_name:
+          type: string
+          description: City or locality
+        region:
+          type: string
+          description: State, province, prefecture, or region
+        country:
+          type: string
+          description: Coutry name
+      required:
+      - street_address
+      - region
+    PostalAddress:
+      type: object
+      properties:
+        address_line:
+          type: string
+        address_type:
+          enum:
+          - BUSINESS
+          - CORRESPONDENCE
+          - DELIVERY_TO
+          - MAIL_TO
+          - PO_BOX
+          - POSTAL
+          - RESIDENTIAL
+          - STATEMENT
+          - UNSUPPORTED
+          type: string
+        building_number:
+          type: string
+        country:
+          type: string
+        department:
+          type: string
+        post_code:
+          type: string
+        street_name:
+          type: string
+        sub_department:
+          type: string
+        town_name:
+          type: string
+        country_sub_division:
+          type: string
+    TransactionSau:
+      required:
+      - account_id
+      - transaction_id
+      - transaction_date_time
+      - transaction_type
+      - status
+      - booking_date_time
+      - payment_modes
+      - amount
+      - credit_debit_indicator
+      type: object
+      properties:
+        account_id:
+          format: uuid
+          type: string
+        transaction_id:
+          format: uuid
+          description: Unique identifier for a transaction
+          type: string
+        index:
+          format: int32
+          type: integer
+        transaction_date_time:
+          format: date-time
+          type: string
+        local_time_zone:
+          format: date-time
+          type: string
+        transaction_reference:
+          type: string
+        statement_reference:
+          type: string
+        transaction_type:
+          enum:
+          - POS
+          - E_COMMERCE
+          - ATM
+          - BILL_PAYMENTS
+          - LOCAL_BANK_TRANSFER
+          - SAME_BANK_TRANSFER
+          - INTERNATIONAL_TRANSFER
+          - TELLER
+          - CHEQUE
+          - UNSUPPORTED
+          type: string
+        sub_transaction_type:
+          enum:
+          - PURCHASE
+          - REVERSAL
+          - REFUND
+          - WITHDRAWAL
+          - WITHDRAWAL_REVERSAL
+          - DEPOSIT
+          - DEPOSIT_REVERSAL
+          - MONEY_TRANSFER
+          - NOT_APPLICABLE
+          - UNSUPPORTED
+          type: string
+        terminal_id:
+          type: string
+        flags:
+          description: The flag of a transaction, options are `PAYROLL`, `CASHBACK`, `DIRECT_DEBIT`, `STANDING_ORDER`, `LOAN`,
+            `DIVIDEND`
+          type: array
+          items:
+            type: string
+        payment_modes:
+          enum:
+          - ONLINE
+          - OFFLINE
+          - BATCH
+          - UNSUPPORTED
+          type: string
+        credit_debit_indicator:
+          enum:
+          - CREDIT
+          - DEBIT
+          - UNSUPPORTED
+          type: string
+        status:
+          enum:
+          - BOOKED
+          - PENDING
+          - REJECTED
+          - UNSUPPORTED
+          type: string
+        transaction_mutability:
+          enum:
+          - IMMUTABLE
+          - MUTABLE
+          - UNSUPPORTED
+          type: string
+        booking_date_time:
+          format: date-time
+          type: string
+        value_date_time:
+          format: date-time
+          type: string
+        transaction_information:
+          type: string
+        amount:
+          $ref: '#/components/schemas/CurrencyAmountSau'
+        charge_amount:
+          $ref: '#/components/schemas/ChargeCurrencyAmountSau'
+        charge_amount_vat:
+          $ref: '#/components/schemas/CurrencyAmountSau'
+        currency_exchange:
+          $ref: '#/components/schemas/CurrencyExchangeSau'
+        bank_transaction_code:
+          $ref: '#/components/schemas/TransactionBankTransactionCodeSau'
+          description: As defined by ISO20022 (https://www.iso20022.org/sites/default/files/2022-05/BTC_Codification_31May2022.xls)
+        proprietary_bank_transaction_code:
+          $ref: '#/components/schemas/TransactionProprietaryBankTransactionCodeStructureSau'
+        balance:
+          $ref: '#/components/schemas/TransactionBalanceSau'
+        merchant_details:
+          $ref: '#/components/schemas/TransactionMerchantDetailsSau'
+        creditor_agent:
+          $ref: '#/components/schemas/AgentIdentifierWithAddressSau'
+        creditor_account:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountIdentifierWithNameSau'
+        debtor_agent:
+          $ref: '#/components/schemas/AgentIdentifierWithAddressSau'
+        debtor_account:
+          $ref: '#/components/schemas/AccountIdentifierWithNameSau'
+        card_instrument:
+          $ref: '#/components/schemas/TransactionCardInstrumentSau'
+        bill_details:
+          $ref: '#/components/schemas/TransactionBillDetailsSau'
+        supplementary_data:
+          type: object
+          additionalProperties:
+            type: string
+          properties: {}
+    StandingOrder:
+      required:
+      - account_id
+      - standing_order_id
+      - final_payment_date_time
+      - first_payment_date_time
+      - number_of_payments
+      - first_payment_amount
+      - final_payment_amount
+      type: object
+      properties:
+        account_id:
+          type: string
+        standing_order_id:
+          description: Unique identifier for a standing order
+          type: string
+        standing_order_status_code:
+          enum:
+          - ACTIVE
+          - INACTIVE
+          type: string
+        first_payment_date_time:
+          format: date-time
+          type: string
+        last_payment_date_time:
+          format: date-time
+          type: string
+        next_payment_date_time:
+          format: date-time
+          type: string
+        final_payment_date_time:
+          format: date-time
+          type: string
+        frequency:
+          $ref: '#/components/schemas/Frequency'
+        number_of_payments:
+          format: int32
+          type: integer
+        reference:
+          type: string
+        first_payment_amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+        last_payment_amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+        next_payment_amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+        final_payment_amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+        creditor_agent:
+          $ref: '#/components/schemas/AgentIdentifier'
+        creditor_account:
+          $ref: '#/components/schemas/AccountIdentifier'
+        regional_data:
+          $ref: '#/components/schemas/StandingOrderRegionalData'
+          description: Region specific data response. Only provided when `verbose=true` in the originating request.
+    StandingOrderSau:
+      required:
+      - account_id
+      - frequency
+      - final_payment_date_time
+      - first_payment_date_time
+      - number_of_payments
+      - first_payment_amount
+      - final_payment_amount
+      - standing_order_id
+      type: object
+      properties:
+        account_id:
+          type: string
+        account_holder_name:
+          description: Name of the account holder
+          type: string
+        account_holder_short_name:
+          description: Short form of the name of the account holder
+          type: string
+        standing_order_id:
+          description: Unique identifier for a standing order
+          type: string
+        standing_order_type:
+          type: string
+        standing_order_status_code:
+          type: string
+        first_payment_date_time:
+          format: date-time
+          type: string
+        last_payment_date_time:
+          format: date-time
+          type: string
+        next_payment_date_time:
+          format: date-time
+          type: string
+        final_payment_date_time:
+          format: date-time
+          type: string
+        frequency:
+          $ref: '#/components/schemas/FrequencySau'
+        number_of_payments:
+          format: int32
+          type: integer
+        creditor_reference:
+          type: string
+        first_payment_amount:
+          $ref: '#/components/schemas/CurrencyAmountSau'
+        last_payment_amount:
+          $ref: '#/components/schemas/CurrencyAmountSau'
+        next_payment_amount:
+          $ref: '#/components/schemas/CurrencyAmountSau'
+        final_payment_amount:
+          $ref: '#/components/schemas/CurrencyAmountSau'
+        creditor_agent:
+          $ref: '#/components/schemas/AgentIdentifierSau'
+        creditor_account:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountIdentifierSau'
+        purpose:
+          description: ''
+          type: string
+        supplementary_data:
+          description: ''
+    AccountIdentifierWithNameSau:
+      type: object
+      properties:
+        identification_type:
+          description: Indicates the type of identification being provided.
+          enum:
+          - IBAN
+          - MASKED_PAN
+          - ACCOUNT_NUMBER
+          - COMMERCIAL_REGISTRATION_NUMBER
+          - EMAIL
+          - MOBILE_NUMBER
+          - NATIONAL_ID
+          - IQAMA_NUMBER
+          - PASSPORT_NUMBER
+          - UNSUPPORTED
+          type: string
+        identification:
+          description: Returns a value based on the `identification_type`.
+          type: string
+        name:
+          description: 'The account name is the name or names of the account owner(s) represented at an account level. Note:
+            The account name is not the product name or the nickname of the account.'
+          type: string
+    CurrencyAmount:
+      type: object
+      properties:
+        amount:
+          format: float
+          description: The value in the denominated currency.
+          type: number
+        currency:
+          description: ISO 3 letter code for the currency the amount is returned in.
+          type: string
+    VerifierSau:
+      type: object
+      properties:
+        organization:
+          type: string
+        txn:
+          type: string
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+servers:
+- url: https://sandbox.sa.leantech.me
+  description: Sandbox
+- url: https://api2.sa.leantech.me
+  description: Production / Pre-Live
+security:
+- bearer: []

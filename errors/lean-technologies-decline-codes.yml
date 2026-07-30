@@ -1,0 +1,29 @@
+generated: '2026-07-20'
+method: searched
+source: https://docs.leantech.me/reference/payments-errors, https://docs.leantech.me/reference/data-errors
+envelope_field: code
+masked_to_buyer: false
+notes: >
+  Open-banking decline / failure reasons surfaced on payment, data and connection
+  flows. Codes arrive on the payment/entity status and (for terminal failures) via
+  webhook. Many are bank-originated and outside Lean's control; the documented
+  action is retry-with-backoff or contact-bank.
+decline_codes:
+  - {code: INSUFFICIENT_BALANCE, meaning: Insufficient funds in the source account, action: Ask payer to fund the account and retry}
+  - {code: EXCEEDS_DAILY_LIMIT, meaning: Payment exceeds the bank's daily limit, action: Retry with a smaller amount or next day}
+  - {code: ANOTHER_PAYMENT_ALREADY_IN_PROGRESS, meaning: A payment is already in progress for this source, action: Wait for the in-flight payment to settle}
+  - {code: USER_CANCELLED, meaning: Payer cancelled in the bank flow, action: Restart the LinkSDK flow}
+  - {code: SESSION_EXPIRED_ON_OTP, meaning: Bank OTP session expired, action: Restart and complete OTP promptly}
+  - {code: BANK_ISSUE, meaning: Bank experiencing technical problems, action: Retry later (bank-side)}
+  - {code: BANK_MAINTENANCE, meaning: Bank undergoing technical maintenance, action: Retry after some hours}
+  - {code: UNSEEN_BANK_ERROR, meaning: Bank reported an unclassified error, action: Retry; contact Lean if persistent}
+  - {code: EU_ACCOUNT_LOCKED, meaning: Online banking account locked by the bank, action: Payer must contact bank to unlock}
+  - {code: EU_FUNCTIONALITY_RESTRICTED, meaning: Bank restricted functionality on the account, action: Payer contacts bank via portal}
+  - {code: LOGGED_IN_ELSEWHERE, meaning: Account logged in on another device, action: Retry after minutes to hours}
+  - {code: ACTIVE_SESSION_EXISTS, meaning: Same account accessed by another application, action: Retry after minutes to hours}
+  - {code: DUPLICATED_REQUEST, meaning: Duplicate request for the same entity, action: Wait 1 minute before retrying}
+  - {code: KNOWN_UNSUPPORTED_MFA_BEHAVIOUR, meaning: Bank MFA behaviour not supported, action: Contact Lean support}
+  - {code: KNOWN_TRAFFIC_OUTSIDE_ALLOWED_REGION, meaning: Service not enabled for the account/region, action: Contact Lean}
+  - {code: DISABLED_BY_LEAN, meaning: Functionality temporarily disabled by Lean, action: Await webhook re-enable notification}
+  - {code: DISABLED_BY_CLIENT, meaning: Application disabled bank functionality, action: Re-enable via Lean Dashboard}
+  - {code: LEAN_ERROR, meaning: Lean unable to process the request, action: Retry; contact support if persistent}

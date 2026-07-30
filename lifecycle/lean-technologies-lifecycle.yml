@@ -1,0 +1,23 @@
+generated: '2026-07-20'
+method: searched
+source: https://docs.leantech.me, https://status.leantech.me
+versioning:
+  scheme: uri-path + docs branch
+  current: v2 (UAE) / v3.0-UAE docs branch; KSA Open Banking v1
+  detail: >
+    Product APIs are path-versioned (v1/v2/v3). Documentation is versioned by branch
+    (e.g. v3.0-UAE), also selected in the hosted MCP server via ?branch=.
+  docs: https://docs.leantech.me
+deprecation:
+  policy_url: null
+  sunset_header: false
+  detail: >
+    No formal published deprecation/Sunset (RFC 8594) policy located. Legacy Payments
+    are being migrated to Account-on-File; migration guides are published.
+  migration_guides:
+    - https://docs.leantech.me/docs/migrating-from-legacy-payments-to-account-on-file
+    - https://docs.leantech.me/docs/migrating-to-open-finance-based-payments
+status_page: https://status.leantech.me
+sla:
+  url: null
+deprecated_operations: []

@@ -1,0 +1,1475 @@
+openapi: 3.1.0
+info:
+  title: Core Resources
+  description: ''
+  version: 2.0.0
+tags:
+- name: Customers
+- name: Banks
+- name: Pending & Asynchronous Requests
+paths:
+  /customers/v1:
+    post:
+      summary: Create Customer
+      deprecated: false
+      description: Create a customer object on Lean given the app_user_id which is the identifier (or a hash of the identifier)
+        you use to refer to a user in your own database. The customer object in Lean should map one to one with the user object
+        in your database.
+      operationId: createCustomer
+      tags:
+      - Customers
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              examples:
+              - app_user_id: your_user_id
+              type: object
+              properties:
+                app_user_id:
+                  description: A unique value from your database, can be the corresponding User ID in your system, or any
+                    other string.
+                  maxLength: 255
+                  minLength: 1
+                  type: string
+                  examples:
+                  - sandbox_user_1
+              required:
+              - app_user_id
+            example:
+              app_user_id: test_user_1
+      responses:
+        '200':
+          description: Customer created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  customer_id:
+                    description: Unique identifier for the customer
+                    type: string
+                    examples:
+                    - 34c11087-b6bc-429b-9a91-725941b1a547
+                  app_user_id:
+                    description: An assigned user id value from your backend. This has a uniqueness constraint.
+                    type: string
+                    examples:
+                    - sandbox_user_1
+              example:
+                customer_id: 85863393-3b91-4a07-8b2f-1286bbf1480f
+                app_user_id: test_user_1
+          headers: {}
+      security:
+      - bearer: []
+    get:
+      summary: List Customers
+      deprecated: false
+      description: ''
+      operationId: getCustomers
+      tags:
+      - Customers
+      parameters:
+      - name: page_number
+        in: query
+        description: ''
+        required: true
+        schema:
+          type: integer
+      - name: page_size
+        in: query
+        description: ''
+        required: true
+        schema:
+          type: integer
+      - name: lean-app-token
+        in: header
+        description: ''
+        required: false
+        example: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List of customers
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        customer_id:
+                          type: string
+                        app_user_id:
+                          type: string
+                        payload:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            customer_id:
+                              type: string
+                            payment_source_id:
+                              type: string
+                            payment_destination_id:
+                              type: string
+                            status:
+                              type: string
+                          required:
+                          - id
+                          - customer_id
+                          - payment_source_id
+                          - payment_destination_id
+                          - status
+                        type:
+                          type: string
+                        message:
+                          type: string
+                        timestamp:
+                          type: string
+                        event_id:
+                          type: string
+                  page:
+                    type: object
+                    properties:
+                      number:
+                        type: integer
+                      size:
+                        type: integer
+                      total_elements:
+                        type: integer
+                      total_pages:
+                        type: integer
+                    required:
+                    - number
+                    - size
+                    - total_elements
+                    - total_pages
+                required:
+                - data
+                - page
+              example:
+                data:
+                - customer_id: 34c11087-b6bc-429b-9a91-725941b1a547
+                  app_user_id: sandbox_user_1
+                  payload:
+                    id: string
+                    customer_id: string
+                    payment_source_id: string
+                    payment_destination_id: string
+                    status: string
+                  type: string
+                  message: string
+                  timestamp: string
+                  event_id: string
+                page:
+                  number: 0
+                  size: 1
+                  total_elements: 46
+                  total_pages: 46
+          headers: {}
+      security:
+      - bearer: []
+  /customers/v1/{customer_id}:
+    get:
+      summary: Get Customer by ID
+      deprecated: false
+      description: ''
+      operationId: getCustomerById
+      tags:
+      - Customers
+      parameters:
+      - name: customer_id
+        in: path
+        description: ''
+        required: true
+        example: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerObject'
+          headers: {}
+      security:
+      - bearer: []
+  /customers/v1/app-user-id/{app_user_id}:
+    get:
+      summary: Get Customer by app_user_id
+      deprecated: false
+      description: ''
+      operationId: getCustomerByAppUserId
+      tags:
+      - Customers
+      parameters:
+      - name: app_user_id
+        in: path
+        description: ''
+        required: true
+        example: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Customer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerObject'
+          headers: {}
+      security:
+      - bearer: []
+  /banks/v1/:
+    get:
+      summary: List Banks
+      deprecated: false
+      description: ''
+      operationId: listBanks
+      tags:
+      - Banks
+      parameters:
+      - name: account_types
+        in: query
+        description: If you want to get the list of business or personal banks (default value is PERSONAL).
+        required: false
+        schema:
+          enum:
+          - BUSINESS
+          - PERSONAL
+          type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BankResponse'
+          headers: {}
+      security:
+      - bearer: []
+  /data/v2/results/{results_id}:
+    get:
+      summary: Get Results
+      deprecated: false
+      description: 'Get the results for an asynchronous response. Note that the request will not work for results_id that
+        have been returned with a synchronous request, i.e.: it will work only when you receive a response for any API where
+        status=PENDING and then receive a webhook.'
+      operationId: getResults
+      tags:
+      - Pending & Asynchronous Requests
+      parameters:
+      - name: results_id
+        in: path
+        description: ''
+        required: true
+        example: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultsResponse'
+              example:
+                status: OK
+                payload: {}
+                results_id: a76e25c0-a966-4532-86c5-19df660dd811
+                timestamp: '2022-08-10T17:38:35.439381Z'
+          headers: {}
+      security:
+      - bearer: []
+components:
+  schemas:
+    Transaction:
+      required:
+      - account_id
+      - transaction_id
+      - booking_date_time
+      - credit_debit_indicator
+      - amount
+      type: object
+      properties:
+        account_id:
+          type: string
+          description: The `account_id` this transaction is related to
+        transaction_id:
+          description: A unique ID for the transaction used to help you tie data back to your systems
+          type: string
+        transaction_information:
+          description: Include the raw unparsed transaction description from the bank
+          type: string
+        transaction_reference:
+          type: string
+          description: 'A unique reference provided by the bank for the transaction.
+
+
+            As an example, it may be a reference code for the local payment scheme e.g. mada, SARIE.'
+        credit_debit_indicator:
+          enum:
+          - CREDIT
+          - DEBIT
+          - UNSUPPORTED
+          type: string
+          description: Indicates whether the transaction represents a credit (inflow) or debit (outflow) to the account.
+        amount:
+          description: The settled value of the transaction, denominated in the transactions's currency
+          type: object
+          properties: {}
+        transaction_mutability:
+          enum:
+          - IMMUTABLE
+          - MUTABLE
+          - UNSUPPORTED
+          type: string
+          description: Specifies whether the transaction details may change after posting (e.g., pending transactions can
+            update upon settlement).
+        booking_date_time:
+          format: date-time
+          type: string
+          description: Date and time when a transaction entry is posted to an account.
+        insights:
+          type:
+          - object
+          - 'null'
+          properties:
+            description_cleansed:
+              type: string
+              description: A cleaned and standardized version of the transaction description.
+            category:
+              enum:
+              - BANK_FEES_AND_CHARGES
+              - CHARITY
+              - EDUCATION
+              - ENTERTAINMENT
+              - GOVERNMENT
+              - GROCERIES
+              - HEALTH_AND_WELLBEING
+              - LOANS_AND_INVESTMENT
+              - RENT_AND_SERVICES
+              - RESTAURANTS_DINING
+              - RETAIL
+              - SALARY_AND_REVENUE
+              - TRANSFER
+              - TRANSPORT
+              - TRAVEL
+              - OTHER
+              type: string
+              description: High-level classification of the transaction
+            category_confidence:
+              type: number
+              description: Confidence of category expressed as a percentage between 0 and 1.
+          description: Value-added insights including transaction categorization, cleansed descriptions, and category confidence
+            scores based on transaction enrichment.
+        balance:
+          description: The account balance after applying the transaction, where available.
+          type: object
+          properties: {}
+        regional_data:
+          description: Region specific data response. Only provided when `verbose=true` in the originating request.
+          anyOf:
+          - $ref: '#/components/schemas/TransactionRegionalData'
+            description: Region specific data response. Only provided when `verbose=true` in the originating request.
+          - type: 'null'
+    TransactionRegionalData:
+      allOf:
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/TransactionSau'
+      - $ref: '#/components/schemas/StandardSau'
+    StandardSau:
+      type: object
+      properties:
+        standard:
+          description: A description of the standard the regional data is returned in formatted as `"{ISO 3 Letter Country
+            Code}.{Standard}.{Version}"`. In the KSA V2 API this will always return as `"SAU.SAMA.V1"`
+          type: string
+          examples:
+          - SAU.SAMA.V1
+    TransactionSau:
+      required:
+      - account_id
+      - transaction_id
+      - transaction_date_time
+      - transaction_type
+      - status
+      - booking_date_time
+      - payment_modes
+      - amount
+      - credit_debit_indicator
+      type: object
+      properties:
+        account_id:
+          format: uuid
+          type: string
+        transaction_id:
+          format: uuid
+          description: Unique identifier for a transaction
+          type: string
+        index:
+          format: int32
+          type: integer
+        transaction_date_time:
+          format: date-time
+          type: string
+        local_time_zone:
+          format: date-time
+          type: string
+        transaction_reference:
+          type: string
+        statement_reference:
+          type: string
+        transaction_type:
+          enum:
+          - POS
+          - E_COMMERCE
+          - ATM
+          - BILL_PAYMENTS
+          - LOCAL_BANK_TRANSFER
+          - SAME_BANK_TRANSFER
+          - INTERNATIONAL_TRANSFER
+          - TELLER
+          - CHEQUE
+          - UNSUPPORTED
+          type: string
+        sub_transaction_type:
+          enum:
+          - PURCHASE
+          - REVERSAL
+          - REFUND
+          - WITHDRAWAL
+          - WITHDRAWAL_REVERSAL
+          - DEPOSIT
+          - DEPOSIT_REVERSAL
+          - MONEY_TRANSFER
+          - NOT_APPLICABLE
+          - UNSUPPORTED
+          type: string
+        terminal_id:
+          type: string
+        flags:
+          description: The flag of a transaction, options are `PAYROLL`, `CASHBACK`, `DIRECT_DEBIT`, `STANDING_ORDER`, `LOAN`,
+            `DIVIDEND`
+          type: array
+          items:
+            type: string
+        payment_modes:
+          enum:
+          - ONLINE
+          - OFFLINE
+          - BATCH
+          - UNSUPPORTED
+          type: string
+        credit_debit_indicator:
+          enum:
+          - CREDIT
+          - DEBIT
+          - UNSUPPORTED
+          type: string
+        status:
+          enum:
+          - BOOKED
+          - PENDING
+          - REJECTED
+          - UNSUPPORTED
+          type: string
+        transaction_mutability:
+          enum:
+          - IMMUTABLE
+          - MUTABLE
+          - UNSUPPORTED
+          type: string
+        booking_date_time:
+          format: date-time
+          type: string
+        value_date_time:
+          format: date-time
+          type: string
+        transaction_information:
+          type: string
+        amount:
+          type: object
+          properties: {}
+        charge_amount:
+          type: object
+          properties: {}
+        charge_amount_vat:
+          type: object
+          properties: {}
+        currency_exchange:
+          type: object
+          properties: {}
+        bank_transaction_code:
+          description: As defined by ISO20022 (https://www.iso20022.org/sites/default/files/2022-05/BTC_Codification_31May2022.xls)
+          type: object
+          properties: {}
+        proprietary_bank_transaction_code:
+          type: object
+          properties: {}
+        balance:
+          type: object
+          properties: {}
+        merchant_details:
+          type: object
+          properties: {}
+        creditor_agent:
+          $ref: '#/components/schemas/AgentIdentifierWithAddressSau'
+        creditor_account:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountIdentifierWithNameSau'
+        debtor_agent:
+          $ref: '#/components/schemas/AgentIdentifierWithAddressSau'
+        debtor_account:
+          $ref: '#/components/schemas/AccountIdentifierWithNameSau'
+        card_instrument:
+          $ref: '#/components/schemas/TransactionCardInstrumentSau'
+        bill_details:
+          $ref: '#/components/schemas/TransactionBillDetailsSau'
+        supplementary_data:
+          type: object
+          additionalProperties:
+            type: string
+          properties: {}
+    TransactionBillDetailsSau:
+      type: object
+      properties:
+        biller_id:
+          type: number
+        bill_number:
+          type: string
+        bill_payment_type:
+          enum:
+          - POST_PAID
+          - ADVANCE_PAYMENT_FOR_ROAMING
+          - RECHARGE
+          - RENEWAL
+          - ROAMING_DEPOSIT
+          - ONE_OFF
+          - RECURRING_PAYMENT
+          - UNSUPPORTED
+          type: string
+    TransactionCardInstrumentSau:
+      required:
+      - instrument_type
+      - card_scheme_name
+      type: object
+      properties:
+        card_scheme_name:
+          enum:
+          - AMERICAN_EXPRESS
+          - MASTER_CARD
+          - VISA
+          - DINERS
+          - MADA
+          - GCC
+          - UPI
+          - UNSUPPORTED
+          type: string
+        instrument_type:
+          enum:
+          - APPLE_PAY
+          - MADA_PAY
+          - CONTACTLESS
+          - CHIP
+          - MAG_STRIPE
+          - OTHER
+          - UNSUPPORTED
+          type: string
+        identification:
+          type: string
+        name:
+          type: string
+    AccountIdentifierWithNameSau:
+      type: object
+      properties:
+        identification_type:
+          description: Indicates the type of identification being provided.
+          enum:
+          - IBAN
+          - MASKED_PAN
+          - ACCOUNT_NUMBER
+          - COMMERCIAL_REGISTRATION_NUMBER
+          - EMAIL
+          - MOBILE_NUMBER
+          - NATIONAL_ID
+          - IQAMA_NUMBER
+          - PASSPORT_NUMBER
+          - UNSUPPORTED
+          type: string
+        identification:
+          description: Returns a value based on the `identification_type`.
+          type: string
+        name:
+          description: 'The account name is the name or names of the account owner(s) represented at an account level. Note:
+            The account name is not the product name or the nickname of the account.'
+          type: string
+    AgentIdentifierWithAddressSau:
+      type: object
+      properties:
+        identification_type:
+          enum:
+          - BICFI
+          - OTHER
+          - UNSUPPORTED
+          type: string
+        identification:
+          type: string
+        name:
+          type: string
+        postal_address:
+          $ref: '#/components/schemas/AddressLongSau'
+    AddressLongSau:
+      type: object
+      properties:
+        address_type:
+          enum:
+          - BUSINESS
+          - DELIVERY_TO
+          - MAIL_TO
+          - PO_BOX
+          - RESIDENTIAL
+          - CORRESPONDENCE
+          - STATEMENT
+          - UNSUPPORTED
+          type: string
+        short_address:
+          type: string
+        building_number:
+          type: string
+        unit_number:
+          type: string
+        street_name:
+          type: string
+        secondary_number:
+          type: string
+        district:
+          type: string
+        postal_code:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+    TransactionMerchantDetailsSau:
+      type: object
+      properties:
+        merchant_id:
+          format: int32
+          type: integer
+        merchant_name:
+          type: string
+        merchant_category_code:
+          type: string
+    TransactionBalanceSau:
+      required:
+      - credit_debit_indicator
+      - amount
+      - type
+      type: object
+      properties:
+        credit_debit_indicator:
+          enum:
+          - CREDIT
+          - DEBIT
+          - UNSUPPORTED
+          type: string
+        type:
+          enum:
+          - CLOSING_AVAILABLE
+          - CLOSING_BOOKED
+          - CLOSING_CLEARED
+          - EXPECTED
+          - FORWARD_AVAILABLE
+          - INFORMATION
+          - INTERIM_AVAILABLE
+          - INTERIM_BOOKED
+          - INTERIM_CLEARED
+          - OPENING_AVAILABLE
+          - OPENING_BOOKED
+          - OPENING_CLEARED
+          - PREVIOUSLY_CLOSED_BOOKED
+          - UNSUPPORTED
+          type: string
+        amount:
+          $ref: '#/components/schemas/CurrencyAmountSau'
+    CurrencyAmountSau:
+      required:
+      - amount
+      - currency
+      type: object
+      properties:
+        amount:
+          type: number
+        currency:
+          type: string
+    TransactionProprietaryBankTransactionCodeStructureSau:
+      required:
+      - code
+      type: object
+      properties:
+        code:
+          type: string
+        issuer:
+          type: string
+    TransactionBankTransactionCodeSau:
+      type: object
+      properties:
+        domain:
+          type: string
+        domain_code:
+          type: string
+        family:
+          type: string
+        family_code:
+          type: string
+        sub_family:
+          type: string
+        sub_family_code:
+          type: string
+    CurrencyExchangeSau:
+      required:
+      - instructed_amount
+      - source_currency
+      - target_currency
+      - unit_currency
+      - exchange_rate
+      type: object
+      properties:
+        source_currency:
+          type: string
+        target_currency:
+          type: string
+        unit_currency:
+          type: string
+        exchange_rate:
+          type: number
+        contract_identification:
+          type: string
+        quotation_date:
+          format: date-time
+          type: string
+        instructed_amount:
+          $ref: '#/components/schemas/CurrencyAmountSau'
+    ChargeCurrencyAmountSau:
+      required:
+      - amount
+      - currency
+      type: object
+      properties:
+        amount:
+          type: number
+        currency:
+          type: string
+        charge_included:
+          type: boolean
+    CustomerObject:
+      title: Customer
+      description: ''
+      type: object
+      properties:
+        customer_id:
+          description: Unique identifier for the customer
+          type: string
+          examples:
+          - 34c11087-b6bc-429b-9a91-725941b1a547
+        app_user_id:
+          description: An assigned user id value from your backend. This has a uniqueness constraint.
+          type: string
+          examples:
+          - sandbox_user_1
+      examples:
+      - customer_id: 34c11087-b6bc-429b-9a91-725941b1a547
+        app_user_id: sandbox_user_1
+    TransactionBalance:
+      required:
+      - credit_debit_indicator
+      - amount
+      - type
+      type: object
+      properties:
+        type:
+          enum:
+          - CLOSING_AVAILABLE
+          - CLOSING_BOOKED
+          - CLOSING_CLEARED
+          - EXPECTED
+          - FORWARD_AVAILABLE
+          - INFORMATION
+          - INTERIM_AVAILABLE
+          - INTERIM_BOOKED
+          - INTERIM_CLEARED
+          - OPENING_AVAILABLE
+          - OPENING_BOOKED
+          - OPENING_CLEARED
+          - PREVIOUSLY_CLOSED_BOOKED
+          - UNSUPPORTED
+          type: string
+        credit_debit_indicator:
+          enum:
+          - CREDIT
+          - DEBIT
+          - UNSUPPORTED
+          type: string
+        amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+    CurrencyAmount:
+      type: object
+      properties:
+        amount:
+          format: float
+          description: The value in the denominated currency.
+          type: number
+        currency:
+          description: ISO 3 letter code for the currency the amount is returned in.
+          type: string
+    AmountObject:
+      type: object
+      properties:
+        currency:
+          type: string
+          description: The currency in which the amount is represented.
+        amount:
+          type: number
+          description: The decimal amount for the transaction
+      description: The total amount for the category.
+    AgentIdentifier:
+      type: object
+      properties:
+        scheme_name:
+          type: string
+          description: The name of the identification scheme for the Bank
+          enum:
+          - BICFI
+          - OTHER
+          - UNSUPPORTED
+          examples:
+          - BICFI
+        identification:
+          type: string
+          description: Unique and unambiguous identification of the Bank
+    AttachmentSau:
+      type: object
+      properties:
+        desc:
+          type: string
+        content_type:
+          type: string
+        content:
+          type: string
+        txn:
+          type: string
+    BeneficiaryCreditorAgent:
+      required:
+      - identification
+      - scheme_name
+      type: object
+      properties:
+        scheme_name:
+          enum:
+          - BICFI
+          - OTHER
+          - UNSUPPORTED
+          type: string
+        identification:
+          type: string
+        name:
+          type: string
+        postal_address:
+          $ref: '#/components/schemas/PostalAddress'
+    PostalAddress:
+      type: object
+      properties:
+        address_line:
+          type: string
+        address_type:
+          enum:
+          - BUSINESS
+          - CORRESPONDENCE
+          - DELIVERY_TO
+          - MAIL_TO
+          - PO_BOX
+          - POSTAL
+          - RESIDENTIAL
+          - STATEMENT
+          - UNSUPPORTED
+          type: string
+        building_number:
+          type: string
+        country:
+          type: string
+        department:
+          type: string
+        post_code:
+          type: string
+        street_name:
+          type: string
+        sub_department:
+          type: string
+        town_name:
+          type: string
+        country_sub_division:
+          type: string
+    BankResponse:
+      title: BankResponse
+      description: ''
+      type: object
+      properties:
+        identifier:
+          description: The unique identifier for the bank.
+          type: string
+        name:
+          description: The user-friendly name of the bank.
+          type: string
+        arabic_name:
+          description: The user-friendly name of the bank in Arabic.
+          type: string
+        logo:
+          description: A black logo for the bank.
+          type: string
+        logo_alt:
+          description: A white logo for the bank
+          type: string
+        main_color:
+          description: The hex code for the main brand colour for the bank.
+          type: string
+        background_color:
+          description: The hex code for the secondary brand colour for the bank.
+          type: string
+        theme:
+          description: '`dark` indicates that white text should be overlayed over the `main_color`, `light` indicates that
+            black text should be overlayed over the `main_color`.'
+          type: string
+        country_code:
+          description: The 3 letter ISO for the country the bank is located in.
+          type: string
+        active:
+          description: Whether the Bank is currently operational.
+          type: boolean
+        traits:
+          description: An array of traits that are used internally to determine the type of bank connection.
+          type: array
+          items:
+            type: string
+        supported_account_types:
+          deprecated: true
+          description: 'Indicates the account types Lean supports for this bank. Accepted values are: `CURRENT`, `SAVINGS`,
+            and `CREDIT`.'
+          enum:
+          - CURRENT
+          - SAVINGS
+          - CREDIT
+          type: string
+        supported_account_sub_types:
+          description: Indicates the account types Lean supports for this bank.
+          type: string
+        bank_type:
+          deprecated: true
+          description: '[DEPRECATED] If the bank identifier corresponds to a retail or SME bank.'
+          enum:
+          - RETAIL
+          - SME
+          type: string
+        account_type:
+          description: If the bank identifier corresponds to a business or personal bank.
+          enum:
+          - BUSINESS
+          - PERSONAL
+          type: string
+        availability:
+          description: 'Whether the Bank is currently available for use with the Data API. Changes to this status trigger
+            `banks.availability.updated` webhooks.
+
+
+
+            **Active** `object`
+
+
+            Whether Lean has enabled the or disabled the Data functionality. When this is false, Lean has taken the bank offline
+            due to stability, maintenance or regulatory reasons.
+
+
+            ---
+
+
+            **Enabled** `object`
+
+
+            Whether the bank has been enabled in the application dashboard or not. If you want to hide a bank or disable it
+            from use for any reason - you can log in to the [Application Dashboard](https://dev.leantech.me) to enable and
+            disable visibility and functionality of a bank on your platform.'
+          type: object
+          properties:
+            active:
+              type: object
+              properties:
+                payments:
+                  type: boolean
+                data:
+                  type: boolean
+            enabled:
+              type: object
+              properties:
+                payments:
+                  type: boolean
+                data:
+                  type: boolean
+    Frequency:
+      type: object
+      properties:
+        frequency_type:
+          enum:
+          - NOT_KNOWN
+          - EVERY_DAY
+          - EVERY_WORKING_DAY
+          - INTERVAL_DAY
+          - INTERVAL_WEEK_DAY
+          - WEEK_IN_MONTH_DAY
+          - INTERVAL_MONTH_DAY
+          - QUARTER_DAY
+          - OTHER
+          - UNSUPPORTED
+          type: string
+        interval:
+          type: string
+    IssuerSau:
+      type: object
+      properties:
+        name:
+          type: string
+        address:
+          $ref: '#/components/schemas/AddressShortSau'
+        country_code:
+          type: string
+        jurisdiction:
+          type: string
+    AddressShortSau:
+      type: object
+      properties:
+        formatted:
+          type: string
+        street_address:
+          type: string
+        locality:
+          type: string
+        region:
+          type: string
+        postal_code:
+          type: string
+        country:
+          type: string
+    PlaceOfBirthSau:
+      type: object
+      properties:
+        region:
+          type: string
+        locality:
+          type: string
+        country:
+          type: string
+    AccountsResponse:
+      allOf:
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/AccountsData'
+      - $ref: '#/components/schemas/DataResponse'
+    DataResponse:
+      type: object
+      properties:
+        status:
+          description: The status of the results. For async requests, initially returns PENDING.
+          enum:
+          - OK
+          - FAILED
+          - PENDING
+          - CONSENT_EXPIRED
+          type: string
+        results_id:
+          type: string
+          description: The ID for this result, this is used when retrieving results from the `/results` endpoint.
+          format: uuid
+        message:
+          description: A message describing the status of the request.
+          type: string
+        meta:
+          type:
+          - string
+          - 'null'
+          description: Optional metadata associated with the result.
+        timestamp:
+          format: date-time
+          description: The timestamp with timezone offset indicating when the response was generated.
+          type: string
+        status_detail:
+          description: Further detail on the error if status=FAILED
+          $ref: '#/components/schemas/StatusDetailObject'
+      required:
+      - status
+      - results_id
+      - message
+      - meta
+      - timestamp
+      - status_detail
+    StatusDetailObject:
+      description: Status Details
+      type: object
+      properties:
+        granular_status_code:
+          description: Detailed error code
+          type: string
+        status_additional_info:
+          description: Further detail on the encountered error
+          type: string
+    AccountsData:
+      allOf:
+      - type: object
+        properties: {}
+      - type: object
+        properties:
+          accounts:
+            description: An array of accounts associated with the Entity
+            type: array
+            items:
+              $ref: '#/components/schemas/Account'
+    Account:
+      type: object
+      properties:
+        account_id:
+          description: The unique identifier for the account. Provided as a UUID.
+          type: string
+        status:
+          description: The current status of the account. Indicating whether it is in active use or not.
+          enum:
+          - DELETED
+          - DISABLED
+          - ENABLED
+          - PENDING
+          - PROFORMA
+          - UNSUPPORTED
+          type: string
+        status_update_date_time:
+          type:
+          - string
+          - 'null'
+          description: The datetime that the status was last updated.
+          format: date-time
+        currency:
+          description: The ISO 3 letter currency code that the account stores value in.
+          type: string
+        account_type:
+          description: 'Indicates whether the account is a retail consumer account or a business account. '
+          enum:
+          - PERSONAL
+          - BUSINESS
+          - UNSUPPORTED
+          type: string
+        account_sub_type:
+          type: string
+          description: Indicates the type of account.
+          enum:
+          - CURRENT
+          - CREDIT
+          - SAVINGS
+          - CHARGE_CARD
+          - EMONEY
+          - LOAN
+          - MORTGAGE
+          - PREPAID
+          - CALL
+          - UNSUPPORTED
+        nickname:
+          type:
+          - string
+          - 'null'
+          description: The name for this account as set by the owner of the account. This name is known to the user.
+        description:
+          type:
+          - string
+          - 'null'
+          description: Specifies the description of the account sub-type.
+        opening_date:
+          type:
+          - string
+          - 'null'
+          description: The date and time the account was opened.
+          format: date-time
+          examples:
+          - 2013-03-15 22:00:00.000 +0400
+        maturity_date:
+          type:
+          - string
+          - 'null'
+          description: Maturity date of the account.
+          format: date-time
+        account:
+          type: array
+          items:
+            type: object
+            properties: {}
+          description: Identification for the account assigned by the Bank based on the Account Scheme Name
+        servicer:
+          $ref: '#/components/schemas/AgentIdentifier'
+          description: Party that manages the account on behalf of the account owner, that is manages the registration and
+            booking of entries on the account, calculates balances on the account and provides information about the account.
+        regional_data:
+          description: Region specific data response. Only provided when `verbose=true` in the originating request.
+          $ref: '#/components/schemas/AccountRegionalData'
+    AccountRegionalData:
+      allOf:
+      - type: object
+        properties:
+          data:
+            type: object
+            properties: {}
+      - $ref: '#/components/schemas/StandardSau'
+    AccountSau:
+      type: object
+      properties:
+        account_id:
+          format: uuid
+          description: The unique identifier for the account. Provided as a UUID.
+          type: string
+        status:
+          description: The current status of the account indicating whether it is in active use or in some other state.
+          enum:
+          - ACTIVE
+          - NOT_ACTIVE
+          - DORMANT
+          - UNCLAIMED
+          - DECEASED
+          - SUSPENDED
+          - CLOSED
+          - UNSUPPORTED
+          type: string
+        status_update_date_time:
+          type:
+          - string
+          - 'null'
+          description: The datetime that the status was last updated.
+          format: date-time
+        currency:
+          description: The 3 Letter ISO code denominating the currency that the account stores value in.
+          type: string
+        account_type:
+          description: Indicates whether the account is a retail consumer account or a corporate account.
+          enum:
+          - RETAIL
+          - CORPORATE
+          - UNSUPPORTED
+          type: string
+        account_sub_type:
+          description: Indicates the type of account.
+          enum:
+          - CHARGE_CARD
+          - CREDIT_CARD
+          - CURRENT_ACCOUNT
+          - E_MONEY
+          - PRE_PAID_CARD
+          - SAVINGS
+          - OTHER
+          - UNSUPPORTED
+          type: string
+        description:
+          type:
+          - string
+          - 'null'
+          description: Specifies the description of the account sub-type.
+        nickname:
+          type:
+          - string
+          - 'null'
+          description: The nickname of the account, assigned by the owner of the account to provide an additional and easier
+            means of identification of the account.
+        opening_date:
+          type:
+          - string
+          - 'null'
+          description: The datetime that the account was opened.
+          format: date-time
+        maturity_date:
+          type:
+          - string
+          - 'null'
+          description: Maturity date of the account.
+          format: date-time
+        servicer:
+          $ref: '#/components/schemas/AgentIdentifierSau'
+          description: Details on the organization that manages the account on behalf of the account owner.
+        account_identifiers:
+          description: An array of identifiers for the account.
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountIdentifierWithNameRequiredSau'
+        account_holder_name:
+          type:
+          - string
+          - 'null'
+          description: Name of the account holder
+        account_holder_short_name:
+          type:
+          - string
+          - 'null'
+          description: Short form of the name of the account holder
+    AccountIdentifierWithNameRequiredSau:
+      type: object
+      properties:
+        identification_type:
+          description: Indicates the type of identification being provided.
+          enum:
+          - IBAN
+          - MASKED_PAN
+          - ACCOUNT_NUMBER
+          - COMMERCIAL_REGISTRATION_NUMBER
+          - EMAIL
+          - MOBILE_NUMBER
+          - NATIONAL_ID
+          - IQAMA_NUMBER
+          - PASSPORT_NUMBER
+          - UNSUPPORTED
+          type: string
+        identification:
+          description: Returns a value based on the `identification_type`.
+          type: string
+        name:
+          type:
+          - string
+          - 'null'
+          description: 'The account name is the name or names of the account owner(s) represented at an account level. Note:
+            The account name is not the product name or the nickname of the account.'
+    AgentIdentifierSau:
+      type: object
+      properties:
+        identification_type:
+          description: 'The type of identifier being provided.
+
+
+            | Value | Description |
+
+            |-|-|
+
+            | BICFI | The BIC/SWIFT code for the Financial Institution |
+
+            | OTHER | A combination of country code and 4 letter identifier for a financial institution |'
+          enum:
+          - BICFI
+          - OTHER
+          - UNSUPPORTED
+          type: string
+        identification:
+          description: 'Provides either the BIC/SWIFT code for the Financial Institution or a value from a coded list.
+
+
+            | Identifier | Institution |
+
+            |-|-|
+
+            | SAINMA | Alinma Bank |
+
+            | SARJHI | Al Rajhi Bank |
+
+            | SAARNB | Arab National Bank |
+
+            | SAALBI | Bank Al Bilad |
+
+            | SABJAZ | Bank Al-Jazira |
+
+            | SABMUS | Bank Muscat |
+
+            | SABSFR | Banque Saudi Fransi |
+
+            | SABNPA | BNP Paribas Saudi Arabia |
+
+            | SACRES | Credit Suisse Saudi Arabia |
+
+            | SADEUT | Deutsche Bank AG, Riyadh Branch |
+
+            | SAEBIL | Emirates NBD PJSC |
+
+            | SAGULF | Gulf International Bank B.S.C., Riyadh |
+
+            | SAICBK | Industrial and Commercial Bank of China, Riyadh Branch |
+
+            | SAISLD | Islamic Development Bank |
+
+            | SAJPMG | J.P. Morgan Saudi Arabia Ltd. |
+
+            | SACHAS | J.P. Morgan Chase Bank, N.A Riyadh |
+
+            | SAMLSA | Merill Lynch Kingdom of Saudi Arabia |
+
+            | SANBOB | National Bank of Bahrain |
+
+            | SANBOK | National Bank of Kuwait |
+
+            | SANBPA | National Bank of Pakistan |
+
+            | SANCBK | Saudi National Bank |
+
+            | SARIBL | Riyad Bank |
+
+            | SASAMA | Saudi Arabian Monetary Authority |
+
+            | SASABB | Saudi British Bank |
+
+            | SASIBC | Saudi Investment Bank |
+
+            | SASCBL | Standard Chartered Capital (Saudi Arabia) |
+
+            | SATCZB | T.C. Ziraat Bankasi A.S. |
+
+            | SASTCP | STC Pay |
+
+            | SANEOL | Neoleap |'
+          type: string
+    ResultsResponse:
+      anyOf:
+      - $ref: '#/components/schemas/AccountsResponse'
+      - type: object
+        properties: {}
+      - type: object
+        properties: {}
+      - type: object
+        properties: {}
+      - type: object
+        properties: {}
+      - type: object
+        properties: {}
+      - type: object
+        properties: {}
+      - type: object
+        properties: {}
+      - $ref: '#/components/schemas/DirectDebitsResponse'
+      title: Results Response
+      description: ''
+    DirectDebitsResponse:
+      allOf:
+      - type: object
+        properties:
+          data:
+            type: object
+            properties: {}
+      - $ref: '#/components/schemas/DataResponse'
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+servers:
+- url: https://sandbox.sa.leantech.me
+  description: Sandbox
+- url: https://api2.sa.leantech.me
+  description: Production / Pre-Live
+security:
+- bearer: []

@@ -1,0 +1,51 @@
+generated: '2026-07-20'
+method: searched
+source: https://github.com/leantechnologies
+notes: >
+  Lean's client surface is the LinkSDK, distributed per mobile/native platform from
+  the leantechnologies GitHub org rather than as public npm/PyPI packages. Server-side
+  integration is REST + a public Postman collection. Distribution repos below are
+  first-party.
+packages:
+  - language: swift
+    registry: github
+    name: link-sdk-ios-distribution
+    url: https://github.com/leantechnologies/link-sdk-ios-distribution
+    install: Swift Package Manager / distribution repo
+    official: true
+    kind: sdk
+  - language: typescript
+    registry: github
+    name: link-sdk-react-native
+    url: https://github.com/leantechnologies/link-sdk-react-native
+    install: React Native LinkSDK
+    official: true
+    kind: sdk
+  - language: dart
+    registry: github
+    name: link-sdk-flutter
+    url: https://github.com/leantechnologies/link-sdk-flutter
+    install: Flutter LinkSDK
+    official: true
+    kind: sdk
+  - language: kotlin
+    registry: github
+    name: lean-android
+    url: https://github.com/leantechnologies/lean-android-test-app
+    install: Android LinkSDK
+    official: true
+    kind: sdk
+  - language: java
+    registry: github
+    name: integration-snippets
+    url: https://github.com/leantechnologies/integration-snippets
+    install: git clone (integration examples)
+    official: true
+    kind: examples
+  - language: http
+    registry: github
+    name: lean-postman
+    url: https://github.com/leantechnologies/lean-postman
+    install: Import the KSA / UAE Postman collections
+    official: true
+    kind: postman

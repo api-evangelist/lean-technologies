@@ -1,0 +1,90 @@
+generated: '2026-07-20'
+method: derived
+source: openapi/ (34 specs) + https://docs.leantech.me/reference
+notes: >
+  Entity-relationship graph derived from Lean's Open Finance object model and the
+  id-reference fields across the OpenAPI operations. app_user_id maps a Lean Customer
+  1:1 to a user in the integrator's system; an Entity is created per bank connection.
+entities:
+  - name: Customer
+    id_field: customer_id
+    external_key: app_user_id
+    relationships:
+      - {type: has_many, target: Entity, via: customer_id}
+      - {type: has_many, target: Consent, via: customer_id}
+      - {type: has_many, target: PaymentSource, via: customer_id}
+  - name: Entity
+    id_field: entity_id
+    note: Created on LinkSDK .connect() with data permissions; one per connected bank.
+    relationships:
+      - {type: belongs_to, target: Customer, via: customer_id}
+      - {type: has_many, target: Account, via: entity_id}
+  - name: Account
+    id_field: account_id
+    relationships:
+      - {type: belongs_to, target: Entity, via: entity_id}
+      - {type: has_many, target: Balance, via: account_id}
+      - {type: has_many, target: Transaction, via: account_id}
+      - {type: has_many, target: Beneficiary, via: account_id}
+      - {type: has_many, target: Identity, via: account_id}
+  - name: Balance
+    relationships:
+      - {type: belongs_to, target: Account, via: account_id}
+  - name: Transaction
+    relationships:
+      - {type: belongs_to, target: Account, via: account_id}
+  - name: Identity
+    relationships:
+      - {type: belongs_to, target: Account, via: account_id}
+  - name: Beneficiary
+    relationships:
+      - {type: belongs_to, target: Account, via: account_id}
+  - name: PaymentIntent
+    id_field: payment_intent_id
+    note: Contract between backend and Lean certifying an amount+currency to be paid.
+    relationships:
+      - {type: has_one, target: PaymentDestination, via: payment_destination_id}
+      - {type: has_many, target: Payment, via: payment_intent_id}
+  - name: PaymentSource
+    id_field: payment_source_id
+    note: Created on LinkSDK .connect() with payments permission.
+    relationships:
+      - {type: belongs_to, target: Customer, via: customer_id}
+  - name: PaymentDestination
+    id_field: payment_destination_id
+    relationships:
+      - {type: belongs_to, target: Customer, via: customer_id}
+  - name: Consent
+    id_field: consent_id
+    note: Account-on-File consent; authorised beneficiary + limits for recurring payment initiation.
+    relationships:
+      - {type: belongs_to, target: Customer, via: customer_id}
+      - {type: has_many, target: Schedule, via: consent_id}
+  - name: Payment
+    id_field: payment_id
+    relationships:
+      - {type: belongs_to, target: PaymentIntent, via: payment_intent_id}
+  - name: Payout
+    id_field: payout_id
+    relationships:
+      - {type: has_one, target: PaymentDestination, via: payment_destination_id}
+  - name: Refund
+    id_field: refund_id
+    relationships:
+      - {type: belongs_to, target: Payment, via: payment_id}
+  - name: Schedule
+    id_field: schedule_id
+    relationships:
+      - {type: belongs_to, target: Consent, via: consent_id}
+      - {type: has_many, target: ScheduledPayment, via: schedule_id}
+  - name: ScheduledPayment
+    relationships:
+      - {type: belongs_to, target: Schedule, via: schedule_id}
+  - name: PaymentLink
+    id_field: payment_link_id
+    relationships:
+      - {type: has_many, target: PaymentLinkUsage, via: payment_link_id}
+  - name: PaymentLinkUsage
+    relationships:
+      - {type: belongs_to, target: PaymentLink, via: payment_link_id}
+      - {type: has_one, target: Payment, via: payment_id}

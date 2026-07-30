@@ -1,0 +1,3890 @@
+openapi: 3.1.0
+info:
+  title: Enrichment
+  description: ''
+  version: 1.0.0
+tags:
+- name: Income
+- name: Cashflows
+- name: Balances
+- name: Expenses
+- name: Liabilities
+paths:
+  /insights/v2/income:
+    post:
+      summary: Get Income
+      deprecated: false
+      description: '`Get Income` endpoint provides essential income verification data for credit decisioning and underwriting
+        processes. This API analyzes transaction history to produce reliable income insights for a specific borrower identified
+        by their `entity_id`.
+
+
+        The API returns comprehensive income information including categorization by source (salary vs. non-salary), monthly
+        income patterns, and statistical analysis that helps lenders accurately assess an applicant''s ability to pay. These
+        insights can be used for:
+
+
+        - Verifying user stated income on loan applications
+
+        - Calculating debt-to-income ratios with precision
+
+        - Identifying income stability and irregularities
+
+        - Supporting automated credit decisioning systems
+
+        - Reducing manual verification workloads in underwriting
+
+
+        Use this endpoint to streamline credit underwriting workflows, reduce time-to-decision, and make more informed lending
+        decisions based on verified financial data.
+
+
+        > **"Only supported for retail accounts"**
+
+        > '
+      operationId: getIncome
+      tags:
+      - Income
+      parameters:
+      - name: async
+        in: query
+        description: 'When `true` the API will only return a `results_id` which can be fetched from the `/results` endpoint
+          when ready.
+
+
+          Defaults to "false"'
+        required: false
+        example: 'false'
+        schema:
+          default: false
+          type: boolean
+      - name: lean-app-token
+        in: header
+        description: 'How Lean identifies your application. '
+        required: true
+        example: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IncomeRequest'
+            example:
+              entity_id: e694a665-a61f-402e-b0c0-a6fcec160bdc
+              start_date: '2023-08-05'
+              estimated_monthly_income: 18000
+              income_type: ALL
+              trend: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  insights:
+                    $ref: '#/components/schemas/IncomeInsights'
+                  type:
+                    type: string
+                    description: The endpoint the original request was made to
+                  status:
+                    description: The status of the results. For async requests, initially returns PENDING.
+                    enum:
+                    - OK
+                    - FAILED
+                    - PENDING
+                    - CONSENT_EXPIRED
+                    type: string
+                  results_id:
+                    type: string
+                    description: The ID for this result, this is used when retrieving results from the `/results` endpoint.
+                    format: uuid
+                  message:
+                    description: A message describing the status of the request.
+                    type: string
+                  meta:
+                    type:
+                    - string
+                    - 'null'
+                    description: Optional metadata associated with the result.
+                  timestamp:
+                    format: date-time
+                    description: The timestamp with timezone offset indicating when the response was generated.
+                    type: string
+                  status_detail:
+                    description: Further detail on the error if status=FAILED
+                    $ref: '#/components/schemas/StatusDetailObject'
+                required:
+                - status
+                - results_id
+                - message
+                - meta
+                - timestamp
+                - status_detail
+              example:
+                insights:
+                  salary:
+                    currency: SAR
+                    total:
+                      amount: 180000
+                      count: 6
+                      last_date_time: '2025-02-25T00:00:00Z'
+                      first_date_time: '2024-09-25T00:00:00Z'
+                      average_monthly_amount: 30000
+                      average_monthly_count: 1
+                      maximum_monthly_amount:
+                        month: 9
+                        year: 2024
+                        amount: 30000
+                      minimum_monthly_amount:
+                        month: 2
+                        year: 2025
+                        amount: 30000
+                    monthly_totals:
+                    - month: 3
+                      year: 2025
+                      amount: 0
+                      count: 0
+                      is_month_complete: false
+                    - month: 2
+                      year: 2025
+                      amount: 30000
+                      count: 1
+                      is_month_complete: true
+                    - month: 1
+                      year: 2025
+                      amount: 30000
+                      count: 1
+                      is_month_complete: true
+                    - month: 12
+                      year: 2024
+                      amount: 30000
+                      count: 1
+                      is_month_complete: true
+                    - month: 11
+                      year: 2024
+                      amount: 30000
+                      count: 1
+                      is_month_complete: true
+                    - month: 10
+                      year: 2024
+                      amount: 30000
+                      count: 1
+                      is_month_complete: true
+                    - month: 9
+                      year: 2024
+                      amount: 30000
+                      count: 1
+                      is_month_complete: false
+                    transactions:
+                    - account_id: 00000000-0000-0000-0000-000000000001
+                      transaction_id: TXN001
+                      transaction_information: 'Income: Incoming Local transfer /REWARDS/ Company A Salaries'
+                      booking_date_time: '2025-01-02T00:00:00Z'
+                      amount: 30000
+                      income_source:
+                        type: EMPLOYMENT
+                        name: Company A
+                    - account_id: 00000000-0000-0000-0000-000000000001
+                      transaction_id: TXN002
+                      transaction_information: 'Income: PAYROLL PAYMENT Company A'
+                      booking_date_time: '2025-01-23T00:00:00Z'
+                      amount: 30000
+                      income_source:
+                        type: EMPLOYMENT
+                        name: Company A
+                    income_factors:
+                      periods:
+                      - period: P3M
+                        income_variation: 0
+                        average_income:
+                          currency: SAR
+                          amount: 30000
+                      - period: P6M
+                        income_variation: 0
+                        average_income:
+                          currency: SAR
+                          amount: 30000
+                      - period: P9M
+                        income_variation: 0
+                        average_income:
+                          currency: SAR
+                          amount: 30000
+                      - period: P12M
+                        income_variation: 0
+                        average_income:
+                          currency: SAR
+                          amount: 30000
+                      delta_min_max: 3649
+                      average_monthly_income_change: -0.17
+                  non_salary:
+                    currency: SAR
+                    total:
+                      amount: 60000
+                      count: 3
+                      last_date_time: '2025-02-01T00:00:00Z'
+                      first_date_time: '2024-12-01T00:00:00Z'
+                      average_monthly_amount: 20000
+                      average_monthly_count: 1
+                      maximum_monthly_amount:
+                        month: 12
+                        year: 2024
+                        amount: 20000
+                      minimum_monthly_amount:
+                        month: 2
+                        year: 2025
+                        amount: 20000
+                    monthly_totals:
+                    - month: 3
+                      year: 2025
+                      amount: 0
+                      count: 0
+                      is_month_complete: false
+                    - month: 2
+                      year: 2025
+                      amount: 20000
+                      count: 1
+                      is_month_complete: true
+                    - month: 1
+                      year: 2025
+                      amount: 20000
+                      count: 1
+                      is_month_complete: true
+                    - month: 12
+                      year: 2024
+                      amount: 20000
+                      count: 1
+                      is_month_complete: true
+                    transactions:
+                    - account_id: 00000000-0000-0000-0000-000000000001
+                      transaction_id: TXN003
+                      transaction_information: Real Estate Development Fund Payment
+                      booking_date_time: '2025-02-01T00:00:00Z'
+                      amount: 20000
+                      income_source:
+                        type: HOUSING_BENEFIT
+                        name: Real Estate Development Fund
+                    income_factors:
+                      periods:
+                      - period: P3M
+                        income_variation: 0
+                        average_income:
+                          currency: SAR
+                          amount: 20000
+                      - period: P6M
+                        income_variation: 0
+                        average_income:
+                          currency: SAR
+                          amount: 20000
+                      - period: P9M
+                        income_variation: 0
+                        average_income:
+                          currency: SAR
+                          amount: 20000
+                      - period: P12M
+                        income_variation: 0
+                        average_income:
+                          currency: SAR
+                          amount: 20000
+                      delta_min_max: 0
+                      average_monthly_income_change: -0.33
+                type: income
+                status: OK
+                results_id: 00000000-0000-0000-0000-000000000002
+                message: Data successfully retrieved
+                meta: null
+                timestamp: '2025-03-25T05:34:28.506132416Z'
+                status_detail: null
+          headers: {}
+      security:
+      - bearer: []
+  /insights/v2/income/employment?async=true:
+    get:
+      summary: Get Employment
+      deprecated: false
+      description: 'Provides insights into employment verification and salary consistency based on bank account, including
+        legal employer name in Arabic and English and salary variance details. (only supported for retail accounts).
+
+
+        This API is asynchronous, please read [this guide](https://docs.leantech.me/v2.0-KSA/docs/handling-asynchronous-requests)
+        for further information on how to fetch the results.
+
+
+        > **"Only supported for retail accounts"**
+
+        > '
+      operationId: getEmployment
+      tags:
+      - Income
+      parameters:
+      - name: entity_id
+        in: query
+        description: The `entity_id` you are querying for. The entity needs to have permissions `accounts` and `transactions`.
+        required: true
+        example: a2fca65a-8c9a-4623-a84b-b0b08403669d
+        schema:
+          type: string
+          format: uuid
+      - name: start_date
+        in: query
+        description: The start date in UTC (in the format YYYY-MM-DD) you want to query transactions for.
+        required: true
+        example: '2023-05-01'
+        schema:
+          type: string
+          format: date
+      - name: async
+        in: query
+        description: 'When `true` the API will only return a `results_id` which can be fetched from the `/results` endpoint
+          when ready.
+
+
+          Defaults to true if not provided. Synchronous requests (false) are not supported and will return a 501 error.'
+        required: false
+        example: 'true'
+        schema:
+          type: boolean
+          default: true
+      - name: lean-app-token
+        in: header
+        description: 'How Lean identifies your application. '
+        required: true
+        example: 34c3bb0f-1e1a-4c94-9c4d-057c90631b72
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    description: The status of the results. For async requests, initially returns PENDING.
+                    enum:
+                    - OK
+                    - FAILED
+                    - PENDING
+                    - CONSENT_EXPIRED
+                    type: string
+                  results_id:
+                    type: string
+                    description: The ID for this result, this is used when retrieving results from the `/results` endpoint.
+                    format: uuid
+                  message:
+                    description: A message describing the status of the request.
+                    type: string
+                  meta:
+                    type:
+                    - string
+                    - 'null'
+                    description: Optional metadata associated with the result.
+                  timestamp:
+                    format: date-time
+                    description: The timestamp with timezone offset indicating when the response was generated.
+                    type: string
+                  status_detail:
+                    description: Further detail on the error if status=FAILED
+                    $ref: '#/components/schemas/StatusDetailObject'
+                  insights:
+                    type:
+                    - object
+                    - 'null'
+                    description: The employment insights data.
+                    properties:
+                      employmentDetails:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/employmentDetailsObject'
+                        description: Array of employment details for each identified employer
+                    required:
+                    - employmentDetails
+                  type:
+                    type: string
+                    enum:
+                    - EMPLOYMENT
+                    description: The type of insights being returned.
+                required:
+                - type
+                - status
+                - results_id
+                - message
+                - meta
+                - timestamp
+                - status_detail
+                examples:
+                - status: OK
+                  results_id: 550e8400-e29b-41d4-a716-446655440000
+                  message: Data successfully retrieved
+                  timestamp: '2023-04-15T14:30:00Z'
+                  type: EMPLOYMENT
+                  insights:
+                    employmentDetails:
+                    - bankEmployerName: ACME Corporation
+                      matchedReferenceEmployer:
+                        name:
+                          en: ACME Corporation Ltd.
+                          ar: شركة أكمي المحدودة
+                        crNumber: 123456789
+                      salaryConsistent: true
+                      salaryDateVariance: 2.5
+                      salaryAmountVariance: 0
+                      firstSalaryDate: '2022-01-15T00:00:00Z'
+                    - bankEmployerName: XYZ Company
+                      matchedReferenceEmployer:
+                        name:
+                          en: XYZ International
+                          ar: شركة إكس واي زد الدولية
+                        crNumber: 987654321
+                      salaryConsistent: false
+                      salaryDateVariance: 8.2
+                      salaryAmountVariance: 1500.5
+                      firstSalaryDate: '2021-06-30T00:00:00Z'
+                - status: PENDING
+                  results_id: 550e8400-e29b-41d4-a716-446655440001
+                  message: Please wait for a webhook or try again later.
+                  timestamp: '2023-04-15T14:30:00Z'
+                  type: EMPLOYMENT
+              example: "{\n    \"status\": \"OK\",\n    \"results_id\": \"31f51bd1-b689-444b-8ba5-b1ab63e99d8a\",\n    \"\
+                message\": \"Data successfully retrieved\",\n    \"meta\": null,\n    \"timestamp\": \"2024-11-08T05:55:47.154131271Z\"\
+                ,\n    \"status_detail\": null,\n    \"insights\": {\n        \"employment_details\": [\n            {\n \
+                \               \"bank_employer_name\": \"شركة لين تكنولوجيز\",\n                \"matched_reference_employer\"\
+                : {\n                    \"name\": {\n                        \"en\": \"Saudi Lean Technologies Company for\
+                \ Information Systems Technology\",\n                        \"ar\": \"شركة لين تكنولوجيز السعودية لتقنية\
+                \ نظم المعلومات\n                    },\n                    \"cr_number\": 1010299593\n                },\n\
+                \                \"salary_consistent\": true,\n                \"salary_date_variance\": 2.14,\n         \
+                \       \"salary_amount_variance\": 145.75,\n                \"first_salary_date\": \"2024-07-27T00:00:00Z\"\
+                \n            },\n            {\n                \"bank_employer_name\": \"Ahad sys\",\n                \"\
+                matched_reference_employer\": {\n                    \"name\": {\n                        \"en\": \"Ahad Systems\
+                \ company \",\n                        \"ar\": \"شركة عهد التكنولوجيا\"\n                    },\n        \
+                \            \"cr_number\": 4030123456\n                },\n                \"salary_consistent\": false,\n\
+                \                \"salary_date_variance\": 6.82,\n                \"salary_amount_variance\": 1824.50,\n \
+                \               \"first_salary_date\": \"2023-11-26T00:00:00Z\"\n            },\n            {\n         \
+                \       \"bank_employer_name\": \"Agility\",\n                \"matched_reference_employer\": null,\n    \
+                \            \"salary_consistent\": false,\n                \"salary_date_variance\": 12.35,\n           \
+                \     \"salary_amount_variance\": 3571.22,\n                \"first_salary_date\": \"2024-10-25T00:00:00Z\"\
+                \n            }\n        ]\n    }\n}"
+          headers: {}
+      security:
+      - bearer: []
+  /insights/v2/assets/cashflows?async=true:
+    get:
+      summary: Get Cashflow
+      deprecated: false
+      description: 'The Cashflow API provides access to **Personal** and **Business** cash flow data. For personal accounts,
+        it offers insights into monthly cash inflows, outflows, and net cash flow. For business accounts, it offers detailed
+        insights on revenue, expenses, and net cash flow.
+
+
+        You can use this API to evaluate financial stability, manage cash flow effectively, and assess the account holder’s
+        ability to meet financial obligations.
+
+
+
+        This API is asynchronous, please read [this guide](https://docs.leantech.me/v2.0-KSA/docs/handling-asynchronous-requests)
+        for further information on how to fetch the results.
+
+
+        > **"Supported for both retail and corporate accounts"**
+
+        > '
+      operationId: GetCashflow
+      tags:
+      - Cashflows
+      parameters:
+      - name: entity_id
+        in: query
+        description: The `entity_id` you're querying for.
+        required: true
+        example: bc287977-2094-3bef-82a0-bae3fe8dadfe
+        schema:
+          type: string
+          format: uuid
+      - name: start_date
+        in: query
+        description: The start date in UTC (in the format YYYY-MM-DD) you want to query expenses for.
+        required: true
+        example: '2024-09-01'
+        schema:
+          format: date
+          type: string
+      - name: async
+        in: query
+        description: "When `true` the API will only return a `results_id` which can be fetched from the `/results` endpoint\
+          \ when ready. \n\nDefaults to true if not provided. Synchronous requests (false) are not supported and will return\
+          \ a 501 error."
+        required: false
+        example: 'true'
+        schema:
+          type: boolean
+          default: true
+      - name: lean-app-token
+        in: header
+        description: Your Lean app token.
+        required: true
+        example: ad0832f0-76aa-4b7b-b267-1f002d7104df
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    description: The status of the results. For async requests, initially returns PENDING.
+                    enum:
+                    - OK
+                    - FAILED
+                    - PENDING
+                    - CONSENT_EXPIRED
+                    type: string
+                  results_id:
+                    type: string
+                    description: The ID for this result, this is used when retrieving results from the `/results` endpoint.
+                    format: uuid
+                  message:
+                    description: A message describing the status of the request.
+                    type: string
+                  meta:
+                    type:
+                    - string
+                    - 'null'
+                    description: Optional metadata associated with the result.
+                  timestamp:
+                    format: date-time
+                    description: The timestamp with timezone offset indicating when the response was generated.
+                    type: string
+                  status_detail:
+                    description: Further detail on the error if status=FAILED
+                    $ref: '#/components/schemas/StatusDetailObject'
+                  insights:
+                    type:
+                    - object
+                    - 'null'
+                    description: The cash flow insights data. Null when status is PENDING or in error states.
+                    properties:
+                      total:
+                        type: object
+                        description: Aggregate cash flow data across all months in the analyzed period.
+                        properties:
+                          inwards:
+                            type: array
+                            description: List of inward cash flow categories with their totals. For retail accounts, typically
+                              contains only the 'inflow' category.
+                            items:
+                              type: object
+                              properties:
+                                category:
+                                  type: string
+                                  enum:
+                                  - inflow
+                                  description: For retail accounts, only 'inflow' is used to represent money coming into accounts.
+                                amount:
+                                  type: object
+                                  description: The monetary amount for this inflow category.
+                                  properties:
+                                    amount:
+                                      type: number
+                                      description: The numeric value of the total inflow amount.
+                                    currency:
+                                      type: string
+                                      description: The three-letter currency code (e.g., 'USD', 'EUR', 'SAR').
+                                count:
+                                  type: integer
+                                  description: The total number of inflow transactions across all analyzed months.
+                          outwards:
+                            type: array
+                            description: List of outward cash flow categories with their totals. For retail accounts, typically
+                              contains only the 'outflow' category.
+                            items:
+                              type: object
+                              properties:
+                                category:
+                                  type: string
+                                  enum:
+                                  - outflow
+                                  description: For retail accounts, only 'outflow' is used to represent money going out of
+                                    accounts.
+                                amount:
+                                  type: object
+                                  description: The monetary amount for this outflow category.
+                                  properties:
+                                    amount:
+                                      type: number
+                                      description: The numeric value of the total outflow amount.
+                                    currency:
+                                      type: string
+                                      description: The three-letter currency code (e.g., 'USD', 'EUR', 'SAR').
+                                count:
+                                  type: integer
+                                  description: The total number of outflow transactions across all analyzed months.
+                          net:
+                            type: object
+                            description: Net cash flow calculation aggregated across all analyzed months.
+                            properties:
+                              overall_amount:
+                                type: object
+                                description: The net monetary amount (inflow minus outflow) across all months.
+                                properties:
+                                  amount:
+                                    type: number
+                                    description: The numeric value of the net amount. Positive indicates net inflow, negative
+                                      indicates net outflow.
+                                  currency:
+                                    type: string
+                                    description: The three-letter currency code (e.g., 'USD', 'EUR', 'SAR').
+                              net_cashflow:
+                                type: 'null'
+                                description: Not used for retail entities, always null. This is only populated for corporate
+                                  accounts.
+                      monthly_totals:
+                        type: array
+                        description: Cash flow details broken down by individual months in the analyzed period.
+                        items:
+                          type: object
+                          properties:
+                            year:
+                              type: integer
+                              description: The year (e.g., 2024) of this monthly total.
+                            month:
+                              type: integer
+                              description: The month number (1-12) of this monthly total, where 1 is January and 12 is December.
+                            is_month_complete:
+                              type: boolean
+                              description: Indicates if the month's data is complete (true) or partial (false). Months that
+                                haven't ended yet will be marked as incomplete.
+                            inwards:
+                              type: array
+                              description: List of inward cash flow categories for this specific month.
+                              items:
+                                type: object
+                                properties:
+                                  category:
+                                    type: string
+                                    enum:
+                                    - inflow
+                                    description: For retail accounts, only 'inflow' is used for inwards in each month.
+                                  amount:
+                                    type: object
+                                    description: The total inflow monetary amount for this month.
+                                    properties:
+                                      amount:
+                                        type: number
+                                        description: The numeric value of the inflow amount for this month.
+                                      currency:
+                                        type: string
+                                        description: The three-letter currency code (e.g., 'USD', 'EUR', 'SAR').
+                                  count:
+                                    type: integer
+                                    description: The number of inflow transactions in this specific month.
+                            outwards:
+                              type: array
+                              description: List of outward cash flow categories for this specific month.
+                              items:
+                                type: object
+                                properties:
+                                  category:
+                                    type: string
+                                    enum:
+                                    - outflow
+                                    description: For retail accounts, only 'outflow' is used for outwards in each month.
+                                  amount:
+                                    type: object
+                                    description: The total outflow monetary amount for this month.
+                                    properties:
+                                      amount:
+                                        type: number
+                                        description: The numeric value of the outflow amount for this month.
+                                      currency:
+                                        type: string
+                                        description: The three-letter currency code (e.g., 'USD', 'EUR', 'SAR').
+                                  count:
+                                    type: integer
+                                    description: The number of outflow transactions in this specific month.
+                            net:
+                              type: object
+                              description: Net cash flow calculation for this specific month.
+                              properties:
+                                overall_amount:
+                                  type: object
+                                  description: The net monetary amount (inflow minus outflow) for this month.
+                                  properties:
+                                    amount:
+                                      type: number
+                                      description: The numeric value of the net amount for this month. Positive indicates
+                                        net inflow, negative indicates net outflow.
+                                    currency:
+                                      type: string
+                                      description: The three-letter currency code (e.g., 'USD', 'EUR', 'SAR').
+                                net_cashflow:
+                                  type: 'null'
+                                  description: Not used for retail entities, always null. This is only populated for corporate
+                                    accounts.
+                      credit_debit_behaviour:
+                        type: object
+                        description: Analysis of credit and debit transaction patterns over different time periods.
+                        properties:
+                          periods:
+                            type: array
+                            description: 'List of time periods with credit/debit behavior analysis. Always contains 4 periods:
+                              12 months (P12M), 9 months (P9M), 6 months (P6M), and 3 months (P3M).'
+                            items:
+                              type: object
+                              properties:
+                                period:
+                                  type: string
+                                  enum:
+                                  - P12M
+                                  - P9M
+                                  - P6M
+                                  - P3M
+                                  description: ISO 8601 duration format indicating the period length (P12M = 12 months, P9M
+                                    = 9 months, etc.).
+                                grand_average_credit_amount:
+                                  description: The average amount of all credit transactions during this period.
+                                  $ref: '#/components/schemas/AmountObject'
+                                grand_average_credit_count:
+                                  type: integer
+                                  description: The average count of credit transactions per month during this period.
+                                grand_average_debit_amount:
+                                  description: The average amount of all debit transactions during this period.
+                                  $ref: '#/components/schemas/AmountObject'
+                                grand_average_debit_count:
+                                  type: integer
+                                  description: The average count of debit transactions per month during this period.
+                                grand_average_credit_debit_amount_ratio:
+                                  type:
+                                  - number
+                                  - 'null'
+                                  description: The ratio of average credit amount to average debit amount (credit divided
+                                    by debit). Null when there are no debit transactions.
+                                grand_average_credit_debit_count_ratio:
+                                  type:
+                                  - number
+                                  - 'null'
+                                  description: The ratio of average credit count to average debit count (credit divided by
+                                    debit). Null when there are no debit transactions.
+                                total_volume_of_credit:
+                                  description: The total sum of all credit transactions during this period.
+                                  $ref: '#/components/schemas/AmountObject'
+                                total_volume_of_debit:
+                                  description: The total sum of all debit transactions during this period.
+                                  $ref: '#/components/schemas/AmountObject'
+                                total_volume_of_credit_debit_ratio:
+                                  type:
+                                  - number
+                                  - 'null'
+                                  description: The ratio of total credit volume to total debit volume (credit divided by debit).
+                                    Null when there are no debit transactions.
+                      big_payments:
+                        type: object
+                        description: Analysis of significant payment transactions that stand out from regular transaction
+                          patterns.
+                        properties:
+                          periods:
+                            type: array
+                            description: 'List of time periods with significant payment analysis. Always contains 4 periods:
+                              12 months (P12M), 9 months (P9M), 6 months (P6M), and 3 months (P3M).'
+                            items:
+                              type: object
+                              properties:
+                                period:
+                                  type: string
+                                  enum:
+                                  - P12M
+                                  - P9M
+                                  - P6M
+                                  - P3M
+                                  description: ISO 8601 duration format indicating the period length (P12M = 12 months, P9M
+                                    = 9 months, etc.).
+                                average_max_monthly_credit_amount:
+                                  description: The average of the maximum credit transaction amount per month during this
+                                    period.
+                                  $ref: '#/components/schemas/AmountObject'
+                                average_max_monthly_debit_amount:
+                                  description: The average of the maximum debit transaction amount per month during this period.
+                                  $ref: '#/components/schemas/AmountObject'
+                                average_max_monthly_credit_debit_amount_ratio:
+                                  type:
+                                  - number
+                                  - 'null'
+                                  description: The ratio of average maximum monthly credit amount to average maximum monthly
+                                    debit amount. Null when there are no debit transactions.
+                required:
+                - status
+                - results_id
+                - message
+                - meta
+                - timestamp
+                - status_detail
+              example:
+                status: OK
+                results_id: 52c59732-8e5c-45e1-9c16-6e5a0bfd555a
+                message: Data successfully retrieved
+                meta: null
+                timestamp: '2025-03-25T05:38:38.124820906Z'
+                status_detail: null
+                insights:
+                  total:
+                    inwards:
+                    - category: inflow
+                      amount:
+                        currency: SAR
+                        amount: 404642.7
+                      count: 24
+                    outwards:
+                    - category: outflow
+                      amount:
+                        currency: SAR
+                        amount: 175509.7
+                      count: 472
+                    net:
+                      overall_amount:
+                        currency: SAR
+                        amount: 229133
+                      net_cashflow: null
+                  monthly_totals:
+                  - month: 12
+                    year: 2024
+                    is_month_complete: true
+                    inwards:
+                    - category: inflow
+                      amount:
+                        currency: SAR
+                        amount: 50000
+                      count: 2
+                    outwards:
+                    - category: outflow
+                      amount:
+                        currency: SAR
+                        amount: 24131.33
+                      count: 69
+                    net:
+                      overall_amount:
+                        currency: SAR
+                        amount: 25868.67
+                      net_cashflow: null
+                  - month: 11
+                    year: 2024
+                    is_month_complete: true
+                    inwards:
+                    - category: inflow
+                      amount:
+                        currency: SAR
+                        amount: 30000
+                      count: 1
+                    outwards:
+                    - category: outflow
+                      amount:
+                        currency: SAR
+                        amount: 18197.72
+                      count: 45
+                    net:
+                      overall_amount:
+                        currency: SAR
+                        amount: 11802.28
+                      net_cashflow: null
+                  - month: 10
+                    year: 2024
+                    is_month_complete: true
+                    inwards:
+                    - category: inflow
+                      amount:
+                        currency: SAR
+                        amount: 30000
+                      count: 1
+                    outwards:
+                    - category: outflow
+                      amount:
+                        currency: SAR
+                        amount: 28263.44
+                      count: 61
+                    net:
+                      overall_amount:
+                        currency: SAR
+                        amount: 1736.56
+                      net_cashflow: null
+                  - month: 9
+                    year: 2024
+                    is_month_complete: true
+                    inwards:
+                    - category: inflow
+                      amount:
+                        currency: SAR
+                        amount: 50000
+                      count: 2
+                    outwards:
+                    - category: outflow
+                      amount:
+                        currency: SAR
+                        amount: 22255.64
+                      count: 62
+                    net:
+                      overall_amount:
+                        currency: SAR
+                        amount: 27744.36
+                      net_cashflow: null
+                  - month: 8
+                    year: 2024
+                    is_month_complete: true
+                    inwards:
+                    - category: inflow
+                      amount:
+                        currency: SAR
+                        amount: 50000
+                      count: 2
+                    outwards:
+                    - category: outflow
+                      amount:
+                        currency: SAR
+                        amount: 17177.14
+                      count: 52
+                    net:
+                      overall_amount:
+                        currency: SAR
+                        amount: 32822.86
+                      net_cashflow: null
+                  - month: 7
+                    year: 2024
+                    is_month_complete: true
+                    inwards:
+                    - category: inflow
+                      amount:
+                        currency: SAR
+                        amount: 50000
+                      count: 2
+                    outwards:
+                    - category: outflow
+                      amount:
+                        currency: SAR
+                        amount: 19213.91
+                      count: 51
+                    net:
+                      overall_amount:
+                        currency: SAR
+                        amount: 30786.09
+                      net_cashflow: null
+                  - month: 6
+                    year: 2024
+                    is_month_complete: true
+                    inwards:
+                    - category: inflow
+                      amount:
+                        currency: SAR
+                        amount: 30000
+                      count: 1
+                    outwards:
+                    - category: outflow
+                      amount:
+                        currency: SAR
+                        amount: 3240.29
+                      count: 13
+                    net:
+                      overall_amount:
+                        currency: SAR
+                        amount: 26759.71
+                      net_cashflow: null
+                  - month: 3
+                    year: 2025
+                    is_month_complete: false
+                    inwards:
+                    - category: inflow
+                      amount:
+                        currency: SAR
+                        amount: 12118.1
+                      count: 4
+                    outwards:
+                    - category: outflow
+                      amount:
+                        currency: SAR
+                        amount: 10459.36
+                      count: 28
+                    net:
+                      overall_amount:
+                        currency: SAR
+                        amount: 1658.74
+                      net_cashflow: null
+                  - month: 2
+                    year: 2025
+                    is_month_complete: true
+                    inwards:
+                    - category: inflow
+                      amount:
+                        currency: SAR
+                        amount: 52524.6
+                      count: 7
+                    outwards:
+                    - category: outflow
+                      amount:
+                        currency: SAR
+                        amount: 12228.42
+                      count: 35
+                    net:
+                      overall_amount:
+                        currency: SAR
+                        amount: 40296.18
+                      net_cashflow: null
+                  - month: 1
+                    year: 2025
+                    is_month_complete: true
+                    inwards:
+                    - category: inflow
+                      amount:
+                        currency: SAR
+                        amount: 50000
+                      count: 2
+                    outwards:
+                    - category: outflow
+                      amount:
+                        currency: SAR
+                        amount: 20342.45
+                      count: 56
+                    net:
+                      overall_amount:
+                        currency: SAR
+                        amount: 29657.55
+                      net_cashflow: null
+                  credit_debit_behaviour:
+                    periods:
+                    - period: P12M
+                      grand_average_credit_amount:
+                        currency: SAR
+                        amount: 18794.42
+                      grand_average_credit_count: 2
+                      grand_average_debit_amount:
+                        currency: SAR
+                        amount: 301.58
+                      grand_average_debit_count: 39
+                      grand_average_credit_debit_amount_ratio: 62.32
+                      grand_average_credit_debit_count_ratio: 0.05
+                      total_volume_of_credit:
+                        currency: SAR
+                        amount: 404642.7
+                      total_volume_of_debit:
+                        currency: SAR
+                        amount: 175509.7
+                      total_volume_of_credit_debit_ratio: 2.31
+                    - period: P9M
+                      grand_average_credit_amount:
+                        currency: SAR
+                        amount: 21725.89
+                      grand_average_credit_count: 2
+                      grand_average_debit_amount:
+                        currency: SAR
+                        amount: 374.41
+                      grand_average_debit_count: 51
+                      grand_average_credit_debit_amount_ratio: 58.03
+                      grand_average_credit_debit_count_ratio: 0.05
+                      total_volume_of_credit:
+                        currency: SAR
+                        amount: 374642.7
+                      total_volume_of_debit:
+                        currency: SAR
+                        amount: 172269.41
+                      total_volume_of_credit_debit_ratio: 2.17
+                    - period: P6M
+                      grand_average_credit_amount:
+                        currency: SAR
+                        amount: 20088.84
+                      grand_average_credit_count: 2
+                      grand_average_debit_amount:
+                        currency: SAR
+                        amount: 383.94
+                      grand_average_debit_count: 49
+                      grand_average_credit_debit_amount_ratio: 52.32
+                      grand_average_credit_debit_count_ratio: 0.06
+                      total_volume_of_credit:
+                        currency: SAR
+                        amount: 224642.7
+                      total_volume_of_debit:
+                        currency: SAR
+                        amount: 113622.72
+                      total_volume_of_credit_debit_ratio: 1.98
+                    - period: P3M
+                      grand_average_credit_amount:
+                        currency: SAR
+                        amount: 11844.35
+                      grand_average_credit_count: 4
+                      grand_average_debit_amount:
+                        currency: SAR
+                        amount: 362.06
+                      grand_average_debit_count: 39
+                      grand_average_credit_debit_amount_ratio: 32.71
+                      grand_average_credit_debit_count_ratio: 0.11
+                      total_volume_of_credit:
+                        currency: SAR
+                        amount: 114642.7
+                      total_volume_of_debit:
+                        currency: SAR
+                        amount: 43030.23
+                      total_volume_of_credit_debit_ratio: 2.66
+                  big_payments:
+                    periods:
+                    - period: P12M
+                      average_max_monthly_credit_amount:
+                        currency: SAR
+                        amount: 23295.29
+                      average_max_monthly_debit_amount:
+                        currency: SAR
+                        amount: 925.22
+                      average_max_monthly_credit_debit_amount_ratio: 25.18
+                    - period: P9M
+                      average_max_monthly_credit_amount:
+                        currency: SAR
+                        amount: 27727.05
+                      average_max_monthly_debit_amount:
+                        currency: SAR
+                        amount: 1164.95
+                      average_max_monthly_credit_debit_amount_ratio: 23.8
+                    - period: P6M
+                      average_max_monthly_credit_amount:
+                        currency: SAR
+                        amount: 26590.58
+                      average_max_monthly_debit_amount:
+                        currency: SAR
+                        amount: 1142.08
+                      average_max_monthly_credit_debit_amount_ratio: 23.28
+                    - period: P3M
+                      average_max_monthly_credit_amount:
+                        currency: SAR
+                        amount: 23181.16
+                      average_max_monthly_debit_amount:
+                        currency: SAR
+                        amount: 1098.98
+                      average_max_monthly_credit_debit_amount_ratio: 21.09
+          headers: {}
+      security:
+      - bearer: []
+  /insights/v2/assets/balances:
+    get:
+      summary: Get Cash Balances
+      deprecated: false
+      description: "The Cash Balances API provides a comprehensive view of both **Personal** or **Business** cash balances,\
+        \ offering insights into current, historical, and average balances. \n\nThe data in this API allows financial companies\
+        \ to monitor liquidity trends and assess the financial health of bank accounts over time. Additionally, it provides\
+        \ information on  the frequency and amount of contributions. You can use these insights to evaluate repayment capacity.\n\
+        \n\nThis API is asynchronous, please read [this guide](https://docs.leantech.me/v2.0-KSA/docs/handling-asynchronous-requests)\
+        \ for further information on how to fetch the results.\n\n> **\"Supported for both retail and corporate accounts\"\
+        **\n> "
+      operationId: getBalances
+      tags:
+      - Balances
+      parameters:
+      - name: entity_id
+        in: query
+        description: The `entity_id` you're querying for.
+        required: true
+        example: bc287977-2094-3bef-82a0-bae3fe8dadfe
+        schema:
+          type: string
+      - name: start_date
+        in: query
+        description: The start date in UTC (in the format YYYY-MM-DD) you want to query expenses for.
+        required: false
+        example: '2024-09-01'
+        schema:
+          format: date
+          type: string
+      - name: async
+        in: query
+        description: When `true` the API will only return a `results_id` which can be fetched from the `/results` endpoint
+          when ready.
+        required: false
+        example: 'false'
+        schema:
+          type: boolean
+      - name: lean-app-token
+        in: header
+        description: Your Lean app token.
+        required: true
+        example: ad0832f0-76aa-4b7b-b267-1f002d7104df
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    description: The status of the results. For async requests, initially returns PENDING.
+                    enum:
+                    - OK
+                    - FAILED
+                    - PENDING
+                    - CONSENT_EXPIRED
+                    type: string
+                  results_id:
+                    type: string
+                    description: The ID for this result, this is used when retrieving results from the `/results` endpoint.
+                    format: uuid
+                  message:
+                    description: A message describing the status of the request.
+                    type: string
+                  meta:
+                    type:
+                    - string
+                    - 'null'
+                    description: Optional metadata associated with the result.
+                  timestamp:
+                    format: date-time
+                    description: The timestamp with timezone offset indicating when the response was generated.
+                    type: string
+                  status_detail:
+                    description: Further detail on the error if status=FAILED
+                    $ref: '#/components/schemas/StatusDetailObject'
+                  insights:
+                    properties:
+                      currency:
+                        description: The 3 Letter ISO code denominating the currency that the cashflow is provided in. This
+                          will be local currency (SAR in KSA).
+                        type: string
+                        examples:
+                        - SAR
+                      current_balance:
+                        description: 'The current balance for the connected accounts. '
+                        type: number
+                        examples:
+                        - '668782.33'
+                      total:
+                        $ref: '#/components/schemas/TotalBalances'
+                        description: ''
+                      monthly_totals:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/MonthlyTotalsBalances'
+                      balance_factors:
+                        $ref: '#/components/schemas/balance_factors'
+                    type: object
+                required:
+                - insights
+                - status
+                - results_id
+                - message
+                - meta
+                - timestamp
+                - status_detail
+              example:
+                status: OK
+                results_id: 84ea61bf-ae3f-4002-8396-ce11e37cc798
+                message: Data successfully retrieved
+                meta: null
+                timestamp: '2024-11-19T10:06:54.395185689Z'
+                status_detail: null
+                insights:
+                  total:
+                    average_balance:
+                      currency: SAR
+                      amount: 329558.57
+                    initial_balance:
+                      currency: SAR
+                      amount: 546438.29
+                    current_balance:
+                      currency: SAR
+                      amount: 680498.14
+                    available_balance:
+                      currency: SAR
+                      amount: 676771.25
+                    frequency_of_contributions: weekly
+                  monthly_totals:
+                  - month: 8
+                    year: 2024
+                    is_month_complete: true
+                    monthly_growth_rate: 0.04
+                    contribution_amount:
+                      currency: SAR
+                      amount: 36439.97
+                    average_balance:
+                      currency: SAR
+                      amount: 176376.33
+                    initial_balance:
+                      currency: SAR
+                      amount: 533894.93
+                  - month: 9
+                    year: 2024
+                    is_month_complete: true
+                    monthly_growth_rate: 0
+                    contribution_amount:
+                      currency: SAR
+                      amount: 85588.01
+                    average_balance:
+                      currency: SAR
+                      amount: 389083.36
+                    initial_balance:
+                      currency: SAR
+                      amount: 592818.06
+                  - month: 10
+                    year: 2024
+                    is_month_complete: true
+                    monthly_growth_rate: 0.03
+                    contribution_amount:
+                      currency: SAR
+                      amount: 5576523.99
+                    average_balance:
+                      currency: SAR
+                      amount: 387400.33
+                    initial_balance:
+                      currency: SAR
+                      amount: 662850.33
+                  - month: 11
+                    year: 2024
+                    is_month_complete: false
+                    monthly_growth_rate: 0
+                    contribution_amount:
+                      currency: SAR
+                      amount: 120000
+                    average_balance:
+                      currency: SAR
+                      amount: 35815.69
+                    initial_balance:
+                      currency: SAR
+                      amount: 680498.14
+                balance_factors:
+                  periods:
+                  - period: P3M
+                    average_balance: 28630.95
+                  - period: P6M
+                    average_balance: 28630.95
+                  - period: P9M
+                    average_balance: 28630.95
+                  - period: P12M
+                    average_balance: 28630.95
+                  balance_trend: 7
+                  balance_trend_average_month_on_month: 1817
+                  current_balance: 36211.63
+                  inflow_factors:
+                    median_transaction_amount: 53.93
+                    max_transaction_amount: 21894
+                    min_transaction_amount: 13.31
+                    weekday_transaction_count: 131
+                    weekend_transaction_count: 53
+                    average_time: 6.83
+                    percent_greater_than_x: 33
+                    recurring_average: 0
+                    median_days: 4
+                    percent_salary_transaction: 98
+                  outflow_factors:
+                    median_transaction_amount: 46
+                    max_transaction_amount: 5000
+                    min_transaction_amount: 0.08
+                    weekday_transaction_count: 130
+                    weekend_transaction_count: 53
+                    average_time: 1
+                    percent_greater_than_x: 20
+                    recurring_average: 0
+                    median_days: 1
+                    spike_transactions:
+                    - month: 11
+                      year: 2024
+                      amount: 15749.05
+                  daily_net_cashflow_estimate: 138.53
+          headers: {}
+      security:
+      - bearer: []
+  /insights/v2/expenses:
+    get:
+      summary: Get Expenses
+      deprecated: false
+      description: Provides insights on the expenses from a bank account (only supported for retail bank accounts).
+      operationId: getExpenses
+      tags:
+      - Expenses
+      parameters:
+      - name: async
+        in: query
+        description: When `true` the API will only return a `results_id` which can be fetched from the `/results` endpoint
+          when ready.
+        required: false
+        example: 'false'
+        schema:
+          default: false
+          type: boolean
+      - name: start_date
+        in: query
+        description: The start date in UTC (in the format YYYY-MM-DD) you want to query expenses for.
+        required: false
+        example: '2023-05-01'
+        schema:
+          format: date
+          type: string
+      - name: entity_id
+        in: query
+        description: The `entity_id` you're querying for.
+        required: true
+        example: bc287977-2094-3bef-82a0-bae3fe8dadfe
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ExpensesResponse'
+              example:
+                status: OK
+                message: The request completed successfully.
+                timestamp: '2023-10-20T08:40:40.392167892Z'
+                meta: {}
+                insights:
+                  currency: SAR
+                  total:
+                    amount: 327110.87
+                    count: 423
+                    last_date_time: '2023-10-18T16:26:26Z'
+                    first_date_time: '2023-05-01T17:22:17Z'
+                    average_monthly_amount: 54518.48
+                    average_monthly_count: 70.5
+                    maximum_monthly_amount:
+                      month: 6
+                      year: 2023
+                      amount: 124948.66
+                    minimum_monthly_amount:
+                      month: 7
+                      year: 2023
+                      amount: 3418.33
+                    breakdown:
+                    - by: category
+                      breakdowns:
+                      - category: OTHER
+                        amount: 64427.96
+                        count: 72
+                        fraction_of_total_expenses: 0.2
+                        average_days_between_transactions: 2.3661921296296295
+                        last_date_time: '2023-10-18T04:02:29Z'
+                        first_date_time: '2023-05-03T04:02:46Z'
+                        average_monthly_amount: 10737.99
+                        average_monthly_count: 12
+                        maximum_monthly_amount:
+                          month: 9
+                          year: 2023
+                          amount: 21265.28
+                        minimum_monthly_amount:
+                          month: 7
+                          year: 2023
+                          amount: 164.4
+                      - category: RESTAURANTS_DINING
+                        amount: 7964.15
+                        count: 49
+                        fraction_of_total_expenses: 0.02
+                        average_days_between_transactions: 3.4500462962962963
+                        last_date_time: '2023-10-14T07:50:12Z'
+                        first_date_time: '2023-05-01T17:22:17Z'
+                        average_monthly_amount: 1327.36
+                        average_monthly_count: 8.166666666666666
+                        maximum_monthly_amount:
+                          month: 5
+                          year: 2023
+                          amount: 2566.6
+                        minimum_monthly_amount:
+                          month: 10
+                          year: 2023
+                          amount: 222.81
+                      - category: TRANSPORT
+                        amount: 8288.46
+                        count: 141
+                        fraction_of_total_expenses: 0.03
+                        average_days_between_transactions: 1.2027893518518518
+                        last_date_time: '2023-10-18T04:14:01Z'
+                        first_date_time: '2023-05-02T18:50:50Z'
+                        average_monthly_amount: 1381.41
+                        average_monthly_count: 23.5
+                        maximum_monthly_amount:
+                          month: 5
+                          year: 2023
+                          amount: 2339.08
+                        minimum_monthly_amount:
+                          month: 7
+                          year: 2023
+                          amount: 181.5
+                      - category: LOAN
+                        amount: 90800
+                        count: 5
+                        fraction_of_total_expenses: 0.28
+                        average_days_between_transactions: 30.997974537037038
+                        last_date_time: '2023-09-25T00:09:44Z'
+                        first_date_time: '2023-05-24T00:21:23Z'
+                        average_monthly_amount: 15133.33
+                        average_monthly_count: 0.8333333333333334
+                        maximum_monthly_amount:
+                          month: 9
+                          year: 2023
+                          amount: 36320
+                        minimum_monthly_amount:
+                          month: 10
+                          year: 2023
+                          amount: 0
+                      - category: TRAVEL
+                        amount: 28186.18
+                        count: 16
+                        fraction_of_total_expenses: 0.09
+                        average_days_between_transactions: 9.801122685185184
+                        last_date_time: '2023-10-13T20:00:00Z'
+                        first_date_time: '2023-05-19T19:35:42Z'
+                        average_monthly_amount: 4697.7
+                        average_monthly_count: 2.6666666666666665
+                        maximum_monthly_amount:
+                          month: 6
+                          year: 2023
+                          amount: 16326.97
+                        minimum_monthly_amount:
+                          month: 7
+                          year: 2023
+                          amount: 262
+                      - category: ENTERTAINMENT
+                        amount: 619.71
+                        count: 17
+                        fraction_of_total_expenses: 0
+                        average_days_between_transactions: 10.16125
+                        last_date_time: '2023-10-14T23:31:26Z'
+                        first_date_time: '2023-05-05T09:36:13Z'
+                        average_monthly_amount: 103.29
+                        average_monthly_count: 2.8333333333333335
+                        maximum_monthly_amount:
+                          month: 9
+                          year: 2023
+                          amount: 379.33
+                        minimum_monthly_amount:
+                          month: 8
+                          year: 2023
+                          amount: 24.47
+                      - category: RETAIL
+                        amount: 5618.82
+                        count: 31
+                        fraction_of_total_expenses: 0.02
+                        average_days_between_transactions: 5.2353125
+                        last_date_time: '2023-10-18T16:26:26Z'
+                        first_date_time: '2023-05-14T15:00:36Z'
+                        average_monthly_amount: 936.47
+                        average_monthly_count: 5.166666666666667
+                        maximum_monthly_amount:
+                          month: 9
+                          year: 2023
+                          amount: 1842.49
+                        minimum_monthly_amount:
+                          month: 5
+                          year: 2023
+                          amount: 488.11
+                      - category: GROCERIES
+                        amount: 341.72
+                        count: 6
+                        fraction_of_total_expenses: 0
+                        average_days_between_transactions: 25.472175925925924
+                        last_date_time: '2023-10-08T18:40:19Z'
+                        first_date_time: '2023-06-03T10:00:36Z'
+                        average_monthly_amount: 56.95
+                        average_monthly_count: 1
+                        maximum_monthly_amount:
+                          month: 6
+                          year: 2023
+                          amount: 166.27
+                        minimum_monthly_amount:
+                          month: 5
+                          year: 2023
+                          amount: 0
+                      - category: TRANSFER
+                        amount: 95394.84
+                        count: 52
+                        fraction_of_total_expenses: 0.29
+                        average_days_between_transactions: 3.2032175925925928
+                        last_date_time: '2023-10-12T12:49:26.941Z'
+                        first_date_time: '2023-05-02T04:04:28Z'
+                        average_monthly_amount: 15899.14
+                        average_monthly_count: 8.666666666666666
+                        maximum_monthly_amount:
+                          month: 6
+                          year: 2023
+                          amount: 67480.75
+                        minimum_monthly_amount:
+                          month: 7
+                          year: 2023
+                          amount: 66.05
+                      - category: HEALTH_AND_WELLBEING
+                        amount: 3434
+                        count: 2
+                        fraction_of_total_expenses: 0.01
+                        average_days_between_transactions: 61.95715277777778
+                        last_date_time: '2023-08-17T05:24:22Z'
+                        first_date_time: '2023-06-16T06:26:04Z'
+                        average_monthly_amount: 572.33
+                        average_monthly_count: 0.3333333333333333
+                        maximum_monthly_amount:
+                          month: 8
+                          year: 2023
+                          amount: 3299
+                        minimum_monthly_amount:
+                          month: 5
+                          year: 2023
+                          amount: 0
+                      - category: RENT_AND_SERVICES
+                        amount: 22035.03
+                        count: 32
+                        fraction_of_total_expenses: 0.07
+                        average_days_between_transactions: 5.245995370370371
+                        last_date_time: '2023-10-16T09:30:33Z'
+                        first_date_time: '2023-05-06T18:29:15Z'
+                        average_monthly_amount: 3672.51
+                        average_monthly_count: 5.333333333333333
+                        maximum_monthly_amount:
+                          month: 8
+                          year: 2023
+                          amount: 12447.52
+                        minimum_monthly_amount:
+                          month: 5
+                          year: 2023
+                          amount: 861.06
+                  monthly_totals:
+                  - month: 10
+                    year: 2023
+                    amount: 43869.25
+                    count: 67
+                    is_month_complete: false
+                    breakdown:
+                    - by: category
+                      breakdowns:
+                      - category: OTHER
+                        amount: 16130.48
+                        count: 18
+                        fraction_of_total_expenses: 0.37
+                      - category: RESTAURANTS_DINING
+                        amount: 222.81
+                        count: 1
+                        fraction_of_total_expenses: 0.01
+                      - category: TRANSPORT
+                        amount: 1545.8
+                        count: 21
+                        fraction_of_total_expenses: 0.04
+                      - category: TRAVEL
+                        amount: 537
+                        count: 1
+                        fraction_of_total_expenses: 0.01
+                      - category: ENTERTAINMENT
+                        amount: 78.5
+                        count: 4
+                        fraction_of_total_expenses: 0
+                      - category: RETAIL
+                        amount: 1329.36
+                        count: 10
+                        fraction_of_total_expenses: 0.03
+                      - category: GROCERIES
+                        amount: 46
+                        count: 1
+                        fraction_of_total_expenses: 0
+                      - category: TRANSFER
+                        amount: 21184.1
+                        count: 4
+                        fraction_of_total_expenses: 0.48
+                      - category: RENT_AND_SERVICES
+                        amount: 2795.2
+                        count: 7
+                        fraction_of_total_expenses: 0.06
+                  - month: 9
+                    year: 2023
+                    amount: 76909.09
+                    count: 103
+                    is_month_complete: true
+                    breakdown:
+                    - by: category
+                      breakdowns:
+                      - category: OTHER
+                        amount: 21265.28
+                        count: 19
+                        fraction_of_total_expenses: 0.28
+                      - category: TRANSPORT
+                        amount: 1711.48
+                        count: 25
+                        fraction_of_total_expenses: 0.02
+                      - category: RESTAURANTS_DINING
+                        amount: 791.22
+                        count: 6
+                        fraction_of_total_expenses: 0.01
+                      - category: RETAIL
+                        amount: 1842.49
+                        count: 7
+                        fraction_of_total_expenses: 0.02
+                      - category: TRAVEL
+                        amount: 9638.09
+                        count: 3
+                        fraction_of_total_expenses: 0.13
+                      - category: ENTERTAINMENT
+                        amount: 379.33
+                        count: 5
+                        fraction_of_total_expenses: 0
+                      - category: LOAN
+                        amount: 36320
+                        count: 2
+                        fraction_of_total_expenses: 0.47
+                      - category: GROCERIES
+                        amount: 42.69
+                        count: 3
+                        fraction_of_total_expenses: 0
+                      - category: TRANSFER
+                        amount: 987.14
+                        count: 22
+                        fraction_of_total_expenses: 0.01
+                      - category: RENT_AND_SERVICES
+                        amount: 3931.37
+                        count: 11
+                        fraction_of_total_expenses: 0.05
+                  - month: 8
+                    year: 2023
+                    amount: 49553.54
+                    count: 56
+                    is_month_complete: true
+                    breakdown:
+                    - by: category
+                      breakdowns:
+                      - category: OTHER
+                        amount: 7319.6
+                        count: 6
+                        fraction_of_total_expenses: 0.15
+                      - category: RESTAURANTS_DINING
+                        amount: 2389.4
+                        count: 10
+                        fraction_of_total_expenses: 0.05
+                      - category: TRANSPORT
+                        amount: 1218.55
+                        count: 27
+                        fraction_of_total_expenses: 0.02
+                      - category: ENTERTAINMENT
+                        amount: 24.47
+                        count: 1
+                        fraction_of_total_expenses: 0
+                      - category: RETAIL
+                        amount: 527.24
+                        count: 4
+                        fraction_of_total_expenses: 0.01
+                      - category: TRAVEL
+                        amount: 1081
+                        count: 2
+                        fraction_of_total_expenses: 0.02
+                      - category: LOAN
+                        amount: 18160
+                        count: 1
+                        fraction_of_total_expenses: 0.37
+                      - category: GROCERIES
+                        amount: 86.76
+                        count: 1
+                        fraction_of_total_expenses: 0
+                      - category: TRANSFER
+                        amount: 3000
+                        count: 1
+                        fraction_of_total_expenses: 0.06
+                      - category: HEALTH_AND_WELLBEING
+                        amount: 3299
+                        count: 1
+                        fraction_of_total_expenses: 0.07
+                      - category: RENT_AND_SERVICES
+                        amount: 12447.52
+                        count: 2
+                        fraction_of_total_expenses: 0.25
+                  - month: 7
+                    year: 2023
+                    amount: 3418.33
+                    count: 23
+                    is_month_complete: true
+                    breakdown:
+                    - by: category
+                      breakdowns:
+                      - category: OTHER
+                        amount: 164.4
+                        count: 3
+                        fraction_of_total_expenses: 0.05
+                      - category: TRANSPORT
+                        amount: 181.5
+                        count: 4
+                        fraction_of_total_expenses: 0.05
+                      - category: RESTAURANTS_DINING
+                        amount: 957.73
+                        count: 6
+                        fraction_of_total_expenses: 0.28
+                      - category: ENTERTAINMENT
+                        amount: 40.47
+                        count: 2
+                        fraction_of_total_expenses: 0.01
+                      - category: TRAVEL
+                        amount: 262
+                        count: 1
+                        fraction_of_total_expenses: 0.08
+                      - category: RETAIL
+                        amount: 717.45
+                        count: 3
+                        fraction_of_total_expenses: 0.21
+                      - category: TRANSFER
+                        amount: 66.05
+                        count: 1
+                        fraction_of_total_expenses: 0.02
+                      - category: RENT_AND_SERVICES
+                        amount: 1028.73
+                        count: 3
+                        fraction_of_total_expenses: 0.3
+                  - month: 6
+                    year: 2023
+                    amount: 124948.66
+                    count: 73
+                    is_month_complete: true
+                    breakdown:
+                    - by: category
+                      breakdowns:
+                      - category: OTHER
+                        amount: 18625.44
+                        count: 12
+                        fraction_of_total_expenses: 0.15
+                      - category: TRANSPORT
+                        amount: 1292.05
+                        count: 26
+                        fraction_of_total_expenses: 0.01
+                      - category: RESTAURANTS_DINING
+                        amount: 1036.39
+                        count: 9
+                        fraction_of_total_expenses: 0.01
+                      - category: ENTERTAINMENT
+                        amount: 40.47
+                        count: 2
+                        fraction_of_total_expenses: 0
+                      - category: LOAN
+                        amount: 18160
+                        count: 1
+                        fraction_of_total_expenses: 0.15
+                      - category: RETAIL
+                        amount: 714.17
+                        count: 4
+                        fraction_of_total_expenses: 0.01
+                      - category: TRAVEL
+                        amount: 16326.97
+                        count: 6
+                        fraction_of_total_expenses: 0.13
+                      - category: GROCERIES
+                        amount: 166.27
+                        count: 1
+                        fraction_of_total_expenses: 0
+                      - category: TRANSFER
+                        amount: 67480.75
+                        count: 7
+                        fraction_of_total_expenses: 0.54
+                      - category: HEALTH_AND_WELLBEING
+                        amount: 135
+                        count: 1
+                        fraction_of_total_expenses: 0
+                      - category: RENT_AND_SERVICES
+                        amount: 971.15
+                        count: 4
+                        fraction_of_total_expenses: 0.01
+                  - month: 5
+                    year: 2023
+                    amount: 28412
+                    count: 101
+                    is_month_complete: true
+                    breakdown:
+                    - by: category
+                      breakdowns:
+                      - category: OTHER
+                        amount: 922.76
+                        count: 14
+                        fraction_of_total_expenses: 0.03
+                      - category: RESTAURANTS_DINING
+                        amount: 2566.6
+                        count: 17
+                        fraction_of_total_expenses: 0.09
+                      - category: TRANSPORT
+                        amount: 2339.08
+                        count: 38
+                        fraction_of_total_expenses: 0.08
+                      - category: ENTERTAINMENT
+                        amount: 56.47
+                        count: 3
+                        fraction_of_total_expenses: 0
+                      - category: LOAN
+                        amount: 18160
+                        count: 1
+                        fraction_of_total_expenses: 0.64
+                      - category: TRAVEL
+                        amount: 341.12
+                        count: 3
+                        fraction_of_total_expenses: 0.01
+                      - category: RETAIL
+                        amount: 488.11
+                        count: 3
+                        fraction_of_total_expenses: 0.02
+                      - category: TRANSFER
+                        amount: 2676.8
+                        count: 17
+                        fraction_of_total_expenses: 0.09
+                      - category: RENT_AND_SERVICES
+                        amount: 861.06
+                        count: 5
+                        fraction_of_total_expenses: 0.03
+          headers: {}
+      security:
+      - bearer: []
+  /insights/v2/liabilities/credit-obligations:
+    get:
+      summary: Get Credit Obligations
+      deprecated: false
+      description: 'The Credit Obligations API allows you to fetch a businesses debt obligations, including loan repayments,
+        credit card usage, and balances. You can use this to understand a company’s credit exposure, repayment behaviour,
+        and overall financial health.
+
+
+        This API is asynchoronous, please read this guide for further information on how to fetch the results
+
+        https://docs.leantech.me/v2.0-KSA/docs/handling-asynchronous-requests. '
+      operationId: getCreditObligations
+      tags:
+      - Liabilities
+      parameters:
+      - name: async
+        in: query
+        description: 'This is an async API. The API will only return a `results_id` which can be fetched from the `/results`
+          endpoint when ready. Please note sync requests will fail. '
+        required: false
+        example: 'true'
+        schema:
+          type: boolean
+      - name: entity_id
+        in: query
+        description: The `entity_id` you're querying for.
+        required: true
+        example: bc287977-2094-3bef-82a0-bae3fe8dadfe
+        schema:
+          type: string
+      - name: start_date
+        in: query
+        description: The start date in UTC (in the format YYYY-MM-DD) you want to query expenses for.
+        required: false
+        example: '2024-09-01'
+        schema:
+          format: date
+          type: string
+      - name: lean-app-token
+        in: header
+        description: Your Lean app token
+        required: true
+        example: ad0832f0-76aa-4b7b-b267-1f002d7104df
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditObligationsResponse'
+              examples:
+                '1':
+                  summary: Credit Obligations Response
+                  value:
+                    status: OK
+                    results_id: b6b6d545-4305-4d5e-bd43-eb8c4047ac78
+                    message: Data successfully retrieved
+                    timestamp: '2024-09-16T06:40:16.995409316Z'
+                    insights:
+                      currency: SAR
+                      current_credit_cards_balance: 667630.64
+                      number_of_credit_cards: 6
+                      total:
+                        loan_repayments:
+                          amount: 14878.1
+                          count: 38
+                        loan_received:
+                          amount: 3258.68
+                          count: 5
+                        credit_cards_repayments:
+                          amount: 17505848.33
+                          count: 5683
+                        credit_cards_spending:
+                          amount: 7800699.15
+                          count: 22084
+                        credit_cards_balance:
+                          average_balance: 310318.24
+                          initial_balance: 498629.62
+                      monthly_totals:
+                      - month: 1
+                        year: 2024
+                        is_month_complete: true
+                        loan_repayments:
+                          amount: 0
+                          count: 0
+                        loan_received:
+                          amount: 0
+                          count: 0
+                        credit_cards_repayments:
+                          amount: 30000
+                          count: 1
+                        credit_cards_spending:
+                          amount: 4416.83
+                          count: 12
+                        credit_cards_balance:
+                          average_balance: 110260.44
+                          initial_balance: 463290.59
+                      - month: 2
+                        year: 2024
+                        is_month_complete: true
+                        loan_repayments:
+                          amount: 0
+                          count: 0
+                        loan_received:
+                          amount: 0
+                          count: 0
+                        credit_cards_repayments:
+                          amount: 50000
+                          count: 2
+                        credit_cards_spending:
+                          amount: 22254.66
+                          count: 54
+                        credit_cards_balance:
+                          average_balance: 347953.88
+                          initial_balance: 509078.04
+                      - month: 3
+                        year: 2024
+                        is_month_complete: true
+                        loan_repayments:
+                          amount: 0
+                          count: 0
+                        loan_received:
+                          amount: 0
+                          count: 0
+                        credit_cards_repayments:
+                          amount: 20000
+                          count: 1
+                        credit_cards_spending:
+                          amount: 19985.45
+                          count: 48
+                        credit_cards_balance:
+                          average_balance: 290489.46
+                          initial_balance: 535138.07
+                      - month: 4
+                        year: 2024
+                        is_month_complete: true
+                        loan_repayments:
+                          amount: 0
+                          count: 0
+                        loan_received:
+                          amount: 0
+                          count: 0
+                        credit_cards_repayments:
+                          amount: 50000
+                          count: 2
+                        credit_cards_spending:
+                          amount: 14619.44
+                          count: 44
+                        credit_cards_balance:
+                          average_balance: 334881.34
+                          initial_balance: 561789.46
+                      - month: 5
+                        year: 2024
+                        is_month_complete: true
+                        loan_repayments:
+                          amount: 0
+                          count: 0
+                        loan_received:
+                          amount: 0
+                          count: 0
+                        credit_cards_repayments:
+                          amount: 50000
+                          count: 2
+                        credit_cards_spending:
+                          amount: 22265.48
+                          count: 47
+                        credit_cards_balance:
+                          average_balance: 343141.9
+                          initial_balance: 594711.22
+                      - month: 6
+                        year: 2024
+                        is_month_complete: true
+                        loan_repayments:
+                          amount: 0
+                          count: 0
+                        loan_received:
+                          amount: 0
+                          count: 0
+                        credit_cards_repayments:
+                          amount: 50000
+                          count: 2
+                        credit_cards_spending:
+                          amount: 22680.36
+                          count: 60
+                        credit_cards_balance:
+                          average_balance: 449483.76
+                          initial_balance: 620273.83
+                      - month: 7
+                        year: 2024
+                        is_month_complete: true
+                        loan_repayments:
+                          amount: 0
+                          count: 0
+                        loan_received:
+                          amount: 0
+                          count: 0
+                        credit_cards_repayments:
+                          amount: 50000
+                          count: 2
+                        credit_cards_spending:
+                          amount: 26330.02
+                          count: 61
+                        credit_cards_balance:
+                          average_balance: 455087.92
+                          initial_balance: 645303.05
+                      - month: 8
+                        year: 2024
+                        is_month_complete: true
+                        loan_repayments:
+                          amount: 14878.1
+                          count: 38
+                        loan_received:
+                          amount: 3258.68
+                          count: 5
+                        credit_cards_repayments:
+                          amount: 17205848.33
+                          count: 5671
+                        credit_cards_spending:
+                          amount: 7668146.91
+                          count: 21758
+                        credit_cards_balance:
+                          average_balance: 151247.24
+                          initial_balance: 702425.15
+                '2':
+                  summary: Results Pending Response
+                  value:
+                    status: PENDING
+                    results_id: 974f39ec-8a15-4bc7-9b3c-4dea64fb8581
+                    message: Please wait for a webhook or try again later.
+                    timestamp: '2024-09-17T07:08:20.741119226Z'
+          headers: {}
+      security:
+      - bearer: []
+  /insights/v2/liabilities/non-credit-obligations:
+    get:
+      summary: Get Non Credit Obligations
+      deprecated: false
+      description: "The Non Credit Obligations API allows you to fetch a recurring personal obligations, including labor wage,\
+        \ monthly external and domestic remittances,  \n\nThis API is asynchoronous, please read this guide for further information\
+        \ on how to fetch the results\nhttps://docs.leantech.me/v2.0-KSA/docs/handling-asynchronous-requests. "
+      operationId: getNonCreditObligations
+      tags:
+      - Liabilities
+      parameters:
+      - name: entity_id
+        in: query
+        description: The `entity_id` you're querying for.
+        required: true
+        example: bc287977-2094-3bef-82a0-bae3fe8dadfe
+        schema:
+          type: string
+      - name: start_date
+        in: query
+        description: The start date in UTC (in the format YYYY-MM-DD) you want to query expenses for.
+        required: false
+        example: '2024-09-01'
+        schema:
+          type: string
+      - name: async
+        in: query
+        description: 'This is an async API. The API will only return a `results_id` which can be fetched from the `/results`
+          endpoint when ready. Please note sync requests will fail. '
+        required: false
+        example: 'true'
+        schema:
+          type: boolean
+      - name: lean-app-token
+        in: header
+        description: Your Lean app token
+        required: true
+        example: ad0832f0-76aa-4b7b-b267-1f002d7104df
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: The status of the request.
+                  results_id:
+                    type: string
+                    description: The ID for this result, this is used when retrieving results from the `/results` endpoint.
+                  message:
+                    type: string
+                    description: Further explanation of the response
+                  meta:
+                    type: string
+                  timestamp:
+                    type: string
+                    format: date-time
+                  status_detail:
+                    $ref: '#/components/schemas/StatusDetailObject'
+                    description: Further detail on the error if status=FAILED
+                  insights:
+                    type: object
+                    properties:
+                      total:
+                        description: Total amount
+                        type: object
+                        properties:
+                          amount:
+                            $ref: '#/components/schemas/AmountObject'
+                          count:
+                            type: integer
+                            description: An integer representing the total count.
+                          last_date_time:
+                            type: string
+                            format: date-time
+                          first_date_time:
+                            type: string
+                            format: date-time
+                          average_monthly_amount:
+                            type: object
+                            properties:
+                              currency:
+                                type: string
+                              amount:
+                                type: number
+                          average_monthly_count:
+                            type: integer
+                          maximum_monthly_amount:
+                            type: object
+                            properties:
+                              month:
+                                type: string
+                              amount:
+                                $ref: '#/components/schemas/AmountObject'
+                          minimum_monthly_amount:
+                            type: object
+                            properties:
+                              month:
+                                type: string
+                              amount:
+                                $ref: '#/components/schemas/AmountObject'
+                          breakdown:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                by:
+                                  type: string
+                                  description: RECURRING_TRANSACTIONS
+                                breakdowns:
+                                  type: array
+                                  items:
+                                    type: object
+                                    properties:
+                                      transaction_name:
+                                        type: string
+                                      amount:
+                                        $ref: '#/components/schemas/AmountObject'
+                                      count:
+                                        type: integer
+                                      fraction_of_total_obligations:
+                                        type: number
+                                      average_monthly_amount:
+                                        $ref: '#/components/schemas/AmountObject'
+                                      average_monthly_count:
+                                        type: integer
+                                      maximum_monthly_amount:
+                                        type: object
+                                        properties:
+                                          month:
+                                            type: string
+                                          amount:
+                                            $ref: '#/components/schemas/AmountObject'
+                                      minimum_monthly_amount:
+                                        type: object
+                                        properties:
+                                          month:
+                                            type: string
+                                          amount:
+                                            $ref: '#/components/schemas/AmountObject'
+                      monthly_totals:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            month:
+                              type: string
+                            year:
+                              type: integer
+                            amount:
+                              $ref: '#/components/schemas/AmountObject'
+                            count:
+                              type: integer
+                            is_month_complete:
+                              type: boolean
+              example:
+                status: OK
+                results_id: 0c12bb6e-7478-4c58-a2a0-6cdfdde82735
+                message: Data successfully retrieved
+                meta: null
+                timestamp: '2024-11-19T09:49:32.747575623Z'
+                status_detail: null
+                insights:
+                  total:
+                    amount:
+                      currency: SAR
+                      amount: 992435
+                    count: 2872
+                    first_date_time: '2024-11-12T00:00:00Z'
+                    last_date_time: '2024-11-12T00:00:00Z'
+                    average_monthly_amount:
+                      currency: SAR
+                      amount: 992435
+                    average_monthly_count: 2872
+                    maximum_monthly_amount:
+                      month: November
+                      amount:
+                        currency: SAR
+                        amount: 992435
+                    minimum_monthly_amount:
+                      month: November
+                      amount:
+                        currency: SAR
+                        amount: 992435
+                    breakdown:
+                    - by: RECURRING_TRANSACTIONS
+                      breakdowns:
+                      - transaction_name: SAR APPLE PAY APP MADA CARD FOOD TO SERVICE
+                        amount:
+                          currency: SAR
+                          amount: 5431.42
+                        count: 17
+                        fraction_of_total_obligations: 0.01
+                        average_monthly_amount:
+                          currency: SAR
+                          amount: 5431.42
+                        average_monthly_count: 1
+                        maximum_monthly_amount:
+                          month: November
+                          amount:
+                            currency: SAR
+                            amount: 5431.42
+                        minimum_monthly_amount:
+                          month: November
+                          amount:
+                            currency: SAR
+                            amount: 5431.42
+                      - transaction_name: معاملة تجريبية مع العائدات
+                        amount:
+                          currency: SAR
+                          amount: 6079.25
+                        count: 20
+                        fraction_of_total_obligations: 0.01
+                        average_monthly_amount:
+                          currency: SAR
+                          amount: 6079.25
+                        average_monthly_count: 1
+                        maximum_monthly_amount:
+                          month: November
+                          amount:
+                            currency: SAR
+                            amount: 6079.25
+                        minimum_monthly_amount:
+                          month: November
+                          amount:
+                            currency: SAR
+                            amount: 6079.25
+                      - transaction_name: SAR APPLE PAY APP MADA CARD AL
+                        amount:
+                          currency: SAR
+                          amount: 4012.19
+                        count: 14
+                        fraction_of_total_obligations: 0
+                        average_monthly_amount:
+                          currency: SAR
+                          amount: 4012.19
+                        average_monthly_count: 1
+                        maximum_monthly_amount:
+                          month: November
+                          amount:
+                            currency: SAR
+                            amount: 4012.19
+                        minimum_monthly_amount:
+                          month: November
+                          amount:
+                            currency: SAR
+                            amount: 4012.19
+                      - transaction_name: معاملة تجريالموجودات الأموال
+                        amount:
+                          currency: SAR
+                          amount: 6824.28
+                        count: 17
+                        fraction_of_total_obligations: 0.01
+                        average_monthly_amount:
+                          currency: SAR
+                          amount: 6824.28
+                        average_monthly_count: 1
+                        maximum_monthly_amount:
+                          month: November
+                          amount:
+                            currency: SAR
+                            amount: 6824.28
+                        minimum_monthly_amount:
+                          month: November
+                          amount:
+                            currency: SAR
+                            amount: 6824.28
+                      - transaction_name: ALLL RETAIL CO
+                        amount:
+                          currency: SAR
+                          amount: 6139.82
+                        count: 19
+                        fraction_of_total_obligations: 0.01
+                        average_monthly_amount:
+                          currency: SAR
+                          amount: 6139.82
+                        average_monthly_count: 1
+                        maximum_monthly_amount:
+                          month: November
+                          amount:
+                            currency: SAR
+                            amount: 6139.82
+                        minimum_monthly_amount:
+                          month: November
+                          amount:
+                            currency: SAR
+                            amount: 6139.82
+                      - transaction_name: Y CLOTHS
+                        amount:
+                          currency: SAR
+                          amount: 4372.92
+                        count: 14
+                        fraction_of_total_obligations: 0
+                        average_monthly_amount:
+                          currency: SAR
+                          amount: 4372.92
+                        average_monthly_count: 1
+                        maximum_monthly_amount:
+                          month: November
+                          amount:
+                            currency: SAR
+                            amount: 4372.92
+                        minimum_monthly_amount:
+                          month: November
+                          amount:
+                            currency: SAR
+                            amount: 4372.92
+                  monthly_totals:
+                  - month: 11
+                    year: 2024
+                    is_month_complete: false
+                    amount:
+                      currency: SAR
+                      amount: 992435
+                    count: 2872
+          headers: {}
+      security:
+      - bearer: []
+webhooks: {}
+components:
+  schemas:
+    IncomeInsights:
+      type: object
+      properties:
+        salary:
+          $ref: '#/components/schemas/Salary'
+          description: Salary income insights.
+        non_salary:
+          $ref: '#/components/schemas/NonSalary'
+          description: Non-salary income insights.
+    SalaryIncomeSource:
+      type: object
+      properties:
+        type:
+          type: string
+          description: The type of source of the income. For salary it will always be `EMPLOYMENT`.
+          enum:
+          - EMPLOYMENT
+        name:
+          type:
+          - string
+          - 'null'
+          description: The name of the employer.
+      required:
+      - name
+      - type
+    NonSalaryIncomeSource:
+      type: object
+      properties:
+        type:
+          type: string
+          description: 'The type of source of the non-salary income. '
+          enum:
+          - 'GIG_ECONOMY '
+          - RETIREMENT
+          - 'HOUSING_BENEFIT '
+          - 'UNEMPLOYMENT '
+          - RENTAL
+          - CASH_DEPOSIT
+          - BONUS
+          - TRANSFER_FROM_OWN_APPLICATION
+        name:
+          description: The name of the entity that provides the income.
+          type: string
+      required:
+      - type
+    IncomeRequest:
+      description: ''
+      required:
+      - entity_id
+      type: object
+      properties:
+        entity_id:
+          description: The `entity_id` you are querying for. The entity needs to have permissions `accounts` and `transactions`.
+          type: string
+        start_date:
+          format: date
+          description: "The start date in UTC (in the format YYYY-MM-DD) you want to query transactions for. \nIf not provided,\
+            \ we will default to 6 months before now."
+          type: string
+        estimated_monthly_income:
+          description: 'Monthly income for the user that you have gathered from another source (e.g.: reported by the user).'
+          type: number
+        income_type:
+          description: If you want to get salary or non-salary income or both. If you do not provide any value, it will default
+            to ALL.
+          enum:
+          - SALARY
+          - NON_SALARY
+          - ALL
+          type: string
+    SalaryFactors:
+      type: object
+      properties:
+        periods:
+          type: array
+          description: Array of income periods with their respective statistics
+          items:
+            type: object
+            properties:
+              period:
+                type: string
+                description: 'The time period for which the statistics are calculated. Allowed values: P3M (3 months), P6M
+                  (6 months), P9M (9 months), P12M (12 months).'
+                enum:
+                - P3M
+                - P6M
+                - P9M
+                - P12M
+                examples:
+                - P3M
+                - P6M
+                - P9M
+                - P12M
+                pattern: ^P(3|6|9|12)M$
+                default: P3M
+              income_variation:
+                type: number
+                description: The standard deviation of income amounts for the period
+                minimum: 0
+                format: double
+              average_income:
+                type: object
+                description: The average income for the period
+                properties:
+                  currency:
+                    type: string
+                    description: The currency code
+                    pattern: ^[A-Z]{3}$
+                    examples:
+                    - SAR
+                  amount:
+                    type: number
+                    description: The amount in the specified currency
+                    minimum: 0
+                    format: double
+                required:
+                - currency
+                - amount
+                additionalProperties: false
+            required:
+            - period
+            - income_variation
+            - average_income
+            additionalProperties: false
+          minItems: 1
+          maxItems: 4
+        delta_min_max:
+          type: number
+          description: 'Ratio of the maximum salary amount to minimum salary amount '
+          minimum: 0
+          format: double
+        average_monthly_income_change:
+          type: number
+          description: Average of Percentage Change Month on Month over the last 12Month
+          format: double
+      required:
+      - periods
+      - delta_min_max
+      - average_monthly_income_change
+      additionalProperties: false
+    AmountObject:
+      type: object
+      properties:
+        currency:
+          type: string
+          description: The currency in which the amount is represented.
+        amount:
+          type: number
+          description: The decimal amount for the transaction
+      description: The total amount for the category.
+    employmentDetailsObject:
+      type: object
+      properties:
+        bank_employer_name:
+          type: string
+          description: The name of the employer as it appears in bank transaction descriptions. This is the raw employer name
+            extracted directly from salary payment transaction records.
+        matched_reference_employer:
+          type:
+          - object
+          - 'null'
+          properties:
+            name:
+              type:
+              - object
+              - 'null'
+              properties:
+                en:
+                  type:
+                  - string
+                  - 'null'
+                  description: Employer name in English.
+                ar:
+                  type:
+                  - string
+                  - 'null'
+                  description: Employer name in Arabic.
+              description: Official name of the employer in English and Arabic.
+            cr_number:
+              type:
+              - integer
+              - 'null'
+              description: Employer’s Commercial Registration (CR) number.
+              format: int64
+          description: Information about the verified employer entity that matched with the bank employer name. Value will
+            be NULL if no matching stored in our database
+          required:
+          - name
+          - cr_number
+        salary_consistent:
+          type: boolean
+          description: Boolean indicator that determines if the salary payments from this employer follow a consistent pattern.
+            true indicates stable payment patterns, while false indicates irregularity. This is calculated by comparing both
+            date and amount variances against predefined thresholds (typically 5 days for dates and 1000 currency units for
+            amounts).
+        salary_date_variance:
+          type: number
+          description: A statistical measure of the variability in the timing of salary payments, expressed as the standard
+            deviation of intervals (in days) between consecutive salary payments. Lower values indicate more consistent payment
+            timing. A value of 0 means all payments were made at exactly the same interval.
+          format: double
+        salary_amount_variance:
+          type: number
+          description: A statistical measure of the variability in salary payment amounts, expressed as the standard deviation
+            of payment amounts. Lower values indicate more consistent payment amounts. A value of 0 means all payments were
+            exactly the same amount.
+          format: double
+        first_salary_date:
+          type: string
+          description: The timestamp of the earliest detected salary payment from this employer. This indicates when the employment
+            relationship began or when the earliest available transaction record starts.
+          format: date-time
+      required:
+      - bank_employer_name
+      - matched_reference_employer
+      - salary_consistent
+      - salary_date_variance
+      - salary_amount_variance
+      - first_salary_date
+    CreditObligationsResponse:
+      title: CreditObligationsResponse
+      description: Credit obligation response
+      type: object
+      properties:
+        status:
+          description: The status of the request.
+          enum:
+          - OK
+          - FAILED
+          - PENDING
+          - CONSENT_EXPIRED
+          type: string
+        results_id:
+          description: The ID for this result, this is used when retrieving results from the `/results` endpoint.
+          type: string
+          examples:
+          - 5e99047e-c45f-4aef-9cae-837e52aaa415
+        message:
+          description: Further explanation of the response
+          type: string
+          examples:
+          - Data successfully retrieved
+        meta:
+          type: string
+        timestamp:
+          format: date-time
+          description: The timestamp of when the response was retrieved
+          type: string
+          examples:
+          - '2024-07-25T13:06:10.800823472Z'
+        status_detail:
+          $ref: '#/components/schemas/StatusDetailObject'
+          description: Further detail on the error if status=FAILED
+        insights:
+          $ref: '#/components/schemas/InsightsCreditObligations'
+      examples:
+      - status: OK
+        results_id: b6b6d545-4305-4d5e-bd43-eb8c4047ac78
+        message: Data successfully retrieved
+        timestamp: '2024-09-16T06:40:16.995409316Z'
+        insights:
+          currency: SAR
+          current_credit_cards_balance: 667630.64
+          number_of_credit_cards: 6
+          total:
+            loan_repayments:
+              amount: 14878.1
+              count: 38
+            loan_received:
+              amount: 3258.68
+              count: 5
+            credit_cards_repayments:
+              amount: 17505848.33
+              count: 5683
+            credit_cards_spending:
+              amount: 7800699.15
+              count: 22084
+            credit_cards_balance:
+              average_balance: 310318.24
+              initial_balance: 498629.62
+          monthly_totals:
+          - month: 1
+            year: 2024
+            is_month_complete: true
+            loan_repayments:
+              amount: 0
+              count: 0
+            loan_received:
+              amount: 0
+              count: 0
+            credit_cards_repayments:
+              amount: 30000
+              count: 1
+            credit_cards_spending:
+              amount: 4416.83
+              count: 12
+            credit_cards_balance:
+              average_balance: 110260.44
+              initial_balance: 463290.59
+          - month: 2
+            year: 2024
+            is_month_complete: true
+            loan_repayments:
+              amount: 0
+              count: 0
+            loan_received:
+              amount: 0
+              count: 0
+            credit_cards_repayments:
+              amount: 50000
+              count: 2
+            credit_cards_spending:
+              amount: 22254.66
+              count: 54
+            credit_cards_balance:
+              average_balance: 347953.88
+              initial_balance: 509078.04
+          - month: 3
+            year: 2024
+            is_month_complete: true
+            loan_repayments:
+              amount: 0
+              count: 0
+            loan_received:
+              amount: 0
+              count: 0
+            credit_cards_repayments:
+              amount: 20000
+              count: 1
+            credit_cards_spending:
+              amount: 19985.45
+              count: 48
+            credit_cards_balance:
+              average_balance: 290489.46
+              initial_balance: 535138.07
+          - month: 4
+            year: 2024
+            is_month_complete: true
+            loan_repayments:
+              amount: 0
+              count: 0
+            loan_received:
+              amount: 0
+              count: 0
+            credit_cards_repayments:
+              amount: 50000
+              count: 2
+            credit_cards_spending:
+              amount: 14619.44
+              count: 44
+            credit_cards_balance:
+              average_balance: 334881.34
+              initial_balance: 561789.46
+          - month: 5
+            year: 2024
+            is_month_complete: true
+            loan_repayments:
+              amount: 0
+              count: 0
+            loan_received:
+              amount: 0
+              count: 0
+            credit_cards_repayments:
+              amount: 50000
+              count: 2
+            credit_cards_spending:
+              amount: 22265.48
+              count: 47
+            credit_cards_balance:
+              average_balance: 343141.9
+              initial_balance: 594711.22
+          - month: 6
+            year: 2024
+            is_month_complete: true
+            loan_repayments:
+              amount: 0
+              count: 0
+            loan_received:
+              amount: 0
+              count: 0
+            credit_cards_repayments:
+              amount: 50000
+              count: 2
+            credit_cards_spending:
+              amount: 22680.36
+              count: 60
+            credit_cards_balance:
+              average_balance: 449483.76
+              initial_balance: 620273.83
+          - month: 7
+            year: 2024
+            is_month_complete: true
+            loan_repayments:
+              amount: 0
+              count: 0
+            loan_received:
+              amount: 0
+              count: 0
+            credit_cards_repayments:
+              amount: 50000
+              count: 2
+            credit_cards_spending:
+              amount: 26330.02
+              count: 61
+            credit_cards_balance:
+              average_balance: 455087.92
+              initial_balance: 645303.05
+          - month: 8
+            year: 2024
+            is_month_complete: true
+            loan_repayments:
+              amount: 14878.1
+              count: 38
+            loan_received:
+              amount: 3258.68
+              count: 5
+            credit_cards_repayments:
+              amount: 17205848.33
+              count: 5671
+            credit_cards_spending:
+              amount: 7668146.91
+              count: 21758
+            credit_cards_balance:
+              average_balance: 151247.24
+              initial_balance: 702425.15
+    TotalCreditObligations:
+      description: ''
+      type: object
+      properties:
+        loan_repayments:
+          $ref: '#/components/schemas/LoanRepayments'
+          description: Total amount of loan repayments and count of repayments
+        loan_received:
+          $ref: '#/components/schemas/LoansReceived'
+          description: Total amount of loans received and count of loans received
+        credit_cards_repayments:
+          $ref: '#/components/schemas/CreditCardsRepayments'
+          description: Total amount of credit card repayments identified and count of card repayments
+        credit_cards_spending:
+          $ref: '#/components/schemas/CreditCardsSpending'
+          description: Total amount of spend on credit cards and number of spending transactions
+        credit_cards_balance:
+          $ref: '#/components/schemas/CreditCardsBalance'
+          description: Initial and average balance held on cards
+    InsightsCreditObligations:
+      description: ''
+      type: object
+      properties:
+        current_credit_cards_balance:
+          type: object
+          properties:
+            amount:
+              type: object
+              properties:
+                currency:
+                  type: string
+                amount:
+                  type: number
+          description: Current balance across all identified credit cards
+        number_of_credit_cards:
+          type: integer
+          description: Total number of credit cards linked to account
+        total:
+          $ref: '#/components/schemas/TotalCreditObligations'
+          description: Total amount
+        monthly_totals:
+          type: array
+          items:
+            $ref: '#/components/schemas/MonthlyTotalsCreditObligations'
+          description: Totals broken down by month
+    LoanRepayments:
+      description: Totals for loan repayments
+      type: object
+      properties:
+        amount:
+          description: Total amount of loan repayments
+          $ref: '#/components/schemas/AmountObject'
+        count:
+          description: Number of loan repayment transactions
+          type: integer
+    LoansReceived:
+      description: Total amount of loans received and count of loans
+      type: object
+      properties:
+        amount:
+          description: Total amount of loans received
+          $ref: '#/components/schemas/AmountObject'
+        count:
+          description: Number of loan receiving transactions
+          type: integer
+    CreditCardsRepayments:
+      description: Total amount of credit card repayments identified and count of repayment transactions
+      type: object
+      properties:
+        amount:
+          description: Total amount of credit card repayments.
+          $ref: '#/components/schemas/AmountObject'
+        count:
+          description: Number of credit card repayment transactions.
+          type: integer
+    CreditCardsSpending:
+      description: Total amount spent on credit cards and number of credit card spending transactions
+      type: object
+      properties:
+        amount:
+          description: Total amount spent on credit cards.
+          $ref: '#/components/schemas/AmountObject'
+        count:
+          description: Number of credit card spending transactions.
+          type: integer
+    CreditCardsBalance:
+      description: Average balance on credit cards and initial balance at start of reporting period
+      type: object
+      properties:
+        initial_balance:
+          description: The initial balance at the start of the reporting period.
+          $ref: '#/components/schemas/AmountObject'
+        average_balance:
+          description: The average balance of the credit cards.
+          $ref: '#/components/schemas/AmountObject'
+    MonthlyTotalsCreditObligations:
+      description: ''
+      type: object
+      properties:
+        month:
+          description: The month of the reporting period
+          type: integer
+          examples:
+          - 1 (Jan)
+        year:
+          description: The year of the reporting period
+          type: integer
+          examples:
+          - '2024'
+        is_month_complete:
+          description: Indicates whether the data for this month is complete.
+          type: boolean
+          examples:
+          - 'true'
+        loan_repayments:
+          $ref: '#/components/schemas/LoanRepayments'
+          description: 'Amount and count of loan repayments for month '
+        loan_received:
+          $ref: '#/components/schemas/LoanRepayments'
+          description: 'Amount and count of loans received for month '
+        credit_cards_repayments:
+          $ref: '#/components/schemas/CreditCardsRepayments'
+          description: Amount and count of credit card repayments for month
+        credit_cards_spending:
+          $ref: '#/components/schemas/CreditCardsSpending'
+          description: Amount credit card spend and count of card spending transactions
+        credit_cards_balance:
+          $ref: '#/components/schemas/CreditCardsBalance'
+          description: Average and initial card balance for the month
+    TotalBalances:
+      type: object
+      properties:
+        average_balance:
+          description: The average balance over since start_date until today.
+          $ref: '#/components/schemas/AmountObject'
+        initial_balance:
+          $ref: '#/components/schemas/AmountObject'
+          description: The starting balance of the account since start_date
+        available_balance:
+          description: The portion of the current balance that is available for withdrawal or spending.
+          $ref: '#/components/schemas/AmountObject'
+        current_balance:
+          description: The total amount of money in the account at the present moment.
+          $ref: '#/components/schemas/AmountObject'
+        frequency_of_contributions:
+          type: string
+          description: How often deposits are made (daily, weekly, monthly) to the bank account.
+          enum:
+          - daily
+          - weekly
+          - monthly
+    MonthlyTotalsBalances:
+      type: object
+      properties:
+        month:
+          type: number
+          description: 'Number of month within the year (e.g.: January is represented as 1 and December is represented as
+            12).'
+        year:
+          type: number
+          description: Year.
+        is_month_complete:
+          type: boolean
+          description: Determines if Lean retrieved the data for all days for the month. This will always be true, except
+            for the first and last month retrieved.
+        monthly_growth_rate:
+          type: number
+          description: The percentage of increase in the account balance each month.
+          format: double
+        contribution_amount:
+          description: The total amount deposited into the account each month.
+          $ref: '#/components/schemas/AmountObject'
+        average_balance:
+          description: The average balance for each month.
+          $ref: '#/components/schemas/AmountObject'
+        initial_balance:
+          description: The first balance of the month.
+          $ref: '#/components/schemas/AmountObject'
+    StatusDetailObject:
+      description: Status Details
+      type: object
+      properties:
+        granular_status_code:
+          description: Detailed error code
+          type: string
+        status_additional_info:
+          description: Further detail on the encountered error
+          type: string
+    DataResponse:
+      type: object
+      properties:
+        status:
+          description: The status of the results. For async requests, initially returns PENDING.
+          enum:
+          - OK
+          - FAILED
+          - PENDING
+          - CONSENT_EXPIRED
+          type: string
+        results_id:
+          type: string
+          description: The ID for this result, this is used when retrieving results from the `/results` endpoint.
+          format: uuid
+        message:
+          description: A message describing the status of the request.
+          type: string
+        meta:
+          type:
+          - string
+          - 'null'
+          description: Optional metadata associated with the result.
+        timestamp:
+          format: date-time
+          description: The timestamp with timezone offset indicating when the response was generated.
+          type: string
+        status_detail:
+          description: Further detail on the error if status=FAILED
+          $ref: '#/components/schemas/StatusDetailObject'
+      required:
+      - status
+      - results_id
+      - message
+      - meta
+      - timestamp
+      - status_detail
+    SalaryMonthlyAggregate:
+      type: object
+      properties:
+        month:
+          description: 'Number of month within the year (e.g.: January is represented as 1 and December is represented as
+            12)'
+          type: integer
+        year:
+          description: Year
+          type: integer
+        amount:
+          description: Total salary for the month
+          type: number
+    SalaryMonthlyTotals:
+      type: object
+      properties:
+        month:
+          description: 'Number of month within the year (e.g.: January is represented as 1 and December is represented as
+            12)'
+          type: integer
+        year:
+          description: Year.
+          type: integer
+        amount:
+          description: Total salary for the month.
+          type: number
+        count:
+          description: Number of salary transaction in the month.
+          type: integer
+        is_month_complete:
+          description: Determines if Lean retrieved the data for all days for the month. This will always be `true`, except
+            for the first and last month retrieved.
+          type: boolean
+      required:
+      - month
+      - year
+      - amount
+      - count
+      - is_month_complete
+    ExpensesResponse:
+      allOf:
+      - type: object
+        properties:
+          insights:
+            $ref: '#/components/schemas/ExpensesData'
+      - $ref: '#/components/schemas/DataResponse'
+    SalaryTotal:
+      type: object
+      properties:
+        amount:
+          description: Total salary since start_date.
+          type: number
+        count:
+          description: Total number of salary payments since start_date.
+          type: integer
+        last_date_time:
+          type:
+          - string
+          - 'null'
+          description: 'UTC Date of the most recent transaction '
+          format: date-time
+        first_date_time:
+          type:
+          - string
+          - 'null'
+          description: UTC Date of the earliest transaction since start_date.
+          format: date-time
+        average_monthly_amount:
+          description: Average salary amount received per month since start_date.
+          type: number
+        average_monthly_count:
+          description: Average number of salary payments per month since start_date.
+          type: number
+        minimum_monthly_amount:
+          description: Minimum salary amount received in a month since start_date and month when this happened.
+          anyOf:
+          - $ref: '#/components/schemas/SalaryMonthlyAggregate'
+            description: Minimum salary amount received in a month since start_date and month when this happened.
+          - type: 'null'
+        maximum_monthly_amount:
+          description: Maximum salary amount received in a month since start_date and month when this happened.
+          anyOf:
+          - $ref: '#/components/schemas/SalaryMonthlyAggregate'
+            description: Maximum salary amount received in a month since start_date and month when this happened.
+          - type: 'null'
+      required:
+      - count
+      - amount
+      - last_date_time
+      - first_date_time
+      - average_monthly_amount
+      - average_monthly_count
+      - minimum_monthly_amount
+      - maximum_monthly_amount
+    ExpensesData:
+      type: object
+      properties:
+        currency:
+          description: The 3 Letter ISO code denominating the currency that the salary is provided in. This will be local
+            currency (SAR in KSA).
+          type: string
+        total:
+          $ref: '#/components/schemas/ExpensesTotal'
+          description: Insights on the expenses since start_date.
+        monthly_totals:
+          description: Total expenses for all months from start_date until today.
+          type: array
+          items:
+            $ref: '#/components/schemas/ExpensesMonthlyTotals'
+    ExpensesMonthlyAggregate:
+      type: object
+      properties:
+        month:
+          description: 'Number of month within the year (e.g.: January is represented as 1 and December is represented as
+            12)'
+          type: integer
+        year:
+          description: Year
+          type: integer
+        amount:
+          description: Total expenses for the month
+          type: number
+    Salary:
+      type: object
+      properties:
+        currency:
+          description: The 3 Letter ISO code denominating the currency that the salary is provided in. This will be local
+            currency (SAR in KSA).
+          type: string
+        total:
+          $ref: '#/components/schemas/SalaryTotal'
+          description: Insights on all salaries received since start_date.
+        monthly_totals:
+          description: Total salary for all months from start_date until today.
+          type: array
+          items:
+            $ref: '#/components/schemas/SalaryMonthlyTotals'
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/SalaryTransaction'
+          description: List of transactions that correspond to a salary deposit.
+          minItems: 0
+        income_factors:
+          description: Salary analysis for different time periods
+          $ref: '#/components/schemas/SalaryFactors'
+      required:
+      - currency
+      - total
+      - monthly_totals
+      - transactions
+      - income_factors
+    NonSalary:
+      type: object
+      properties:
+        currency:
+          description: The 3 Letter ISO code denominating the currency that the non-salary income is provided in. This will
+            be local currency (SAR in KSA).
+          type: string
+        total:
+          $ref: '#/components/schemas/NonSalaryTotal'
+          description: Insights on non-salary income received since start_date.
+        monthly_totals:
+          description: Total non-salary income for all months from start_date until today.
+          type: array
+          items:
+            $ref: '#/components/schemas/NonSalaryMonthlyTotals'
+        transactions:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/NonSalaryTransaction'
+          description: List of transactions that correspond to a non-salary income deposit.
+        income_factors:
+          description: Non-Salary analysis for different time periods
+          $ref: '#/components/schemas/NonSalaryFactors'
+      required:
+      - income_factors
+      - transactions
+      - monthly_totals
+      - currency
+      - total
+    NonSalaryMonthlyAggregate:
+      type: object
+      properties:
+        month:
+          description: 'Number of month within the year (e.g.: January is represented as 1 and December is represented as
+            12)'
+          type: integer
+        year:
+          description: Year
+          type: integer
+        amount:
+          description: Total non-salary income for the month
+          type: number
+    NonSalaryMonthlyTotals:
+      type: object
+      properties:
+        month:
+          description: 'Number of month within the year (e.g.: January is represented as 1 and December is represented as
+            12)'
+          type: integer
+        year:
+          description: Year.
+          type: integer
+        amount:
+          description: Total non-salary income for the month.
+          type: number
+        count:
+          description: Number of non-salary income transaction in the month.
+          type: integer
+        is_month_complete:
+          description: Determines if Lean retrieved the data for all days for the month. This will always be `true`, except
+            for the first and last month retrieved.
+          type: boolean
+    NonSalaryTotal:
+      type: object
+      properties:
+        count:
+          description: Number of non-salary income payments since start_date.
+          type: integer
+        amount:
+          description: Total non-salary income since start_date.
+          type: number
+        first_date_time:
+          type:
+          - string
+          - 'null'
+          description: UTC datetime of first non-salary income payment since start_date.
+          format: date-time
+        last_date_time:
+          type:
+          - string
+          - 'null'
+          description: UTC datetime of last non-salary income payment.
+          format: date-time
+        average_monthly_count:
+          description: Average number of non-salary income payments per month since start_date.
+          type: number
+        average_monthly_amount:
+          description: Average non-salary income amount received per month since start_date.
+          type: number
+        minimum_monthly_amount:
+          $ref: '#/components/schemas/NonSalaryMonthlyAggregate'
+          description: Minimum non-salary income amount received in a month since start_date and month when this happened.
+        maximum_monthly_amount:
+          $ref: '#/components/schemas/NonSalaryMonthlyAggregate'
+          description: Maximum non-salary income amount received in a month since start_date and month when this happened.
+    ExpensesMonthlyBreakdownCategory:
+      type: object
+      properties:
+        by:
+          description: Criteria by which we are breakdowning down the expenses.
+          enum:
+          - category
+          type: string
+        breakdowns:
+          description: Breakdown of the expenses by category.
+          type: array
+          items:
+            $ref: '#/components/schemas/ExpensesMonthlyBreakdownsCategory'
+    ExpensesMonthlyBreakdownsCategory:
+      type: object
+      properties:
+        category:
+          description: The category of the transaction.
+          enum:
+          - BANK_FEES_AND_CHARGES
+          - CHARITY
+          - EDUCATION
+          - ENTERTAINMENT
+          - GOVERNMENT
+          - GROCERIES
+          - HEALTH_AND_WELLBEING
+          - LOANS
+          - RENT_AND_SERVICES
+          - RESTAURANTS_DINING
+          - RETAIL
+          - TRANSFER
+          - TRANSPORT
+          - TRAVEL
+          - OTHER
+          type: string
+        count:
+          description: Number of expenses transactions  for the month.
+          type: integer
+        amount:
+          description: Total expenses  for the month.
+          type: number
+        fraction_of_total_expenses:
+          description: Fraction of the total expenses that this category represents for the month.
+          type: number
+    ExpensesTotalBreakdownCategory:
+      type: object
+      properties:
+        by:
+          description: Criteria by which we are breakdowning down the expenses.
+          enum:
+          - category
+          type: string
+        breakdowns:
+          description: Breakdown of the expenses by category.
+          type: array
+          items:
+            $ref: '#/components/schemas/ExpensesMonthlyBreakdownsCategory'
+    ExpensesMonthlyTotals:
+      type: object
+      properties:
+        month:
+          description: 'Number of month within the year (e.g.: January is represented as 1 and December is represented as
+            12)'
+          type: integer
+        year:
+          description: Year.
+          type: integer
+        amount:
+          description: Total expenses for the month.
+          type: number
+        count:
+          description: Number of expense transactions in the month.
+          type: integer
+        is_month_complete:
+          description: Determines if Lean retrieved the data for all days for the month. This will always be `true`, except
+            for the first and last month retrieved.
+          type: boolean
+        breakdown:
+          description: Breakdown of expenses by category.
+          type: array
+          items:
+            $ref: '#/components/schemas/ExpensesMonthlyBreakdownCategory'
+    ExpensesTotal:
+      type: object
+      properties:
+        count:
+          description: Number of expenses transactions since start_date.
+          type: integer
+        amount:
+          description: Total expenses since start_date.
+          type: number
+        first_date_time:
+          format: date-time
+          description: UTC datetime of first expense transaction since start_date.
+          type: string
+        last_date_time:
+          format: date-time
+          description: UTC datetime of last expense transaction.
+          type: string
+        average_monthly_count:
+          description: Average number of expenses transactions per month since start_date.
+          type: number
+        average_monthly_amount:
+          description: Average expenses amount per month since start_date.
+          type: number
+        minimum_monthly_amount:
+          $ref: '#/components/schemas/ExpensesMonthlyAggregate'
+          description: Minimum expenses amount in a month since start_date and month when this happened.
+        maximum_monthly_amount:
+          $ref: '#/components/schemas/ExpensesMonthlyAggregate'
+          description: Maximum expenses amount in a month since start_date and month when this happened.
+        breakdown:
+          description: Breakdown of expenses by category.
+          type: array
+          items:
+            $ref: '#/components/schemas/ExpensesTotalBreakdownCategory'
+    NonSalaryTransaction:
+      type: object
+      properties:
+        account_id:
+          description: The id of the account where the non-salary income transaction was credited into.
+          type: string
+        transaction_id:
+          description: Unique identifier for a transaction
+          type: string
+        amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+          description: Amount and currency of the transaction.
+        transaction_information:
+          description: Description of the transaction
+          type: string
+        booking_date_time:
+          format: date-time
+          description: Date and time when the non-salary income transaction is posted to the account.
+          type: string
+        income_source:
+          $ref: '#/components/schemas/NonSalaryIncomeSource'
+          description: Type and name of the source where the income comes from.
+    SalaryTransaction:
+      type: object
+      properties:
+        account_id:
+          type: string
+          description: The id of the account where the salary transaction was credited into.
+          format: uuid
+        transaction_id:
+          description: Unique identifier for a transaction
+          type: string
+        transaction_information:
+          description: Description of the transaction
+          type: string
+        booking_date_time:
+          format: date-time
+          description: Date and time when the salary transaction is posted to the account.
+          type: string
+        amount:
+          type: number
+          description: Amount the salary transaction.
+        income_source:
+          $ref: '#/components/schemas/SalaryIncomeSource'
+          description: Type and name of the source where the income comes from.
+      required:
+      - account_id
+      - transaction_id
+      - amount
+      - transaction_information
+      - income_source
+      - booking_date_time
+    CurrencyAmount:
+      type: object
+      properties:
+        amount:
+          format: float
+          description: The value in the denominated currency.
+          type: number
+        currency:
+          description: ISO 3 letter code for the currency the amount is returned in.
+          type: string
+    NonSalaryFactors:
+      type: object
+      properties:
+        periods:
+          type: array
+          description: Array of income periods with their respective statistics
+          items:
+            type: object
+            properties:
+              period:
+                type: string
+                description: 'The time period for which the statistics are calculated. Allowed values: P3M (3 months), P6M
+                  (6 months), P9M (9 months), P12M (12 months).'
+                enum:
+                - P3M
+                - P6M
+                - P9M
+                - P12M
+                examples:
+                - P3M
+                - P6M
+                - P9M
+                - P12M
+                pattern: ^P(3|6|9|12)M$
+                default: P3M
+              income_variation:
+                type: number
+                description: The standard deviation of income amounts for the period
+                minimum: 0
+                format: double
+              average_income:
+                type: object
+                description: The average income for the period
+                properties:
+                  currency:
+                    type: string
+                    description: The currency code
+                    pattern: ^[A-Z]{3}$
+                    examples:
+                    - SAR
+                  amount:
+                    type: number
+                    description: The amount in the specified currency
+                    minimum: 0
+                    format: double
+                required:
+                - currency
+                - amount
+                additionalProperties: false
+            required:
+            - period
+            - income_variation
+            - average_income
+            additionalProperties: false
+          minItems: 1
+          maxItems: 4
+        delta_min_max:
+          type: number
+          description: 'Ratio of the maximum salary amount to minimum salary amount '
+          minimum: 0
+          format: double
+        average_monthly_income_change:
+          type: number
+          description: Average of Percentage Change Month on Month over the last 12Month
+          format: double
+      required:
+      - periods
+      - delta_min_max
+      - average_monthly_income_change
+      additionalProperties: false
+    balance_factors:
+      type: object
+      title: BalanceFactors
+      description: Balance factors analysis for cash balance insights
+      properties:
+        periods:
+          type: array
+          description: List of balance periods with their average balances
+          items:
+            type: object
+            properties:
+              period:
+                type: string
+                description: The time period in ISO 8601 duration format
+                enum:
+                - P3M
+                - P6M
+                - P9M
+                - P12M
+                examples:
+                - P3M
+              average_balance:
+                type: number
+                description: The average balance for the period
+                format: decimal
+                examples:
+                - 28630.95
+            required:
+            - period
+            - average_balance
+        balance_trend_average_month_on_month:
+          type: number
+          description: Average month-over-month balance trend percentage
+          format: decimal
+          examples:
+          - 1817
+        current_balance:
+          type: number
+          description: Current balance amount
+          format: decimal
+          examples:
+          - 36211.63
+        balance_trend:
+          type: integer
+          description: Number of times the balance increased month over month
+          minimum: 0
+          examples:
+          - 7
+        inflow_factors:
+          type: object
+          description: Analysis of credit (incoming) transactions
+          properties:
+            median_transaction_amount:
+              type: number
+              description: Median transaction amount
+              format: decimal
+              examples:
+              - 53.93
+            max_transaction_amount:
+              type: number
+              description: Maximum transaction amount
+              format: decimal
+              examples:
+              - 21894
+            min_transaction_amount:
+              type: number
+              description: Minimum transaction amount
+              format: decimal
+              examples:
+              - 13.31
+            weekday_transaction_count:
+              type: integer
+              description: Number of weekday transactions
+              minimum: 0
+              examples:
+              - 131
+            weekend_transaction_count:
+              type: integer
+              description: Number of weekend transactions
+              minimum: 0
+              examples:
+              - 53
+            average_time:
+              type: number
+              description: Average time between transactions in days
+              format: decimal
+              examples:
+              - 6.83
+            percent_greater_than_x:
+              type: number
+              description: Percentage of transactions greater than a threshold
+              format: decimal
+              minimum: 0
+              maximum: 100
+              examples:
+              - 33
+            recurring_average:
+              type: number
+              description: Average amount of recurring transactions
+              format: decimal
+              examples:
+              - 0
+            median_days:
+              type: number
+              description: Median number of days between transactions
+              format: decimal
+              examples:
+              - 4
+            percent_salary_transaction:
+              type: number
+              description: Percentage of transactions that are salary-related
+              format: decimal
+              minimum: 0
+              maximum: 100
+              examples:
+              - 98
+          required:
+          - median_transaction_amount
+          - max_transaction_amount
+          - min_transaction_amount
+          - weekday_transaction_count
+          - weekend_transaction_count
+          - average_time
+          - percent_greater_than_x
+          - recurring_average
+          - median_days
+          - percent_salary_transaction
+        outflow_factors:
+          type: object
+          description: Analysis of debit (outgoing) transactions
+          properties:
+            median_transaction_amount:
+              type: number
+              description: Median transaction amount
+              format: decimal
+              examples:
+              - 46
+            max_transaction_amount:
+              type: number
+              description: Maximum transaction amount
+              format: decimal
+              examples:
+              - 5000
+            min_transaction_amount:
+              type: number
+              description: Minimum transaction amount
+              format: decimal
+              examples:
+              - 0.08
+            weekday_transaction_count:
+              type: integer
+              description: Number of weekday transactions
+              minimum: 0
+              examples:
+              - 130
+            weekend_transaction_count:
+              type: integer
+              description: Number of weekend transactions
+              minimum: 0
+              examples:
+              - 53
+            average_time:
+              type: number
+              description: Average time between transactions in days
+              format: decimal
+              examples:
+              - 1
+            percent_greater_than_x:
+              type: number
+              description: Percentage of transactions greater than a threshold
+              format: decimal
+              minimum: 0
+              maximum: 100
+              examples:
+              - 20
+            recurring_average:
+              type: number
+              description: Average amount of recurring transactions
+              format: decimal
+              examples:
+              - 0
+            median_days:
+              type: number
+              description: Median number of days between transactions
+              format: decimal
+              examples:
+              - 1
+            spike_transactions:
+              type: array
+              description: List of transactions that are considered spikes
+              items:
+                type: object
+                properties:
+                  month:
+                    type: integer
+                    description: Month of the spike transaction
+                    minimum: 1
+                    maximum: 12
+                    examples:
+                    - 11
+                  year:
+                    type: integer
+                    description: Year of the spike transaction
+                    examples:
+                    - 2024
+                  amount:
+                    type: number
+                    description: Amount of the spike transaction
+                    format: decimal
+                    examples:
+                    - 15749.05
+                required:
+                - month
+                - year
+                - amount
+          required:
+          - median_transaction_amount
+          - max_transaction_amount
+          - min_transaction_amount
+          - weekday_transaction_count
+          - weekend_transaction_count
+          - average_time
+          - percent_greater_than_x
+          - recurring_average
+          - median_days
+          - spike_transactions
+        daily_net_cashflow_estimate:
+          type: number
+          description: Estimated daily net cash flow
+          format: decimal
+          examples:
+          - 138.53
+      required:
+      - periods
+      - balance_trend
+      - balance_trend_average_month_on_month
+      - current_balance
+      - inflow_factors
+      - outflow_factors
+      - daily_net_cashflow_estimate
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+servers:
+- url: https://sandbox.sa.leantech.me
+  description: Sandbox
+- url: https://api2.sa.leantech.me
+  description: Production / Pre-Live
+security:
+- bearer: []

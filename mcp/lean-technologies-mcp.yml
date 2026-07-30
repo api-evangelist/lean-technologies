@@ -1,0 +1,18 @@
+generated: '2026-07-20'
+method: searched
+status: published
+source: https://docs.leantech.me/docs/mcp
+server:
+  name: lean-documentation
+  transport: http
+  url: https://docs.leantech.me/mcp?branch=v3.0-UAE
+  auth: Optional API headers passed via the MCP client (query params / header config)
+capabilities:
+  - Direct API access to Lean Tech functionality
+  - Documentation search across the Lean docs
+  - Real-time data from your Lean Tech account
+  - Code generation assistance for Lean integrations
+notes: >
+  Lean publishes a hosted documentation MCP server that fronts the docs site and
+  API reference. The branch query parameter selects the docs version
+  (e.g. v3.0-UAE). Configure it in any MCP client (Cursor example published in docs).

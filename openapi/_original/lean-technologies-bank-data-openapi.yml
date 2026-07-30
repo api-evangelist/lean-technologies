@@ -1,0 +1,1493 @@
+openapi: 3.1.0
+info:
+  title: UAE - V2
+  description: ''
+  version: 1.0.0
+tags:
+- name: Entities
+- name: Raw Data
+paths:
+  /customers/v1/{customer_id}/entities:
+    get:
+      summary: Get Entities for Customer
+      deprecated: false
+      description: 'An Entity is generated whenever a Customer connects a new bank using the `.connect()` method in the LinkSDK
+        with _any_ data related permissions. '
+      operationId: getCustomerEntities
+      tags:
+      - Entities
+      parameters:
+      - name: customer_id
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Entity'
+              example:
+              - id: efbad0dd-641a-ef83-ef7e-c90ca172759b
+                customer_id: 6bf8f7ae-e0f5-dae4-9519-de82fbc9ee42
+                bank_identifier: MOCK_UAE
+                permissions:
+                  identity: true
+                  accounts: true
+                  balance: true
+                  transactions: false
+                bank_type: RETAIL
+              - id: 51161c8b-a6c3-6d35-5c89-fa4e03f87390
+                customer_id: 8c7af590-ac88-f41b-8b59-067ab3a12349
+                bank_identifier: MOCK_UAE
+                permissions:
+                  identity: false
+                  accounts: false
+                  balance: true
+                  transactions: true
+                bank_type: CORPORATE
+          headers: {}
+      security:
+      - bearer: []
+  /customers/v1/{customer_id}/entities/{entity_id}:
+    get:
+      summary: Get Entity by ID
+      deprecated: false
+      description: 'Returns a single Entity.
+
+
+        An Entity is generated whenever a Customer connects a new bank using the `.connect()` method in the LinkSDK with _any_
+        data related permissions. '
+      operationId: getEntityById
+      tags:
+      - Entities
+      parameters:
+      - name: customer_id
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+      - name: entity_id
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entity'
+              example:
+                id: 8d56a41f-7045-7312-a620-abe78414a143
+                customer_id: 3c70d3ed-d761-f231-5fd1-2bdeef42e46e
+                bank_identifier: MOCK_UAE
+                permissions:
+                  identity: true
+                  accounts: true
+                  balance: false
+                  transactions: true
+                bank_type: RETAIL
+          headers: {}
+      security:
+      - bearer: []
+    delete:
+      summary: Delete Entity
+      deprecated: false
+      description: Marks the entity as deleted. It can be recreated later by intiating a new .connect() flow from the LinkSDK.
+      operationId: deleteEntity
+      tags:
+      - Entities
+      parameters:
+      - name: customer_id
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+      - name: entity_id
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+                  enum:
+                  - USER_REQUESTED
+                  description: Please always pass in the value USER_REQUESTED.
+              required:
+              - reason
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+      security:
+      - bearer: []
+  /data/v2/accounts:
+    get:
+      summary: Get Accounts
+      deprecated: false
+      description: Retrieve the accounts for an Entity ID
+      operationId: fetchAccounts
+      tags:
+      - Raw Data
+      parameters:
+      - name: async
+        in: query
+        description: When `true` the API will only return a `results_id` which can be fetched from the `/results` endpoint
+          when ready.
+        required: false
+        schema:
+          default: false
+          type: boolean
+      - name: page
+        in: query
+        description: The page you're requesting - returns page 0 of a response if not specified.
+        required: false
+        schema:
+          format: int32
+          default: 0
+          type: integer
+      - name: size
+        in: query
+        description: The number of objects you want to return as a page size.
+        required: false
+        schema:
+          format: int32
+          default: 50
+          maximum: 100
+          type: integer
+      - name: entity_id
+        in: query
+        description: The `entity_id` you're querying for.
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - name: meta
+        in: query
+        description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
+        required: false
+        schema:
+          type: string
+      - name: force_refresh
+        in: query
+        description: 'Ignore Lean''s caching and force a call to the bank. This may have unwanted performance issues. '
+        required: false
+        schema:
+          default: false
+          type: boolean
+      - name: verbose
+        in: query
+        description: Shows `regional_data` values in responses when true. Defaults to `false`.
+        required: false
+        schema:
+          default: false
+          type: boolean
+      - name: customer-ip
+        in: header
+        description: IP Address of the customer. Required to indicate that the user is currently on-session. When this value
+          isn't supplied the request is treated as a background refresh. Banks may place limits on the number of background
+          refreshes can be performed over 24 hours.
+        required: false
+        example: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - OK
+                    - FAILED
+                    - PENDING
+                    - CONSENT_EXPIRED
+                    description: The status of the request
+                  data:
+                    type: object
+                    properties:
+                      accounts:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            account_id:
+                              type: string
+                              description: The unique identifier for the account. Provided as a UUID.
+                              format: uuid
+                            status:
+                              type: string
+                              description: The current status of the account. Indicating whether it is in active use or not.
+                              enum:
+                              - ENABLED
+                              - DISABLED
+                              - PENDING
+                              - PROFORMA
+                              - DELETED
+                              - UNSUPPORTED
+                            currency:
+                              type: string
+                              description: The ISO 3 letter currency code that the account stores value in.
+                            account_type:
+                              type: string
+                              description: Indicates whether the account is a retail consumer account or a business account.
+                              enum:
+                              - PERSONAL
+                              - BUSINESS
+                              - UNSUPPORTED
+                            account_sub_type:
+                              type: string
+                              description: Indicates the type of account.
+                              enum:
+                              - CALL
+                              - CHARGE_CARD
+                              - CREDIT
+                              - CURRENT
+                              - EMONEY
+                              - LOAN
+                              - MORTGAGE
+                              - PREPAID
+                              - SAVINGS
+                              - UNSUPPORTED
+                            nickname:
+                              type: string
+                              description: The name for this account as set by the owner of the account. This name is known
+                                to the user.
+                            account:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  scheme_name:
+                                    type: string
+                                    description: Specifies the type of account identifier being provided
+                                    enum:
+                                    - PAN
+                                    - IBAN
+                                    - BBAN
+                                    - OTHER
+                                    - UNSUPPORTED
+                                  identification:
+                                    type: string
+                                    description: The identification value specified by the scheme_type
+                                  name:
+                                    type: string
+                                    description: Associated name of the identifier
+                                required:
+                                - scheme_name
+                                - identification
+                            description:
+                              type: string
+                              description: Specifies the description of the account sub-type.
+                            regional_data:
+                              type: object
+                              properties:
+                                standard:
+                                  type: string
+                                  description: A description of the standard the regional data is returned in formatted as
+                                    `"{ISO 3 Letter Country Code}.{Standard}.{Version}"`. In the UAE V2 API this will always
+                                    return as `"ARE.LEAN.V1"`
+                                data:
+                                  properties:
+                                    account_id:
+                                      type: string
+                                      description: The unique identifier for the account. Provided as a UUID.
+                                    account_number:
+                                      type: string
+                                      description: The account number for the account.
+                                    name:
+                                      type: string
+                                      description: The product name of the account
+                                    currency_code:
+                                      type: string
+                                      description: The ISO 3 letter currency code the account stores value in,
+                                    type:
+                                      type: string
+                                      enum:
+                                      - CURRENT
+                                      - SAVINGS
+                                      - CREDIT
+                                      description: Indicates the type of account
+                                    iban:
+                                      type: string
+                                      description: The IBAN for the account.
+                                  required:
+                                  - account_id
+                                  - account_number
+                                  - name
+                                  - currency_code
+                                  - type
+                                  - iban
+                                  $ref: '#/components/schemas/Accounts'
+                              required:
+                              - standard
+                              - data
+                              description: Region specific data response. Only provided when verbose=true in the originating
+                                request.
+                          required:
+                          - account_id
+                        description: An array of accounts associated with the Entity
+                      page:
+                        $ref: '#/components/schemas/Pagination'
+                      type:
+                        type: string
+                        description: The endpoint the original request was made to.
+                    required:
+                    - accounts
+                    - page
+                    - type
+                  results_id:
+                    type: string
+                    description: The ID for this result, this is used when retrieving results from the /results endpoint.
+                  message:
+                    type: string
+                    description: Further explanation of the response
+                  timestamp:
+                    type: string
+                    description: The timestamp of when the response was retrieved
+                  status_detail:
+                    type: object
+                    properties:
+                      granular_status_code:
+                        type: string
+                        description: Detailed error code
+                      status_additional_info:
+                        type: string
+                        description: Further detail on the encountered error
+                    required:
+                    - granular_status_code
+                    - status_additional_info
+                    description: Further detail on the error if status=FAILED
+                required:
+                - status
+                - data
+                - results_id
+                - message
+                - timestamp
+                - status_detail
+              example:
+                status: OK
+                data:
+                  accounts:
+                  - account_id: c568aac1-df29-489b-80f8-63aaad5f6a2f
+                    status: ENABLED
+                    currency: AED
+                    account_type: PERSONAL
+                    account_sub_type: CURRENT
+                    nickname: Current Account
+                    account:
+                    - scheme_name: IBAN
+                      identification: AE070331234567890123456
+                    - scheme_name: BBAN
+                      identification: '4567890123456'
+                    description: Current Account
+                    regional_data:
+                      standard: ARE.LEAN.V1
+                      data:
+                        account_id: c568aac1-df29-489b-80f8-63aaad5f6a2f
+                        account_number: '4567890123456'
+                        name: Current Account
+                        currency_code: AED
+                        type: CURRENT
+                        iban: AE070331234567890123456
+                  page:
+                    number: 0
+                    size: 1
+                    total_elements: 1
+                    total_pages: 1
+                  type: accounts
+                results_id: f5e6ab0e-9586-4d42-81c2-f2c5cbdad3cf
+                message: Data successfully retrieved
+                timestamp: '2023-10-19T16:27:10.500036785Z'
+          headers: {}
+      security:
+      - bearer: []
+  /data/v2/accounts/{account_id}/balances:
+    get:
+      summary: Get Balances
+      deprecated: false
+      description: 'Get the balances for a specific account given an accountId. The accountId can be found by making a call
+        to the /accounts endpoint.
+
+
+        Requires an active entity with the `balances` permission to use.'
+      operationId: fetchBalances
+      tags:
+      - Raw Data
+      parameters:
+      - name: account_id
+        in: path
+        description: 'The `account_id` to fetch balance(s) for '
+        required: true
+        example: ''
+        schema:
+          type: string
+      - name: async
+        in: query
+        description: When `true` the API will only return a `results_id` which can be fetched from the `/results` endpoint
+          when ready.
+        required: false
+        schema:
+          default: false
+          type: boolean
+      - name: page
+        in: query
+        description: The page you're requesting - returns page 0 of a response if not specified.
+        required: false
+        schema:
+          format: int32
+          default: 0
+          type: integer
+      - name: size
+        in: query
+        description: The number of objects you want to return as a page size.
+        required: false
+        schema:
+          format: int32
+          default: 50
+          maximum: 100
+          type: integer
+      - name: entity_id
+        in: query
+        description: The `entity_id` you're querying for.
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - name: meta
+        in: query
+        description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
+        required: false
+        schema:
+          type: string
+      - name: force_refresh
+        in: query
+        description: 'Ignore Lean''s caching and force a call to the bank. This may have unwanted performance issues. '
+        required: false
+        schema:
+          default: false
+          type: boolean
+      - name: verbose
+        in: query
+        description: Shows `regional_data` values in responses when true. Defaults to `false`.
+        required: false
+        schema:
+          default: false
+          type: boolean
+      - name: customer-ip
+        in: header
+        description: IP Address of the customer. Required to indicate that the user is currently on-session. When this value
+          isn't supplied the request is treated as a background refresh. Banks may place limits on the number of background
+          refreshes can be performed over 24 hours.
+        required: false
+        example: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        description: The endpoint the original request was made to
+                      page:
+                        type: object
+                        properties: {}
+                      balances:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            account_id:
+                              type: string
+                              description: The `account_id` this balance is related to.
+                            credit_debit_indicator:
+                              type: string
+                              description: Indicates whether the amount returned is a credit or a debit amount. A value of
+                                0 is returned as CREDIT.
+                              enum:
+                              - CREDIT
+                              - DEBIT
+                              - UNSUPPORTED
+                            amount:
+                              $ref: '#/components/schemas/CurrencyAmount'
+                            type:
+                              type: string
+                              description: 'The type of balance for the account.
+
+
+                                Note: Banks support different types for presenting account balance, so this list is used to
+                                support different Bank systems in KSA.'
+                              enum:
+                              - CLOSING_AVAILABLE
+                              - CLOSING_BOOKED
+                              - CLOSING_CLEARED
+                              - EXPECTED
+                              - FORWARD_AVAILABLE
+                              - INFORMATION
+                              - INTERIM_AVAILABLE
+                              - INTERIM_BOOKED
+                              - INTERIM_CLEARED
+                              - OPENING_AVAILABLE
+                              - OPENING_BOOKED
+                              - OPENING_CLEARED
+                              - PREVIOUSLY_CLOSED
+                            date_time:
+                              type: string
+                              description: The date and time that this balance object was generated.
+                            credit_line:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  included:
+                                    type: boolean
+                                    description: 'Boolean flag to Indicate whether or not a credit line is included in the
+                                      balance of the account. Usage: If not present, credit line is not included in the balance
+                                      amount of the account.'
+                                  amount:
+                                    $ref: '#/components/schemas/CurrencyAmount'
+                                  type:
+                                    type: string
+                                    enum:
+                                    - AVAILABLE
+                                    - CREDIT
+                                    - EMERGENCY
+                                    - "PRE-AGREED\t"
+                                    - TEMPORARY
+                                    description: 'Type of credit line provided to the account.
+
+                                      Note: Banks support different types of credit lines on accounts, so this list is used
+                                      to support different banking systems in KSA.'
+                                required:
+                                - included
+                                - amount
+                                - type
+                              description: Information on any credit available to the balance of this account. Returned as
+                                an array.
+                            regional_data:
+                              type: object
+                              properties:
+                                standard:
+                                  type: string
+                                  description: A description of the standard the regional data is returned in formatted as
+                                    `"{ISO 3 Letter Country Code}.{Standard}.{Version}"`. In the UAE V2 API this will always
+                                    return as `"ARE.LEAN.V1"`
+                                data:
+                                  properties:
+                                    account_id:
+                                      type: string
+                                      description: The `account_id` this balance is related to.
+                                    balance:
+                                      type: number
+                                      description: The stored balance in the account a negative value may be returned for
+                                        example for `CREDIT` accounts or current accounts in overdraft.
+                                    currency_code:
+                                      type: string
+                                      maxLength: 3
+                                      minLength: 3
+                                      examples:
+                                      - AED
+                                      - SAR
+                                      - USD
+                                      description: The 3 letter ISO code for the denominated currency of the account balance.
+                                    account_name:
+                                      type: string
+                                      description: The name of the account the balance has been fetched for
+                                    account_type:
+                                      type: string
+                                      description: The type of the account
+                                      enum:
+                                      - CURRENT
+                                      - SAVINGS
+                                      - CREDIT
+                                  required:
+                                  - account_id
+                                  - balance
+                                  - currency_code
+                                  - account_name
+                                  - account_type
+                                  $ref: '#/components/schemas/Balances'
+                              required:
+                              - data
+                              - standard
+                              description: Region specific data response. Only provided when `verbose=true` in the originating
+                                request.
+                          required:
+                          - account_id
+                          - credit_debit_indicator
+                          - amount
+                          - date_time
+                    required:
+                    - type
+                    - page
+                    - balances
+                  status:
+                    type: string
+                    description: The status of the request.
+                    enum:
+                    - OK
+                    - FAILED
+                    - PENDING
+                    - CONSENT_EXPIRED
+                  results_id:
+                    type: string
+                    description: The ID for this result, this is used when retrieving results from the `/results` endpoint.
+                  message:
+                    type: string
+                    description: Further explanation of the response
+                  timestamp:
+                    type: string
+                    description: The timestamp of when the response was retrieved
+                  meta:
+                    type: string
+                  status_detail:
+                    type: object
+                    properties:
+                      granular_status_code:
+                        type: string
+                        description: Detailed error code
+                      status_additional_info:
+                        type: string
+                        description: Further detail on the encountered error.
+                    description: Further detail on the error if status is `FAILED`
+                required:
+                - data
+                - status
+                - results_id
+                - message
+                - timestamp
+              example:
+                status: OK
+                data:
+                  balances:
+                  - account_id: c568aac1-df29-489b-80f8-63aaad5f6a2f
+                    credit_debit_indicator: CREDIT
+                    amount:
+                      amount: 132.31
+                      currency: AED
+                    type: INTERIM_AVAILABLE
+                    regional_data:
+                      standard: ARE.LEAN.V1
+                      data:
+                        balance: 132.31
+                        currency_code: AED
+                        account_id: c568aac1-df29-489b-80f8-63aaad5f6a2f
+                        account_name: Liv Current Account
+                        account_type: CURRENT
+                  page:
+                    number: 0
+                    size: 1
+                    total_elements: 1
+                    total_pages: 1
+                  type: balances
+                results_id: cf7700fa-01b6-4f06-b77f-e173b6ab84ae
+                message: Data successfully retrieved
+                timestamp: '2023-10-20T06:46:09.934801534Z'
+          headers: {}
+      security:
+      - bearer: []
+  /data/v2/accounts/{account_id}/transactions:
+    get:
+      summary: Get Transactions
+      deprecated: false
+      description: Get the transactions for a specific account given an accountId. The accountId can be found by making a
+        call to the /accounts endpoint.
+      operationId: fetchTransactions
+      tags:
+      - Raw Data
+      parameters:
+      - name: account_id
+        in: path
+        description: ''
+        required: true
+        example: ''
+        schema:
+          type: string
+      - name: async
+        in: query
+        description: When `true` the API will only return a `results_id` which can be fetched from the `/results` endpoint
+          when ready.
+        required: false
+        schema:
+          default: false
+          type: boolean
+      - name: page
+        in: query
+        description: The page you're requesting - returns page 0 of a response if not specified.
+        required: false
+        schema:
+          format: int32
+          default: 0
+          type: integer
+      - name: size
+        in: query
+        description: The number of objects you want to return as a page size.
+        required: false
+        schema:
+          format: int32
+          default: 50
+          maximum: 100
+          type: integer
+      - name: entity_id
+        in: query
+        description: The `entity_id` you're querying for.
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - name: meta
+        in: query
+        description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
+        required: false
+        schema:
+          type: string
+      - name: verbose
+        in: query
+        description: Shows `regional_data` values in responses when true. Defaults to `false`.
+        required: false
+        schema:
+          default: false
+          type: boolean
+      - name: start_date
+        in: query
+        description: The start date in UTC (in the format YYYY-MM-DD) you want to query transactions for.
+        required: false
+        schema:
+          format: date
+          type: string
+      - name: end_date
+        in: query
+        description: The end date in UTC (in the format YYYY-MM-DD) you want to query transactions for.
+        required: false
+        schema:
+          format: date
+          type: string
+      - name: customer-ip
+        in: header
+        description: IP Address of the customer. Required to indicate that the user is currently on-session. When this value
+          isn't supplied the request is treated as a background refresh. Banks may place limits on the number of background
+          refreshes can be performed over 24 hours.
+        required: false
+        example: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: The status of the request.
+                    enum:
+                    - OK
+                    - PENDING
+                    - FAILED
+                    - CONSENT_EXPIRED
+                  data:
+                    type: object
+                    properties:
+                      transactions:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            account_id:
+                              type: string
+                              description: Unique identifier for the account where the transaction is credited/debited from
+                              format: uuid
+                            transaction_id:
+                              type: string
+                              description: Unique identifier for a transaction
+                            transaction_information:
+                              type: string
+                            credit_debit_indicator:
+                              type: string
+                              enum:
+                              - CREDIT
+                              - DEBIT
+                              - UNSUPPORTED
+                            amount:
+                              $ref: '#/components/schemas/CurrencyAmount'
+                            transaction_mutability:
+                              type: string
+                              description: Whether this transaction can be considered in a final state or may change in future
+                                fetches of transaction data.
+                              enum:
+                              - MUTABLE
+                              - IMMUTABLE
+                              - UNSUPPORTED
+                            booking_date_time:
+                              type: string
+                              description: The UTC datetime the transaction was executed. Note that in the case the bank only
+                                provides the date with no time, we assume the transaction ocurred at 00:00 in the local timezone
+                                and then convert to UTC.
+                            insights:
+                              type: object
+                              properties:
+                                description_cleansed:
+                                  type: string
+                                  description: A cleansed statement descriptor
+                                category:
+                                  type: string
+                                  enum:
+                                  - BANK_FEES_AND_CHARGES
+                                  - CHARITY
+                                  - EDUCATION
+                                  - ENTERTAINMENT
+                                  - GOVERNMENT
+                                  - GROCERIES
+                                  - HEALTH_AND_WELLBEING
+                                  - LOANS_AND_INVESTMENT
+                                  - RENT_AND_SERVICES
+                                  - RESTAURANTS_DINING
+                                  - RETAIL
+                                  - SALARY_AND_REVENUE
+                                  - TRANSFER
+                                  - TRANSPORT
+                                  - TRAVEL
+                                  - OTHER
+                                category_confidence:
+                                  type: number
+                                  minimum: 0
+                                  maximum: 1
+                                  description: Confidence of category expressed as a percentage between 0 and 1
+                              required:
+                              - description_cleansed
+                              - category
+                              - category_confidence
+                            status:
+                              type: string
+                              enum:
+                              - BOOKED
+                              - PENDING
+                              - REJECTED
+                              - UNSUPPORTED
+                              description: Status of the transaction
+                            index:
+                              type: integer
+                              description: Indicates the order of the transactions. For each date, the first transaction will
+                                have an index of 0.
+                            regional_data:
+                              type: object
+                              properties:
+                                standard:
+                                  type: string
+                                  description: A description of the standard the regional data is returned in formatted as
+                                    "{ISO 3 Letter Country Code}.{Standard}.{Version}". In the UAE V2 API this will always
+                                    return as `"ARE.LEAN.V1"`
+                                data:
+                                  type: object
+                                  properties:
+                                    id:
+                                      type: string
+                                      description: Transaction identifier
+                                    description:
+                                      type: string
+                                      description: Statement descriptor
+                                    account_id:
+                                      type: string
+                                      description: Account ID that owns the transaction
+                                    amount:
+                                      type:
+                                      - integer
+                                      - number
+                                      description: Amount of transaction (negative numbers are outflow positive numbers are
+                                        inflow)
+                                    currency_code:
+                                      type: string
+                                      description: 3 letter ISO code for the currency the transaction was processed in.
+                                    index:
+                                      type: integer
+                                      description: Indicates the order of the transactions. For each date, the first transaction
+                                        will have an index of 0.
+                                    pending:
+                                      type: boolean
+                                      description: Whether the transaction has been settled yet or not
+                                    timestamp:
+                                      type: string
+                                      description: When the transaction was processed
+                                  required:
+                                  - id
+                                  - description
+                                  - account_id
+                                  - amount
+                                  - currency_code
+                                  - index
+                                  - pending
+                                  - timestamp
+                              required:
+                              - standard
+                              - data
+                              description: Region specific data response. Only provided when `verbose=true` in the originating
+                                request.
+                          required:
+                          - account_id
+                          - transaction_id
+                          - transaction_information
+                          - credit_debit_indicator
+                          - amount
+                          - transaction_mutability
+                          - booking_date_time
+                          - insights
+                          - regional_data
+                          - status
+                          - index
+                      page:
+                        $ref: '#/components/schemas/Pagination'
+                      type:
+                        type: string
+                        description: The endpoint the original request was made to
+                    required:
+                    - transactions
+                    - page
+                    - type
+                  results_id:
+                    type: string
+                  message:
+                    type: string
+                  timestamp:
+                    type: string
+                required:
+                - status
+                - data
+                - results_id
+                - message
+                - timestamp
+              example:
+                status: OK
+                data:
+                  transactions:
+                  - account_id: c568aac1-df29-489b-80f8-63aaad5f6a2f
+                    transaction_id: 8422a5ab-fedc-4d7c-a5d8-75112cc3b5cf
+                    transaction_information: Transfer via LEAN2P
+                    credit_debit_indicator: DEBIT
+                    amount:
+                      amount: 50
+                      currency: AED
+                    transaction_mutability: IMMUTABLE
+                    booking_date_time: '2023-10-01T20:00:00Z'
+                    insights:
+                      description_cleansed: LEAN2P
+                      category: TRANSFER
+                      category_confidence: 0.64
+                    regional_data:
+                      standard: ARE.LEAN.V1
+                      data:
+                        id: 8422a5ab-fedc-4d7c-a5d8-75112cc3b5cf
+                        description: Transfer via LEAN2P
+                        account_id: c568aac1-df29-489b-80f8-63aaad5f6a2f
+                        amount: -50
+                        currency_code: AED
+                        index: 0
+                        pending: false
+                        timestamp: '2023-10-01T20:00:00Z'
+                    status: BOOKED
+                    index: 0
+                  - account_id: c568aac1-df29-489b-80f8-63aaad5f6a2f
+                    transaction_id: d9b67a03-8485-4215-be0a-231a50205152
+                    transaction_information: SUSHI CIRCLE ACHRAFIEH LBN
+                    credit_debit_indicator: CREDIT
+                    amount:
+                      amount: 9576.72
+                      currency: AED
+                    transaction_mutability: IMMUTABLE
+                    booking_date_time: '2022-10-19T20:00:00Z'
+                    insights:
+                      description_cleansed: SUSHI CIRCLE
+                      category: RESTAURANTS_DINING
+                      category_confidence: 0.98
+                    regional_data:
+                      standard: ARE.LEAN.V1
+                      data:
+                        id: d9b67a03-8485-4215-be0a-231a50205152
+                        description: SUSHI CIRCLE ACHRAFIEH LBN
+                        account_id: c4c1a3a9-73ec-4b3e-ae79-f9d3dbb1438b
+                        amount: 9576.72
+                        currency_code: AED
+                        index: 0
+                        pending: false
+                        timestamp: '2022-10-19T20:00:00Z'
+                    status: BOOKED
+                    index: 0
+                  page:
+                    number: 0
+                    size: 2
+                    total_elements: 2
+                    total_pages: 1
+                  type: transactions
+                results_id: c1e71678-14bc-45a8-a3a7-2d8e77a01607
+                message: Data successfully retrieved
+                timestamp: '2023-10-20T07:46:15.497910449Z'
+          headers: {}
+      security:
+      - bearer: []
+  /data/v2/identity:
+    get:
+      summary: Retrieve Identity
+      deprecated: false
+      description: Get the identity details of the account holder stored at the bank.
+      operationId: fetchCurrentIdentity
+      tags:
+      - Raw Data
+      parameters:
+      - name: async
+        in: query
+        description: When `true` the API will only return a `results_id` which can be fetched from the `/results` endpoint
+          when ready.
+        required: false
+        schema:
+          default: false
+          type: boolean
+      - name: page
+        in: query
+        description: The page you're requesting - returns page 0 of a response if not specified.
+        required: false
+        schema:
+          format: int32
+          default: 0
+          type: integer
+      - name: size
+        in: query
+        description: The number of objects you want to return as a page size.
+        required: false
+        schema:
+          format: int32
+          default: 50
+          maximum: 100
+          type: integer
+      - name: entity_id
+        in: query
+        description: The `entity_id` you're querying for.
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - name: meta
+        in: query
+        description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
+        required: false
+        schema:
+          type: string
+      - name: force_refresh
+        in: query
+        description: 'Ignore Lean''s caching and force a call to the bank. This may have unwanted performance issues. '
+        required: false
+        schema:
+          default: false
+          type: boolean
+      - name: verbose
+        in: query
+        description: Shows `regional_data` values in responses when true. Defaults to `false`.
+        required: false
+        schema:
+          default: false
+          type: boolean
+      - name: customer-ip
+        in: header
+        description: IP Address of the customer. Required to indicate that the user is currently on-session. When this value
+          isn't supplied the request is treated as a background refresh. Banks may place limits on the number of background
+          refreshes can be performed over 24 hours.
+        required: false
+        example: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: The status of the request.
+                    enum:
+                    - OK
+                    - FAILED
+                    - PENDING
+                    - CONSENT_EXPIRED
+                  data:
+                    type: object
+                    properties:
+                      identities:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            full_legal_name:
+                              type: string
+                            email_address:
+                              type: string
+                            mobile_number:
+                              type: string
+                            Address:
+                              $ref: '#/components/schemas/Address'
+                            regional_data:
+                              type: object
+                              properties:
+                                standard:
+                                  type: string
+                                  description: A description of the standard the regional data is returned in formatted as
+                                    "{ISO 3 Letter Country Code}.{Standard}.{Version}". In the UAE V2 API this will always
+                                    return as `"ARE.LEAN.V1"`
+                                data:
+                                  properties:
+                                    full_name:
+                                      type: string
+                                      description: The full legal name of the account holder.
+                                    mobile_number:
+                                      type: string
+                                      description: The registered mobile number of the account holder.
+                                    gender:
+                                      type: string
+                                      description: The registered gender of the account holder.
+                                    national_identity_number:
+                                      type: string
+                                      description: The registered identity number of the account holder.
+                                    birth_date:
+                                      type: string
+                                      description: The date of birth of the account holder.
+                                    email_address:
+                                      type: string
+                                      description: The registered email address of the account holder.
+                                    address:
+                                      type: string
+                                      description: The registered address of the account holder.
+                                  required:
+                                  - full_name
+                                  - mobile_number
+                                  - gender
+                                  - national_identity_number
+                                  - birth_date
+                                  - email_address
+                                  - address
+                                  $ref: '#/components/schemas/Identity'
+                              required:
+                              - standard
+                              - data
+                      page:
+                        $ref: '#/components/schemas/Pagination'
+                      type:
+                        type: string
+                        description: The endpoint the original request was made to.
+                    required:
+                    - identities
+                    - page
+                    - type
+                  results_id:
+                    type: string
+                    description: The ID for this result, this is used when retrieving results from the /results endpoint.
+                  message:
+                    type: string
+                    description: Further explanation of the response
+                  timestamp:
+                    type: string
+                    description: The timestamp of when the response was retrieved
+                required:
+                - status
+                - data
+                - results_id
+                - message
+                - timestamp
+              example: "{\n    \"status\": \"OK\",\n    \"data\": {\n        \"identities\": [\n            {\n          \
+                \      \"full_legal_name\": \"MARY SMITH\",\n                \"email_address\": \"mary@gmail.com\",\n    \
+                \            \"mobile_number\": \"971585673015\",\n                \"address\": {\n                    \"\
+                address_type\": \"RESIDENTIAL\",\n                    \"building_type\": \"Apartment\",\n                \
+                \    \"apartment_or_villa_number\": \"123\",\n                    \"building_name\": \"Example Tower\",\n\
+                \                    \"street\": \"Example Street\",\n                    \"area\": \"Example Area\",\n  \
+                \                  \"town_name\": \"Example Town\",\n                    \"region\": \"Example Region\",\n\
+                \                    \"country\": \"United Arab Emirates\",\n                    \"post_code\": \"0000\",\n\
+                \                    \"po_box\": \"0000\",\n                    \"street_address\": \"123, Example Tower,\
+                \ Example Street\",\n                    \"address_line\": \"123, Example Tower, Example Street, Example Area,\
+                \ Example Town, Example Region, United Arab Emirates\"\n      }\n            \n                \"regional_data\"\
+                : {\n                    \"standard\": \"ARE.LEAN.V1\",\n                    \"data\": {\n               \
+                \         \"full_name\": \"MARY SMITH\",\n                        \"mobile_number\": \"971585673015\",\n \
+                \                       \"gender\": \"FEMALE\",\n                        \"national_identity_number\": \"\
+                784-1990-8478484-9\",\n                        \"birth_date\": \"1990-05-09\",\n                        \"\
+                email_address\": \"mary@gmail.com\",\n                        \"address\": \"4411, BAHAR RESIDENCES, SHEIKH\
+                \ ZAYED ROAD, Dubai, United Arab Emirates\"\n                    }\n                }\n            }\n   \
+                \     ],\n        \"page\": {\n            \"number\": 0,\n            \"size\": 1,\n            \"total_elements\"\
+                : 1,\n            \"total_pages\": 1\n        },\n        \"type\": \"identities\"\n    },\n    \"results_id\"\
+                : \"6dfa266b-4d33-483e-a226-aae0ce9bcd2b\",\n    \"message\": \"Data successfully retrieved\",\n    \"timestamp\"\
+                : \"2023-10-20T06:58:11.457017332Z\"\n}"
+          headers: {}
+      security:
+      - bearer: []
+components:
+  schemas:
+    Identity:
+      type: object
+      properties:
+        full_name:
+          type: string
+          description: The full legal name of the account holder.
+        mobile_number:
+          type: string
+          description: The registered mobile number of the account holder.
+        gender:
+          type: string
+          description: The registered gender of the account holder.
+        national_identity_number:
+          type: string
+          description: The registered identity number of the account holder.
+        birth_date:
+          type: string
+          description: The date of birth of the account holder.
+        email_address:
+          type: string
+          description: The registered email address of the account holder.
+        address:
+          type: string
+          description: The registered address of the account holder.
+      required:
+      - full_name
+      - mobile_number
+      - gender
+      - national_identity_number
+      - birth_date
+      - email_address
+      - address
+    Accounts:
+      type: object
+      properties:
+        account_id:
+          type: string
+          description: The unique identifier for the account. Provided as a UUID.
+        account_number:
+          type: string
+          description: The account number for the account.
+        name:
+          type: string
+          description: The product name of the account
+        currency_code:
+          type: string
+          description: The ISO 3 letter currency code the account stores value in,
+        type:
+          type: string
+          enum:
+          - CURRENT
+          - SAVINGS
+          - CREDIT
+          description: Indicates the type of account
+        iban:
+          type: string
+          description: The IBAN for the account.
+      required:
+      - account_id
+      - account_number
+      - name
+      - currency_code
+      - type
+      - iban
+    Balances:
+      type: object
+      properties:
+        account_id:
+          type: string
+          description: The `account_id` this balance is related to.
+        balance:
+          type: number
+          description: The stored balance in the account a negative value may be returned for example for `CREDIT` accounts
+            or current accounts in overdraft.
+        currency_code:
+          type: string
+          maxLength: 3
+          minLength: 3
+          examples:
+          - AED
+          - SAR
+          - USD
+          description: The 3 letter ISO code for the denominated currency of the account balance.
+        account_name:
+          type: string
+          description: The name of the account the balance has been fetched for
+        account_type:
+          type: string
+          description: The type of the account
+          enum:
+          - CURRENT
+          - SAVINGS
+          - CREDIT
+      required:
+      - account_id
+      - balance
+      - currency_code
+      - account_name
+      - account_type
+    CurrencyAmount:
+      type: object
+      properties:
+        amount:
+          type: number
+          description: The value in the denominated currency.
+        currency:
+          type: string
+          description: ISO 3 letter code for the currency the amount is returned in.
+          minLength: 3
+          maxLength: 3
+      required:
+      - amount
+      - currency
+    Address:
+      type: object
+      description: The address details extracted from the proof of address document.
+      properties:
+        address_type:
+          type: string
+          description: The type of address (e.g., residential, business).
+        building_type:
+          type: string
+          description: 'The type of building, apartments or villa for example. '
+        apartment_or_villa_number:
+          type: string
+          description: The apartment or villa number.
+        building_name:
+          type: string
+          description: The name of the building.
+        street:
+          type: string
+          description: The street name.
+        area:
+          type: string
+          description: The area or neighborhood.
+        town_name:
+          type: string
+          description: The town or city name where the address is located.
+        region:
+          type: string
+          description: The region of the address.
+        country:
+          type: string
+          description: The country where the address is located.
+        post_code:
+          type: string
+          description: The postal code associated with the address.
+        po_box:
+          type: string
+          description: The post office box number.
+        street_address:
+          type: string
+          description: The street address extracted from the document.
+        address_line:
+          type: string
+          description: The full address line as extracted from the document.
+      required:
+      - building_type
+    Pagination:
+      type: object
+      properties:
+        number:
+          type: integer
+          description: The current page being returned by the API
+        size:
+          type: integer
+          description: The page size requested
+        total_elements:
+          type: integer
+          description: The total number of elements in all pages
+        total_pages:
+          type: integer
+          description: The total number of pages retrievable
+      required:
+      - number
+      - size
+      - total_elements
+      - total_pages
+    Entity:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The `entity_id`
+          format: uuid
+        customer_id:
+          type: string
+          description: Identifies which Customer owns the connection
+          format: uuid
+        bank_identifier:
+          type: string
+          description: Identifies the bank which has been connected
+        permissions:
+          type: object
+          properties:
+            identity:
+              type: boolean
+              description: Indicates access to read identity data
+            accounts:
+              type: boolean
+              description: Indicates access to read accounts data
+            balance:
+              type: boolean
+              description: Indicates access to read balance data
+            transactions:
+              type: boolean
+              description: Indicates access to read transactions data
+          required:
+          - identity
+          - accounts
+          - balance
+          - transactions
+          description: Indicates which permissions have been granted by the user, this corresponds with the Data API calls
+            you can make using the entity.
+        bank_type:
+          type: string
+          enum:
+          - RETAIL
+          - CORPORATE
+          description: 'Specifies whether the Entity is a Retail or Corporate owned account. '
+      required:
+      - id
+      - customer_id
+      - bank_identifier
+      - permissions
+      - bank_type
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production / Pre-live
+security:
+- bearer: []

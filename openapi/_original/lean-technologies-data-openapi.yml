@@ -1,0 +1,3787 @@
+openapi: 3.1.0
+info:
+  title: Lean API
+  version: v3.0.0
+servers:
+- url: https://sandbox.leantech.me
+  description: Sandbox
+- url: https://api2.leantech.me
+  description: Production
+paths:
+  /data/v1/accounts:
+    servers: []
+  /data/v2/accounts:
+    servers: []
+    get:
+      operationId: fetchAccountsV2
+      summary: Get Accounts
+      description: "The Get Accounts endpoint retrieves a list of bank accounts that have been linked by a user via LinkSDK,\
+        \ identified by their entity_id.\nEach account object contains fields such as account_id, account status, currency,\
+        \ account_sub_type, account identifiers (such as IBAN, ACCOUNT_NUMBER, and NATIONAL_ID) and other data points related\
+        \ accounts. \nYou can use the resulting account_ids to query additional financial data through other Lean APIs such\
+        \ as transactions, balances, beneficiaries, and other data APIs.\n"
+      parameters:
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/PageParameter'
+      - $ref: '#/components/parameters/SizeParameter'
+      - $ref: '#/components/parameters/EntityIdParameter'
+      - $ref: '#/components/parameters/MetaParameter'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountsRequestResultV2'
+              examples:
+                GetAccounts_V2_KSA_Example:
+                  summary: Successful get accounts - KSA
+                  value:
+                    status: OK
+                    results_id: 81bac9e7-e51b-45bd-b660-a7557b286642
+                    message: Data successfully retrieved
+                    meta: null
+                    timestamp: '2025-09-11T19:02:04.447189646Z'
+                    status_detail: {}
+                    data:
+                      type: accounts
+                      accounts:
+                      - entity_id: 550e8400-e29b-41d4-a716-446655440000
+                        account_id: 7c8a9f12-3456-4abc-b123-9876543210ab
+                        account_holder_name: Ahmed Abdullah
+                        account_holder_short_name: Ahmed
+                        status: ENABLED
+                        status_update_date_time: '2025-08-01T10:30:00.000Z'
+                        currency: SAR
+                        account_type: PERSONAL
+                        account_sub_type: CURRENT
+                        nickname: Main Account
+                        description: Personal current account
+                        opening_date: '2023-01-15'
+                        maturity_date: null
+                        account:
+                        - scheme_name: IBAN
+                          identification: SA4420000001234567891234
+                          name: Ahmed Abdullah
+                        - scheme_name: BBAN
+                          identification: '20000001234567891234'
+                          name: Ahmed Abdullah
+                        servicer:
+                          scheme_name: BICFI
+                          identification: RIBLSARI
+                      - entity_id: 550e8400-e29b-41d4-a716-446655440000
+                        account_id: 9d2e4f56-7890-4bcd-e345-fedcba987654
+                        account_holder_name: Ahmed Abdullah
+                        account_holder_short_name: Ahmed
+                        status: ENABLED
+                        status_update_date_time: '2025-07-15T14:20:00.000Z'
+                        currency: SAR
+                        account_type: PERSONAL
+                        account_sub_type: SAVINGS
+                        nickname: Savings Account
+                        description: Personal savings account
+                        opening_date: '2023-03-20'
+                        maturity_date: null
+                        account:
+                        - scheme_name: IBAN
+                          identification: SA8830000009876543210987
+                          name: Ahmed Abdullah
+                        - scheme_name: BBAN
+                          identification: '30000009876543210987'
+                          name: Ahmed Abdullah
+                        servicer:
+                          scheme_name: BICFI
+                          identification: RIBLSARI
+                      page:
+                        number: 0
+                        size: 100
+                        total_elements: 2
+                        total_pages: 1
+                    type: accounts
+                    refreshed_at: '2025-08-07T12:10:15.643Z'
+                GetAccounts_V2_UAE_Example:
+                  summary: Successful get accounts - UAE
+                  value:
+                    status: OK
+                    results_id: c7f9cb2c-1ad0-402f-b0b9-a6eadbcd4817
+                    message: Data successfully retrieved
+                    meta: null
+                    timestamp: '2025-08-28T11:28:56.547000863Z'
+                    status_detail: null
+                    data:
+                      type: accounts
+                      accounts:
+                      - entity_id: 550e8400-e29b-41d4-a716-446655440000
+                        account_id: a1b2c3d4-5678-90ef-a123-1234567890ab
+                        account_holder_name: Mohammed Ahmed
+                        account_holder_short_name: Mohammed
+                        status: ENABLED
+                        status_update_date_time: '2025-08-15T09:45:00.000Z'
+                        currency: AED
+                        account_type: PERSONAL
+                        account_sub_type: CURRENT
+                        nickname: Primary Account
+                        description: Main current account
+                        opening_date: '2022-06-10'
+                        maturity_date: null
+                        account:
+                        - scheme_name: IBAN
+                          identification: AE070331234567890123456
+                          name: Mohammed Ahmed Al-Maktoum
+                        - scheme_name: BBAN
+                          identification: 0331234567890123456
+                          name: Mohammed Ahmed
+                        servicer:
+                          scheme_name: BICFI
+                          identification: EBILAEAD
+                      - entity_id: 550e8400-e29b-41d4-a716-446655440000
+                        account_id: b2c3d4e5-6789-01fa-b234-234567890bcd
+                        account_holder_name: Mohammed Ahmed
+                        account_holder_short_name: Mohammed
+                        status: ENABLED
+                        status_update_date_time: '2025-07-20T16:30:00.000Z'
+                        currency: AED
+                        account_type: PERSONAL
+                        account_sub_type: SAVINGS
+                        nickname: Savings Account
+                        description: Personal savings account
+                        opening_date: '2022-09-25'
+                        maturity_date: null
+                        account:
+                        - scheme_name: IBAN
+                          identification: AE230331987654321098765
+                          name: Mohammed Ahmed
+                        - scheme_name: BBAN
+                          identification: 0331987654321098765
+                          name: 'Mohammed Ahmed '
+                        servicer:
+                          scheme_name: BICFI
+                          identification: EBILAEAD
+                      page:
+                        number: 0
+                        size: 100
+                        total_elements: 2
+                        total_pages: 1
+                    type: accounts
+                    refreshed_at: '2025-08-28T11:17:25.347Z'
+                BankIssueV2Example:
+                  $ref: '#/components/examples/BankIssueV2Example'
+        '202':
+          description: Accepted (Asynchronous request) when async=true
+          content:
+            application/json:
+              examples:
+                GetAccountsV2AsyncExample:
+                  $ref: '#/components/examples/AsyncProcessingV2Example'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                InvalidParametersExample:
+                  $ref: '#/components/examples/InvalidParametersExample'
+        '404':
+          description: Entity not found
+          content:
+            application/json:
+              examples:
+                UnknownEntityExample:
+                  $ref: '#/components/examples/UnknownEntityExample'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                InternalServerErrorExample:
+                  $ref: '#/components/examples/InternalServerErrorExample'
+      tags:
+      - Accounts Raw Data
+  /data/v1/balance:
+    servers: []
+  /data/v2/accounts/{account_id}/balances:
+    servers: []
+    get:
+      operationId: fetchBalancesV2
+      summary: Get Balances
+      description: 'The `Get Balances` endpoint retrieves a list of balances associated with a specific bank account that
+        has been linked by a user via LinkSDK, identified by both the `entity_id` and the `account_id`.
+
+        The `account_id` can be found by making a call to the /accounts endpoint.
+
+        Each balance object contains fields such as `balance type` (e.g., CLOSING_AVAILABLE, INTERIM_BOOKED, etc.), `amount`,
+        `currency`, `credit/debit indicator`, and *optional* `credit_line` details that indicate available or agreed credit
+        facilities tied to the account.Balance types can vary based on the bank and the nature of the account, and multiple
+        types of balances may be available for the same account at the same time.
+
+        **Requires an active entity with the `balances` permission to use.**
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountIdParameter'
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/PageParameter'
+      - $ref: '#/components/parameters/SizeParameter'
+      - $ref: '#/components/parameters/EntityIdParameter'
+      - $ref: '#/components/parameters/MetaParameter'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FetchBalancesV2Result'
+              examples:
+                GetBalances_V2_KSA_Example:
+                  summary: Successful get balances - KSA
+                  value:
+                    status: OK
+                    results_id: 1f6aa762-fdd0-4313-abc2-34ef31c0240e
+                    message: Data successfully retrieved
+                    meta: null
+                    timestamp: '2025-08-06T17:43:16.041940122Z'
+                    status_detail: null
+                    data:
+                      type: balances
+                      balances:
+                      - account_id: 36f0cf74-b4b0-492f-b50f-0a4680aba59f
+                        credit_debit_indicator: CREDIT
+                        amount:
+                          currency: SAR
+                          amount: 375.11
+                        type: OPENING_AVAILABLE
+                        date_time: '2025-08-06T14:40:42.149Z'
+                        credit_line:
+                        - included: false
+                          amount:
+                            currency: SAR
+                            amount: 0
+                          type: CREDIT
+                      - account_id: 36f0cf74-b4b0-492f-b50f-0a4680aba59f
+                        credit_debit_indicator: CREDIT
+                        amount:
+                          currency: SAR
+                          amount: 675.11
+                        type: EXPECTED
+                        date_time: '2025-08-06T14:40:42.149Z'
+                        credit_line: []
+                      page:
+                        number: 0
+                        size: 50
+                        total_elements: 2
+                        total_pages: 1
+                    type: balances
+                    refreshed_at: '2025-08-06T17:40:42.210Z'
+                BankIssueExample:
+                  summary: Example response for bank issue
+                  value:
+                    status: FAILED
+                    results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+                    message: Your bank is currently experiencing technological problems. Please try again later.
+                    meta: null
+                    timestamp: '2025-09-12T05:13:49.739987382Z'
+                    status_detail:
+                      granular_status_code: BANK_ISSUE
+                      status_additional_info: Your bank is currently experiencing technological problems. Please try again
+                        later.
+                    type: null
+                    refreshed_at: null
+        '202':
+          description: Accepted (Asynchronous request)
+          content:
+            application/json:
+              examples:
+                GetAsyncExample:
+                  $ref: '#/components/examples/AsyncProcessingV2Example'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                InvalidParametersExample:
+                  $ref: '#/components/examples/InvalidParametersExample'
+        '404':
+          description: Account or entity not found
+          content:
+            application/json:
+              examples:
+                UnknownAccountExample:
+                  $ref: '#/components/examples/UnknownAccountExample'
+                UnknownEntityExample:
+                  $ref: '#/components/examples/UnknownEntityExample'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                InternalServerErrorExample:
+                  $ref: '#/components/examples/InternalServerErrorExample'
+      tags:
+      - Balance Raw Data
+  /data/v2/accounts/{account_id}/beneficiaries:
+    servers: []
+    get:
+      operationId: fetchBeneficiariesV2
+      summary: Get Beneficiaries
+      description: "Get the beneficiaries for a specific account given an accountId. \nThe accountId can be found by making\
+        \ a call to the /accounts endpoint.\nThe accountId can be found by making a call to the /accounts endpoint. \nRequires\
+        \ the following permissions: `beneficiaries`\n"
+      parameters:
+      - $ref: '#/components/parameters/AccountIdParameter'
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/PageParameter'
+      - $ref: '#/components/parameters/SizeParameter'
+      - $ref: '#/components/parameters/EntityIdParameter'
+      - $ref: '#/components/parameters/MetaParameter'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FetchBeneficiariesResultV2'
+              examples:
+                Get_Beneficiaries_KSA_Example:
+                  summary: Successful get beneficiaries - KSA
+                  value:
+                    status: OK
+                    results_id: a1b2c3d4-5e6f-7890-abcd-ef1234567890
+                    message: Data successfully retrieved
+                    meta: null
+                    timestamp: '2025-09-13T10:30:15.123456789Z'
+                    status_detail: null
+                    type: beneficiaries
+                    refreshed_at: '2025-09-13T10:30:10.123456789Z'
+                    data:
+                      type: beneficiaries
+                      beneficiaries:
+                      - account_id: 550e8400-e29b-41d4-a716-446655440000
+                        account_holder_name: Ahmed Mohammed Al-Saud
+                        account_holder_short_name: Ahmed Al-Saud
+                        beneficiary_id: ben-001-ksa-2024
+                        beneficiary_type: TRUSTED
+                        creditor_agent:
+                          scheme_name: BICFI
+                          identification: NCBKSAJE
+                          name: The National Commercial Bank
+                          postal_address:
+                            street_name: King Fahd Road
+                            building_number: '1234'
+                            post_code: '11564'
+                            town_name: Riyadh
+                            country: SA
+                        creditor_account:
+                          scheme_name: IBAN
+                          identification: SA0380000000608010167519
+                          name: Ahmed Mohammed Al-Saud
+                        reference: REF-KSA-001
+                      - account_id: 550e8400-e29b-41d4-a716-446655440001
+                        account_holder_name: Fatima Abdullah Al-Rashid
+                        account_holder_short_name: Fatima Al-Rashid
+                        beneficiary_id: ben-002-ksa-2024
+                        beneficiary_type: ORDINARY
+                        creditor_agent:
+                          scheme_name: BICFI
+                          identification: RJHISARI
+                          name: Riyad Bank
+                          postal_address:
+                            street_name: Olaya Street
+                            building_number: '5678'
+                            post_code: '12211'
+                            town_name: Riyadh
+                            country: SA
+                        creditor_account:
+                          scheme_name: IBAN
+                          identification: SA0615000000000001234567
+                          name: Fatima Abdullah Al-Rashid
+                        reference: REF-KSA-002
+                      - account_id: 550e8400-e29b-41d4-a716-446655440002
+                        account_holder_name: Mohammed Khalid Al-Ghamdi
+                        account_holder_short_name: Mohammed Al-Ghamdi
+                        beneficiary_id: ben-003-ksa-2024
+                        beneficiary_type: TRUSTED
+                        creditor_agent:
+                          scheme_name: BICFI
+                          identification: ALBLSARI
+                          name: Al Rajhi Bank
+                          postal_address:
+                            street_name: King Abdulaziz Road
+                            building_number: '9012'
+                            post_code: '12611'
+                            town_name: Riyadh
+                            country: SA
+                        creditor_account:
+                          scheme_name: IBAN
+                          identification: SA1280000000608010167519
+                          name: Mohammed Khalid Al-Ghamdi
+                        reference: REF-KSA-003
+                      page:
+                        number: 0
+                        size: 20
+                        total_elements: 3
+                        total_pages: 1
+                BankIssueExample:
+                  summary: Example response for bank issue
+                  value:
+                    status: FAILED
+                    results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+                    message: Your bank is currently experiencing technological problems. Please try again later.
+                    meta: null
+                    timestamp: '2025-09-12T05:13:49.739987382Z'
+                    status_detail:
+                      granular_status_code: BANK_ISSUE
+                      status_additional_info: Your bank is currently experiencing technological problems. Please try again
+                        later.
+                    type: null
+                    refreshed_at: null
+        '202':
+          description: Accepted (Asynchronous request)
+          content:
+            application/json:
+              examples:
+                GetAsyncExample:
+                  $ref: '#/components/examples/AsyncProcessingV2Example'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                InvalidParametersExample:
+                  $ref: '#/components/examples/InvalidParametersExample'
+        '404':
+          description: Account or entity not found
+          content:
+            application/json:
+              examples:
+                UnknownAccountExample:
+                  $ref: '#/components/examples/UnknownAccountExample'
+                UnknownEntityExample:
+                  $ref: '#/components/examples/UnknownEntityExample'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                InternalServerErrorExample:
+                  $ref: '#/components/examples/InternalServerErrorExample'
+      tags:
+      - Beneficiaries Raw Data
+  /data/v2/accounts/{account_id}/direct-debits:
+    servers: []
+    get:
+      operationId: fetchDirectDebits
+      summary: Get Direct Debits
+      description: "Get the direct debits for a specific account given an accountId.\nThe accountId can be found by making\
+        \ a call to the /accounts endpoint.  \nRequires the following permissions: `direct_debits`\n"
+      parameters:
+      - $ref: '#/components/parameters/AccountIdParameter'
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/PageParameter'
+      - $ref: '#/components/parameters/SizeParameter'
+      - $ref: '#/components/parameters/EntityIdParameter'
+      - $ref: '#/components/parameters/MetaParameter'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DirectDebitsResult'
+              examples:
+                Get_Direct_Debits_KSA_Example:
+                  summary: Successful get direct debits - KSA
+                  value:
+                    status: OK
+                    results_id: b3c4d5e6-7f80-9012-bcde-f12345678901
+                    message: Data successfully retrieved
+                    meta: null
+                    timestamp: '2025-09-13T11:15:30.456789012Z'
+                    status_detail: null
+                    data:
+                      direct_debits:
+                      - entity_id: a5b23e1f-67d8-42c9-a815-98f4c7e36d92
+                        account_id: 53fd3763-8089-4a85-ac26-b66c8d0a950a
+                        direct_debit_id: d2d02d19-1c3a-47df-b72e-4d776da59578
+                        name: Saudi Electricity Company
+                        status_code: ACTIVE
+                        frequency: MONTHLY
+                        mandate_identification: SAMA-DD-SEC-00048219
+                        previous_payment_date_time: '2025-08-31T21:05:12Z'
+                        previous_payment_amount:
+                          currency: SAR
+                          amount: 248.7
+                      - entity_id: a5b23e1f-67d8-42c9-a815-98f4c7e36d92
+                        account_id: 53fd3763-8089-4a85-ac26-b66c8d0a950a
+                        direct_debit_id: 07da6f91-4a23-4ccb-a1f0-9d9057295d9d
+                        name: stc
+                        status_code: ACTIVE
+                        frequency: MONTHLY
+                        mandate_identification: SAMA-DD-STC-00119384
+                        previous_payment_date_time: '2025-08-29T07:40:03Z'
+                        previous_payment_amount:
+                          currency: SAR
+                          amount: 199.75
+                      page:
+                        number: 0
+                        size: 20
+                        total_elements: 2
+                        total_pages: 1
+                      type: direct-debits
+                    type: direct-debits
+                    refreshed_at: '2025-09-13T11:10:25.123456789Z'
+                BankIssueExample:
+                  summary: Example response for bank issue
+                  value:
+                    status: FAILED
+                    results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+                    message: Your bank is currently experiencing technological problems. Please try again later.
+                    meta: null
+                    timestamp: '2025-09-12T05:13:49.739987382Z'
+                    status_detail:
+                      granular_status_code: BANK_ISSUE
+                      status_additional_info: Your bank is currently experiencing technological problems. Please try again
+                        later.
+                    data: null
+                    type: null
+                    refreshed_at: null
+        '202':
+          description: Accepted (Asynchronous request)
+          content:
+            application/json:
+              examples:
+                GetV2AsyncExample:
+                  $ref: '#/components/examples/AsyncProcessingV2Example'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                InvalidParametersExample:
+                  $ref: '#/components/examples/InvalidParametersExample'
+        '404':
+          description: Account or entity not found
+          content:
+            application/json:
+              examples:
+                UnknownAccountExample:
+                  $ref: '#/components/examples/UnknownAccountExample'
+                UnknownEntityExample:
+                  $ref: '#/components/examples/UnknownEntityExample'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                InternalServerErrorExample:
+                  $ref: '#/components/examples/InternalServerErrorExample'
+      tags:
+      - Direct Debits Raw Data
+  /data/v2/accounts/{account_id}/identities:
+    servers: []
+    get:
+      operationId: fetchAllIdentities
+      summary: Get identities
+      description: "Get the identities of all the people associated to an account given an accountId. \nThe accountId can\
+        \ be found by making a call to the /accounts endpoint.\nRequires the following permissions: `identities`\n"
+      parameters:
+      - $ref: '#/components/parameters/AccountIdParameter'
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/PageParameter'
+      - $ref: '#/components/parameters/SizeParameter'
+      - $ref: '#/components/parameters/EntityIdParameter'
+      - $ref: '#/components/parameters/MetaParameter'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdentitiesResult'
+              examples:
+                Get_Identities_KSA_Example:
+                  summary: Successful get identities - KSA
+                  value:
+                    status: OK
+                    results_id: 37c84e2a-9f15-4d76-b218-56f8a31c2e5d
+                    message: Data successfully retrieved
+                    meta: null
+                    timestamp: '2025-09-12T17:15:05.424086733Z'
+                    status_detail: null
+                    data:
+                      account_id: 53fd3763-8089-4a85-ac26-b66c8d0a950a
+                      identities:
+                      - entity_id: a5b23e1f-67d8-42c9-a815-98f4c7e36d92
+                        full_legal_name: ABDULLAH AHMED AL QAHTANI
+                        name: ABDULLAH
+                        phone: '+966541782365'
+                        email_address: abdullah.qahtani@example.com
+                        legal_structure: ''
+                        mobile_number: '+966541782365'
+                        address:
+                          address_type: RESIDENTIAL
+                          building_type: Apartment
+                          apartment_or_villa_number: 12A
+                          building_name: Al Yasmin Residence
+                          street: King Abdulaziz Road
+                          area: Al Yasmin
+                          town_name: Riyadh
+                          region: Riyadh
+                          country: SA
+                          post_code: '13325'
+                          po_box: '123'
+                          street_address: 12A Al Yasmin Residence, King Abdulaziz Road
+                          address_line: 12A Al Yasmin Residence, King Abdulaziz Road, Riyadh, SA
+                        account_role: ADMINISTRATOR
+                        party_type: SOLE
+                        party_id: PT_0000000029837526
+                        party_number: 0000000029837526
+                        birth_date: '1985-03-15'
+                        gender: MALE
+                      - entity_id: c2d5c0fd-3a4b-4bc8-9d19-e0f5c2e6b2cc
+                        full_legal_name: FATIMAH SALEH AL HARBI
+                        name: FATIMAH
+                        phone: '+966501234567'
+                        email_address: fatimah.harbi@example.com
+                        legal_structure: ''
+                        mobile_number: '+966501234567'
+                        address:
+                          address_type: RESIDENTIAL
+                          building_type: Villa
+                          apartment_or_villa_number: '8'
+                          building_name: Al Nakheel Villas
+                          street: Prince Turki Street
+                          area: Al Nakheel
+                          town_name: Riyadh
+                          region: Riyadh
+                          country: SA
+                          post_code: '13521'
+                          po_box: '456'
+                          street_address: Villa 8, Al Nakheel Villas, Prince Turki Street
+                          address_line: Villa 8, Al Nakheel Villas, Prince Turki Street, Riyadh, SA
+                        account_role: DELEGATE
+                        party_type: DELEGATE
+                        party_id: PT_0000000045123987
+                        party_number: 0000000045123987
+                        national_id: '9876543210'
+                        birth_date: '1990-07-22'
+                        gender: FEMALE
+                      page:
+                        number: 0
+                        size: 50
+                        total_elements: 2
+                        total_pages: 1
+                      type: identities
+                    type: identities
+                    refreshed_at: '2025-08-10T10:45:27.963Z'
+                BankIssueExample:
+                  summary: bank issue response
+                  value:
+                    status: FAILED
+                    results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+                    message: Your bank is currently experiencing technological problems. Please try again later.
+                    meta: null
+                    timestamp: '2025-09-12T05:13:49.739987382Z'
+                    status_detail:
+                      granular_status_code: BANK_ISSUE
+                      status_additional_info: Your bank is currently experiencing technological problems. Please try again
+                        later.
+                    refreshed_at: null
+        '202':
+          description: Accepted (Asynchronous request)
+          content:
+            application/json:
+              examples:
+                GetV2AsyncExample:
+                  $ref: '#/components/examples/AsyncProcessingV2Example'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                InvalidParametersExample:
+                  $ref: '#/components/examples/InvalidParametersExample'
+        '404':
+          description: Account or entity not found
+          content:
+            application/json:
+              examples:
+                UnknownAccountExample:
+                  $ref: '#/components/examples/UnknownAccountExample'
+                UnknownEntityExample:
+                  $ref: '#/components/examples/UnknownEntityExample'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                InternalServerErrorExample:
+                  $ref: '#/components/examples/InternalServerErrorExample'
+      tags:
+      - Raw Data
+  /data/v1/identity:
+    servers: []
+  /data/v2/identity:
+    servers: []
+    get:
+      operationId: fetchIdentitiesV2
+      summary: Get identity
+      description: "Get the identity details of the account holder stored at the bank. \nRequires the following permissions:\
+        \ `identity`\n"
+      parameters:
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/PageParameter'
+      - $ref: '#/components/parameters/SizeParameter'
+      - $ref: '#/components/parameters/EntityIdParameter'
+      - $ref: '#/components/parameters/MetaParameter'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FetchIdentityV2Result'
+              examples:
+                Get_Identity_V2_KSA_Example:
+                  summary: Successful get identity - KSA
+                  value:
+                    status: OK
+                    results_id: 37c84e2a-9f15-4d76-b218-56f8a31c2e5d
+                    message: Data successfully retrieved
+                    meta: null
+                    timestamp: '2025-09-12T17:15:05.424086733Z'
+                    status_detail: null
+                    data:
+                      identities:
+                      - entity_id: a5b23e1f-67d8-42c9-a815-98f4c7e36d92
+                        full_legal_name: ABDULLAH AHMED Lean
+                        name: ABDULLAH
+                        phone: '+966541782365'
+                        email_address: aa_qahtani85@gmail.com
+                        legal_structure: ''
+                        mobile_number: '+966541782365'
+                        address:
+                          address_type: RESIDENTIAL
+                          building_type: Apartment
+                          apartment_or_villa_number: '1'
+                          building_name: Lean building
+                          street: Lean street
+                          area: main area
+                          town_name: حي الياسمين
+                          region: '6'
+                          country: SA
+                          post_code: '13325'
+                          po_box: '123'
+                          street_address: 100 وح
+                          address_line: 173 وحدة حي الياسمين
+                        account_role: ADMINISTRATOR
+                        party_type: SOLE
+                        party_id: PT_0000000029837526
+                        party_number: 0000000029837526
+                        birth_date: '1985-03-15'
+                        gender: MALE
+                      page:
+                        number: 0
+                        size: 50
+                        total_elements: 1
+                        total_pages: 1
+                      type: identity
+                    type: identity
+                    refreshed_at: '2025-08-10T10:45:27.963Z'
+                BankIssueV2Example:
+                  $ref: '#/components/examples/BankIssueV2Example'
+        '202':
+          description: Accepted (Asynchronous request)
+          content:
+            application/json:
+              examples:
+                GetAccountsV2AsyncExample:
+                  $ref: '#/components/examples/AsyncProcessingV2Example'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                InvalidParametersExample:
+                  $ref: '#/components/examples/InvalidParametersExample'
+        '404':
+          description: Entity not found
+          content:
+            application/json:
+              examples:
+                UnknownEntityExample:
+                  $ref: '#/components/examples/UnknownEntityExample'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                InternalServerErrorExample:
+                  $ref: '#/components/examples/InternalServerErrorExample'
+      tags:
+      - Identity Raw Data
+  /data/v2/refreshes:
+    servers: []
+    post:
+      operationId: triggerDataRefresh
+      summary: Trigger a Manual Data Refresh
+      description: Trigger on-demand data refresh for an entity that has an active consent
+      parameters:
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/PageParameter'
+      - $ref: '#/components/parameters/SizeParameter'
+      - $ref: '#/components/parameters/EntityIdParameter'
+      - $ref: '#/components/parameters/MetaParameter'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TriggerDataRefreshRequestBody'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TriggerDataRefreshResponseBody'
+              examples:
+                Successful_Refresh_Example:
+                  summary: Successful data refresh trigger
+                  value:
+                    refresh_id: 79f89fa4-03aa-4beb-b31e-b4f18c953e79
+                    status: OK
+                    message: Data refresh triggered successfully
+                    timestamp: '2025-09-12T08:41:32.579538664Z'
+                Reconnect_Required_Example:
+                  summary: Reconnection required
+                  value:
+                    reconnect_id: 14ced864-13fa-481a-a785-7b6d84788aff
+                    refresh_id: 14ced864-13fa-481a-a785-7b6d84788aff
+                    status: RECONNECT_REQUIRED
+                    message: User input is required to reconnect with the bank.
+                    timestamp: '2025-09-12T08:08:40.084979049Z'
+                    metadata: null
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                InvalidParametersExample:
+                  $ref: '#/components/examples/InvalidParametersExample'
+        '403':
+          description: Forbidden - Consent expired
+          content:
+            application/json:
+              examples:
+                ConsentExpiredExample:
+                  summary: Consent expired error
+                  value:
+                    timestamp: '2025-09-12T08:08:40.084979049Z'
+                    status: CONSENT_EXPIRED
+                    message: Consent was suspended, revoked, or expired. New consent is required, please connect the entity
+                      once again.
+                    metadata: null
+        '404':
+          description: Entity not found
+          content:
+            application/json:
+              examples:
+                UnknownEntityExample:
+                  $ref: '#/components/examples/UnknownEntityExample'
+        '429':
+          description: Too Many Requests - Duplicated request
+          content:
+            application/json:
+              examples:
+                DuplicatedRequestExample:
+                  summary: Duplicated data refresh request error
+                  value:
+                    timestamp: '2025-09-12T08:36:15.261673121Z'
+                    status: DUPLICATED_REQUEST
+                    message: Data refresh is already pending.
+                    metadata: null
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                InternalServerErrorExample:
+                  $ref: '#/components/examples/InternalServerErrorExample'
+      tags:
+      - Data refresh
+    get:
+      operationId: getDataRefreshes
+      summary: Get data refreshes
+      parameters:
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/PageParameter'
+      - $ref: '#/components/parameters/SizeParameter'
+      - $ref: '#/components/parameters/EntityIdParameter'
+      - $ref: '#/components/parameters/MetaParameter'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetDataRefreshesResponseBody'
+              examples:
+                GetDataRefreshesExample:
+                  summary: List of data refreshes
+                  value:
+                    content:
+                    - created_at: '2025-09-12T08:41:30.279Z'
+                      customer_id: fb8310d0-365a-4d4f-be94-f9726ac8a8af
+                      entity_id: 206b7203-d5ef-4790-a2de-9356e03795da
+                      refresh_id: 79f89fa4-03aa-4beb-b31e-b4f18c953e79
+                      status: PENDING
+                      updated_at: '2025-09-12T08:41:37.96Z'
+                    - created_at: '2025-09-12T08:36:13.978Z'
+                      customer_id: fb8310d0-365a-4d4f-be94-f9726ac8a8af
+                      entity_id: 206b7203-d5ef-4790-a2de-9356e03795da
+                      refresh_id: d2ef6ae5-ba73-4a09-8653-cb3906e1f192
+                      status: FINISHED
+                      updated_at: '2025-09-12T08:36:17.888Z'
+                    - created_at: '2025-09-12T08:34:49.67Z'
+                      customer_id: fb8310d0-365a-4d4f-be94-f9726ac8a8af
+                      entity_id: 206b7203-d5ef-4790-a2de-9356e03795da
+                      refresh_id: 721d6010-828f-4b30-9039-4c72ad6906a8
+                      status: FINISHED
+                      updated_at: '2025-09-12T08:34:56.299Z'
+                    - created_at: '2025-09-10T06:16:23.278Z'
+                      customer_id: fb8310d0-365a-4d4f-be94-f9726ac8a8af
+                      entity_id: 206b7203-d5ef-4790-a2de-9356e03795da
+                      refresh_id: 641f9d90-7654-47c8-9f74-c235f1d99be4
+                      status: FINISHED
+                      updated_at: '2025-09-10T06:16:35.487Z'
+                    page:
+                      number: 0
+                      size: 50
+                      total_elements: 4
+                      total_pages: 1
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                InvalidParametersExample:
+                  $ref: '#/components/examples/InvalidParametersExample'
+        '404':
+          description: Entity not found
+          content:
+            application/json:
+              examples:
+                UnknownEntityExample:
+                  $ref: '#/components/examples/UnknownEntityExample'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                InternalServerErrorExample:
+                  $ref: '#/components/examples/InternalServerErrorExample'
+      tags:
+      - Data refresh
+  /data/v2/refreshes/{refresh_id}:
+    servers: []
+    get:
+      operationId: getDataRefreshStatus
+      parameters:
+      - name: refresh_id
+        in: path
+        required: true
+        schema:
+          description: Refresh ID for the request created by server
+          type: string
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/PageParameter'
+      - $ref: '#/components/parameters/SizeParameter'
+      - $ref: '#/components/parameters/EntityIdParameter'
+      - $ref: '#/components/parameters/MetaParameter'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetDataRefreshStatusResponseBody'
+              examples:
+                GetDataRefreshStatusExample:
+                  summary: Data refresh details
+                  value:
+                    refresh_id: 721d6010-828f-4b30-9039-4c72ad6906a8
+                    entity_id: 206b7203-d5ef-4790-a2de-9356e03795da
+                    customer_id: fb8310d0-365a-4d4f-be94-f9726ac8a8af
+                    status: FINISHED
+                    data_status:
+                      accounts: OK
+                      identity: OK
+                      account_data:
+                      - account_id: b7daaae2-5342-4e88-be7a-d5e1aa896e61
+                        balance: OK
+                        identity: FAILED
+                        transactions: OK
+                        scheduled_payments: UNSUPPORTED
+                        direct_debits: OK
+                        standing_orders: FAILED
+                        beneficiaries: OK
+                        transactionAvailability:
+                          start: '2024-09-07'
+                          end: '2025-09-12'
+                    created_at: '2025-09-12T08:36:04.084Z'
+                    updated_at: '2025-09-12T08:36:11.151Z'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                InvalidParametersExample:
+                  $ref: '#/components/examples/InvalidParametersExample'
+        '404':
+          description: Entity not found
+          content:
+            application/json:
+              examples:
+                UnknownEntityExample:
+                  $ref: '#/components/examples/UnknownEntityExample'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                InternalServerErrorExample:
+                  $ref: '#/components/examples/InternalServerErrorExample'
+      tags:
+      - Data refresh
+  /data/v1/results/{results_id}:
+    servers: []
+  /data/v2/results/{results_id}:
+    servers: []
+    get:
+      operationId: getResultsV2
+      summary: Get Results
+      description: "Get the results for an asynchronous response. Note that the request will\nnot work for results_id that\
+        \ have been returned with a synchronous\nrequest, i.e.: it will work only when you receive a response for any API\n\
+        where status=PENDING and then receive a webhook. \n**Note: it's recommended to use the sync flow (async=false) for\
+        \ all request by adapting the new data workflow.**\n"
+      parameters:
+      - $ref: '#/components/parameters/ResultsIdParameter'
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/PageParameter'
+      - $ref: '#/components/parameters/SizeParameter'
+      - $ref: '#/components/parameters/EntityIdParameter'
+      - $ref: '#/components/parameters/MetaParameter'
+      responses:
+        '200':
+          description: Get results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    description: The status of the request.
+                    type: string
+                    enum:
+                    - OK
+                    - FAILED
+                    - PENDING
+                    - RECONNECT_REQUIRED
+                  data:
+                    description: The payload corresponding to the result requested, the schema of object depends on the original
+                      request was made to and it will be matching its response schema
+                    type: object
+                    properties: {}
+                  results_id:
+                    description: The ID for this result, this is used when retrieving results from the /results endpoint.
+                    type: string
+                  timestamp:
+                    description: The timestamp of when the response was retrieved
+                    type: string
+                  type:
+                    description: The endpoint the original request was made to.
+                    type: string
+                required:
+                - status
+                - results_id
+                - timestamp
+                - data
+                - type
+              examples:
+                '200':
+                  summary: Success
+                  value:
+                    status: OK
+                    results_id: 2caa051e-04e2-4745-b50a-5133c99ce046
+                    message: Data successfully retrieved
+                    meta: null
+                    timestamp: '2025-09-13T00:27:07.322969021Z'
+                    status_detail: null
+                    data:
+                      accounts:
+                      - entity_id: b7fe8c0c-212b-4168-a2e7-479f5a57e668
+                        account_id: 20132874-5e62-4fed-9ae8-9e7763814224
+                        status: DISABLED
+                        status_update_date_time: '2025-03-21T07:03:03Z'
+                        currency: SAR
+                        account_type: PERSONAL
+                        account_sub_type: CURRENT
+                        nickname: null
+                        description: null
+                        opening_date: '2025-03-11'
+                        maturity_date: null
+                        account:
+                        - scheme_name: IBAN
+                          identification: SA4820000123456789012345
+                          name: AHMED MOHAMMAD ALI SALEM
+                        - scheme_name: BBAN
+                          identification: 077030010006084567890
+                          name: AHMED MOHAMMAD ALI SALEM
+                        - scheme_name: OTHER
+                          identification: '1110987654'
+                          name: AHMED MOHAMMAD ALI SALEM
+                        servicer:
+                          scheme_name: BICFI
+                          identification: RJHISARI
+                      page:
+                        number: 0
+                        size: 50
+                        total_elements: 1
+                        total_pages: 1
+                      type: accounts
+                    type: accounts
+                    refreshed_at: '2025-08-07T08:08:29.794Z'
+        '404':
+          description: Result not found
+          content:
+            application/json:
+              examples:
+                UnknownResultExample:
+                  $ref: '#/components/examples/UnknownResultExample'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                InternalServerErrorExample:
+                  $ref: '#/components/examples/InternalServerErrorExample'
+      deprecated: false
+      tags:
+      - Pending & Asynchronous Requests
+  /data/v2/accounts/{account_id}/scheduled-payments:
+    servers: []
+    get:
+      operationId: fetchScheduledPayments
+      summary: Get Scheduled Payments
+      description: "Get the scheduled payments for a specific account given an accountId. \nThe accountId can be found by\
+        \ making a call to the /accounts endpoint. \nRequires the following permissions: `scheduled_payments`\n"
+      parameters:
+      - $ref: '#/components/parameters/AccountIdParameter'
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/PageParameter'
+      - $ref: '#/components/parameters/SizeParameter'
+      - $ref: '#/components/parameters/EntityIdParameter'
+      - $ref: '#/components/parameters/MetaParameter'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduledPaymentsResult'
+              examples:
+                Get_Scheduled_Payments_KSA_Example:
+                  summary: Successful get scheduled payments - KSA
+                  value:
+                    status: OK
+                    results_id: d7e8f9a0-1b2c-3d4e-5f67-890123456789
+                    message: Data successfully retrieved
+                    meta: null
+                    timestamp: '2025-09-13T14:25:42.789123456Z'
+                    status_detail: null
+                    data:
+                      type: scheduled-payments
+                      page:
+                        number: 0
+                        size: 20
+                        total_elements: 2
+                        total_pages: 1
+                      scheduled_payments:
+                      - entity_id: a5b23e1f-67d8-42c9-a815-98f4c7e36d92
+                        account_id: 53fd3763-8089-4a85-ac26-b66c8d0a950a
+                        account_holder_name: Ahmed Mohammed Al-Saud
+                        account_holder_short_name: Ahmed Al-Saud
+                        scheduled_payment_id: SP-KSA-001-2024
+                        scheduled_type: EXECUTION
+                        scheduled_payment_date_time: '2025-09-20T10:00:00Z'
+                        debtor_reference: RENT-SEPT-2025
+                        instructed_amount:
+                          currency: SAR
+                          amount: 5000
+                        creditor_agent:
+                          identification_type: BICFI
+                          identification: NCBKSAJE
+                          name: The National Commercial Bank
+                        creditor_account:
+                          scheme_name: IBAN
+                          identification: SA0380000000608010167519
+                          name: Saudi Electricity Company
+                      - entity_id: a5b23e1f-67d8-42c9-a815-98f4c7e36d92
+                        account_id: 53fd3763-8089-4a85-ac26-b66c8d0a950a
+                        account_holder_name: Ahmed Mohammed Al-Saud
+                        account_holder_short_name: Ahmed Al-Saud
+                        scheduled_payment_id: SP-KSA-002-2024
+                        scheduled_type: ARRIVAL
+                        scheduled_payment_date_time: '2025-09-25T14:30:00Z'
+                        debtor_reference: SALARY-SEPT-2025
+                        instructed_amount:
+                          currency: SAR
+                          amount: 12500
+                        creditor_agent:
+                          identification_type: BICFI
+                          identification: RJHISARI
+                          name: Riyad Bank
+                        creditor_account:
+                          scheme_name: IBAN
+                          identification: SA0615000000000001234567
+                          name: stc
+                    refreshed_at: '2025-09-13T14:25:42.789123456Z'
+                BankIssueExample:
+                  summary: Example response for bank issue
+                  value:
+                    status: FAILED
+                    results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+                    message: Your bank is currently experiencing technological problems. Please try again later.
+                    meta: null
+                    timestamp: '2025-09-12T05:13:49.739987382Z'
+                    status_detail:
+                      granular_status_code: BANK_ISSUE
+                      status_additional_info: Your bank is currently experiencing technological problems. Please try again
+                        later.
+                    refreshed_at: null
+        '202':
+          description: Accepted (Asynchronous request)
+          content:
+            application/json:
+              examples:
+                GetAsyncExample:
+                  $ref: '#/components/examples/AsyncProcessingV2Example'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                InvalidParametersExample:
+                  $ref: '#/components/examples/InvalidParametersExample'
+        '404':
+          description: Account or entity not found
+          content:
+            application/json:
+              examples:
+                UnknownAccountExample:
+                  $ref: '#/components/examples/UnknownAccountExample'
+                UnknownEntityExample:
+                  $ref: '#/components/examples/UnknownEntityExample'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                InternalServerErrorExample:
+                  $ref: '#/components/examples/InternalServerErrorExample'
+      tags:
+      - Scheduled Payments Raw Data
+  /data/v2/accounts/{account_id}/standing-orders:
+    servers: []
+    get:
+      operationId: getStandingOrders
+      summary: Get Standing Orders
+      description: "Get the standing orders for a specific account given an accountId. \nThe accountId can be found by making\
+        \ a call to the /accounts endpoint. \nRequires the following permissions: `standing_orders`\n"
+      parameters:
+      - $ref: '#/components/parameters/AccountIdParameter'
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/PageParameter'
+      - $ref: '#/components/parameters/SizeParameter'
+      - $ref: '#/components/parameters/EntityIdParameter'
+      - $ref: '#/components/parameters/MetaParameter'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandingOrdersResponse'
+              examples:
+                GetStandingOrders_KSA_Example:
+                  summary: Successful get standing orders -KSA
+                  value:
+                    status: OK
+                    results_id: 206340f7-37e8-4166-a98d-fb351bddc6b6
+                    message: Data successfully retrieved
+                    meta: null
+                    timestamp: '2025-02-15T00:00:00Z'
+                    status_detail: null
+                    data:
+                      standing_orders:
+                      - account_id: 53fd3763-8089-4a85-ac26-b66c8d0a950a
+                        standing_order_id: SO-KSA-001-2024
+                        standing_order_status_code: ACTIVE
+                        standing_order_type: LOCAL_BANK_TRANSFER
+                        purpose: Monthly utility payment
+                        first_payment_date_time: '2024-01-15T10:00:00Z'
+                        last_payment_date_time: '2025-01-15T10:00:00Z'
+                        next_payment_date_time: '2025-02-15T10:00:00Z'
+                        final_payment_date_time: null
+                        frequency:
+                          frequency_type: MONTHLY
+                          interval: null
+                        number_of_payments: null
+                        reference: UTILITY-PAYMENT-001
+                        first_payment_amount:
+                          currency: SAR
+                          amount: 500
+                        last_payment_amount:
+                          currency: SAR
+                          amount: 500
+                        next_payment_amount:
+                          currency: SAR
+                          amount: 500
+                        final_payment_amount:
+                          currency: SAR
+                          amount: 500
+                        creditor_agent:
+                          identification_type: BICFI
+                          identification: NCBKSAJE
+                          name: The National Commercial Bank
+                        creditor_account:
+                          scheme_name: IBAN
+                          identification: SA0380000000608010167519
+                          name: Saudi Electricity Company
+                      - account_id: 53fd3763-8089-4a85-ac26-b66c8d0a950a
+                        standing_order_id: SO-KSA-002-2024
+                        standing_order_status_code: ACTIVE
+                        standing_order_type: LOCAL_BANK_TRANSFER
+                        purpose: Monthly mobile service payment
+                        first_payment_date_time: '2024-01-20T14:30:00Z'
+                        last_payment_date_time: '2025-01-20T14:30:00Z'
+                        next_payment_date_time: '2025-02-20T14:30:00Z'
+                        final_payment_date_time: null
+                        frequency:
+                          frequency_type: MONTHLY
+                          interval: null
+                        number_of_payments: null
+                        reference: MOBILE-SERVICE-002
+                        first_payment_amount:
+                          currency: SAR
+                          amount: 199.75
+                        last_payment_amount:
+                          currency: SAR
+                          amount: 199.75
+                        next_payment_amount:
+                          currency: SAR
+                          amount: 199.75
+                        final_payment_amount: null
+                        creditor_agent:
+                          identification_type: BICFI
+                          identification: RJHISARI
+                          name: Riyad Bank
+                        creditor_account:
+                          scheme_name: IBAN
+                          identification: SA0615000000000001234567
+                          name: stc
+                      page:
+                        number: 0
+                        size: 50
+                        total_elements: 2
+                        total_pages: 1
+                    type: standing-orders
+                    refreshed_at: '2025-02-15T00:00:03Z'
+                BankIssueExample:
+                  summary: Example response for bank issue
+                  value:
+                    status: FAILED
+                    results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+                    message: Your bank is currently experiencing technological problems. Please try again later.
+                    meta: null
+                    timestamp: '2025-09-12T05:13:49.739987382Z'
+                    status_detail:
+                      granular_status_code: BANK_ISSUE
+                      status_additional_info: Your bank is currently experiencing technological problems. Please try again
+                        later.
+                    data: null
+                    type: null
+                    refreshed_at: null
+        '202':
+          description: Accepted (Asynchronous request)
+          content:
+            application/json:
+              examples:
+                GetStandingOrdersV2AsyncExample:
+                  $ref: '#/components/examples/AsyncProcessingV2Example'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                InvalidParametersExample:
+                  $ref: '#/components/examples/InvalidParametersExample'
+        '404':
+          description: Account not found
+          content:
+            application/json:
+              examples:
+                UnknownAccountExample:
+                  $ref: '#/components/examples/UnknownAccountExample'
+                UnknownEntityExample:
+                  $ref: '#/components/examples/UnknownEntityExample'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                InternalServerErrorExample:
+                  $ref: '#/components/examples/InternalServerErrorExample'
+      security:
+      - bearer: []
+      tags:
+      - Standing Orders Raw Data
+  /data/v1/transactions:
+    servers: []
+  /data/v2/accounts/{account_id}/transactions:
+    servers: []
+    get:
+      operationId: fetchTransactionsV2
+      summary: Get Transactions
+      description: 'The `Get Transactions `endpoint retrieves a list of historical transactions associated with a specific
+        bank account linked by a user via LinkSDK, identified by both the entity_id and the account_id. Each transaction object
+        contains fields such as amount, status, balance after each transaction, transaction category and type, and additional
+        information. Requires an active entity with the `transactions` permission to use.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AccountIdParameter'
+      - $ref: '#/components/parameters/AsyncParameter'
+      - $ref: '#/components/parameters/PageParameter'
+      - $ref: '#/components/parameters/SizeParameter'
+      - $ref: '#/components/parameters/EntityIdParameter'
+      - $ref: '#/components/parameters/MetaParameter'
+      - name: start_date
+        in: query
+        description: The start date in UTC (in the format YYYY-MM-DD) you want to query transactions for.
+        required: false
+        schema:
+          type: string
+          format: date
+        x-field-extra-annotation: '@PastOrPresent'
+      - name: end_date
+        in: query
+        description: The end date in UTC (in the format YYYY-MM-DD) you want to query transactions for.
+        required: false
+        schema:
+          type: string
+          format: date
+        x-field-extra-annotation: '@PastOrPresent'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FetchTransactionsResultV2'
+              examples:
+                Get_Transactions_V2_KSA_Example:
+                  summary: Successful get transactions - KSA
+                  value:
+                    status: OK
+                    results_id: 81bac9e7-e51b-45bd-b660-a7557b286642
+                    message: Data successfully retrieved
+                    meta: null
+                    timestamp: '2025-09-11T19:02:04.447189646Z'
+                    status_detail: null
+                    data:
+                      type: transactions
+                      transactions:
+                      - entity_id: 2f229893-893d-408c-a968-d2df6daf5f4f
+                        account_id: 73acd95b-1106-4e2b-891f-176c7ba64be1
+                        transaction_id: efb1b58b-aca9-430a-8f87-f8833c6aba06
+                        transaction_information: شراء من حساب 2000 20 SAR من KHALED ALGHAMDI STATIO في 03-02-2020 09:31PM
+                        transaction_reference: ERPpSJRubRgXXXr
+                        credit_debit_indicator: DEBIT
+                        amount:
+                          currency: SAR
+                          amount: 42.7
+                        transaction_mutability: IMMUTABLE
+                        booking_date_time: '2025-06-05T00:00:00Z'
+                        insights: null
+                        balance:
+                          type: PREVIOUSLY_CLOSED_BOOKED
+                          credit_debit_indicator: CREDIT
+                          amount:
+                            currency: SAR
+                            amount: 44902.6
+                        status: BOOKED
+                        statement_reference:
+                        - FerDHEpKQjFHlTl
+                        value_date_time: '2025-06-05T00:00:00Z'
+                        index: 0
+                        charge_amount:
+                          amount: 0.42
+                          currency: SAR
+                          charge_included: false
+                        bank_transaction_code:
+                          code: Counter Transactions
+                          sub_code: Cash Withdrawal
+                        card_instrument:
+                          authorization_type: CONSUMER_DEVICE
+                          card_scheme_name: DINERS
+                          identification: dveRUhRJTPykpmS
+                          name: OCKdZZjsJlrMvqS
+                        merchant_details:
+                          merchant_category_code: CC8311
+                          merchant_name: Amazon SA
+                        proprietary_bank_transaction_code:
+                          code: FQSPovkTmxcqDWudyENpikr
+                          issuer: LzbpfbvcuRgMPOLyCLu
+                        currency_exchange: null
+                        creditor_account:
+                          name: Zetta
+                          scheme_name: null
+                          identification: SA04607NTDHIJYI2VFQKPPKO
+                        creditor_agent:
+                          scheme_name: OTHER
+                          identification: KSAOB.SAOTHE
+                          name: Some Other Bank
+                          postal_address:
+                            address_type: BUSINESS
+                            address_line: 5423, Al Hawi Street, 13516, Riyadh
+                            building_number: '5423'
+                            country: Saudi Arabia
+                            country_subdivision: Hiteen District
+                            post_code: '13516'
+                            street_name: Al Hawi Street
+                            town_name: Riyadh
+                        debtor_account:
+                          name: Ahmed Abdullah CURRENT Account
+                          scheme_name: null
+                          identification: SA4420000001234567891234
+                        debtor_agent:
+                          scheme_name: BICFI
+                          identification: RIBLSARI
+                          name: Riyad Bank
+                          postal_address:
+                            address_type: BUSINESS
+                            address_line: King Fahd Road, 11411, Riyadh
+                            building_number: '1234'
+                            country: Saudi Arabia
+                            country_subdivision: Al Olaya District
+                            post_code: '11411'
+                            street_name: King Fahd Road
+                            town_name: Riyadh
+                        local_time_zone: UTC+00:00
+                        transaction_type: ATM
+                        sub_transaction_type: DEPOSIT_REVERSAL
+                        payment_modes: null
+                        flags: []
+                      - entity_id: 2f229893-893d-408c-a968-d2df6daf5f4f
+                        account_id: 73acd95b-1106-4e2b-891f-176c7ba64be1
+                        transaction_id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+                        transaction_information: SAUDI ELECTRICITY COMPANY - BILL PAYMENT
+                        transaction_reference: REF-KSA-20250805-002345
+                        credit_debit_indicator: DEBIT
+                        amount:
+                          currency: SAR
+                          amount: 450.5
+                        transaction_mutability: MUTABLE
+                        booking_date_time: '2025-08-05T14:20:00Z'
+                        insights: null
+                        balance:
+                          type: CLOSING_AVAILABLE
+                          credit_debit_indicator: CREDIT
+                          amount:
+                            currency: SAR
+                            amount: 30230.75
+                        status: BOOKED
+                        statement_reference:
+                        - STMT-2025-08-002
+                        value_date_time: '2025-08-05T14:20:00Z'
+                        index: 1
+                        charge_amount:
+                          amount: 0
+                          currency: SAR
+                          charge_included: false
+                        bank_transaction_code:
+                          code: Payments
+                          sub_code: Bill Payment
+                        card_instrument: null
+                        merchant_details: null
+                        proprietary_bank_transaction_code:
+                          code: BILL_PAY
+                          issuer: NCBKSAJE
+                        currency_exchange: null
+                        creditor_account:
+                          name: Saudi Electricity Company
+                          scheme_name: IBAN
+                          identification: SA4420000001234567891234
+                        creditor_agent:
+                          scheme_name: BICFI
+                          identification: NCBKSAJE
+                          name: The National Commercial Bank
+                          postal_address:
+                            address_type: BUSINESS
+                            address_line: King Abdulaziz Road, 11411, Riyadh
+                            building_number: '1000'
+                            country: Saudi Arabia
+                            country_subdivision: Al Olaya District
+                            post_code: '11411'
+                            street_name: King Abdulaziz Road
+                            town_name: Riyadh
+                        debtor_account:
+                          name: Ahmed Abdullah CURRENT Account
+                          scheme_name: null
+                          identification: SA4420000001234567891234
+                        debtor_agent:
+                          scheme_name: BICFI
+                          identification: RIBLSARI
+                          name: Riyad Bank
+                          postal_address:
+                            address_type: BUSINESS
+                            address_line: King Fahd Road, 11411, Riyadh
+                            building_number: '1234'
+                            country: Saudi Arabia
+                            country_subdivision: Al Olaya District
+                            post_code: '11411'
+                            street_name: King Fahd Road
+                            town_name: Riyadh
+                        local_time_zone: Asia/Riyadh
+                        transaction_type: BILL_PAYMENTS
+                        sub_transaction_type: MONEY_TRANSFER
+                        payment_modes: ONLINE
+                        flags: []
+                      - entity_id: 2f229893-893d-408c-a968-d2df6daf5f4f
+                        account_id: 73acd95b-1106-4e2b-891f-176c7ba64be1
+                        transaction_id: b2c3d4e5-f6a7-8901-bcde-f12345678901
+                        transaction_information: POS PURCHASE - PANDORA JEWELLERY RIYADH PARK
+                        transaction_reference: REF-KSA-20250803-003456
+                        credit_debit_indicator: DEBIT
+                        amount:
+                          currency: SAR
+                          amount: 1250
+                        transaction_mutability: IMMUTABLE
+                        booking_date_time: '2025-08-03T18:45:00Z'
+                        insights: null
+                        balance:
+                          type: CLOSING_AVAILABLE
+                          credit_debit_indicator: CREDIT
+                          amount:
+                            currency: SAR
+                            amount: 30681.25
+                        status: BOOKED
+                        statement_reference:
+                        - STMT-2025-08-003
+                        value_date_time: '2025-08-03T18:45:00Z'
+                        index: 2
+                        charge_amount:
+                          amount: 0
+                          currency: SAR
+                          charge_included: false
+                        bank_transaction_code:
+                          code: Card Payments
+                          sub_code: POS Purchase
+                        card_instrument:
+                          authorization_type: CONTACTLESS
+                          card_scheme_name: VISA
+                          identification: '****1234'
+                          name: AHMED ABDULLAH
+                        merchant_details:
+                          merchant_category_code: '5944'
+                          merchant_name: PANDORA JEWELLERY RIYADH PARK
+                        proprietary_bank_transaction_code:
+                          code: POS_PURCHASE
+                          issuer: RIBLSARI
+                        currency_exchange: null
+                        creditor_account:
+                          name: PANDORA JEWELLERY RIYADH PARK
+                          scheme_name: null
+                          identification: SA8830000009876543210987
+                        creditor_agent:
+                          scheme_name: OTHER
+                          identification: KSAOB.SAOTHE
+                          name: Some Other Bank
+                          postal_address:
+                            address_type: BUSINESS
+                            address_line: Riyadh Park Mall, 13244, Riyadh
+                            building_number: '100'
+                            country: Saudi Arabia
+                            country_subdivision: North Ring Road
+                            post_code: '13244'
+                            street_name: Northern Ring Road
+                            town_name: Riyadh
+                        debtor_account:
+                          name: Ahmed Abdullah CURRENT Account
+                          scheme_name: null
+                          identification: SA4420000001234567891234
+                        debtor_agent:
+                          scheme_name: BICFI
+                          identification: RIBLSARI
+                          name: Riyad Bank
+                          postal_address:
+                            address_type: BUSINESS
+                            address_line: King Fahd Road, 11411, Riyadh
+                            building_number: '1234'
+                            country: Saudi Arabia
+                            country_subdivision: Al Olaya District
+                            post_code: '11411'
+                            street_name: King Fahd Road
+                            town_name: Riyadh
+                        local_time_zone: Asia/Riyadh
+                        transaction_type: POS
+                        sub_transaction_type: PURCHASE
+                        payment_modes: OFFLINE
+                        flags: []
+                      page:
+                        number: 0
+                        size: 100
+                        total_elements: 3
+                        total_pages: 1
+                    type: transactions
+                    refreshed_at: '2025-08-07T12:10:15.643Z'
+                BankIssueExample:
+                  summary: bank issue response
+                  value:
+                    status: FAILED
+                    results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+                    message: Your bank is currently experiencing technological problems. Please try again later.
+                    meta: null
+                    timestamp: '2025-09-12T05:13:49.739987382Z'
+                    status_detail:
+                      granular_status_code: BANK_ISSUE
+                      status_additional_info: Your bank is currently experiencing technological problems. Please try again
+                        later.
+                    data: null
+                    type: null
+                    refreshed_at: null
+        '202':
+          description: Accepted (Asynchronous request)
+          content:
+            application/json:
+              examples:
+                GetTransactionsAsyncExample:
+                  $ref: '#/components/examples/AsyncProcessingV2Example'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                InvalidParametersExample:
+                  $ref: '#/components/examples/InvalidParametersExample'
+        '404':
+          description: Account or entity not found
+          content:
+            application/json:
+              examples:
+                UnknownAccountExample:
+                  $ref: '#/components/examples/UnknownAccountExample'
+                UnknownEntityExample:
+                  $ref: '#/components/examples/UnknownEntityExample'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                InternalServerErrorExample:
+                  $ref: '#/components/examples/InternalServerErrorExample'
+      tags:
+      - Transactions Raw Data
+components:
+  parameters:
+    AccountIdParameter:
+      name: account_id
+      description: The account_id used to fetch requested data
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    AsyncParameter:
+      name: async
+      in: query
+      description: 'When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when
+        ready. **Note: it''s recommended to use the sync flow (async=false) for all requests by adapting the [data workflow](https://docs.leantech.me/docs/data-workflow)
+        for connected entities.**'
+      required: false
+      schema:
+        type: boolean
+        default: false
+      deprecated: true
+    EntityIdParameter:
+      name: entity_id
+      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
+      in: query
+      required: false
+      schema:
+        type: string
+        format: uuid
+    MetaParameter:
+      name: meta
+      description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
+      in: query
+      required: false
+      schema:
+        type: string
+    PageParameter:
+      name: page
+      in: query
+      description: The page you're requesting - returns page 0 of a response if not specified.
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+    ResultsIdParameter:
+      name: results_id
+      in: path
+      description: results_id was returned from a request with `async=true`
+      required: true
+      example: 549fd28b-1268-4ab3-a34d-bed7d4710c00
+      schema:
+        type: string
+        format: uuid
+    SizeParameter:
+      name: size
+      description: The number of objects you want to return as a page size.
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 50
+        maximum: 100
+        minimum: 1
+  schemas:
+    AccountStatus:
+      description: The current status of the account. Indicating whether it is in active use or not.
+      type:
+      - string
+      - 'null'
+      enum:
+      - DELETED
+      - DISABLED
+      - ENABLED
+      - PENDING
+      - PROFORMA
+      - UNSUPPORTED
+    Account:
+      type: object
+      properties:
+        entity_id:
+          description: The unique identifier for the entity. Provided as a UUID.
+          type: string
+          format: uuid
+        account_id:
+          description: The unique identifier for the account. Provided as a UUID.
+          type: string
+          format: uuid
+        account_holder_name:
+          description: The Account Holder Name is the name or names of the Account owner(s) represented at the account level
+          type: string
+        account_holder_short_name:
+          description: Short form of the account holder name
+          type: string
+        status:
+          $ref: '#/components/schemas/AccountStatus'
+        status_update_date_time:
+          description: The datetime that the account status was updated.
+          type:
+          - string
+          - 'null'
+          format: date-time
+        currency:
+          $ref: '#/components/schemas/Currency'
+        account_type:
+          $ref: '#/components/schemas/AccountType'
+        account_sub_type:
+          $ref: '#/components/schemas/AccountSubType'
+        nickname:
+          description: The nickname for the account as set by the owner of the account. This name is known to the end-user
+          type:
+          - string
+          - 'null'
+        description:
+          description: Specifies the description of the account sub-type.
+          type:
+          - string
+          - 'null'
+        opening_date:
+          description: The date the account was opened.
+          type:
+          - string
+          - 'null'
+          format: date
+        maturity_date:
+          description: Maturity date of the account.
+          type:
+          - string
+          - 'null'
+          format: date-time
+        account:
+          description: A list of identifications for the account assigned by the Bank based on the Account Scheme Name
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountIdentification'
+        servicer:
+          description: Party that manages the account on behalf of the account owner, that is manages the registration and
+            booking of entries on the account, calculates balances on the account and provides information about the account.
+          allOf:
+          - $ref: '#/components/schemas/Servicer'
+      required:
+      - account_id
+      x-toBuilder: true
+    ServicerSchemeName:
+      description: Servicer identification scheme name
+      type: string
+      enum:
+      - BICFI
+      - OTHER
+      - UNSUPPORTED
+    Servicer:
+      type: object
+      properties:
+        scheme_name:
+          $ref: '#/components/schemas/ServicerSchemeName'
+        identification:
+          description: Servicer identification code
+          type: string
+      x-toBuilder: true
+    AccountsData:
+      type: object
+      properties:
+        type:
+          description: The endpoint the original request was made to.
+          type: string
+        accounts:
+          description: An array of accounts associated with the Entity.
+          type: array
+          items:
+            $ref: '#/components/schemas/Account'
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+      required:
+      - type
+      - page
+      - accounts
+      x-toBuilder: true
+    AccountsRequestResultV2:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/DataResult'
+      - properties:
+          data:
+            $ref: '#/components/schemas/AccountsData'
+        type: object
+      x-toBuilder: true
+    ResultStatus:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - RECONNECT_REQUIRED
+      - PROCESSING_STARTED
+    CreditAreLean:
+      type: object
+      properties:
+        card_number_last_four:
+          description: Last 4 digits of card
+          type: string
+        limit:
+          description: Card limit
+          type: number
+        next_payment_due_date:
+          description: Due date for next payment
+          type: string
+          format: date
+        next_payment_due_amount:
+          description: Due amount for next payment
+          type: number
+      x-toBuilder: true
+    AccountDto:
+      description: An end user's account at a financial institution
+      type: object
+      properties:
+        account_id:
+          description: Unique identifier for the account
+          type: string
+          format: uuid
+        name:
+          description: Name of the account
+          type:
+          - string
+          - 'null'
+        currency_code:
+          description: ISO 4217 currency code (e.g., USD, EUR)
+          type:
+          - string
+          - 'null'
+        type:
+          description: Type of account (e.g., checking, savings, credit card)
+          type:
+          - string
+          - 'null'
+        iban:
+          description: International Bank Account Number
+          type:
+          - string
+          - 'null'
+        account_number:
+          description: Account number
+          type:
+          - string
+          - 'null'
+        credit:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CreditAreLean'
+    AccountListDto:
+      type: object
+      properties:
+        accounts:
+          description: List of user accounts
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountDto'
+        type:
+          description: Represents the resource category. This value is fixed as 'accounts' for all objects of this schema.
+          type:
+          - string
+          default: accounts
+    ReconnectRequestIdPayloadDto:
+      description: Reconnect response
+      type:
+      - object
+      - 'null'
+      properties:
+        reconnect_id:
+          description: Reconnect ID
+          type:
+          - string
+          format: uuid
+        type:
+          description: Type of response
+          type:
+          - string
+          default: reconnect
+      required:
+      - type
+    BalanceV1Data:
+      type: object
+      properties:
+        type:
+          description: The endpoint the original request was made to.
+          type: string
+        balance:
+          description: The balance amount in the specified currency
+          type: number
+          format: decimal
+        currency_code:
+          description: The ISO 3-letter currency code for the balance
+          type: string
+        account_id:
+          description: The unique identifier for the account
+          type: string
+          format: uuid
+        account_name:
+          description: The name of the account
+          type: string
+        account_type:
+          description: The type of the account
+          type: string
+      required:
+      - currency_code
+      - type
+      x-toBuilder: true
+    IdentityV1Data:
+      type: object
+      properties:
+        type:
+          description: Indicates the `payload` type. Always `identity` when calling /identity
+          type: string
+        address:
+          description: The registered address of the account holder.
+          type: string
+        birth_date:
+          description: The date of birth of the account holder.
+          type: string
+          format: date
+        email_address:
+          description: The registered email address of the account holder.
+          type: string
+        full_name:
+          description: The full legal name of the account holder.
+          type: string
+        gender:
+          description: The registered gender of the account holder.
+          type: string
+        mobile_number:
+          description: The registered mobile number of the account holder.
+          type: string
+        national_identity_number:
+          description: The registered identity number of the account holder.
+          type: string
+      x-toBuilder: true
+    TransactionV1Data:
+      type: object
+      properties:
+        id:
+          description: The unique identifier for the transaction.
+          type: string
+          format: uuid
+        description:
+          description: The description for the transaction.
+          type: string
+        amount:
+          description: The amount paid / received for the transaction. For credits it will be a positive (+) value and for
+            debits it will be a negative (-) value.
+          type: number
+          format: float
+          x-java-type: java.math.BigDecimal
+        currency_code:
+          description: The currency that the transaction was performed with.
+          type: string
+        index:
+          description: Indicates the order of the transactions. For each date, the first transaction will have an index of
+            0.
+          type: integer
+        pending:
+          description: Indicates whether the transaction has been finalised by the bank.
+          type: boolean
+        timestamp:
+          description: "The UTC datetime the transaction was executed. \n\n**Note** In the case the bank only provides the\
+            \ date with no time, we assume the transaction ocurred at 00:00 in the local timezone and then convert to UTC."
+          type: string
+          format: date-time
+        insights:
+          description: Not present if insights true is not supplied in your call. **Note that insights is not available for
+            corporate data.**
+          type: object
+          properties:
+            description_cleansed:
+              description: A cleaned statement descriptor.
+              type: string
+            category:
+              description: The category that the transaction fits in to.
+              type: string
+            category_confidence:
+              description: A percentage confidence score from our category models with 1 being equal to 100% confidence.
+              type: number
+              format: float
+              x-java-type: java.math.BigDecimal
+            type:
+              description: The payment method of the transaction, for example a card payment or bank transfer.
+              type: string
+              deprecated: true
+            type_confidence:
+              description: A percentage confidence score from our type models with 1 being equal to 100% confidence.
+              type: number
+              format: float
+              deprecated: true
+              x-java-type: java.math.BigDecimal
+          required:
+          - description_cleansed
+          - category
+          - category_confidence
+        running_balance:
+          description: Running balance
+          type: number
+          format: float
+          x-java-type: java.math.BigDecimal
+        transaction_reference:
+          description: Reference of the transaction
+          type: string
+        value_timestamp:
+          description: The date and time at which assets become available to the account owner (value date).
+          type: string
+          format: date-time
+        transaction_timestamp:
+          description: The date and time the transaction was initiated by the user.
+          type: string
+          format: date-time
+      required:
+      - id
+      - amount
+      - currency_code
+    TransactionV1DataPayload:
+      type: object
+      properties:
+        transactions:
+          description: Array of transactions
+          type: array
+          items:
+            $ref: '#/components/schemas/TransactionV1Data'
+        type:
+          description: Identifies the type of data in the payload. For transaction data, this will be 'transactions'.
+          type: string
+    ResponseDataPayLoadV1:
+      discriminator:
+        propertyName: type
+        mapping:
+          accounts: '#/components/schemas/AccountListDto'
+          reconnect: '#/components/schemas/ReconnectRequestIdPayloadDto'
+          balance: '#/components/schemas/BalanceV1Data'
+          identity: '#/components/schemas/IdentityV1Data'
+          transactions: '#/components/schemas/TransactionV1DataPayload'
+      oneOf:
+      - $ref: '#/components/schemas/AccountListDto'
+      - $ref: '#/components/schemas/ReconnectRequestIdPayloadDto'
+      - $ref: '#/components/schemas/BalanceV1Data'
+      - $ref: '#/components/schemas/IdentityV1Data'
+      - $ref: '#/components/schemas/TransactionV1DataPayload'
+    StatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        granular_status_code:
+          description: Granular status code
+          type:
+          - string
+          - 'null'
+        status_additional_info:
+          description: Additional information about the status
+          type:
+          - string
+          - 'null'
+    Result:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ResultStatus'
+        results_id:
+          description: The unique identifier for the request
+          type: string
+          format: uuid
+        message:
+          description: A message describing the status of the request
+          type: string
+        meta:
+          description: Meta information about the request
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: string
+        timestamp:
+          description: The datetime of when the request was made
+          type: string
+          format: date-time
+        status_detail:
+          description: Additional information about the status
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/StatusDetail'
+      required:
+      - status
+      - results_id
+      - message
+      - timestamp
+    DataResult:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          refreshed_at:
+            description: The datetime of when the data was refreshed
+            type:
+            - string
+            - 'null'
+            format: date-time
+          type:
+            description: The endpoint the original request was made to.
+            type:
+            - string
+            - 'null'
+    Currency:
+      description: The ISO 3 letter currency code
+      type: string
+      examples:
+      - AED
+      pattern: ^[A-Z]{3}$
+    AccountType:
+      description: Specifies the type of account (PERSONAL or BUSINESS).
+      type: string
+      enum:
+      - PERSONAL
+      - BUSINESS
+      - UNSUPPORTED
+    AccountSubType:
+      description: Specifies the sub type of account i.e., product family group such as CURRENT, SAVINGS, SAVINGS and CREDIT
+      type: string
+      enum:
+      - CHARGE_CARD
+      - CREDIT
+      - CURRENT
+      - EMONEY
+      - LOAN
+      - MORTGAGE
+      - PERSONAL_LOAN
+      - PREPAID
+      - SAVINGS
+      - CALL
+      - UNSUPPORTED
+    SchemeName:
+      description: The scheme name of the account identification value
+      type: string
+      enum:
+      - PAN
+      - IBAN
+      - BBAN
+      - COMMERCIAL_REGISTRATION_NUMBER
+      - EMAIL
+      - MOBILE_NUMBER
+      - NATIONAL_ID
+      - IQAMA_NUMBER
+      - PASSPORT_NUMBER
+      - OTHER
+      - UNSUPPORTED
+    AccountIdentification:
+      type: object
+      properties:
+        scheme_name:
+          $ref: '#/components/schemas/SchemeName'
+        identification:
+          description: The identification value for the account assigned by the Bank based on the Account Scheme Name.
+          type: string
+        name:
+          description: Account name
+          type: string
+    PageMetadata:
+      description: Metadata about the current page of results
+      type: object
+      properties:
+        number:
+          description: The current page being returned by the API
+          type: integer
+          format: int32
+        size:
+          description: The page size requested
+          type: integer
+          format: int32
+        total_elements:
+          description: The total number of elements in all pages
+          type: integer
+          format: int64
+        total_pages:
+          description: The total number of pages retrievable
+          type: integer
+          format: int32
+        sort:
+          description: Sort parameters applied to the results
+          type: array
+          items:
+            type: string
+      required:
+      - number
+      - size
+      - total_elements
+      - total_pages
+    CreditDebitIndicator:
+      description: Indicates whether the balance is a credit or debit balance
+      type: string
+      enum:
+      - CREDIT
+      - DEBIT
+      - UNSUPPORTED
+    BalanceType:
+      description: 'The type of balance for the account. Note: Banks support different types for presenting account balance.'
+      type: string
+      enum:
+      - CLOSING_AVAILABLE
+      - CLOSING_BOOKED
+      - CLOSING_CLEARED
+      - EXPECTED
+      - FORWARD_AVAILABLE
+      - INFORMATION
+      - INTERIM_AVAILABLE
+      - INTERIM_BOOKED
+      - INTERIM_CLEARED
+      - OPENING_AVAILABLE
+      - OPENING_BOOKED
+      - OPENING_CLEARED
+      - PREVIOUSLY_CLOSED_BOOKED
+      - UNSUPPORTED
+    CurrencyAmount:
+      type: object
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          description: The amount of money in the currency specified.
+          type: number
+      required:
+      - currency
+      - amount
+    CreditLineType:
+      description: The type of credit line
+      type: string
+      enum:
+      - AVAILABLE
+      - CREDIT
+      - EMERGENCY
+      - PRE_AGREED
+      - TEMPORARY
+      - UNSUPPORTED
+    CreditLine:
+      type: object
+      properties:
+        included:
+          description: 'Indicates whether or not a credit line is included in the balance of the account. Usage: If false,
+            credit line is not included in the balance amount of the account'
+          type: boolean
+          default: false
+        amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+        type:
+          $ref: '#/components/schemas/CreditLineType'
+    Balance:
+      type: object
+      properties:
+        entity_id:
+          description: The unique identifier for the entity. Provided as a UUID.
+          type: string
+          format: uuid
+        account_id:
+          description: The account_id this balance is related to.
+          type: string
+          format: uuid
+        credit_debit_indicator:
+          $ref: '#/components/schemas/CreditDebitIndicator'
+        type:
+          $ref: '#/components/schemas/BalanceType'
+        amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+        date_time:
+          description: The date and time that this balance object was checked.
+          type:
+          - string
+          - 'null'
+          format: date-time
+        credit_line:
+          description: Represents the credit limits associated with the account. Each object defines a specific credit facility
+            and its assigned limit
+          type: array
+          items:
+            $ref: '#/components/schemas/CreditLine'
+      required:
+      - amount
+    BalancesData:
+      type: object
+      properties:
+        type:
+          description: The endpoint the original request was made to.
+          type: string
+        balances:
+          description: An array of balances associated with the account.
+          type: array
+          items:
+            $ref: '#/components/schemas/Balance'
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+      required:
+      - type
+      - page
+      - balances
+      x-toBuilder: true
+    Address:
+      description: The full address details
+      type: object
+      properties:
+        address_line:
+          description: Full address line as retrieved from bank
+          type: string
+        address_type:
+          description: The type of address (e.g., residential, business).
+          type: string
+        building_type:
+          description: The type of building, apartments or villa for example.
+          type: string
+        apartment_or_villa_number:
+          description: The apartment or villa/house number.
+          type: string
+        building_name:
+          description: The name of the building.
+          type: string
+        street:
+          description: The street name.
+          type: string
+        area:
+          description: The area or neighborhood.
+          type: string
+        street_address:
+          description: Street address which may include house number, street name and PO Box
+          type: string
+        post_code:
+          description: The Zip or postal code associated with the address.
+          type: string
+        town_name:
+          description: The town or city name where the address is located.
+          type: string
+        region:
+          description: The region of the address. State, province, prefecture, or region
+          type: string
+        po_box:
+          description: The post office box number.
+          type: string
+        country:
+          description: The country where the address is located.
+          type: string
+      x-toBuilder: true
+    IdentityV2data:
+      type: object
+      properties:
+        entity_id:
+          description: entity id
+          type: string
+          format: uuid
+        full_legal_name:
+          description: Full legal name as retrieved from bank
+          type: string
+        name:
+          description: Name of the account holder
+          type: string
+        national_id:
+          description: National ID number for the country
+          type: string
+        birth_date:
+          description: The date of birth of the account holder.
+          type: string
+          format: date
+        gender:
+          description: The gender of the account holder.
+          type: string
+        email_address:
+          description: The registered email address of the account holder.
+          type: string
+        legal_structure:
+          description: Legal structure of the entity
+          type: string
+        phone:
+          description: Phone number of the account holder
+          type: string
+        mobile_number:
+          description: Mobile number of the account holder
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
+        account_role:
+          description: Role of the account holder
+          type: string
+        party_type:
+          description: Type of party relationship
+          type: string
+          enum:
+          - DELEGATE
+          - JOINT
+          - SOLE
+          - UNSUPPORTED
+        party_id:
+          description: Unique identifier for the party
+          type: string
+        party_number:
+          description: Party number assigned by the institution
+          type: string
+      x-toBuilder: true
+    IdentityData:
+      type: object
+      properties:
+        account_id:
+          description: Account ID
+          type: string
+          format: uuid
+        type:
+          description: The endpoint the original request was made to.
+          type: string
+        identities:
+          description: An array of identities associated with the Entity.
+          type: array
+          items:
+            $ref: '#/components/schemas/IdentityV2data'
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+      required:
+      - type
+      x-toBuilder: true
+    TransactionMutability:
+      description: Specifies whether the transaction details may change after posting (e.g., pending transactions can update
+        upon settlement).
+      type: string
+      enum:
+      - IMMUTABLE
+      - MUTABLE
+      - UNSUPPORTED
+    Categorisation:
+      description: Category enriched information when insights parameter is set to true.
+      type: object
+      properties:
+        description_cleansed:
+          description: A cleaned and standardized version of the transaction description.
+          type: string
+        category:
+          description: High-level classification of the transaction including BANK_FEES_AND_CHARGES CHARITY EDUCATION ENTERTAINMENT
+            GOVERNMENT GROCERIES HEALTH_AND_WELLBEING LOANS_AND_INVESTMENT RENT_AND_SERVICES RESTAURANTS_DINING RETAIL SALARY_AND_REVENUE
+            TRANSFER TRANSPORT TRAVEL OTHER
+          type: string
+        category_confidence:
+          description: Confidence of category expressed as a percentage between 0 and 1.
+          type: number
+          format: decimal
+    TransactionBalance:
+      type: object
+      properties:
+        type:
+          description: The type of balance for the transaction
+          type: string
+        credit_debit_indicator:
+          $ref: '#/components/schemas/CreditDebitIndicator'
+        amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+      x-toBuilder: true
+    TransactionChargeAmount:
+      type: object
+      properties:
+        amount:
+          description: Amount of money charged for the transaction.
+          type: number
+          format: decimal
+        currency:
+          description: Currency in which the charge amount is expressed.
+          type: string
+        charge_included:
+          description: Indicates whether the charge is included in the transaction amount or is a separate charge.
+          type: boolean
+    BankTransactionCode:
+      type: object
+      properties:
+        code:
+          description: Bank transaction code used by the bank to categorize the transaction.
+          type: string
+        sub_code:
+          description: Sub-category of the bank transaction code providing further details.
+          type: string
+    CardInstrument:
+      type: object
+      properties:
+        authorization_type:
+          description: Type of card authorization performed for the transaction.
+          type: string
+        card_scheme_name:
+          description: Name of the card scheme.
+          type: string
+        identification:
+          description: Identification assigned by an institution to identify the card instrument.
+          type: string
+        name:
+          description: Name of the cardholder using the card.
+          type: string
+    MerchantDetails:
+      type: object
+      properties:
+        merchant_category_code:
+          description: Category code conform to ISO 18245, related to the type of services or goods the merchant provides
+            for the transaction.
+          type: string
+        merchant_name:
+          description: Name by which the merchant is known and which is usually used to identify that merchant.
+          type: string
+    ProprietaryBankTransactionCode:
+      type: object
+      properties:
+        code:
+          description: Proprietary bank transaction code to identify the underlying transaction.
+          type: string
+        issuer:
+          description: Identification of the issuer of the proprietary bank transaction code.
+          type: string
+    CurrencyExchange:
+      type: object
+      properties:
+        source_currency:
+          description: Currency from which an amount is to be converted in a currency conversion.
+          type: string
+        target_currency:
+          description: Currency into which an amount is to be converted in a currency conversion.
+          type: string
+        unit_currency:
+          description: Currency in which the rate of exchange is expressed in a currency exchange.
+          type: string
+        exchange_rate:
+          description: Factor used to convert an amount from one currency into another.
+          type: number
+          format: decimal
+        contract_identification:
+          description: Unique identification to unambiguously identify the foreign exchange contract.
+          type: string
+        quotation_date:
+          description: Date and time at which an exchange rate is quoted.
+          type: string
+          format: date-time
+        instructed_amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+    TransactionAccountIdentifier:
+      type: object
+      properties:
+        name:
+          description: Name of the account, as assigned by the account servicing institution.
+          type: string
+        scheme_name:
+          description: Name of the identification scheme, in a coded form as published in an external list.
+          type: string
+        identification:
+          description: Identification assigned by an institution to identify an account.
+          type: string
+    PostalAddress:
+      type: object
+      properties:
+        address_type:
+          description: Identifies the nature of the postal address.
+          type: string
+        address_line:
+          description: Information that locates and identifies a specific address.
+          type: string
+        building_number:
+          description: Number that identifies the position of a building on a street.
+          type: string
+        country:
+          description: Nation with its own government.
+          type: string
+        country_subdivision:
+          description: Identifies a subdivision of a country such as state, region, county.
+          type: string
+        post_code:
+          description: Identifier consisting of a group of letters and/or numbers that is added to a postal address.
+          type: string
+        street_name:
+          description: Name of a street or thoroughfare.
+          type: string
+        town_name:
+          description: Name of a built-up area, with defined boundaries, and a local government.
+          type: string
+    Agent:
+      type: object
+      properties:
+        scheme_name:
+          description: Name of the identification scheme, in a coded form as published in an external list.
+          type: string
+        identification:
+          description: Unique and unambiguous identification of the agent.
+          type: string
+        name:
+          description: Name by which the agent is known and which is usually used to identify that agent.
+          type: string
+        postal_address:
+          $ref: '#/components/schemas/PostalAddress'
+    PostalAddressSau:
+      type: object
+      properties:
+        address_type:
+          description: Identifies the nature of the postal address.
+          type: string
+        short_address:
+          description: Abbreviated form of the address.
+          type: string
+        building_number:
+          description: Number that identifies the position of a building on a street.
+          type: string
+        unit_number:
+          description: Number identifying a specific unit within a building.
+          type: string
+        street_name:
+          description: Name of a street or thoroughfare.
+          type: string
+        secondary_number:
+          description: Additional number used to identify a location.
+          type: string
+        district:
+          description: District or neighborhood name within a city.
+          type: string
+        postal_code:
+          description: Identifier consisting of a group of letters and/or numbers that is added to a postal address.
+          type: string
+        city:
+          description: Name of the city.
+          type: string
+        country:
+          description: Nation with its own government.
+          type: string
+    Transaction:
+      type: object
+      properties:
+        entity_id:
+          description: The unique identifier for the entity. Provided as a UUID.
+          type: string
+          format: uuid
+        account_id:
+          description: The account_id this transaction is related to.
+          type: string
+        transaction_id:
+          description: A unique ID for the transaction used to help you tie data back to your systems
+          type: string
+        transaction_information:
+          description: Include the raw unparsed transaction description from the bank
+          type: string
+        transaction_reference:
+          description: A unique reference provided by the bank for the transaction when processed through a national payment
+            system. As an example, it may be a reference code for the local payment scheme
+          type: string
+        credit_debit_indicator:
+          $ref: '#/components/schemas/CreditDebitIndicator'
+        amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+        transaction_mutability:
+          $ref: '#/components/schemas/TransactionMutability'
+        booking_date_time:
+          description: Date and time when a transaction entry is posted to an account.
+          type: string
+          format: date-time
+        insights:
+          $ref: '#/components/schemas/Categorisation'
+        balance:
+          $ref: '#/components/schemas/TransactionBalance'
+        status:
+          description: Status of the transaction (e.g., pending, booked).
+          type: string
+        statement_reference:
+          description: A list of references for the statement if available.
+          type: array
+          items:
+            type: string
+        value_date_time:
+          description: Date and time at which assets become available to the account owner (value date).
+          type: string
+          format: date-time
+        index:
+          description: Index position of the transaction in the sequence for the day.
+          type: integer
+        charge_amount:
+          $ref: '#/components/schemas/TransactionChargeAmount'
+        bank_transaction_code:
+          $ref: '#/components/schemas/BankTransactionCode'
+        card_instrument:
+          $ref: '#/components/schemas/CardInstrument'
+        merchant_details:
+          $ref: '#/components/schemas/MerchantDetails'
+        proprietary_bank_transaction_code:
+          $ref: '#/components/schemas/ProprietaryBankTransactionCode'
+        currency_exchange:
+          $ref: '#/components/schemas/CurrencyExchange'
+        creditor_account:
+          $ref: '#/components/schemas/TransactionAccountIdentifier'
+        creditor_agent:
+          $ref: '#/components/schemas/Agent'
+        debtor_account:
+          $ref: '#/components/schemas/TransactionAccountIdentifier'
+        debtor_agent:
+          $ref: '#/components/schemas/Agent'
+        local_time_zone:
+          description: Local time zone
+          type: string
+        transaction_type:
+          description: Transaction type
+          type: string
+          enum:
+          - POS
+          - E_COMMERCE
+          - ATM
+          - BILL_PAYMENTS
+          - LOCAL_BANK_TRANSFER
+          - SAME_BANK_TRANSFER
+          - INTERNATIONAL_TRANSFER
+          - TELLER
+          - CHEQUE
+          - OTHER
+          - UNSUPPORTED
+        sub_transaction_type:
+          description: Sub transaction type
+          type: string
+          enum:
+          - PURCHASE
+          - REVERSAL
+          - REFUND
+          - WITHDRAWAL
+          - WITHDRAWAL_REVERSAL
+          - DEPOSIT
+          - DEPOSIT_REVERSAL
+          - MONEY_TRANSFER
+          - NOT_APPLICABLE
+          - UNSUPPORTED
+          - REPAYMENTS
+          - INTEREST
+          - FEE
+          - CHARGES
+          - PROFIT
+          - DISBURSEMENT
+          - TAX
+          - ADJUSTMENT
+          - REWARDS
+          - LEASE_REPAYMENT
+        payment_modes:
+          description: Mode of the payment
+          type: string
+          enum:
+          - ONLINE
+          - OFFLINE
+          - BATCH
+          - UNSUPPORTED
+        flags:
+          description: The list of flags for a transaction by the bank e.g., CASHBACK
+          type: array
+          items:
+            type: string
+      required:
+      - account_id
+      - transaction_id
+      - amount
+      - status
+      x-toBuilder: true
+    TransactionsData:
+      type: object
+      properties:
+        type:
+          description: The endpoint the original request was made to.
+          type: string
+          default: transactions
+        transactions:
+          description: An array of transactions associated with the account.
+          type: array
+          items:
+            $ref: '#/components/schemas/Transaction'
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+      required:
+      - type
+      - page
+    FetchBalancesV2Result:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/DataResult'
+      - properties:
+          data:
+            $ref: '#/components/schemas/BalancesData'
+        type: object
+      x-toBuilder: true
+    FetchBalancesV1Result:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/DataResult'
+      - type: object
+        properties:
+          payload:
+            $ref: '#/components/schemas/ResponseDataPayLoadV1'
+      x-toBuilder: true
+    Beneficiary:
+      type: object
+      properties:
+        account_id:
+          description: Unique identifier for the account
+          type: string
+        account_holder_name:
+          description: Full name of the account holder
+          type: string
+        account_holder_short_name:
+          description: Short form of the name of the account holder
+          type: string
+        beneficiary_id:
+          description: Unique identifier for the beneficiary
+          type: string
+        beneficiary_type:
+          description: Type of beneficiary relationship
+          type: string
+          enum:
+          - TRUSTED
+          - ORDINARY
+          - OTHER
+          - UNSUPPORTED
+        creditor_agent:
+          $ref: '#/components/schemas/BeneficiaryCreditorAgent'
+        creditor_account:
+          $ref: '#/components/schemas/AccountIdentifier'
+        reference:
+          description: 'Unique reference in the context of the creditor, provided by the creditor to debtor, to unambiguously
+            refer to the payment transaction. Usage: If available, the initiating party (i.e. Debtor) provides this reference
+            in the structured remittance information, to enable reconciliation by the Creditor upon receipt of the amount
+            of money. This field is populated by the User 1 (who is the initiating party of the payment e.g. the Debtor).'
+          type: string
+        supplementary_data:
+          description: Additional information that can not be captured in the structured fields and/or any other specific
+            block.
+          type: object
+          additionalProperties:
+            type: string
+          properties: {}
+    BeneficiariesData:
+      type: object
+      properties:
+        beneficiaries:
+          description: An array of beneficiaries associated with the account.
+          type: array
+          items:
+            $ref: '#/components/schemas/Beneficiary'
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+        type:
+          description: The endpoint the original request was made to.
+          type: string
+      required:
+      - type
+      x-toBuilder: true
+    FetchBeneficiariesResultV2:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/DataResult'
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/BeneficiariesData'
+    AccountIdentifier:
+      type: object
+      properties:
+        scheme_name:
+          description: Indicates the type of identification being provided. For example,  IBAN | The `identification` field
+            is returning the IBAN for the account.
+          enum:
+          - PAN
+          - MASKED_PAN
+          - IBAN
+          - BBAN
+          - UNSUPPORTED
+          - OTHER
+        identification:
+          description: The account identification value
+          type: string
+        name:
+          description: The name associated with the account
+          type: string
+    FinancialInstitutionIdentificationType:
+      description: Type of financial institution identification scheme
+      type: string
+      enum:
+      - BICFI
+      - OTHER
+      - UNSUPPORTED
+    OBPostalAddress:
+      type: object
+      properties:
+        address_line:
+          description: Full address line
+          type: string
+        address_type:
+          description: Type of address
+          type: string
+          enum:
+          - BUSINESS
+          - CORRESPONDENCE
+          - DELIVERY_TO
+          - MAIL_TO
+          - PO_BOX
+          - POSTAL
+          - RESIDENTIAL
+          - STATEMENT
+          - UNSUPPORTED
+        building_number:
+          description: Building number
+          type: string
+        country:
+          description: Country name or code
+          type: string
+        department:
+          description: Department within the address
+          type: string
+        post_code:
+          description: Postal or ZIP code
+          type: string
+        street_name:
+          description: Name of the street
+          type: string
+        sub_department:
+          description: Sub-department within the address
+          type: string
+        town_name:
+          description: Town or city name
+          type: string
+        country_sub_division:
+          description: Country subdivision such as state or province
+          type: string
+      x-toBuilder: true
+    BeneficiaryCreditorAgent:
+      type: object
+      properties:
+        scheme_name:
+          $ref: '#/components/schemas/FinancialInstitutionIdentificationType'
+        identification:
+          description: Unique identification of the servicing institution.
+          type: string
+        name:
+          description: Name of the agent or institution
+          type: string
+        postal_address:
+          $ref: '#/components/schemas/OBPostalAddress'
+    CreditorAgent:
+      type: object
+      properties:
+        identification_type:
+          description: identification_type
+          type: string
+        identification:
+          description: Unique identification of the servicing institution.
+          type: string
+        name:
+          description: Name of the agent or institution
+          type: string
+        postal_address:
+          $ref: '#/components/schemas/PostalAddressSau'
+      x-toBuilder: true
+    StatusCode:
+      description: Specifies the status of the direct debit in code form.
+      type: string
+      enum:
+      - ACTIVE
+      - INACTIVE
+      - UNSUPPORTED
+    Frequency:
+      description: Regularity with which direct debit instructions are to be created and processed.
+      type: string
+      enum:
+      - MONTHLY
+      - QUARTERLY
+      - HALF_YEARLY
+      - ANNUAL
+      - FORTNIGHTLY
+      - DAILY
+      - WEEKLY
+      - NOT_KNOWN
+      - UNSUPPORTED
+    DirectDebit:
+      type: object
+      properties:
+        entity_id:
+          description: The unique identifier for the entity. Provided as a UUID.
+          type: string
+          format: uuid
+        account_id:
+          description: The account_id this direct debit is related to.
+          type: string
+        direct_debit_id:
+          description: A unique identifier of the direct debit resource. This identifier has no meaning to the account owner.
+          type: string
+        name:
+          description: This is the name of the regulated beneficiary entity that initiates the Direct Debit collection.
+          type: string
+        status_code:
+          $ref: '#/components/schemas/StatusCode'
+        frequency:
+          $ref: '#/components/schemas/Frequency'
+        mandate_identification:
+          description: Direct Debit reference. For AUDDIS service users provide Core Reference. For non AUDDIS service users
+            provide Core reference if possible or last used reference.
+          type: string
+        previous_payment_date_time:
+          description: Date of most recent direct debit collection.
+          type: string
+          format: date-time
+        previous_payment_amount:
+          description: The amount of the most recent direct debit collection.
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+      x-builder: true
+    DirectDebitsData:
+      type:
+      - object
+      - 'null'
+      properties:
+        type:
+          description: The endpoint the original request was made to.
+          type: string
+          const: direct-debits
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+        direct_debits:
+          description: List of direct debits for an Account
+          type: array
+          items:
+            $ref: '#/components/schemas/DirectDebit'
+      required:
+      - type
+      x-toBuilder: true
+    DirectDebitsResult:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/DataResult'
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/DirectDebitsData'
+    IdentitiesResult:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/DataResult'
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/IdentitiesData'
+    IdentitiesData:
+      type: object
+      properties:
+        type:
+          description: The endpoint the original request was made to.
+          type: string
+          default: identities
+          const: identities
+        account_id:
+          description: The account_id these identities are related to.
+          type: string
+          format: uuid
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+        identities:
+          description: An array of identities associated with the account.
+          type: array
+          items:
+            $ref: '#/components/schemas/IdentityV2data'
+      required:
+      - type
+      x-toBuilder: true
+    FetchIdentityV1Result:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/DataResult'
+      - type: object
+        properties:
+          payload:
+            $ref: '#/components/schemas/ResponseDataPayLoadV1'
+      x-toBuilder: true
+    FetchIdentityV2Result:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/DataResult'
+      - properties:
+          data:
+            $ref: '#/components/schemas/IdentityData'
+        type: object
+      x-toBuilder: true
+    TriggerDataRefreshRequestBody:
+      type: object
+      properties:
+        entity_id:
+          description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
+          type: string
+          format: uuid
+      required:
+      - entity_id
+    TriggerDataRefreshResponseBody:
+      type: object
+      properties:
+        refresh_id:
+          description: Refresh ID for the request created by server
+          type: string
+          format: uuid
+        status:
+          description: 'Status of the data refresh which will be '
+          type: string
+        message:
+          description: Message
+          type: string
+        timestamp:
+          description: Data refresh trigger date time
+          type: string
+          format: date-time
+      required:
+      - refresh_id
+      - status
+      - message
+      - timestamp
+    DataRefreshDataStatusStatus:
+      description: Status of the data refresh for account, identity, balance, transaction
+      type: string
+      enum:
+      - PENDING
+      - OK
+      - FAILED
+      - UNSUPPORTED
+    DataRefreshStatus:
+      description: Overall data refresh status
+      type: string
+      enum:
+      - PENDING
+      - FINISHED
+    GetDataRefreshesResponseBody:
+      type: object
+      properties:
+        content:
+          items:
+            type: object
+            properties:
+              refresh_id:
+                type: string
+                format: uuid
+              entity_id:
+                type: string
+                format: uuid
+              customer_id:
+                type: string
+                format: uuid
+              status:
+                $ref: '#/components/schemas/DataRefreshStatus'
+              created_at:
+                type: string
+                format: date-time
+              updated_at:
+                type: string
+                format: date-time
+            required:
+            - refresh_id
+            - entity_id
+            - customer_id
+            - status
+            - created_at
+            - updated_at
+          type: array
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+      required:
+      - content
+      - page
+    GetDataRefreshStatusResponseBody:
+      type: object
+      properties:
+        refresh_id:
+          description: Refresh ID for the request created by server
+          type: string
+          format: uuid
+        entity_id:
+          description: The entity_id you're querying for
+          type: string
+          format: uuid
+        customer_id:
+          description: The customer_id you're querying for
+          type: string
+          format: uuid
+        status:
+          $ref: '#/components/schemas/DataRefreshStatus'
+        data_status:
+          $ref: '#/components/schemas/DataRefreshDataStatus'
+        created_at:
+          description: Data refresh created date
+          type: string
+          format: date-time
+        updated_at:
+          description: Data refresh updated date
+          type: string
+          format: date-time
+      required:
+      - refresh_id
+      - entity_id
+      - customer_id
+      - status
+      - data_status
+      - created_at
+      - updated_at
+    DataRefreshDataStatus:
+      type: object
+      properties:
+        accounts:
+          $ref: '#/components/schemas/DataRefreshDataStatusStatus'
+        identity:
+          $ref: '#/components/schemas/DataRefreshDataStatusStatus'
+        account_data:
+          type: array
+          items:
+            type: object
+            properties:
+              account_id:
+                type: string
+                format: uuid
+              balance:
+                $ref: '#/components/schemas/DataRefreshDataStatusStatus'
+              identity:
+                $ref: '#/components/schemas/DataRefreshDataStatusStatus'
+              transactions:
+                $ref: '#/components/schemas/DataRefreshDataStatusStatus'
+              scheduled_payments:
+                $ref: '#/components/schemas/DataRefreshDataStatusStatus'
+              direct_debits:
+                $ref: '#/components/schemas/DataRefreshDataStatusStatus'
+              standing_orders:
+                $ref: '#/components/schemas/DataRefreshDataStatusStatus'
+              beneficiaries:
+                $ref: '#/components/schemas/DataRefreshDataStatusStatus'
+              transactionAvailability:
+                type: object
+                properties:
+                  start:
+                    type: string
+                    format: date
+                  end:
+                    type: string
+                    format: date
+                required:
+                - start
+                - end
+            required:
+            - account_id
+            - balance
+            - identity
+            - transactions
+            - scheduled_payments
+            - direct_debits
+            - standing_orders
+            - beneficiaries
+      required:
+      - accounts
+      - identity
+      - account_data
+    ScheduledPayment:
+      type: object
+      properties:
+        entity_id:
+          description: The unique identifier for the entity. Provided as a UUID.
+          type: string
+          format: uuid
+        account_id:
+          description: Account ID for the bank account
+          type: string
+        account_holder_name:
+          description: Full name of the account holder
+          type: string
+        account_holder_short_name:
+          description: Short form of the name of the account holder
+        scheduled_payment_id:
+          description: Scheduled payment ID
+          type: string
+        scheduled_type:
+          description: Specifies the scheduled payment date type requested
+          type: string
+          enum:
+          - ARRIVAL
+          - EXECUTION
+          - UNSUPPORTED
+        scheduled_payment_date_time:
+          description: The date on which the scheduled payment will be made.
+          type: string
+          format: date-time
+        debtor_reference:
+          description: A reference value provided by the user (i.e. the Debtor) to the PISP while setting up the scheduled
+            payment.
+          type: string
+        instructed_amount:
+          description: 'The amount to be moved between the debtor and creditor, before deduction of charges, expressed in
+            the currency as ordered by the initiating party. Usage: This amount has to be transported unchanged through the
+            transaction chain.'
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        creditor_agent:
+          $ref: '#/components/schemas/CreditorAgent'
+        creditor_account:
+          $ref: '#/components/schemas/AccountIdentification'
+      x-builder: true
+    ScheduledPaymentsData:
+      type: object
+      properties:
+        type:
+          description: The endpoint the original request was made to.
+          type: string
+          const: scheduled-payments
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+        scheduled_payments:
+          description: An array of  scheduled payments associated with the account.
+          type: array
+          items:
+            $ref: '#/components/schemas/ScheduledPayment'
+      required:
+      - type
+      x-toBuilder: true
+    ScheduledPaymentsResult:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/DataResult'
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/ScheduledPaymentsData'
+    StandingOrdersResponse:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/DataResult'
+      - type: object
+        properties:
+          data:
+            description: The standing orders data
+            allOf:
+            - $ref: '#/components/schemas/StandingOrdersData'
+    StandingOrdersData:
+      type: object
+      properties:
+        standing_orders:
+          description: List of standing orders for the account
+          type: array
+          items:
+            $ref: '#/components/schemas/StandingOrder'
+        page:
+          description: Pagination information
+          allOf:
+          - $ref: '#/components/schemas/PageMetadata'
+      required:
+      - standing_orders
+      - page
+    StandingOrder:
+      type: object
+      properties:
+        account_id:
+          description: The unique identifier of the account
+          type: string
+          format: uuid
+        standing_order_id:
+          description: Unique identifier for the standing order
+          type: string
+        standing_order_status_code:
+          description: Current status of the standing order
+          type: string
+        standing_order_type:
+          description: The type of standing order
+          type: string
+          enum:
+          - BETWEEN_MY_ACCOUNTS
+          - SAME_BANK_TRANSFER
+          - LOCAL_BANK_TRANSFER
+          - INTERNATIONAL_TRANSFER
+          - CHARITY
+          - UNSUPPORTED
+        purpose:
+          description: The purpose of the standing order payment.
+          type: string
+        first_payment_date_time:
+          description: Date and time of the first payment
+          type:
+          - string
+          - 'null'
+          format: date-time
+        last_payment_date_time:
+          description: Date and time of the last payment
+          type:
+          - string
+          - 'null'
+          format: date-time
+        next_payment_date_time:
+          description: Date and time of the next scheduled payment
+          type:
+          - string
+          - 'null'
+          format: date-time
+        final_payment_date_time:
+          description: Date and time of the final payment
+          type:
+          - string
+          - 'null'
+          format: date-time
+        frequency:
+          description: Frequency details of the standing order
+          allOf:
+          - $ref: '#/components/schemas/StandingOrderFrequency'
+        number_of_payments:
+          description: Total number of payments
+          type:
+          - integer
+          - 'null'
+        reference:
+          description: Reference for the standing order
+          type:
+          - string
+          - 'null'
+        first_payment_amount:
+          description: Amount of the first payment
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        last_payment_amount:
+          description: Amount of the last payment
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        next_payment_amount:
+          description: Amount of the next payment
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        final_payment_amount:
+          description: Amount of the final payment
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        creditor_agent:
+          $ref: '#/components/schemas/CreditorAgent'
+        creditor_account:
+          $ref: '#/components/schemas/AccountIdentification'
+      required:
+      - account_id
+      - standing_order_id
+    StandingOrderFrequency:
+      type: object
+      properties:
+        frequency_type:
+          description: Type of frequency
+          type: string
+          enum:
+          - DAILY
+          - WEEKLY
+          - FORTNIGHTLY
+          - MONTHLY
+          - QUARTERLY
+          - HALF_YEARLY
+          - YEARLY
+          - OTHER
+        interval:
+          description: Interval value when frequency_type is OTHER
+          type:
+          - string
+          - 'null'
+    Amount:
+      $ref: '#/components/schemas/CurrencyAmount'
+    creditor_agent:
+      $ref: '#/components/schemas/CreditorAgent'
+    creditor_account:
+      $ref: '#/components/schemas/AccountIdentification'
+    FetchTransactionsResultV2:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/DataResult'
+      - properties:
+          data:
+            $ref: '#/components/schemas/TransactionsData'
+        type: object
+      x-toBuilder: true
+    FetchTransactionsResultV1:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/DataResult'
+      - type: object
+        properties:
+          payload:
+            $ref: '#/components/schemas/ResponseDataPayLoadV1'
+      x-toBuilder: true
+  examples:
+    InvalidParametersExample:
+      summary: Invalid parameters error response
+      description: Response when required parameters are missing or invalid
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-10T21:05:59.919233187Z'
+        status: INVALID_PARAMETERS
+        message: 'The request is badly formatted or a parameter of the wrong type has been provided, field: entity_id, value:
+          e34d8e49-9af2-4252-a53e-bd2df855134.'
+        metadata: null
+    UnknownEntityExample:
+      summary: Entity not found error response
+      description: Response when the provided entity_id is not found
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-10T21:03:05.413806605Z'
+        status: UNKNOWN_ENTITY
+        message: The entity_id provided did not match an account in our records.
+        metadata: null
+    InternalServerErrorExample:
+      summary: Internal server error response
+      description: Response when an unexpected server error occurs
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-08-07T13:07:38.834977945Z'
+        status: INTERNAL_SERVER_ERROR
+        message: Something has gone wrong. If you continue to see this error, please get in touch with Lean.
+        metadata: null
+    BankIssueV2Example:
+      summary: Failed request due to bank technical issues
+      description: Response when the bank is experiencing technical problems
+      value:
+        status: FAILED
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        message: Your bank is currently experiencing technological problems. Please try again later.
+        meta: null
+        timestamp: '2025-09-12T05:13:49.739987382Z'
+        status_detail:
+          granular_status_code: BANK_ISSUE
+          status_additional_info: Your bank is currently experiencing technological problems. Please try again later.
+        type: null
+        refreshed_at: null
+    AsyncProcessingV2Example:
+      summary: Asynchronous processing response with async=true
+      description: Response to request with async=true
+      value:
+        status: PENDING
+        results_id: df73d596-7138-46df-af96-cbcbe9a8af59
+        message: Please wait for a webhook or try again later.
+        meta: null
+        timestamp: '2025-09-11T19:15:07.829993148Z'
+        status_detail: null
+        data: null
+        type: null
+        refreshed_at: null
+    UnknownAccountExample:
+      summary: Account not found error response
+      description: Response when the provided account_id does not match an account for the entity_id
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-11T18:55:42.579432745Z'
+        status: UNKNOWN_ACCOUNT
+        message: The account_id provided does not match an account with the entity_id provided.
+        metadata: null
+    UnknownResultExample:
+      summary: Result not found error response
+      description: Response when the provided result_id is not found
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-10T21:03:05.413806605Z'
+        status: UNKNOWN_RESULTS_ID
+        message: The results_id provided has not been recognized by Lean or has not been processed yet
+        metadata: null
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+tags:
+- name: Accounts Raw Data
+  x-displayName: Accounts Raw Data
+- name: Balance Raw Data
+  x-displayName: Balance Raw Data
+- name: Beneficiaries Raw Data
+  x-displayName: Beneficiaries Raw Data
+- name: Direct Debits Raw Data
+  x-displayName: Direct Debits Raw Data
+- name: Raw Data
+  x-displayName: Raw Data
+- name: Identity Raw Data
+  x-displayName: Identity Raw Data
+- name: Data refresh
+  x-displayName: Data refresh
+- name: Pending & Asynchronous Requests
+  x-displayName: Pending & Asynchronous Requests
+- name: Scheduled Payments Raw Data
+  x-displayName: Scheduled Payments Raw Data
+- name: Standing Orders Raw Data
+  x-displayName: Standing Orders Raw Data
+- name: Transactions Raw Data
+  x-displayName: Transactions Raw Data
+security:
+- bearerAuth: []

@@ -1,0 +1,140 @@
+# Lean Tech Documentation
+
+> Documentation for Lean Tech
+
+## Guides
+- [Authentication](https://docs.leantech.me/docs/authentication.md)
+- [Creating a customer](https://docs.leantech.me/docs/creating-a-customer.md)
+- [Connect to a bank](https://docs.leantech.me/docs/creating-a-bank-connection.md)
+- [Making Payments](https://docs.leantech.me/docs/making-payments.md)
+- [Getting started with Pay by Bank](https://docs.leantech.me/docs/find-your-use-case.md): Learn about the payments use cases that can be powered with Open Finance.
+- [Configuring your application](https://docs.leantech.me/docs/configuring-your-application.md): Configure required settings in the Lean Dashboard before enabling Open Finance payments.
+- [Deposits](https://docs.leantech.me/docs/deposits.md): Accept customer-authorised bank deposits into wallets or accounts. One-time or via long-lived authorisation.
+- [Collections](https://docs.leantech.me/docs/collections.md): Collect customer payments on demand from their bank using a single, long-lived authorisation.
+- [Checkout](https://docs.leantech.me/docs/checkouts.md): Accept bank payments at checkout with guest and express flows, using one-time or long-lived authorisation.
+- [Getting started with Single Instant Payments](https://docs.leantech.me/docs/getting-started-with-single-instant-payments.md): Pay by bank solution offering single one time payments ideal for wallet/account deposits and guest checkouts
+- [Initiating a Single Instant Payment](https://docs.leantech.me/docs/initiating-a-single-instant-payment.md)
+- [Getting started with Account-on-file Payments](https://docs.leantech.me/docs/getting-started-with-account-in-file-payments.md): Pay by bank solution supporting variable value end user and merchant initiated payments ideal for loan collections, faster return deposit and frequently returning checkout use cases.
+- [Migrating from Legacy Payments to Account-on-File](https://docs.leantech.me/docs/migrating-from-legacy-payments-to-account-on-file.md)
+- [Integrating Account-on-file Payments](https://docs.leantech.me/docs/integrating-account-on-file-payments.md)
+- [Consent Lifecycle](https://docs.leantech.me/docs/consent-lifecycle.md)
+- [Consent Limits](https://docs.leantech.me/docs/consent-limits.md): Define how much, how often, and for how long payments can be initiated under a consent.
+- [Fetching IBAN and Account Holder Name](https://docs.leantech.me/docs/fetching-account-on-file-consents.md)
+- [Checking balance using Account-on-file consent](https://docs.leantech.me/docs/fetch-balance.md)
+- [Getting Started with Payment Links](https://docs.leantech.me/docs/getting-started.md): Use Lean’s hosted checkout to collect payments
+- [Create and configure a Payment Link](https://docs.leantech.me/docs/create-payment-link.md): Learn how to create, configure, and share payment links.
+- [Manage Payment Links and usages](https://docs.leantech.me/docs/view-and-manage-payment-links.md): Learn how to find existing Payment Links in the Lean Dashboard, inspect usages, view collected identifiers, and disable or re-enable links.
+- [Getting started with Scheduled Payments](https://docs.leantech.me/docs/getting-start-with-scheduled-payments.md): Using Lean's Payment scheduler with Account-on-file for Scheduled Payment use cases
+- [Intergrating Scheduled Payments](https://docs.leantech.me/docs/intergrating-scheduled-payments.md): Using Lean's Payment scheduler with Account-on-file for Scheduled Payment use cases
+- [Scheduled Payments status lifecycles](https://docs.leantech.me/docs/schedule-lifecycle.md): Using Lean's Payment scheduler with Account-on-file for Scheduled Payment use cases
+- [Scheduled Payments schedule management](https://docs.leantech.me/docs/schedule-management.md): Using Lean's Payment Scheduler with Account-on-file for Scheduled Payment use cases
+- [Open Finance Enablement for Existing Integrations](https://docs.leantech.me/docs/migrating-to-open-finance-based-payments.md)
+- [Payment status lifecycle ](https://docs.leantech.me/docs/payment-statuses.md)
+- [Consent Management](https://docs.leantech.me/docs/consent-management.md)
+- [Risk Details](https://docs.leantech.me/docs/risk-details.md)
+- [Lean Open Finance Data Integration Guide](https://docs.leantech.me/docs/lean-open-finance-data-integration-guide.md): A step by step introduction to building with Lean Open Finance Data APIs in the United Arab Emirates.
+- [Fetching Bank Data: Open Finance Enablement ](https://docs.leantech.me/docs/fetching-bank-data-migrating-to-open-finance.md)
+- [Data workflow](https://docs.leantech.me/docs/data-workflow.md)
+- [How to use the Get Income API](https://docs.leantech.me/docs/getting-started-with-get-income-api.md)
+- [Account Verification ](https://docs.leantech.me/docs/how-to-use-account-verification-service.md): This Account Verification API covers domestic (UAE) and international countries.
+- [Account Verification Coverage](https://docs.leantech.me/docs/account-verification-coverage.md)
+- [Address Verification](https://docs.leantech.me/docs/how-to-use-address-verification.md): Automate and simplify address verification
+- [Name Verification](https://docs.leantech.me/docs/getting-started-with-name-verification.md)
+- [How to handle invalid passwords for Deposits API or reconciliation](https://docs.leantech.me/docs/how-to-handle-invalid-password-for-deposits-api-or-reconciliation.md)
+- [Getting Started with Payouts](https://docs.leantech.me/docs/getting-started-with-payouts.md)
+- [Making Payouts using Single Payment Mechanism](https://docs.leantech.me/docs/single-payment-mechanism.md)
+- [Different Payment Authorization Flows](https://docs.leantech.me/docs/payouts-authorization-flows-overview.md)
+- [Updating Bank Credentials for Payouts](https://docs.leantech.me/docs/updating-bank-credentials-for-payouts.md)
+- [Getting started with Refunds ](https://docs.leantech.me/docs/using-refunds-for-payouts.md)
+- [Web](https://docs.leantech.me/docs/web.md)
+- [iOS](https://docs.leantech.me/docs/ios.md)
+- [Android](https://docs.leantech.me/docs/android.md)
+- [React Native](https://docs.leantech.me/docs/react-native.md)
+- [Config Reference](https://docs.leantech.me/docs/config-reference.md)
+- [Flows Reference](https://docs.leantech.me/docs/flows-reference.md)
+- [LinkSDK statuses](https://docs.leantech.me/docs/linksdk-statuses.md)
+- [Webhooks](https://docs.leantech.me/docs/webhooks.md)
+- [Webhook Library](https://docs.leantech.me/docs/webhook-library.md)
+- [MCP](https://docs.leantech.me/docs/mcp.md)
+
+## API Reference
+- [Generate Access Token](https://docs.leantech.me/reference/postoauth2token.md)
+- [List Customers](https://docs.leantech.me/reference/getcustomers.md): Fetch a list of all customers created
+- [Create Customer](https://docs.leantech.me/reference/createcustomer.md): Create a customer object on Lean given the app_user_id which is the identifier (or a hash of the identifier) you use to refer to a user in your own database. The customer object in Lean should map one to one with the user object in your database.
+- [Update Customer](https://docs.leantech.me/reference/updatecustomer.md): This endpoint allows you to update the government identifiers associated with an existing customer. Government identifiers are required by the UAE Open Finance specification to uniquely identify the customer and must reflect the latest, valid information for the account holder.
+- [Get Customer by ID](https://docs.leantech.me/reference/getcustomerbyid.md): Fetch a Customer object by the customer_id associated
+- [Get Customer by app_user_id](https://docs.leantech.me/reference/getcustomerbyuserid.md): Fetch a Customer object by the associated `app_user_id` value
+- [List Banks](https://docs.leantech.me/reference/getbanks-1.md): Fetch a list of all supported Banks for your application, includes status and configuration information.
+- [Get all Events](https://docs.leantech.me/reference/getevents.md): List all events created by Lean and sent over webhooks in the past 90 days.
+- [Create a new AoF consent](https://docs.leantech.me/reference/createaccountonfileconsent.md): Creates a new Account-on-File consent that can be authorized later.
+- [Initiate an AoF payment](https://docs.leantech.me/reference/initiateaccountonfilepayment.md): Endpoint responsible for initiating an AoF payment against an existing, authorized consent.
+- [List customers consents](https://docs.leantech.me/reference/fetchconsents.md): Retrieves a paginated list of payment consents for the specified customer.
+- [Retrieve balance of consent-linked account](https://docs.leantech.me/reference/fetchconsentbalance.md): Retrieves the balance of the account associated with the specified authorized consent.
+- [Retrieve consent details](https://docs.leantech.me/reference/fetchconsent.md): Retrieves a payment consent and its consumption data. Consumption data is returned only for authorized consents.
+- [Revoke a consent](https://docs.leantech.me/reference/revokeconsent.md): Revokes an authorised payment consent. The consent must be in `AUTHORISED` state.
+- [Create Payment Destination](https://docs.leantech.me/reference/createpaymentdestination.md): Payment Destination defines the target account to which funds will be transferred. It is used when creating a Beneficiary in the user's bank via the LinkSDK, either through the `.connect()` flow or the `.createBeneficiary()` method. In Open Finance flows, the Payment Destination represents the consent beneficiary i.e. the account explicitly authorised to receive funds under the granted consent.
+- [List Payment Destinations](https://docs.leantech.me/reference/getpaymentdestinations.md): Retrieve a list of all Payment Destinations you have in stored with Lean.
+- [Get Payment Destinations for Customer](https://docs.leantech.me/reference/getpaymentdestinationsbycustomerid.md): Retrieve a list of all Payment Destinations associated with a given Customer.
+- [Get Payment Destination by ID](https://docs.leantech.me/reference/getpaymentdestinationbyid.md): Retrieve the details of a single Payment Destination stored by Lean.
+- [Get all Payment Sources for Customer](https://docs.leantech.me/reference/getpaymentsources.md): Payment Sources are created upon successful completion of the `.connect()` method in the LinkSDK when `payments` is set as a Permission.
+- [Get Payment Source by ID](https://docs.leantech.me/reference/getpaymentsourcebyid.md): Payment Sources are created upon successful completion of the `.connect()` method in the LinkSDK when `payments` is set as a Permission.
+- [Delete Payment Source](https://docs.leantech.me/reference/deletepaymentsource.md): Delete a Payment Source to remove Customer credentials from the platform.
+- [Create Payment Intent](https://docs.leantech.me/reference/createpaymentintent.md): The Payment intent is the contract between your backend and Lean to certify that you will request a payment from your customer of a specified amount and currency. In order to initiate a payment, the `payment_intent_id` must be provided into the `pay()` or `checkout()` method of the LinkSDK.
+- [List Payment Intents](https://docs.leantech.me/reference/listpaymentintents.md): List all Payment Intents
+- [Get Payment Intent](https://docs.leantech.me/reference/getpaymentintentbyid.md): The Payment intent is the contract between your backend and Lean to certify that you will request a payment from your customer of a specified amount and currency. In order to initiate a payment, the `payment_intent_id` must be provided into the `pay()` method of the LinkSDK.
+- [Create Payment Link](https://docs.leantech.me/reference/createpaymentlink.md): Creates a payment link that can be shared with customers to collect payments.  The link remains ACTIVE until it expires, reaches its usage limit, or is explicitly disabled.
+- [List Payment Links](https://docs.leantech.me/reference/getpaymentlinks.md): Returns a paginated list of all payment links created by your application.
+- [Get Payment Link](https://docs.leantech.me/reference/getpaymentlink.md): Retrieves the current state of a payment link, including its status, usage count, and configuration.
+- [Update Payment Link](https://docs.leantech.me/reference/updatepaymentlink.md): Changes the status of a payment link.  Set status to `DISABLED` to immediately stop the link from accepting new payments, or `ACTIVE` to re-enable a previously disabled link.  Links in `EXPIRED` or `USED` status cannot be reactivated.
+- [List Payment Link Usages](https://docs.leantech.me/reference/listpaymentlinkusages.md): Returns a paginated list of usages for a given payment link.
+- [Get Payment Link Usage](https://docs.leantech.me/reference/getpaymentlinkusage.md): Returns the details of a single payment link usage, including its current status, the identifiers collected from the payer during the payment flow, and the resulting payment reference once the bank has processed the payment.  The `payment_id` and `payment_status` fields are populated asynchronously - they will be `null` immediately after usage creation and will be set once the payment has been processed by the bank.
+- [Get Payment](https://docs.leantech.me/reference/getpaymentbyid.md): Fetch a single payment
+- [Create Payout Payment ](https://docs.leantech.me/reference/createpayout.md)
+- [List Payouts](https://docs.leantech.me/reference/getpayouts.md)
+- [Get Payment History](https://docs.leantech.me/reference/getpaymenthistory.md)
+- [Create Payouts Destination(s)](https://docs.leantech.me/reference/createpayoutdestination.md): Create payment destinations for use with Payouts. Destinations created with Payouts create a corresponding beneficiary with your bank.
+- [Get Payouts Destination](https://docs.leantech.me/reference/getpayoutdestinationbyid.md): Create payment destinations for use with Payouts. Destinations created with Payouts create a corresponding beneficiary with your bank.
+- [List Refunds](https://docs.leantech.me/reference/listrefunds.md): Returns a list of all refunds intitated . You can filter the transactions based on status of the refund transaction by passing it in the query parameter. This API allows pagination with the default size of 50 refunds per page.
+- [Create Refunds](https://docs.leantech.me/reference/createrefund.md): Creates and queues a refund payment for approval or rejection. Refunds are always returned to the originating account of the corresponding payment. The total refund amount cannot exceed the original payment. For processing amounts greater than the original payment, please refer to payouts.
+- [Process Refunds](https://docs.leantech.me/reference/processrefunds.md): Updates the refund status based on the approver's (or checker's) confirmation or rejection. This serves as a fail-safe mechanism to validate the refund decision after the transaction is initiated, rather than processing it immediately.
+- [Get Refund Reasons](https://docs.leantech.me/reference/getrefundreasons.md): Returns the reason code for the created refund, which is then used in the refund request creation.
+- [Retrieve payments](https://docs.leantech.me/reference/getreconciliationpayments.md): Retrieve payments with reconciliation information.
+- [Retrieve Deposits](https://docs.leantech.me/reference/getdeposits.md): Retrieve deposits from your connected bank accounts
+- [Get Payment](https://docs.leantech.me/reference/getreconciliationpaymentbyid.md): Retrieve a specific payment from your connected bank accounts
+- [Get Entities for Customer](https://docs.leantech.me/reference/getcustomerentities.md): An Entity is generated whenever a Customer connects a new bank using the `.connect()` method in the LinkSDK with _any_ data related permissions.
+- [Get Entity by ID](https://docs.leantech.me/reference/getentitybyid.md): Returns a single Entity.  An Entity is generated whenever a Customer connects a new bank using the `.connect()` method in the LinkSDK with _any_ data related permissions.
+- [Retrieve All Entities](https://docs.leantech.me/reference/listentities.md): Retrieves a list of entities created for your application within the provided time range.The entities are paginated, and the query parameters allow filtering by start and end dates.
+- [Delete Entity](https://docs.leantech.me/reference/deleteentity.md): Marks the entity as deleted. It can be recreated later by intiating a new .connect() flow from the LinkSDK.
+- [Get Accounts](https://docs.leantech.me/reference/fetchaccountsv2.md): The Get Accounts endpoint retrieves a list of bank accounts that have been linked by a user via LinkSDK, identified by their entity_id.Each account object contains fields such as account_id, account status, currency, account_sub_type, account identifiers (such as IBAN, ACCOUNT_NUMBER, and NATIONAL_ID) and other data points related accounts. You can use the resulting account_ids to query additional financial data through other Lean APIs such as transactions, balances, beneficiaries, and other data APIs. **A step by step guide** [here](https://docs.leantech.me/docs/lean-open-finance-data-integration-guide).
+- [Get Balances](https://docs.leantech.me/reference/fetchbalancesv2.md): The `Get Balances` endpoint retrieves a list of balances associated with a specific bank account that has been linked by a user via LinkSDK, identified by both the `entity_id` and the `account_id`.The `account_id` can be found by making a call to the /accounts endpoint.Each balance object contains fields such as `balance type` (e.g., CLOSING_AVAILABLE, INTERIM_BOOKED, etc.), `amount`, `currency`, `credit/debit indicator`, and *optional* `credit_line` details that indicate available or agreed credit facilities tied to the account.Balance types can vary based on the bank and the nature of the account, and multiple types of balances may be available for the same account at the same time.**Requires an active entity with the `balances` permission to use.** **A step by step guide** [here](https://docs.leantech.me/docs/lean-open-finance-data-integration-guide).
+- [Get Transactions](https://docs.leantech.me/reference/fetchtransactionsv2.md): The `Get Transactions `endpoint retrieves a list of historical transactions associated with a specific bank account linked by a user via LinkSDK, identified by both the entity_id and the account_id. Each transaction object contains fields such as amount, status, balance after each transaction, transaction category and type, and additional information. Requires an active entity with the `transactions` permission to use. **A step by step guide** [here](https://docs.leantech.me/docs/lean-open-finance-data-integration-guide).
+- [Get identity](https://docs.leantech.me/reference/fetchidentitiesv2.md): Get the identity details of the account holder stored at the bank. Requires the following permissions: `identity`. **A step by step guide** [here](https://docs.leantech.me/docs/lean-open-finance-data-integration-guide).
+- [Get identities](https://docs.leantech.me/reference/fetchallidentities.md): Get the identities of all the people associated to an account given an accountId.  The accountId can be found by making a call to the /accounts endpoint. Requires the following permissions: `identities`
+- [Get Beneficiaries](https://docs.leantech.me/reference/fetchbeneficiariesv2.md): Get the beneficiaries for a specific account given an accountId.  The accountId can be found by making a call to the /accounts endpoint. The accountId can be found by making a call to the /accounts endpoint.  Requires the following permissions: `beneficiaries`
+- [Get Direct Debits](https://docs.leantech.me/reference/fetchdirectdebits.md): Get the direct debits for a specific account given an accountId. The accountId can be found by making a call to the /accounts endpoint.   Requires the following permissions: `direct_debits`
+- [Get Standing Orders](https://docs.leantech.me/reference/getstandingorders.md): Get the standing orders for a specific account given an accountId.  The accountId can be found by making a call to the /accounts endpoint.  Requires the following permissions: `standing_orders`
+- [Get Scheduled Payments](https://docs.leantech.me/reference/fetchscheduledpayments.md): Get the scheduled payments for a specific account given an accountId.  The accountId can be found by making a call to the /accounts endpoint.  Requires the following permissions: `scheduled_payments`
+- [Trigger a Manual Data Refresh](https://docs.leantech.me/reference/triggerdatarefresh.md): Trigger on-demand data refresh for an entity that has an active consent
+- [Get Results](https://docs.leantech.me/reference/getresultsv2.md): Get the results for an asynchronous response. Note that the request willnot work for results_id that have been returned with a synchronousrequest, i.e.: it will work only when you receive a response for any APIwhere status=PENDING and then receive a webhook. **Note: it's recommended to use the sync flow (async=false) for all request by adapting the new [data workflow](https://docs.leantech.me/docs/data-workflow). **
+- [Register a schedule](https://docs.leantech.me/reference/createschedule.md): Registers a new schedule (recurring or explicit) against an existing, authorized consent.
+- [List schedules](https://docs.leantech.me/reference/listschedules.md): Returns a paginated list of schedules for the calling application, optionally filtered by consent and status.
+- [Get schedule details](https://docs.leantech.me/reference/getschedule.md): Returns the full details of a single schedule.
+- [Cancel a schedule](https://docs.leantech.me/reference/cancelschedule.md): Cancels a schedule. No further payments will be attempted.
+- [Pause a schedule](https://docs.leantech.me/reference/pauseschedule.md): Pauses an active schedule. Payments will not be attempted until resumed.
+- [Resume a schedule](https://docs.leantech.me/reference/resumeschedule.md): Resumes a paused schedule.
+- [List upcoming payments](https://docs.leantech.me/reference/listupcomingpayments.md): Returns a paginated list of upcoming (not yet executed) payments for a schedule.
+- [List scheduled payments](https://docs.leantech.me/reference/listscheduledpayments.md): Returns a paginated list of the scheduled payments belonging to a schedule, optionally filtered by status and due-date range.
+- [Get scheduled payment details](https://docs.leantech.me/reference/getscheduledpayment.md): Returns the current view of a single scheduled payment, including its identity within the schedule, due date, amount, reference, status and number of recorded attempts.
+- [Get Income](https://docs.leantech.me/reference/verifyincome.md): `Get Income` endpoint provides essential income verification data for credit decisioning and underwriting processes. This API analyzes transaction history to produce reliable income insights for a specific borrower identified by their `entity_id`.  The API returns comprehensive income information including categorization by source (salary vs. non-salary), monthly income patterns, and statistical analysis that helps lenders accurately assess an applicant's ability to pay. These insights can be used for:  - Verifying user stated income on loan applications - Calculating debt-to-income ratios with precision - Identifying income stability and irregularities - Supporting automated credit decisioning systems - Reducing manual verification workloads in underwriting  Use this endpoint to streamline credit underwriting workflows, reduce time-to-decision, and make more informed lending decisions based on verified financial data.
+- [Get Expenses](https://docs.leantech.me/reference/getexpenses.md): Provides insights on the expenses (outflows) from a bank account.
+- [Get Behavioral Insights](https://docs.leantech.me/reference/getbehavioralinsights.md): Enriches debit transactions with category, merchant, and location data, returning aggregated spend analytics  by category, merchant, and geography.
+- [Get Cash Flow Patterns](https://docs.leantech.me/reference/getcashflowpatterns.md): Detects recurring inflow and outflow transactions and groups them into structured patterns, surfacing frequency,  expected timing, and whether each pattern is ongoing, new, or stopped.
+- [Get Credit Obligations](https://docs.leantech.me/reference/getcreditobligationsv3.md): Delivers a structured view of a user's borrowing activity as per the connected account.  Shows repayments and disbursements broken down by lender name and credit type.
+- [Get Credit Assessments](https://docs.leantech.me/reference/getcreditassessments.md): Aggregates income, expenses, and balance into pre-computed credit indicators for DBR, affordability ratio,  net cashflow, and max installment capacity. This endpoint offers configuration capabilities in order to fit and calibrate to your credit policy.
+- [Get Account Controls](https://docs.leantech.me/reference/getaccountcontrols.md): Offers overview signals and configurable thresholds on a connected account,  returning a simple eligible/not-eligible verdict before any downstream process begins
+- [Create Bank Statements Report](https://docs.leantech.me/reference/createbankstatementsreport.md): Create a new bank statements report.
+- [Get Bank Statements Report](https://docs.leantech.me/reference/getbankstatementsreport.md): Retrieve the bank statement report.
+- [Account Verification API](https://docs.leantech.me/reference/internationalavsverification.md): Verifies account ownership and details for UAE and  international accounts. **A step by step guide** [here](https://docs.leantech.me/docs/how-to-use-account-verification-service).
+- [Verify Name](https://docs.leantech.me/reference/nameverification.md): Verify the name held by the bank matches a name provided. Requires the following permissions: accounts & identity.
+- [Data errors](https://docs.leantech.me/reference/data-errors.md)
+- [Payments Errors](https://docs.leantech.me/reference/payments-errors.md)

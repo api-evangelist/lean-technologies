@@ -1,0 +1,19 @@
+generated: '2026-07-20'
+method: generated
+skills:
+  - file: lean-technologies-pay-by-bank.md
+    name: Collect a pay-by-bank payment
+    api: openapi/lean-technologies-payments-core-openapi.yml
+    operations: [createCustomer, createPaymentDestination, createPaymentIntent, getPaymentIntentById, getPaymentById]
+  - file: lean-technologies-fetch-bank-data.md
+    name: Fetch a customer's bank data
+    api: openapi/lean-technologies-data-openapi.yml
+    operations: [createCustomer, fetchAccountsV2, fetchBalancesV2, fetchTransactionsV2]
+  - file: lean-technologies-account-on-file.md
+    name: Set up recurring Account-on-File payments
+    api: openapi/lean-technologies-account-on-file-openapi.yml
+    operations: [createAccountOnFileConsent, fetchConsent, initiateAccountOnFilePayment]
+  - file: lean-technologies-verify-income.md
+    name: Run income and credit assessment
+    api: openapi/lean-technologies-insights-openapi.yml
+    operations: [verifyIncome, getCreditAssessments, createBankStatementsReport]
