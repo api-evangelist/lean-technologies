@@ -751,6 +751,8 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: PostmanWorkspace
+  url: https://www.postman.com/kinlaneapi/lean-technologies/overview
 - type: DeveloperPortal
   url: https://docs.leantech.me
 - type: Documentation
