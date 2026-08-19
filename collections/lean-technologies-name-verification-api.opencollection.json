@@ -1,0 +1,39 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Name Verification API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Name Verification",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Verify Name",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://sandbox.leantech.me/insights/v1/name-verification",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Verify the name held by the bank matches a name provided. Requires the following permissions: accounts & identity."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

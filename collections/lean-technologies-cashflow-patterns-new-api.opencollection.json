@@ -1,0 +1,55 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Cashflow Patterns (New) API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Cashflow Patterns (New)",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get Cash Flow Patterns",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/insights/v3/cashflow-patterns",
+            "params": [
+              {
+                "name": "entity_id",
+                "value": "",
+                "type": "query",
+                "description": "The `entity_id` you're querying for."
+              },
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "The start date in UTC (in the format YYYY-MM-DD) of the analysis window. When omitted, defaults to the earliest transaction available for the entity."
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "The end date in UTC (in the format YYYY-MM-DD) of the analysis window (inclusive — transactions on this date are included). When omitted, defaults to the current time."
+              }
+            ]
+          },
+          "docs": "Detects recurring inflow and outflow transactions and groups them into structured patterns, surfacing frequency, \nexpected timing, and whether each pattern is ongoing, new, or stopped."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

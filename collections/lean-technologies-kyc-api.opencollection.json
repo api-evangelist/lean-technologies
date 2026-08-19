@@ -1,0 +1,43 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) KYC API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "KYC",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Retrieve Proof of Address Document",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/files/kyc/poa/:document_id.pdf",
+            "params": [
+              {
+                "name": "document_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the proof of address document"
+              }
+            ]
+          },
+          "docs": "Get proof of address document by ID."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

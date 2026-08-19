@@ -1,0 +1,162 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Entities API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Entities",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get Entities for Customer",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/customers/v1/:customer_id/entities",
+            "params": [
+              {
+                "name": "customer_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "An Entity is generated whenever a Customer connects a new bank using the `.connect()` method in the LinkSDK with _any_ data related permissions. "
+        },
+        {
+          "info": {
+            "name": "Get Entity by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/customers/v1/:customer_id/entities/:entity_id",
+            "params": [
+              {
+                "name": "customer_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "entity_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Returns a single Entity.\n\nAn Entity is generated whenever a Customer connects a new bank using the `.connect()` method in the LinkSDK with _any_ data related permissions. "
+        },
+        {
+          "info": {
+            "name": "Delete Entity",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://sandbox.leantech.me/customers/v1/:customer_id/entities/:entity_id",
+            "params": [
+              {
+                "name": "customer_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "entity_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Marks the entity as deleted. It can be recreated later by intiating a new .connect() flow from the LinkSDK."
+        },
+        {
+          "info": {
+            "name": "Retrieve all entities for a given time range",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/customers/v1/entities",
+            "params": [
+              {
+                "name": "page_number",
+                "value": "",
+                "type": "query",
+                "description": "Indicator of which page of results to return, starts at 0"
+              },
+              {
+                "name": "page_size",
+                "value": "",
+                "type": "query",
+                "description": "Size of a single page of results to return"
+              },
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "The start date must be in the past or present."
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "The end date must be after the start date and in the past or present."
+              }
+            ]
+          },
+          "docs": "Retrieves a list of entities created for a specific application within the provided time range.\nThe entities are paginated, and the query parameters allow filtering by start and end dates.\n"
+        },
+        {
+          "info": {
+            "name": "Delete Consent",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://sandbox.leantech.me/customers/v1/:customer_id/entities/:entity_id/consent/:consent_id",
+            "params": [
+              {
+                "name": "customer_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "entity_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "consent_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "reason",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Revokes a consent"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

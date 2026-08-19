@@ -1,0 +1,138 @@
+{
+  "item": [
+    {
+      "id": "7c415966-47cc-4cdc-a31b-19ba23be87f0",
+      "name": "Payments",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "5bb66f90-bd33-4b93-aad5-c28df06cf65d",
+          "name": "Get Payment",
+          "request": {
+            "name": "Get Payment",
+            "description": {
+              "content": "Fetch a single payment",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "payments",
+                "v1",
+                ":payment_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "payment_id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "da749a71-36e7-49fa-a2f5-4c7c361349b7",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "payments",
+                    "v1",
+                    ":payment_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "payment_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"88c4d3e8-b80c-cd46-ac56-f084879744d6\",\n  \"payment_intent_id\": \"30caf494-d6e0-d83e-907b-9393361c3895\",\n  \"payment_source_id\": \"8d98c54d-b11f-4f39-52bb-6065dc0f4749\",\n  \"sender_details\": {\n    \"account_number\": 101929293,\n    \"iban\": \"AE132353311P10164V8R3\",\n    \"name\": \"Dwight Schrute\"\n  },\n  \"recipient_details\": {\n    \"account_number\": 192929827,\n    \"iban\": \"AE23QQWD1004305268319738\",\n    \"name\": \"Michael Gary Scott\"\n  },\n  \"amount\": 3448.38,\n  \"currency\": \"AED\",\n  \"description\": \"30caf494d6e0d83e907b9393361c3895\",\n  \"submission_timestamp\": \"2024-09-19T11:43:08.933Z\",\n  \"initiation_timestamp\": \"2024-09-19T11:43:17.683Z\",\n  \"status\": \"ACCEPTED_BY_BANK\",\n  \"bank_transaction_reference\": \"WD100430526831\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://sandbox.leantech.me",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "f0653a31-8d39-4e1b-b315-6df9c0d95dbb",
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Payments API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "",
+      "type": "text/plain"
+    }
+  }
+}

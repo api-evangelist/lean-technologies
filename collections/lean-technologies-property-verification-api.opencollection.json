@@ -1,0 +1,68 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Property Verification API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Property Verification",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Verify Property Information",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://sandbox.leantech.me/verifications/v1/properties",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Verifies property information by Real Estate Number through the Saudi Real Estate Registry (RER).\n\nProvide a `verification_type` (`STATUS_ONLY`, `BASIC`, or `FULL`) and an `identification_method`.\n`STATUS_ONLY` returns only the property record status; all other detail fields are `null`.\nThe `identification_method` determines which identifications are required:\n- **REGISTRATION_DATE**: Provide `PROPERTY_NUMBER` and `FIRST_REGISTRATION_DATE` identifications\n- **IDENTITY**: Provide `PROPERTY_NUMBER"
+        },
+        {
+          "info": {
+            "name": "Verify Properties List by ID Number",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://sandbox.leantech.me/verifications/v1/properties/search",
+            "params": [
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "The page you're requesting - returns page 0 of the results if not specified."
+              },
+              {
+                "name": "size",
+                "value": "",
+                "type": "query",
+                "description": "The page size is fixed at 20 results per page."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Returns the list of properties owned by a person, searched by their identification\nthrough the Saudi Real Estate Registry (RER).\n\nProvide an `identification_method` of `IDENTITY` and an\n`identifications` array containing the owner identification and the owner's date of birth:\n- When the owner identification is `NATIONAL_ID`, provide `DATE_OF_BIRTH_HIJRI`.\n- For any other owner identification, provide `DATE_OF_BIRTH_GREGORIAN`.\n\nResults are paginated using the standard `page` query parameter. The"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

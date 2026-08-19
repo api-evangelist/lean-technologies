@@ -1,0 +1,1106 @@
+{
+  "item": [
+    {
+      "id": "a541fbbc-06e6-4467-8637-37194ae1f03f",
+      "name": "Schedules",
+      "description": {
+        "content": "The schedules API allows you to register, manage and inspect scheduled (recurring or\nexplicit) payments executed against an authorized consent.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "15aebd9e-e219-4015-bbf9-18422b845330",
+          "name": "Register a schedule",
+          "request": {
+            "name": "Register a schedule",
+            "description": {
+              "content": "Registers a new schedule (recurring or explicit) against an existing, authorized consent.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "schedules",
+                "v1"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "(Required) Unique key used to ensure idempotency of requests.\nMust be unique per operation.\n",
+                "key": "Idempotency-Key",
+                "value": "<string>"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"consent_id\": \"<uuid>\",\n  \"schedule\": {\n    \"kind\": \"<string>\",\n    \"recurrence\": {\n      \"unit\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      }\n    },\n    \"amount\": {\n      \"value\": \"<decimal>\",\n      \"currency\": \"<string>\"\n    },\n    \"start_date\": \"<string,null-date>\",\n    \"end_date\": \"<string,null-date>\"\n  },\n  \"reference\": \"<string,null>\",\n  \"purpose\": \"<string,null>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "90c3f480-2ed1-4a9c-bcd2-b75e5c151db0",
+              "name": "The schedule was registered.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "schedules",
+                    "v1"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) Unique key used to ensure idempotency of requests.\nMust be unique per operation.\n",
+                    "key": "Idempotency-Key",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"schedule_id\": \"341c3308-408d-48d9-ae44-c98eb1aa9a6f\",\n  \"consent_id\": \"123e4567-e89b-12d3-a456-426655440000\",\n  \"status\": \"ACTIVE\",\n  \"links\": {\n    \"self\": \"/schedules/v1/341c3308-408d-48d9-ae44-c98eb1aa9a6f\",\n    \"cancel\": \"/schedules/v1/341c3308-408d-48d9-ae44-c98eb1aa9a6f/cancel\",\n    \"pause\": \"/schedules/v1/341c3308-408d-48d9-ae44-c98eb1aa9a6f/pause\",\n    \"upcoming_payments\": \"/schedules/v1/341c3308-408d-48d9-ae44-c98eb1aa9a6f/upcoming-payments\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "4d3d28cb-9b29-485d-a82c-2463ae6541cc",
+          "name": "List schedules",
+          "request": {
+            "name": "List schedules",
+            "description": {
+              "content": "Returns a paginated list of schedules for the calling application, optionally filtered by\nconsent and status.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "schedules",
+                "v1"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "consentId",
+                  "value": "<uuid>",
+                  "description": "Filter schedules to a single consent."
+                },
+                {
+                  "disabled": false,
+                  "key": "status",
+                  "value": "<string>",
+                  "description": "Filter schedules by status."
+                },
+                {
+                  "disabled": false,
+                  "key": "page",
+                  "value": "0",
+                  "description": "The page you're requesting - returns page 0 of a response if not specified."
+                },
+                {
+                  "disabled": false,
+                  "key": "size",
+                  "value": "50",
+                  "description": "The number of objects you want to return as a page size."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET"
+          },
+          "response": [
+            {
+              "id": "9a135a6e-f861-42fc-9130-e6e78c8ba196",
+              "name": "A paginated list of schedule summaries.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "schedules",
+                    "v1"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "consentId",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "status",
+                      "value": "CANCELLED"
+                    },
+                    {
+                      "key": "page",
+                      "value": "0"
+                    },
+                    {
+                      "key": "size",
+                      "value": "50"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"content\": [\n    {\n      \"schedule_id\": \"17b33ec5-c80b-2972-0e0f-6c700307570c\",\n      \"consent_id\": \"4fa0defa-01ae-1ab8-2452-fcf6b7aaf33b\",\n      \"kind\": \"EXPLICIT\",\n      \"status\": \"ACTIVE\",\n      \"created_at\": \"2000-07-03T20:39:08.313Z\",\n      \"plan_summary\": {\n        \"amount\": {\n          \"value\": 5553.749359233265,\n          \"currency\": \"string\"\n        },\n        \"period_unit\": \"MONTH\",\n        \"start_date\": \"1991-04-19\",\n        \"end_date\": \"1958-03-19\",\n        \"planned_count\": 1668,\n        \"first_payment_date\": \"2000-10-24\",\n        \"last_payment_date\": \"1999-09-23\"\n      },\n      \"next_payment\": {\n        \"execute_on\": \"1969-08-26\",\n        \"amount\": {\n          \"value\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"currency\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        },\n        \"reference\": \"string\"\n      }\n    },\n    {\n      \"schedule_id\": \"1f8d9cb9-e65c-2c19-6706-931fec6c411f\",\n      \"consent_id\": \"74434df0-1f0d-2436-99c6-f5157c846913\",\n      \"kind\": \"RECURRING\",\n      \"status\": \"COMPLETED\",\n      \"created_at\": \"2000-09-14T13:07:45.855Z\",\n      \"plan_summary\": {\n        \"amount\": {\n          \"value\": 9947.819422486886,\n          \"currency\": \"string\"\n        },\n        \"period_unit\": \"YEAR\",\n        \"start_date\": \"1947-03-27\",\n        \"end_date\": \"1966-09-06\",\n        \"planned_count\": 2985,\n        \"first_payment_date\": \"1952-02-20\",\n        \"last_payment_date\": \"1948-10-16\"\n      },\n      \"next_payment\": {\n        \"execute_on\": \"1979-09-24\",\n        \"amount\": {\n          \"value\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"currency\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        },\n        \"reference\": \"string\"\n      }\n    }\n  ],\n  \"page\": {\n    \"number\": 9752,\n    \"size\": 6349,\n    \"total_elements\": 1207,\n    \"total_pages\": 7624,\n    \"sort\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "89646bf8-46a4-4c7b-b84a-fbf044c771b7",
+          "name": "Get schedule details",
+          "request": {
+            "name": "Get schedule details",
+            "description": {
+              "content": "Returns the full details of a single schedule.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "schedules",
+                "v1",
+                ":schedule_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "schedule_id",
+                  "description": "(Required) The id of the schedule."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET"
+          },
+          "response": [
+            {
+              "id": "f001965e-3c1d-44b8-9ad1-236bfe71ed38",
+              "name": "The schedule details.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "schedules",
+                    "v1",
+                    ":schedule_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "schedule_id",
+                      "description": "(Required) The id of the schedule."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"schedule_id\": \"acd7aec2-a0ea-f9de-345c-296ee30186cd\",\n  \"consent_id\": \"a089ded0-1ec4-89a6-ec74-1869c21686fe\",\n  \"application_id\": \"6631ea02-1662-d9aa-2fbb-234971bb6cf4\",\n  \"kind\": \"RECURRING\",\n  \"status\": \"CANCELLED\",\n  \"plan_summary\": {\n    \"amount\": {\n      \"value\": 2178.3907425587854,\n      \"currency\": \"string\"\n    },\n    \"period_unit\": \"MONTH\",\n    \"start_date\": \"2015-06-22\",\n    \"end_date\": \"2014-01-28\",\n    \"planned_count\": 6382,\n    \"first_payment_date\": \"1964-12-29\",\n    \"last_payment_date\": \"1978-06-27\"\n  },\n  \"created_at\": \"1957-12-01T15:22:45.667Z\",\n  \"pending_payment\": {\n    \"scheduled_payment_id\": \"b387f692-dbee-c17d-6bbf-347d39df14be\",\n    \"due_date\": \"2019-03-09\",\n    \"amount\": {\n      \"value\": 7980.893737641811,\n      \"currency\": \"string\"\n    },\n    \"reference\": \"string\"\n  },\n  \"updated_at\": \"1977-11-10T20:17:29.499Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "1e4d22ab-b237-4474-bd92-c459ed35ba63",
+          "name": "Cancel a schedule",
+          "request": {
+            "name": "Cancel a schedule",
+            "description": {
+              "content": "Cancels a schedule. No further payments will be attempted.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "schedules",
+                "v1",
+                ":schedule_id",
+                "cancel"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "schedule_id",
+                  "description": "(Required) The id of the schedule."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"<string,null>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "1bb25364-dea8-467b-8bea-f2e969e5f329",
+              "name": "The schedule was cancelled.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "schedules",
+                    "v1",
+                    ":schedule_id",
+                    "cancel"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "schedule_id",
+                      "description": "(Required) The id of the schedule."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"schedule_id\": \"29d8b0b9-2b46-6561-fa0e-90aa76c4c261\",\n  \"status\": \"PAUSED\",\n  \"updated_at\": \"2016-09-26T09:52:42.226Z\",\n  \"links\": {\n    \"self\": \"string\",\n    \"cancel\": \"string\",\n    \"pause\": \"string\",\n    \"resume\": \"string\",\n    \"upcoming_payments\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "699f108f-af23-42b3-8545-3d3fa89e12a4",
+          "name": "Pause a schedule",
+          "request": {
+            "name": "Pause a schedule",
+            "description": {
+              "content": "Pauses an active schedule. Payments will not be attempted until resumed.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "schedules",
+                "v1",
+                ":schedule_id",
+                "pause"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "schedule_id",
+                  "description": "(Required) The id of the schedule."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"<string,null>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "83af5ca2-3a94-4679-a030-d6ec163e0cd4",
+              "name": "The schedule was paused.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "schedules",
+                    "v1",
+                    ":schedule_id",
+                    "pause"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "schedule_id",
+                      "description": "(Required) The id of the schedule."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"schedule_id\": \"29d8b0b9-2b46-6561-fa0e-90aa76c4c261\",\n  \"status\": \"PAUSED\",\n  \"updated_at\": \"2016-09-26T09:52:42.226Z\",\n  \"links\": {\n    \"self\": \"string\",\n    \"cancel\": \"string\",\n    \"pause\": \"string\",\n    \"resume\": \"string\",\n    \"upcoming_payments\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "5e61117a-2020-4cc9-9139-00a2a17be1e9",
+          "name": "Resume a schedule",
+          "request": {
+            "name": "Resume a schedule",
+            "description": {
+              "content": "Resumes a paused schedule.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "schedules",
+                "v1",
+                ":schedule_id",
+                "resume"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "schedule_id",
+                  "description": "(Required) The id of the schedule."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"<string,null>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "ef5cba1a-973b-4614-8044-3abdec1143e8",
+              "name": "The schedule was resumed.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "schedules",
+                    "v1",
+                    ":schedule_id",
+                    "resume"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "schedule_id",
+                      "description": "(Required) The id of the schedule."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"schedule_id\": \"29d8b0b9-2b46-6561-fa0e-90aa76c4c261\",\n  \"status\": \"PAUSED\",\n  \"updated_at\": \"2016-09-26T09:52:42.226Z\",\n  \"links\": {\n    \"self\": \"string\",\n    \"cancel\": \"string\",\n    \"pause\": \"string\",\n    \"resume\": \"string\",\n    \"upcoming_payments\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "6d594088-af4b-46bf-9c13-c25d723624b8",
+          "name": "List upcoming payments",
+          "request": {
+            "name": "List upcoming payments",
+            "description": {
+              "content": "Returns a paginated list of upcoming (not yet executed) payments for a schedule.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "schedules",
+                "v1",
+                ":schedule_id",
+                "upcoming-payments"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "fromDate",
+                  "value": "<date>",
+                  "description": "Only return upcoming payments due on or after this date (inclusive)."
+                },
+                {
+                  "disabled": false,
+                  "key": "toDate",
+                  "value": "<date>",
+                  "description": "Only return upcoming payments due on or before this date (inclusive)."
+                },
+                {
+                  "disabled": false,
+                  "key": "page",
+                  "value": "0",
+                  "description": "The page you're requesting - returns page 0 of a response if not specified."
+                },
+                {
+                  "disabled": false,
+                  "key": "size",
+                  "value": "50",
+                  "description": "The number of objects you want to return as a page size."
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "schedule_id",
+                  "description": "(Required) The id of the schedule."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET"
+          },
+          "response": [
+            {
+              "id": "60a5735d-33a8-4167-8cf9-92c62f11154e",
+              "name": "A paginated list of upcoming payments.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "schedules",
+                    "v1",
+                    ":schedule_id",
+                    "upcoming-payments"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "fromDate",
+                      "value": "<date>"
+                    },
+                    {
+                      "key": "toDate",
+                      "value": "<date>"
+                    },
+                    {
+                      "key": "page",
+                      "value": "0"
+                    },
+                    {
+                      "key": "size",
+                      "value": "50"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "schedule_id",
+                      "description": "(Required) The id of the schedule."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"content\": [\n    {\n      \"due_date\": \"1962-11-10\",\n      \"amount\": {\n        \"value\": 4040.4211254147895,\n        \"currency\": \"string\"\n      },\n      \"reference\": \"string\"\n    },\n    {\n      \"due_date\": \"1991-07-28\",\n      \"amount\": {\n        \"value\": 1376.7499318181233,\n        \"currency\": \"string\"\n      },\n      \"reference\": \"string\"\n    }\n  ],\n  \"page\": {\n    \"number\": 1373,\n    \"size\": 4765,\n    \"total_elements\": 7325,\n    \"total_pages\": 5521,\n    \"sort\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "073628d4-a651-4067-a874-a41bd12a5562",
+          "name": "List scheduled payments",
+          "request": {
+            "name": "List scheduled payments",
+            "description": {
+              "content": "Returns a paginated list of the scheduled payments belonging to a schedule, optionally\nfiltered by status and due-date range.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "schedules",
+                "v1",
+                ":schedule_id",
+                "payments"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "status",
+                  "value": "<string>",
+                  "description": "Filter scheduled payments by status."
+                },
+                {
+                  "disabled": false,
+                  "key": "fromDate",
+                  "value": "<date>",
+                  "description": "Only return scheduled payments due on or after this date (inclusive)."
+                },
+                {
+                  "disabled": false,
+                  "key": "toDate",
+                  "value": "<date>",
+                  "description": "Only return scheduled payments due on or before this date (inclusive)."
+                },
+                {
+                  "disabled": false,
+                  "key": "page",
+                  "value": "0",
+                  "description": "The page you're requesting - returns page 0 of a response if not specified."
+                },
+                {
+                  "disabled": false,
+                  "key": "size",
+                  "value": "50",
+                  "description": "The number of objects you want to return as a page size."
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "schedule_id",
+                  "description": "(Required) The id of the schedule."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET"
+          },
+          "response": [
+            {
+              "id": "6fc738f2-f86d-414d-bed7-63f59033c652",
+              "name": "A paginated list of scheduled payments.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "schedules",
+                    "v1",
+                    ":schedule_id",
+                    "payments"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "status",
+                      "value": "PROCESSING"
+                    },
+                    {
+                      "key": "fromDate",
+                      "value": "<date>"
+                    },
+                    {
+                      "key": "toDate",
+                      "value": "<date>"
+                    },
+                    {
+                      "key": "page",
+                      "value": "0"
+                    },
+                    {
+                      "key": "size",
+                      "value": "50"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "schedule_id",
+                      "description": "(Required) The id of the schedule."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"content\": [\n    {\n      \"scheduled_payment_id\": \"f114f598-d70b-b894-1f25-ed6cc8c19c7a\",\n      \"occurrence_index\": 7788,\n      \"due_date\": \"2023-06-12\",\n      \"amount\": {\n        \"value\": 3739.1611988817367,\n        \"currency\": \"string\"\n      },\n      \"status\": \"PLANNED\",\n      \"attempt_count\": 9791,\n      \"reference\": \"string\",\n      \"updated_at\": \"1995-05-10T03:33:15.117Z\"\n    },\n    {\n      \"scheduled_payment_id\": \"a188e8b5-61b4-e629-1799-7183e142c05f\",\n      \"occurrence_index\": 974,\n      \"due_date\": \"1974-02-01\",\n      \"amount\": {\n        \"value\": 3933.0359298466074,\n        \"currency\": \"string\"\n      },\n      \"status\": \"PROCESSING\",\n      \"attempt_count\": 467,\n      \"reference\": \"string\",\n      \"updated_at\": \"2007-10-16T13:57:34.969Z\"\n    }\n  ],\n  \"page\": {\n    \"number\": 6745,\n    \"size\": 292,\n    \"total_elements\": 2661,\n    \"total_pages\": 1778,\n    \"sort\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "0f8e1b5b-9068-46d0-bb41-1e34da040bd4",
+          "name": "Get scheduled payment details",
+          "request": {
+            "name": "Get scheduled payment details",
+            "description": {
+              "content": "Returns the current view of a single scheduled payment, including its identity within the\nschedule, due date, amount, reference, status and number of recorded attempts.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "schedules",
+                "v1",
+                ":schedule_id",
+                "payments",
+                ":scheduled_payment_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "schedule_id",
+                  "description": "(Required) The id of the schedule."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "scheduled_payment_id",
+                  "description": "(Required) The id of the scheduled payment."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET"
+          },
+          "response": [
+            {
+              "id": "42d3fda5-c62b-4caf-af29-9bb87c9bd661",
+              "name": "The scheduled payment details.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "schedules",
+                    "v1",
+                    ":schedule_id",
+                    "payments",
+                    ":scheduled_payment_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "schedule_id",
+                      "description": "(Required) The id of the schedule."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "scheduled_payment_id",
+                      "description": "(Required) The id of the scheduled payment."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"scheduled_payment_id\": \"ee03d904-be3e-9290-f8df-b26512ad0165\",\n  \"schedule_id\": \"8bca5f69-03aa-8f9f-951f-e3b22377a9ae\",\n  \"occurrence_index\": 3468,\n  \"due_date\": \"2018-06-18\",\n  \"amount\": {\n    \"value\": 2254.8090815367436,\n    \"currency\": \"string\"\n  },\n  \"reference\": \"string\",\n  \"status\": \"CANCELLED\",\n  \"attempt_count\": 4752,\n  \"created_at\": \"1972-07-19T10:56:02.674Z\",\n  \"updated_at\": \"1990-02-17T16:49:33.410Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://sandbox.leantech.me",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "1495cb3c-92e6-4d6c-824e-fe93bb362817",
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Schedules API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The schedules API allows you to register, manage and inspect scheduled (recurring or\nexplicit) payments executed against an authorized consent.",
+      "type": "text/plain"
+    }
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Open Banking Account Parties API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Open Banking Account Parties",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get Open Banking Account Parties",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/open-banking/account-information/2022.11.01-final-errata2/accounts/:AccountId/parties",
+            "headers": [
+              {
+                "name": "x-fapi-interaction-id",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "AccountId",
+                "value": "",
+                "type": "path",
+                "description": "The Lean account identifier uniquely identifying the account within Lean."
+              },
+              {
+                "name": "EntityId",
+                "value": "",
+                "type": "query",
+                "description": "The entity_id of the connected customer."
+              },
+              {
+                "name": "CustomerId",
+                "value": "",
+                "type": "query",
+                "description": "The customer_id of the connected customer."
+              },
+              {
+                "name": "Page",
+                "value": "",
+                "type": "query",
+                "description": "The page you're requesting - returns page 0 of a response if not specified."
+              },
+              {
+                "name": "Size",
+                "value": "",
+                "type": "query",
+                "description": "The number of objects you want to return as a page size."
+              }
+            ]
+          },
+          "docs": "Retrieves the parties associated with a specific bank account linked by a user via LinkSDK for the KSA Open Banking (SAMA) ecosystem.\nEach party object contains the party type, account role, and verified identity claims.\nRequires ReadParty consent permission.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

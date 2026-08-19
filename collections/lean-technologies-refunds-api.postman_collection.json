@@ -1,0 +1,442 @@
+{
+  "item": [
+    {
+      "id": "6b5abe40-394f-4fc2-9b34-e9197a9150f0",
+      "name": "Refunds",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "cb356f66-d063-48b2-a097-fbae01a8f0ef",
+          "name": "Create Refunds",
+          "request": {
+            "name": "Create Refunds",
+            "description": {
+              "content": "Creates and queues a refund payment for approval or rejection. Refunds are always returned to the originating account of the corresponding payment. The total refund amount cannot exceed the original payment. For processing amounts greater than the original payment, please refer to payouts.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "payouts",
+                "refunds"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"payment_id\": \"<string>\",\n    \"reason_code\": \"<string>\",\n    \"amount\": \"<integer>\",\n    \"currency\": \"<string>\",\n    \"description\": \"<string>\",\n    \"external_reference\": \"<string>\",\n    \"status\": \"CREATED\"\n  },\n  {\n    \"payment_id\": \"<string>\",\n    \"reason_code\": \"<string>\",\n    \"amount\": \"<integer>\",\n    \"currency\": \"<string>\",\n    \"description\": \"<string>\",\n    \"external_reference\": \"<string>\",\n    \"status\": \"CREATED\"\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "a1feec03-4f02-467b-89d1-072a4243f4a3",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "payouts",
+                    "refunds"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) ",
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  {\n    \"payment_id\": \"00fdbc90-8116-42b2-bf26-5665b05bfb6b\",\n    \"amount\": 7,\n    \"currency\": \"AED\",\n    \"reason_code\": \"DUPLICATED_PAYMENT\",\n    \"description\": \"Refund isused for Order NO. 21342322123\",\n    \"external_reference\": \"21451234567\"\n  }\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"refund_id\": \"d7427d13-0b4c-4e67-8b23-7c9ba03d95e3\",\n    \"payment_id\": \"00fdbc90-8116-42b2-bf26-5665b05bfb6b\",\n    \"status\": \"CREATED\",\n    \"amount\": 0.01,\n    \"currency\": \"AED\",\n    \"reason_code\": \"DUPLICATED_PAYMENT\",\n    \"description\": \"Refund isused for Order NO. 21342322123\",\n    \"external_reference\": \"21451234567\",\n    \"beneficiary\": {\n      \"name\": \"Jay Sheron\",\n      \"iban\": \"SA10000000000023\",\n      \"city\": \"Dubai\"\n    }\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "aa0b4c1d-7a9b-4df8-8246-517b1e1fd8e5",
+          "name": "Process Refunds",
+          "request": {
+            "name": "Process Refunds",
+            "description": {
+              "content": "Updates the refund status based on the approver's (or checker's) confirmation or rejection. This serves as a fail-safe mechanism to validate the refund decision after the transaction is initiated, rather than processing it immediately. ",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "payouts",
+                "refunds"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PUT",
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"refund_id\": \"<string>\",\n    \"status\": \"<string>\"\n  },\n  {\n    \"refund_id\": \"<string>\",\n    \"status\": \"<string>\"\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "1ea2ca77-426e-467f-912b-fa841e8e11ab",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "payouts",
+                    "refunds"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) ",
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  {\n    \"refund_id\": \"5d43a659-a4cf-4f56-af66-ad6478d61890\",\n    \"status\": \"CONFIRMED\"\n  }\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"refund_id\": \"5d43a659-a4cf-4f56-af66-ad6478d61890\",\n    \"status\": \"REJECTED\"\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "6a17ee90-193d-4359-98b9-9aa46fc92efe",
+          "name": "List Refunds",
+          "request": {
+            "name": "List Refunds",
+            "description": {
+              "content": "Returns a list of all refunds intitated . You can filter the transactions based on status of the refund transaction by passing it in the query parameter. This API allows pagination with the default size of 50 refunds per page.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "payouts",
+                "refunds"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "status",
+                  "value": "<string>",
+                  "description": "Fetch all refund transactions based on the entered refund payment status."
+                },
+                {
+                  "disabled": false,
+                  "key": "size",
+                  "value": "50",
+                  "description": "Defines the number of transactions per page hence manages payload size"
+                },
+                {
+                  "disabled": false,
+                  "key": "page",
+                  "value": "<integer>",
+                  "description": "Specifies the page number to retreive. e.g if page=2 and size=50, the API will return records from 101 to 150"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET"
+          },
+          "response": [
+            {
+              "id": "7744ece2-4eb6-4fcd-b6ce-4e8bbbce35f5",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "payouts",
+                    "refunds"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "status",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "size",
+                      "value": "50"
+                    },
+                    {
+                      "key": "page",
+                      "value": "<integer>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"content\": [\n    {\n      \"refund_id\": \"8161d683-88f7-4c13-b4f5-1e9cb13a49c1\",\n      \"deposit_amount\": 15.34,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"b16b66fa-3cb0-433e-a8c8-5e0467e4c9d6\",\n      \"status\": \"ACCEPTED_BY_BANK\",\n      \"amount\": 15.34,\n      \"currency\": \"AED\",\n      \"reason_code\": \"FRAUDULENT_PAYMENT\",\n      \"description\": \"8N&[as39q_\",\n      \"external_reference\": \"x8VerE\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-28T11:36:17.899660Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"refund_intent_id\": \"f41b1b7a-bd15-432b-9fff-a621b68675a4\"\n    },\n    {\n      \"refund_id\": \"d7d85efa-6fd9-4452-9ca5-850f7ada845d\",\n      \"deposit_amount\": 10.35,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"9c6cbf27-f2fb-44f6-a0be-57506a144440\",\n      \"status\": \"ACCEPTED_BY_BANK\",\n      \"amount\": 10.35,\n      \"currency\": \"AED\",\n      \"reason_code\": \"CUSTOMER_REQUEST\",\n      \"description\": \"0`fZ&P1;:@\",\n      \"external_reference\": \"sqo YT\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-28T11:36:16.941592Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"refund_intent_id\": \"b231582c-4e4c-4f86-8cae-75c5356eab06\"\n    },\n    {\n      \"refund_id\": \"6c6ab9df-5a6e-4f79-8ff4-07e94cdfdd1d\",\n      \"deposit_amount\": 13.55,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"7caf7c3e-8e8e-48d9-9e2b-0c2e03f236c0\",\n      \"status\": \"CREATED\",\n      \"amount\": 13.55,\n      \"currency\": \"AED\",\n      \"reason_code\": \"CUSTOMER_REQUEST\",\n      \"description\": \"QA refund initiation\",\n      \"external_reference\": \"SMN9DH\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-28T11:36:31.134243Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": null,\n      \"refund_intent_id\": null\n    },\n    {\n      \"refund_id\": \"de848b84-5dd9-4178-9f07-4e42fee93d67\",\n      \"deposit_amount\": 18.62,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"80248e0e-588b-4bde-b531-919abc0e68ae\",\n      \"status\": \"CREATED\",\n      \"amount\": 18.62,\n      \"currency\": \"AED\",\n      \"reason_code\": \"DUPLICATED_PAYMENT\",\n      \"description\": \"kVk&sP7V_s\",\n      \"external_reference\": \"I0o6t0\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-28T11:36:29.915697Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": null,\n      \"refund_intent_id\": null\n    },\n    {\n      \"refund_id\": \"f3284877-da5e-4fb7-8e55-c41a4fb4fedc\",\n      \"deposit_amount\": 18.25,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"5a9b61f7-88f4-4378-a932-2ae0082d4f42\",\n      \"status\": \"ACCEPTED_BY_BANK\",\n      \"amount\": 18.25,\n      \"currency\": \"AED\",\n      \"reason_code\": \"CUSTOMER_REQUEST\",\n      \"description\": \"XSb#3iAuH{\",\n      \"external_reference\": \"mzCLJf\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-28T09:19:32.122751Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"refund_intent_id\": \"7837da43-a5c9-4777-b7d7-1c7f3f3d66d6\"\n    },\n    {\n      \"refund_id\": \"b73611bb-7a73-4b38-84af-7c27558fd03c\",\n      \"deposit_amount\": 15.34,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"7053b95c-b5c2-4f2c-ba59-879a2ab27bf9\",\n      \"status\": \"APPROVED\",\n      \"amount\": 15.34,\n      \"currency\": \"AED\",\n      \"reason_code\": \"FRAUDULENT_PAYMENT\",\n      \"description\": \",aZwDar32@\",\n      \"external_reference\": \"csxXf4\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-28T09:07:54.714141Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"refund_intent_id\": \"37f5b0c3-b9f4-487e-aec3-36ee9deffafc\"\n    },\n    {\n      \"refund_id\": \"cc1af5a0-b9df-4377-bca6-4c4d5827e9b5\",\n      \"deposit_amount\": 18.42,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"a7c33c83-4c34-448f-93bf-fce721413733\",\n      \"status\": \"CREATED\",\n      \"amount\": 18.42,\n      \"currency\": \"AED\",\n      \"reason_code\": \"ORDER_CANCELLED\",\n      \"description\": \"Xsj3^  Y53\",\n      \"external_reference\": \"GUnW1J\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-28T09:07:40.845413Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": null,\n      \"refund_intent_id\": null\n    },\n    {\n      \"refund_id\": \"0f01a43d-e4d5-4da0-a524-dad9daa1ade3\",\n      \"deposit_amount\": 17.55,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"2b74f624-8ca9-40fc-b8c7-0835b6a52201\",\n      \"status\": \"CREATED\",\n      \"amount\": 17.55,\n      \"currency\": \"AED\",\n      \"reason_code\": \"CUSTOMER_REQUEST\",\n      \"description\": \"QA refund initiation\",\n      \"external_reference\": \"eXGSNb\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-28T09:07:27.057079Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": null,\n      \"refund_intent_id\": null\n    },\n    {\n      \"refund_id\": \"8e1c8094-8fba-40f4-bbbe-df6f1325f849\",\n      \"deposit_amount\": 15.34,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"73727d12-c60b-4697-b57c-04e8a411cc0e\",\n      \"status\": \"ACCEPTED_BY_BANK\",\n      \"amount\": 15.34,\n      \"currency\": \"AED\",\n      \"reason_code\": \"DUPLICATED_PAYMENT\",\n      \"description\": \"bc>W!{o6$e\",\n      \"external_reference\": \"fQ4Hom\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-21T17:09:35.525332Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"refund_intent_id\": \"582de6bb-1108-46d8-9f02-f404a3f51f41\"\n    },\n    {\n      \"refund_id\": \"41aacc33-ca14-4509-adf4-02998a62e465\",\n      \"deposit_amount\": 19.51,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"501169c4-0af3-440e-82f3-2fd12c581832\",\n      \"status\": \"ACCEPTED_BY_BANK\",\n      \"amount\": 19.51,\n      \"currency\": \"AED\",\n      \"reason_code\": \"CUSTOMER_REQUEST\",\n      \"description\": \"_krSH86Lo4\",\n      \"external_reference\": \"4xSMFI\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-21T17:09:34.732135Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"refund_intent_id\": \"7ffea5af-5067-4500-a3a3-823bbf63c169\"\n    },\n    {\n      \"refund_id\": \"c0a57ad4-bc43-44d0-9cde-33d4d78dff1e\",\n      \"deposit_amount\": 14.6,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"5c453616-b72d-469e-ac0b-a59863e123cb\",\n      \"status\": \"ACCEPTED_BY_BANK\",\n      \"amount\": 14.6,\n      \"currency\": \"AED\",\n      \"reason_code\": \"ORDER_CANCELLED\",\n      \"description\": \"Jrk9YG2b#@\",\n      \"external_reference\": \"8Fy27W\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-21T17:08:54.856670Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"refund_intent_id\": \"30cad392-8865-4785-bb8d-0b7d13b6c204\"\n    },\n    {\n      \"refund_id\": \"8724b494-4b8d-488e-a4f6-5444c05b3c1d\",\n      \"deposit_amount\": 15.34,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"4cb52f8d-91c4-40e2-b5bf-db97d3a7f943\",\n      \"status\": \"ACCEPTED_BY_BANK\",\n      \"amount\": 15.34,\n      \"currency\": \"AED\",\n      \"reason_code\": \"CUSTOMER_REQUEST\",\n      \"description\": \"w`2x!ckWFq\",\n      \"external_reference\": \"7JZrDT\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-21T17:08:55.229138Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"refund_intent_id\": \"deb997f1-d261-49b0-9b27-f11bcbed2c89\"\n    },\n    {\n      \"refund_id\": \"623a3cff-0fcd-44a1-aa23-ba473eb373d4\",\n      \"deposit_amount\": 16.35,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"afa65c92-7b01-4ec3-b473-7d322dcdeeca\",\n      \"status\": \"CREATED\",\n      \"amount\": 16.35,\n      \"currency\": \"AED\",\n      \"reason_code\": \"CUSTOMER_REQUEST\",\n      \"description\": \"QA refund initiation\",\n      \"external_reference\": \"knrRpk\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-21T17:09:47.303748Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": null,\n      \"refund_intent_id\": null\n    },\n    {\n      \"refund_id\": \"261aac81-4030-47e1-9091-30b4e82179d3\",\n      \"deposit_amount\": 15.15,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"bee462a1-5156-4aae-90dd-f549914651d5\",\n      \"status\": \"CREATED\",\n      \"amount\": 15.15,\n      \"currency\": \"AED\",\n      \"reason_code\": \"ORDER_CANCELLED\",\n      \"description\": \"POYoOVCx^Q\",\n      \"external_reference\": \"Lw7GxW\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-21T17:09:46.449358Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": null,\n      \"refund_intent_id\": null\n    },\n    {\n      \"refund_id\": \"d9a74217-8a72-4cee-a4a7-d289389f08d5\",\n      \"deposit_amount\": 15.94,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"c70871c8-2caf-4fe3-80aa-cc45c9b22b1c\",\n      \"status\": \"CREATED\",\n      \"amount\": 15.94,\n      \"currency\": \"AED\",\n      \"reason_code\": \"CUSTOMER_REQUEST\",\n      \"description\": \"QA refund initiation\",\n      \"external_reference\": \"NlSA4M\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-21T17:09:06.392478Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": null,\n      \"refund_intent_id\": null\n    },\n    {\n      \"refund_id\": \"1536c4c4-2f9f-4142-b5a7-61b74599ccd8\",\n      \"deposit_amount\": 19.5,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"d5941b8b-2045-4318-b162-c5bd34a05340\",\n      \"status\": \"CREATED\",\n      \"amount\": 19.5,\n      \"currency\": \"AED\",\n      \"reason_code\": \"CUSTOMER_REQUEST\",\n      \"description\": \"B?4QI;?A(e\",\n      \"external_reference\": \"kt97gL\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-21T17:09:00.663644Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": null,\n      \"refund_intent_id\": null\n    },\n    {\n      \"refund_id\": \"0a19c0dc-d6bb-46ca-b60a-2f680c477482\",\n      \"deposit_amount\": 15.34,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"1606c287-2d10-48db-aec4-e0b4dcbf379f\",\n      \"status\": \"ACCEPTED_BY_BANK\",\n      \"amount\": 15.34,\n      \"currency\": \"AED\",\n      \"reason_code\": \"ORDER_CANCELLED\",\n      \"description\": \"i&,RDGi`J1\",\n      \"external_reference\": \"b2WfBS\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-21T08:37:58.351630Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"refund_intent_id\": \"132f1b8e-8b31-4e87-980c-3d34d567ed51\"\n    },\n    {\n      \"refund_id\": \"e4e94108-4bb4-4f45-b362-5d0dc41124c7\",\n      \"deposit_amount\": 19.81,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"8f2c87ef-9c3c-4b0d-8b60-a66cbf5770cd\",\n      \"status\": \"ACCEPTED_BY_BANK\",\n      \"amount\": 19.81,\n      \"currency\": \"AED\",\n      \"reason_code\": \"FRAUDULENT_PAYMENT\",\n      \"description\": \"YqDCHd$&Gq\",\n      \"external_reference\": \"h85Fmm\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-21T08:37:56.653606Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"refund_intent_id\": \"0082d74c-07d2-493f-9a94-7cee7f80b437\"\n    },\n    {\n      \"refund_id\": \"6ebf5f0f-b6bc-49ba-920b-e68399d20a4f\",\n      \"deposit_amount\": 12.11,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"331288d4-fe29-4caa-be59-5df83b056502\",\n      \"status\": \"CREATED\",\n      \"amount\": 12.11,\n      \"currency\": \"AED\",\n      \"reason_code\": \"CUSTOMER_REQUEST\",\n      \"description\": \"QA refund initiation\",\n      \"external_reference\": \"Wqj7G3\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-21T08:38:10.936716Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": null,\n      \"refund_intent_id\": null\n    },\n    {\n      \"refund_id\": \"d42b4385-2b92-4b61-9896-31b147458714\",\n      \"deposit_amount\": 17.35,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"3cd62de6-8092-4be3-8bac-4d8a6d9c0892\",\n      \"status\": \"CREATED\",\n      \"amount\": 17.35,\n      \"currency\": \"AED\",\n      \"reason_code\": \"ORDER_CANCELLED\",\n      \"description\": \";LnlORBni6\",\n      \"external_reference\": \"nbe9ac\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-21T08:38:07.425033Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": null,\n      \"refund_intent_id\": null\n    },\n    {\n      \"refund_id\": \"7f36be50-5fef-46d3-85cd-443d964d7d5c\",\n      \"deposit_amount\": 17.83,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"9a6b42e9-c703-492e-8d52-6e4d7606e170\",\n      \"status\": \"ACCEPTED_BY_BANK\",\n      \"amount\": 17.83,\n      \"currency\": \"AED\",\n      \"reason_code\": \"FRAUDULENT_PAYMENT\",\n      \"description\": \"Zf0:GKdMk(\",\n      \"external_reference\": \"qkm3p1\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-20T13:00:44.322599Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"refund_intent_id\": \"90452a2f-c9e9-4210-bb6c-ccc2d145329d\"\n    },\n    {\n      \"refund_id\": \"8e377c16-e8cc-4171-b0e0-9d09632b65f4\",\n      \"deposit_amount\": 15.34,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"d9691228-11f7-4e88-a4ea-25499c8913df\",\n      \"status\": \"ACCEPTED_BY_BANK\",\n      \"amount\": 15.34,\n      \"currency\": \"AED\",\n      \"reason_code\": \"CUSTOMER_REQUEST\",\n      \"description\": \"Er;fEbR^rT\",\n      \"external_reference\": \"fEpvVc\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-20T13:00:40.758911Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"refund_intent_id\": \"40aef1d6-8bd5-4827-b4f8-b101a2ab8d54\"\n    },\n    {\n      \"refund_id\": \"b8d482cc-cbff-464e-866c-35a6aeca9ae8\",\n      \"deposit_amount\": 18.94,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"fd17be52-6a03-4639-b1ed-d546118c1f23\",\n      \"status\": \"CREATED\",\n      \"amount\": 18.94,\n      \"currency\": \"AED\",\n      \"reason_code\": \"DUPLICATED_PAYMENT\",\n      \"description\": \"E b_T FS9;\",\n      \"external_reference\": \"YzuhYJ\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-20T13:00:41.053090Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": null,\n      \"refund_intent_id\": null\n    },\n    {\n      \"refund_id\": \"6c343c40-f95a-4e3e-b030-bbb321cbf9bd\",\n      \"deposit_amount\": 17.7,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"223a7243-50a1-4969-b58a-8cd0a01b0d2e\",\n      \"status\": \"CREATED\",\n      \"amount\": 17.7,\n      \"currency\": \"AED\",\n      \"reason_code\": \"CUSTOMER_REQUEST\",\n      \"description\": \"QA refund initiation\",\n      \"external_reference\": \"6dDjQS\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-20T13:00:40.795937Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": null,\n      \"refund_intent_id\": null\n    },\n    {\n      \"refund_id\": \"08aac111-514f-4e88-8353-79fd28529e31\",\n      \"deposit_amount\": 17.98,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"4aff697e-ca9c-45bc-a544-d63be3865af0\",\n      \"status\": \"ACCEPTED_BY_BANK\",\n      \"amount\": 17.98,\n      \"currency\": \"AED\",\n      \"reason_code\": \"FRAUDULENT_PAYMENT\",\n      \"description\": \"A3 ^Pc&{yV\",\n      \"external_reference\": \"4ZZJqd\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-20T11:31:05.206280Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"refund_intent_id\": \"921ea06d-3cf8-4a01-8000-7e78cc0d7b2e\"\n    },\n    {\n      \"refund_id\": \"c048c84f-7dc0-45e9-8565-b457c52f51d8\",\n      \"deposit_amount\": 15.34,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"da23f8fe-ebe2-4495-b12e-45d037d76a56\",\n      \"status\": \"ACCEPTED_BY_BANK\",\n      \"amount\": 15.34,\n      \"currency\": \"AED\",\n      \"reason_code\": \"DUPLICATED_PAYMENT\",\n      \"description\": \"rZp8JdM(.|\",\n      \"external_reference\": \"ociZ7u\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-20T11:31:05.067652Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"refund_intent_id\": \"8b084b92-a897-4328-bcf5-7b23c9d49276\"\n    },\n    {\n      \"refund_id\": \"84b80cc7-7914-4a89-9154-7da0910455e3\",\n      \"deposit_amount\": 11.82,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"3294e26d-fbb6-4afd-b3a5-9c65904428d3\",\n      \"status\": \"CREATED\",\n      \"amount\": 11.82,\n      \"currency\": \"AED\",\n      \"reason_code\": \"CUSTOMER_REQUEST\",\n      \"description\": \"QA refund initiation\",\n      \"external_reference\": \"T5wMuT\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-20T11:31:05.206280Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": null,\n      \"refund_intent_id\": null\n    },\n    {\n      \"refund_id\": \"d52c826e-0f50-4c14-b4d7-661bce93e663\",\n      \"deposit_amount\": 12.62,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"009839be-0e65-4a8b-8840-201e0428505d\",\n      \"status\": \"CREATED\",\n      \"amount\": 12.62,\n      \"currency\": \"AED\",\n      \"reason_code\": \"DUPLICATED_PAYMENT\",\n      \"description\": \"hwmt.#VcpZ\",\n      \"external_reference\": \"gM9krH\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-20T11:31:04.368999Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": null,\n      \"refund_intent_id\": null\n    },\n    {\n      \"refund_id\": \"9b229bad-2be2-4969-8dd6-e0f33e73fc56\",\n      \"deposit_amount\": 17.57,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"16146778-212d-40bf-b5ab-1132bc3f759c\",\n      \"status\": \"ACCEPTED_BY_BANK\",\n      \"amount\": 17.57,\n      \"currency\": \"AED\",\n      \"reason_code\": \"DUPLICATED_PAYMENT\",\n      \"description\": \"FqWIm!k{LZ\",\n      \"external_reference\": \" utYIf\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-16T17:59:45.389023Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"refund_intent_id\": \"ebc6d449-a281-47aa-b195-d6e7483f0614\"\n    },\n    {\n      \"refund_id\": \"b267fc06-644c-403a-acb1-78ef5cfc5d75\",\n      \"deposit_amount\": 15.34,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"e71863e4-56d3-4d1e-83d3-5b5a44fe5ffe\",\n      \"status\": \"ACCEPTED_BY_BANK\",\n      \"amount\": 15.34,\n      \"currency\": \"AED\",\n      \"reason_code\": \"ORDER_CANCELLED\",\n      \"description\": \"Xy.+?itDx \",\n      \"external_reference\": \"Fj8IT \",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-16T17:59:36.765057Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"refund_intent_id\": \"dcfb24bc-33af-492a-abc6-157ed343b022\"\n    },\n    {\n      \"refund_id\": \"7a8a7639-2676-4eb3-96cd-d3778842bec0\",\n      \"deposit_amount\": 11.35,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"513ee602-1eb6-44d7-b53c-3b4b5e415fd1\",\n      \"status\": \"CREATED\",\n      \"amount\": 11.35,\n      \"currency\": \"AED\",\n      \"reason_code\": \"ORDER_CANCELLED\",\n      \"description\": \"iIhj!Lr_hE\",\n      \"external_reference\": \"lEJbEj\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-16T17:59:32.375417Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": null,\n      \"refund_intent_id\": null\n    },\n    {\n      \"refund_id\": \"6003a276-d12a-449a-b7ed-e96783eea0a6\",\n      \"deposit_amount\": 12.94,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"6abb295e-b5d0-479f-a399-c3a210646269\",\n      \"status\": \"CREATED\",\n      \"amount\": 12.94,\n      \"currency\": \"AED\",\n      \"reason_code\": \"CUSTOMER_REQUEST\",\n      \"description\": \"QA refund initiation\",\n      \"external_reference\": \"a8ng5z\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-16T17:59:22.652382Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": null,\n      \"refund_intent_id\": null\n    },\n    {\n      \"refund_id\": \"561d1fcb-2343-4880-8ec7-da82b54bef32\",\n      \"deposit_amount\": 15.34,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"e82529c2-25a8-4475-9b63-916f0153a9b5\",\n      \"status\": \"ACCEPTED_BY_BANK\",\n      \"amount\": 15.34,\n      \"currency\": \"AED\",\n      \"reason_code\": \"CUSTOMER_REQUEST\",\n      \"description\": \"8kDTL jwTj\",\n      \"external_reference\": \"zeCU08\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-16T08:23:48.995862Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"refund_intent_id\": \"92ddec8b-b71b-4336-828a-74e0bd6a153b\"\n    },\n    {\n      \"refund_id\": \"a734bbda-b6f1-46ce-b418-671dea03b16f\",\n      \"deposit_amount\": 17.61,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"518cd8ee-bed2-46be-a20f-58258c1a99b7\",\n      \"status\": \"ACCEPTED_BY_BANK\",\n      \"amount\": 17.61,\n      \"currency\": \"AED\",\n      \"reason_code\": \"ORDER_CANCELLED\",\n      \"description\": \"epC`k[uGm4\",\n      \"external_reference\": \"CQDcnZ\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-16T08:23:48.736775Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"refund_intent_id\": \"f6732478-bd0c-4855-a0fd-0d97f2704eb4\"\n    },\n    {\n      \"refund_id\": \"bfef9298-be00-44b3-a00a-981abc450334\",\n      \"deposit_amount\": 13.14,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"20c23166-7dcc-48bb-a323-6ad965208e17\",\n      \"status\": \"CREATED\",\n      \"amount\": 13.14,\n      \"currency\": \"AED\",\n      \"reason_code\": \"CUSTOMER_REQUEST\",\n      \"description\": \"Z4+nON2<*a\",\n      \"external_reference\": \"URHtb3\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-16T08:24:03.404675Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": null,\n      \"refund_intent_id\": null\n    },\n    {\n      \"refund_id\": \"6a47473a-6710-4b57-b79f-8a4ac2a26a14\",\n      \"deposit_amount\": 10.35,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"0981017f-6334-4650-b6de-d0397a7ab6d0\",\n      \"status\": \"CREATED\",\n      \"amount\": 10.35,\n      \"currency\": \"AED\",\n      \"reason_code\": \"CUSTOMER_REQUEST\",\n      \"description\": \"QA refund initiation\",\n      \"external_reference\": \"ZRJd 8\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-16T08:23:48.736773Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": null,\n      \"refund_intent_id\": null\n    },\n    {\n      \"refund_id\": \"75353762-9863-44e0-8517-869e8b1284a4\",\n      \"deposit_amount\": 18.79,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"0850f9be-98e7-4b04-a139-95a987088b3f\",\n      \"status\": \"CREATED\",\n      \"amount\": 18.79,\n      \"currency\": \"AED\",\n      \"reason_code\": \"CUSTOMER_REQUEST\",\n      \"description\": \"QA refund initiation\",\n      \"external_reference\": \"uTtQnj\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-15T11:28:18.412974Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": null,\n      \"refund_intent_id\": null\n    },\n    {\n      \"refund_id\": \"67a0a494-28c4-4be8-891e-8833e4780194\",\n      \"deposit_amount\": 10.98,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"e35879f8-4d38-443b-ad95-03da1df2d1bf\",\n      \"status\": \"ACCEPTED_BY_BANK\",\n      \"amount\": 10.98,\n      \"currency\": \"AED\",\n      \"reason_code\": \"FRAUDULENT_PAYMENT\",\n      \"description\": \"`,`PY@_rZi\",\n      \"external_reference\": \"S UkVC\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-15T11:26:45.403176Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"refund_intent_id\": \"641e6270-624f-4099-b3f0-d0143b755285\"\n    },\n    {\n      \"refund_id\": \"f3fd6d45-fd10-4df1-8161-b88c6d4d44f5\",\n      \"deposit_amount\": 15.34,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"2037c860-f0b1-4733-8df9-3d6903e7273b\",\n      \"status\": \"ACCEPTED_BY_BANK\",\n      \"amount\": 15.34,\n      \"currency\": \"AED\",\n      \"reason_code\": \"FRAUDULENT_PAYMENT\",\n      \"description\": \"{xKtE ZBn!\",\n      \"external_reference\": \"yRFZ3o\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-15T11:26:45.403081Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"refund_intent_id\": \"fe484bd8-9f58-453c-93f6-0f28a76d3a5c\"\n    },\n    {\n      \"refund_id\": \"a1c185ec-ae82-453c-a2db-7028649abd8a\",\n      \"deposit_amount\": 10.37,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"20d41570-4d79-4b6b-9b56-b14f957da910\",\n      \"status\": \"CREATED\",\n      \"amount\": 10.37,\n      \"currency\": \"AED\",\n      \"reason_code\": \"CUSTOMER_REQUEST\",\n      \"description\": \"OBYqIU&*S&\",\n      \"external_reference\": \"EFNN21\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-15T11:27:00.163206Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": null,\n      \"refund_intent_id\": null\n    },\n    {\n      \"refund_id\": \"d5c4c96f-9159-4adc-9a1e-5ddd64c862ff\",\n      \"deposit_amount\": 15.34,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"3d869642-0892-4a22-bf00-7964badc1add\",\n      \"status\": \"ACCEPTED_BY_BANK\",\n      \"amount\": 15.34,\n      \"currency\": \"AED\",\n      \"reason_code\": \"FRAUDULENT_PAYMENT\",\n      \"description\": \" Z.Rh7g.b(\",\n      \"external_reference\": \"Nwhs86\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-14T14:40:16.724925Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"refund_intent_id\": \"bf6baed3-f20b-4b0e-89db-24e8e364f2db\"\n    },\n    {\n      \"refund_id\": \"c89b40bd-e274-452a-a926-d35a580b4155\",\n      \"deposit_amount\": 12.71,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"83a37c0d-d279-4af2-b394-10bfcf940129\",\n      \"status\": \"ACCEPTED_BY_BANK\",\n      \"amount\": 12.71,\n      \"currency\": \"AED\",\n      \"reason_code\": \"CUSTOMER_REQUEST\",\n      \"description\": \"Wy`6Vt%h[n\",\n      \"external_reference\": \"NBU im\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-14T14:40:15.249139Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"refund_intent_id\": \"73375386-7398-42e0-8461-1691bd010662\"\n    },\n    {\n      \"refund_id\": \"cde0a167-8a01-4a23-b5ae-34bc5fa1cf37\",\n      \"deposit_amount\": 11.03,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"53db5326-9f4b-4160-902d-53e3274c6c1f\",\n      \"status\": \"ACCEPTED_BY_BANK\",\n      \"amount\": 11.03,\n      \"currency\": \"AED\",\n      \"reason_code\": \"FRAUDULENT_PAYMENT\",\n      \"description\": \"AS+_FB@+oM\",\n      \"external_reference\": \"6DLU7u\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-14T14:40:10.932065Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"refund_intent_id\": \"68762890-6c28-4755-9908-c0e635699981\"\n    },\n    {\n      \"refund_id\": \"4a664c20-57f1-4cbd-9c6f-0b848d7d8564\",\n      \"deposit_amount\": 15.34,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"8a9c3fe2-4585-419c-898c-929bf35659ec\",\n      \"status\": \"ACCEPTED_BY_BANK\",\n      \"amount\": 15.34,\n      \"currency\": \"AED\",\n      \"reason_code\": \"DUPLICATED_PAYMENT\",\n      \"description\": \"y9f<]lz}@I\",\n      \"external_reference\": \"VIH7Uc\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-14T14:40:11.080025Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"refund_intent_id\": \"4f04f8f0-ce75-42c0-8080-c1b631df1093\"\n    },\n    {\n      \"refund_id\": \"10553d93-7498-493b-80dc-0fbf8f53980b\",\n      \"deposit_amount\": 19.06,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"460c67ae-0039-494a-aa03-c0071beea9e6\",\n      \"status\": \"CREATED\",\n      \"amount\": 19.06,\n      \"currency\": \"AED\",\n      \"reason_code\": \"ORDER_CANCELLED\",\n      \"description\": \" Pr+fLQKJR\",\n      \"external_reference\": \"mYD9ac\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-14T14:40:31.347124Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": null,\n      \"refund_intent_id\": null\n    },\n    {\n      \"refund_id\": \"bcf4e591-8bf8-4324-9ff0-b540d6f0b27e\",\n      \"deposit_amount\": 14.55,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"8410366f-b936-42d0-9c4d-6ea49ae99aca\",\n      \"status\": \"CREATED\",\n      \"amount\": 14.55,\n      \"currency\": \"AED\",\n      \"reason_code\": \"FRAUDULENT_PAYMENT\",\n      \"description\": \"ptr:7PspZg\",\n      \"external_reference\": \"w0QYuk\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-14T14:40:26.800408Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": null,\n      \"refund_intent_id\": null\n    },\n    {\n      \"refund_id\": \"bd36fc10-469c-41cd-84d4-cecc919f1e6f\",\n      \"deposit_amount\": 15.25,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"4aae6753-88a7-4650-a33f-bf50a2cb8333\",\n      \"status\": \"CREATED\",\n      \"amount\": 15.25,\n      \"currency\": \"AED\",\n      \"reason_code\": \"CUSTOMER_REQUEST\",\n      \"description\": \"QA refund initiation\",\n      \"external_reference\": \"MoCw0N\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-14T14:40:14.948910Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": null,\n      \"refund_intent_id\": null\n    },\n    {\n      \"refund_id\": \"b6f9bca4-1a82-42b1-a581-dc81d4ed65d3\",\n      \"deposit_amount\": 13.36,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"b8136d5c-a92a-4167-84f9-4e11d719e986\",\n      \"status\": \"CREATED\",\n      \"amount\": 13.36,\n      \"currency\": \"AED\",\n      \"reason_code\": \"CUSTOMER_REQUEST\",\n      \"description\": \"QA refund initiation\",\n      \"external_reference\": \"qNh1Lh\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-14T14:40:12.337238Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": null,\n      \"refund_intent_id\": null\n    },\n    {\n      \"refund_id\": \"bf3063e1-4896-40ce-898a-7052754422af\",\n      \"deposit_amount\": 15.34,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"5ca31a84-4007-4cda-a2cc-7b65e3c489ee\",\n      \"status\": \"ACCEPTED_BY_BANK\",\n      \"amount\": 15.34,\n      \"currency\": \"AED\",\n      \"reason_code\": \"ORDER_CANCELLED\",\n      \"description\": \"bhA a?Y{:(\",\n      \"external_reference\": \"ff thU\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-14T13:25:29.020814Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"refund_intent_id\": \"be14a247-a0d4-4240-8d14-56ded21769a6\"\n    },\n    {\n      \"refund_id\": \"207a1ee1-4a1b-4eaf-956e-1e4a7cbd5209\",\n      \"deposit_amount\": 11.08,\n      \"deposit_currency\": \"AED\",\n      \"payment_id\": \"8d4dd7e1-72d6-4d85-94d4-9cdb2ebedbd1\",\n      \"status\": \"ACCEPTED_BY_BANK\",\n      \"amount\": 11.08,\n      \"currency\": \"AED\",\n      \"reason_code\": \"ORDER_CANCELLED\",\n      \"description\": \"7Ry6 WynK(\",\n      \"external_reference\": \"wAxWnO\",\n      \"beneficiary\": {\n        \"name\": \"Rolf Bogan\",\n        \"iban\": \"AE280003008159427667010\",\n        \"city\": \"Dubai\"\n      },\n      \"created_at\": \"2025-05-14T13:25:28.147737Z\",\n      \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"actioned_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n      \"refund_intent_id\": \"2908a48a-6939-45ce-8697-35d7611733f1\"\n    }\n  ],\n  \"page\": {\n    \"number\": 0,\n    \"size\": 50,\n    \"total_elements\": 1229,\n    \"total_pages\": 25,\n    \"sort\": null\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "0b3e047d-40ee-4ae6-a10c-285764e4a9bf",
+          "name": "Get Refund Reasons",
+          "request": {
+            "name": "Get Refund Reasons",
+            "description": {
+              "content": "Returns the reason code for the created refund, which is then used in the refund request creation.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "payouts",
+                "refunds",
+                "reasons"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET"
+          },
+          "response": [
+            {
+              "id": "12a41823-5b55-4e8e-8be8-daea27434fe0",
+              "name": "Returns the list of reasons for which a refund is being inititated.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "payouts",
+                    "refunds",
+                    "reasons"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"code\": \"CUSTOMER_REQUEST\",\n    \"description\": \"Requested by the client\"\n  },\n  {\n    \"code\": \"DUPLICATED_PAYMENT\",\n    \"description\": \"Duplicated Payment\"\n  },\n  {\n    \"code\": \"FRAUDULENT_PAYMENT\",\n    \"description\": \"Fraudulent Payment\"\n  },\n  {\n    \"code\": \"ORDER_CANCELLED\",\n    \"description\": \"Service/Order Cancellation\"\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://sandbox.leantech.me",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "06138680-88a6-4fe4-ac52-6c97d4fe9ce1",
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Refunds API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "",
+      "type": "text/plain"
+    }
+  }
+}

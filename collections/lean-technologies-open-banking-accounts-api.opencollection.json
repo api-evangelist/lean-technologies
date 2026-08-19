@@ -1,0 +1,67 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Open Banking Accounts API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Open Banking Accounts",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get Open Banking Accounts",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/open-banking/account-information/2022.11.01-final-errata2/accounts",
+            "headers": [
+              {
+                "name": "x-fapi-interaction-id",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "EntityId",
+                "value": "",
+                "type": "query",
+                "description": "The entity_id of the connected customer."
+              },
+              {
+                "name": "CustomerId",
+                "value": "",
+                "type": "query",
+                "description": "The customer_id of the connected customer."
+              },
+              {
+                "name": "Page",
+                "value": "",
+                "type": "query",
+                "description": "The page you're requesting - returns page 0 of a response if not specified."
+              },
+              {
+                "name": "Size",
+                "value": "",
+                "type": "query",
+                "description": "The number of objects you want to return as a page size."
+              }
+            ]
+          },
+          "docs": "Retrieves a list of bank accounts linked by a user via LinkSDK for the KSA Open Banking (SAMA) ecosystem.\nEach account object contains account identification, status, currency, account type, account identifiers\n(such as IBAN), and other account-level data.\nRequires ReadAccountsBasic or ReadAccountsDetail consent permission.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

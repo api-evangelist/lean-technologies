@@ -1,0 +1,88 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Payment Source API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Payment Source",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get all Payment Sources for Customer",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/customers/v1/:customer_id/payment-sources",
+            "params": [
+              {
+                "name": "customer_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Payment Sources are created upon successful completion of the `.connect()` method in the LinkSDK when `payments` is set as a Permission. "
+        },
+        {
+          "info": {
+            "name": "Get Payment Source by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/customers/v1/:customer_id/payment-sources/:payment_source_id",
+            "params": [
+              {
+                "name": "customer_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "payment_source_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Payment Sources are created upon successful completion of the `.connect()` method in the LinkSDK when `payments` is set as a Permission. "
+        },
+        {
+          "info": {
+            "name": "Delete Payment Source",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://sandbox.leantech.me/customers/v1/:customer_id/payment-sources/:payment_source_id",
+            "params": [
+              {
+                "name": "customer_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "payment_source_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Delete a Payment Source to remove Customer credentials from the platform."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

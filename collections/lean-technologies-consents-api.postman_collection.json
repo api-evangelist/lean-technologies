@@ -1,0 +1,574 @@
+{
+  "item": [
+    {
+      "id": "0a2226f6-1114-4fc6-a58d-dee61df291c8",
+      "name": "Consents",
+      "description": {
+        "content": "The Consents API provides endpoints for retrieving consents and their associated data.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "235fed63-a0ff-4ca8-a2f9-76a2506b449d",
+          "name": "Retrieve consent details",
+          "request": {
+            "name": "Retrieve consent details",
+            "description": {
+              "content": "Retrieves a payment consent and its consumption data. Consumption data is returned only for authorized consents.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "consents",
+                "v1",
+                ":consent_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "consent_id",
+                  "description": "(Required) The unique identifier for the consent. Provided as a UUID."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET"
+          },
+          "response": [
+            {
+              "id": "b19ba320-2fb2-41df-a121-a1b6f2164265",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "consents",
+                    "v1",
+                    ":consent_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "consent_id",
+                      "description": "(Required) The unique identifier for the consent. Provided as a UUID."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"consent_id\": \"123e4567-e89b-12d3-a456-426655440000\",\n  \"bank_identifier\": \"ADCB_UAE\",\n  \"application_id\": \"app_7f8d9e0a1b2c3d4e\",\n  \"start_date_time\": \"2025-03-09T10:00:00Z\",\n  \"expiration_date_time\": \"2026-03-09T10:00:00Z\",\n  \"customer_id\": \"c9876543-21fe-dcba-9876-543210fedcba\",\n  \"status\": \"AWAITING_AUTHORISATION\",\n  \"destination_account_id\": \"c9876543-21fe-dcba-9876-543210fedcb1\",\n  \"sender_account_id\": \"a1234567-89ab-cdef-0123-456789abcdef\",\n  \"reference\": \"MONTHLY-SUBSCRIPTION-2025\",\n  \"consented_account\": {\n    \"iban\": \"AE070331234567890123456\",\n    \"holder_name\": \"John Doe\"\n  },\n  \"currency\": \"AED\",\n  \"payment_purpose\": {\n    \"code\": \"FIS\",\n    \"description\": \"Financial services\"\n  },\n  \"control_parameters\": {\n    \"type\": \"VariableOnDemand\",\n    \"period_type\": \"Week\",\n    \"maximum_individual_amount\": 1000,\n    \"periodic_limits\": [\n      {\n        \"period_type\": \"MONTH\",\n        \"period_alignment\": \"CONSENT\",\n        \"maximum_amount\": 5000,\n        \"maximum_number_of_payments\": 10\n      }\n    ]\n  },\n  \"payment_consumption\": {\n    \"cumulative_number_of_payments\": 3,\n    \"cumulative_value_of_payments\": 2500,\n    \"cumulative_number_of_payments_in_current_period\": 2,\n    \"cumulative_value_of_payments_in_current_period\": 1800\n  },\n  \"immediate_payment\": {\n    \"amount\": 130.52,\n    \"reference\": \"ACME-ACCOUNT-LINK-2025-001\",\n    \"creditor_reference\": \"INV-2025-004321\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "c54a3d4c-1f89-41d9-ae79-98b90a557a0d",
+          "name": "Retrieve balance of consent-linked account",
+          "request": {
+            "name": "Retrieve balance of consent-linked account",
+            "description": {
+              "content": "Retrieves the balance of the account associated with the specified authorized consent.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "consents",
+                "v1",
+                ":consent_id",
+                "balance"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "consent_id",
+                  "description": "(Required) Unique identifier of the authorized consent."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET"
+          },
+          "response": [
+            {
+              "id": "5ec6c853-d1bb-4709-82b8-d87cf7872610",
+              "name": "OK - Account balance retrieved successfully.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "consents",
+                    "v1",
+                    ":consent_id",
+                    "balance"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "consent_id",
+                      "description": "(Required) Unique identifier of the authorized consent."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"currency\": \"AED\",\n  \"balance\": 2500\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "40466c21-0531-4b69-8f9d-5763427ecd11",
+              "name": "The specified consent is not authorized.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "consents",
+                    "v1",
+                    ":consent_id",
+                    "balance"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "consent_id",
+                      "description": "(Required) Unique identifier of the authorized consent."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Conflict",
+              "code": 409,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "ed4526f2-5335-4f74-a2d1-f1b615420fb1",
+          "name": "List customers consents",
+          "request": {
+            "name": "List customers consents",
+            "description": {
+              "content": "Retrieves a paginated list of payment consents for the specified customer.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "consents",
+                "v1"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "customer_id",
+                  "value": "<uuid>",
+                  "description": "(Required) "
+                },
+                {
+                  "disabled": false,
+                  "key": "status",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "status",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "page_number",
+                  "value": "0",
+                  "description": "Indicator of which page of results to return, starts at 0"
+                },
+                {
+                  "disabled": false,
+                  "key": "page_size",
+                  "value": "100",
+                  "description": "Size of a single page of results to return"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET"
+          },
+          "response": [
+            {
+              "id": "f372db32-5669-4163-8dfe-1dbeb009ec08",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "consents",
+                    "v1"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "customer_id",
+                      "value": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    {
+                      "key": "status",
+                      "value": "AUTHORISED"
+                    },
+                    {
+                      "key": "page_number",
+                      "value": "0"
+                    },
+                    {
+                      "key": "page_size",
+                      "value": "100"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"consent_id\": \"069dc650-f26b-450d-6bbb-e2283874921a\",\n      \"application_id\": \"string\",\n      \"start_date_time\": \"2019-01-23T20:38:18.696Z\",\n      \"expiration_date_time\": \"1980-02-25T10:09:27.667Z\",\n      \"customer_id\": \"bd97969d-cbbc-8b2c-f95d-2f21fcd05f9f\",\n      \"status\": \"AUTHORISED\",\n      \"destination_account_id\": \"5866ac82-9dbd-680b-13d8-f0b4b6c1bac7\",\n      \"reference\": \"string\",\n      \"currency\": \"AED\",\n      \"payment_purpose\": {\n        \"code\": \"LNC\",\n        \"description\": \"string\"\n      },\n      \"control_parameters\": {\n        \"type\": \"string\",\n        \"period_type\": \"Week\",\n        \"max_individual_amount\": 2193.4565604023956,\n        \"max_cumulative_amount\": 904.374099081198,\n        \"max_cumulative_number_of_payments\": 6755,\n        \"max_cumulative_amount_per_period\": 7117.529625259804,\n        \"max_cumulative_number_of_payments_per_period\": 9921\n      },\n      \"bank_identifier\": \"string\",\n      \"sender_account_id\": \"a66d4755-4fcf-28ae-999a-5e7a52a0c5df\",\n      \"consented_account\": {\n        \"iban\": \"string\",\n        \"holder_name\": \"string\"\n      },\n      \"payment_consumption\": {\n        \"cumulative_number_of_payments\": 10,\n        \"cumulative_value_of_payments\": 10000.05,\n        \"cumulative_number_of_payments_in_current_period\": 5,\n        \"cumulative_value_of_payments_in_current_period\": 5000.05\n      },\n      \"immediate_payment\": {\n        \"amount\": 123.45,\n        \"reference\": \"Invoice #12345\",\n        \"creditor_reference\": \"string\"\n      }\n    },\n    {\n      \"consent_id\": \"29cfe0cd-8eb0-ec8c-3432-cd14a14a60be\",\n      \"application_id\": \"string\",\n      \"start_date_time\": \"1988-01-28T17:56:05.813Z\",\n      \"expiration_date_time\": \"1991-06-08T20:13:12.728Z\",\n      \"customer_id\": \"e60f2cfc-6a39-7148-d130-40954e0d0b45\",\n      \"status\": \"REVOKED\",\n      \"destination_account_id\": \"72f3fc81-b176-c9b6-9387-9b7a4812f96a\",\n      \"reference\": \"string\",\n      \"currency\": \"AED\",\n      \"payment_purpose\": {\n        \"code\": \"TCS\",\n        \"description\": \"string\"\n      },\n      \"control_parameters\": {\n        \"type\": \"string\",\n        \"period_type\": \"Year\",\n        \"max_individual_amount\": 2313.9461309643752,\n        \"max_cumulative_amount\": 9777.638053192713,\n        \"max_cumulative_number_of_payments\": 7640,\n        \"max_cumulative_amount_per_period\": 7752.996251923791,\n        \"max_cumulative_number_of_payments_per_period\": 286\n      },\n      \"bank_identifier\": \"string\",\n      \"sender_account_id\": \"71306aad-4907-0e35-1d77-594bd9888450\",\n      \"consented_account\": {\n        \"iban\": \"string\",\n        \"holder_name\": \"string\"\n      },\n      \"payment_consumption\": {\n        \"cumulative_number_of_payments\": 10,\n        \"cumulative_value_of_payments\": 10000.05,\n        \"cumulative_number_of_payments_in_current_period\": 5,\n        \"cumulative_value_of_payments_in_current_period\": 5000.05\n      },\n      \"immediate_payment\": {\n        \"amount\": 123.45,\n        \"reference\": \"Invoice #12345\",\n        \"creditor_reference\": \"string\"\n      }\n    }\n  ],\n  \"page\": {\n    \"number\": 3290,\n    \"size\": 9363,\n    \"total_elements\": 892,\n    \"total_pages\": 2153,\n    \"sort\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "a2acea5d-f0a7-468a-801d-ea86e3b65dde",
+          "name": "Revoke a consent",
+          "request": {
+            "name": "Revoke a consent",
+            "description": {
+              "content": "Revokes an authorised payment consent. The consent must be in `AUTHORISED` state.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "consents",
+                "v1",
+                ":consent_id",
+                "revocation"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "consent_id",
+                  "description": "(Required) The unique identifier of the consent to revoke. Provided as a UUID."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"<string>\",\n  \"additional_context\": \"<string,null>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "d30d28bd-a7b3-47b6-b0f9-d59577426e8f",
+              "name": "Consent revoked successfully.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "consents",
+                    "v1",
+                    ":consent_id",
+                    "revocation"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "consent_id",
+                      "description": "(Required) The unique identifier of the consent to revoke. Provided as a UUID."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "edef44ad-4741-4a44-8439-0d51825a712f",
+              "name": "The consent is not in an `AUTHORISED` state and cannot be revoked.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "consents",
+                    "v1",
+                    ":consent_id",
+                    "revocation"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "consent_id",
+                      "description": "(Required) The unique identifier of the consent to revoke. Provided as a UUID."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://sandbox.leantech.me",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "cb8a4a2c-cec2-4d16-b2dc-87740cc547ea",
+    "name": "Account On File Account Controls (New) Account Controls (New) Consents API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The Consents API provides endpoints for retrieving consents and their associated data.",
+      "type": "text/plain"
+    }
+  }
+}

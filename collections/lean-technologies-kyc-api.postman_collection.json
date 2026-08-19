@@ -1,0 +1,135 @@
+{
+  "item": [
+    {
+      "id": "41b1a1ba-7e1a-4120-86f2-8429fb24c6fc",
+      "name": "KYC",
+      "description": {
+        "content": "Endpoints for retrieving KYC documents",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "e2f906b8-5838-4565-84b3-3eee5eb59a77",
+          "name": "Retrieve Proof of Address Document",
+          "request": {
+            "name": "Retrieve Proof of Address Document",
+            "description": {
+              "content": "Get proof of address document by ID.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "files",
+                "kyc",
+                "poa",
+                "{{document_id}}.pdf"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/octet-stream"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "76537f1b-e258-4039-94e6-bcf8f8b1731b",
+              "name": "PoA Document content",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "files",
+                    "kyc",
+                    "poa",
+                    "{{document_id}}.pdf"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/octet-stream"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/octet-stream"
+                }
+              ],
+              "body": "string",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://sandbox.leantech.me",
+      "key": "baseUrl"
+    },
+    {
+      "disabled": false,
+      "description": {
+        "content": "(Required) The unique identifier of the proof of address document",
+        "type": "text/plain"
+      },
+      "type": "any",
+      "value": "<string>",
+      "key": "document_id"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "1ca56ff4-0a47-4463-8de0-7ee90e47eb77",
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) KYC API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Endpoints for retrieving KYC documents",
+      "type": "text/plain"
+    }
+  }
+}

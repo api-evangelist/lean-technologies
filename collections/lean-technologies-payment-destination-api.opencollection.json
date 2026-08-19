@@ -1,0 +1,87 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Payment Destination API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Payment Destination",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List Payment Destinations",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/payments/v1/destinations"
+          },
+          "docs": "Retrieve a list of all Payment Destinations you have in stored with Lean."
+        },
+        {
+          "info": {
+            "name": "Create Payment Destination",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://sandbox.leantech.me/payments/v1/destinations",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "A Payment Destination defines the account for a Payment Intent to make payments into. Payment Destinations are used to create Beneficiaries in a user's Bank Account using the `.connect()` or `.createBeneficiary()` methods in the LinkSDK"
+        },
+        {
+          "info": {
+            "name": "Get Payment Destination by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/payments/v1/destinations/:payment_destination_id",
+            "params": [
+              {
+                "name": "payment_destination_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Payment Destination."
+              }
+            ]
+          },
+          "docs": "Retrieve the details of a single Payment Destination stored by Lean."
+        },
+        {
+          "info": {
+            "name": "Get Payment Destinations for Customer",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/customers/v1/:customer_id/destinations",
+            "params": [
+              {
+                "name": "customer_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Retrieve a list of all Payment Destinations associated with a given Customer."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,162 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Payment Links API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Payment Links",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List Payment Links",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/payment-links/v1",
+            "params": [
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "The page you're requesting - returns page 0 of a response if not specified."
+              },
+              {
+                "name": "size",
+                "value": "",
+                "type": "query",
+                "description": "The number of objects you want to return as a page size."
+              }
+            ]
+          },
+          "docs": "Returns a paginated list of all payment links created by your application."
+        },
+        {
+          "info": {
+            "name": "Create Payment Link",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://sandbox.leantech.me/payment-links/v1",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Creates a payment link that can be shared with customers to collect payments. \nThe link remains ACTIVE until it expires, reaches its usage limit, or is explicitly disabled."
+        },
+        {
+          "info": {
+            "name": "Get Payment Link",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/payment-links/v1/:payment_link_id",
+            "params": [
+              {
+                "name": "payment_link_id",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier of the payment link"
+              }
+            ]
+          },
+          "docs": "Retrieves the current state of a payment link, including its status, usage count, and configuration."
+        },
+        {
+          "info": {
+            "name": "Update Payment Link",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://sandbox.leantech.me/payment-links/v1/:payment_link_id",
+            "params": [
+              {
+                "name": "payment_link_id",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier of the payment link"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Changes the status of a payment link. \nSet status to `DISABLED` to immediately stop the link from accepting new payments, or `ACTIVE` to re-enable a previously disabled link. \nLinks in `EXPIRED` or `USED` status cannot be reactivated."
+        },
+        {
+          "info": {
+            "name": "List Payment Link Usages",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/payment-links/v1/:payment_link_id/usages",
+            "params": [
+              {
+                "name": "payment_link_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the payment link."
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "The page you're requesting - returns page 0 of a response if not specified."
+              },
+              {
+                "name": "size",
+                "value": "",
+                "type": "query",
+                "description": "The number of objects you want to return as a page size."
+              }
+            ]
+          },
+          "docs": "Returns a paginated list of usages for a given payment link."
+        },
+        {
+          "info": {
+            "name": "Get Payment Link Usage",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/payment-links/v1/:payment_link_id/usages/:usage_id",
+            "params": [
+              {
+                "name": "payment_link_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the payment link."
+              },
+              {
+                "name": "usage_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the payment link usage."
+              }
+            ]
+          },
+          "docs": "Returns the details of a single payment link usage, including its current status,\nthe identifiers collected from the payer during the payment flow, and the resulting\npayment reference once the bank has processed the payment.\n\nThe `payment_id` and `payment_status` fields are populated asynchronously - they will\nbe `null` immediately after usage creation and will be set once the payment has\nbeen processed by the bank."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

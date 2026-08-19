@@ -1,0 +1,685 @@
+{
+  "item": [
+    {
+      "id": "40b28fcb-3f44-44ae-8e5c-9740aa678ba9",
+      "name": "Payment Links",
+      "description": {
+        "content": "Payment link management operations",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "c1fe3464-4788-480c-95a4-56fa47da8cee",
+          "name": "Create Payment Link",
+          "request": {
+            "name": "Create Payment Link",
+            "description": {
+              "content": "Creates a payment link that can be shared with customers to collect payments. \nThe link remains ACTIVE until it expires, reaches its usage limit, or is explicitly disabled.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "payment-links",
+                "v1"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"payment_details\": {\n    \"reference\": \"<string>\",\n    \"currency\": \"<string>\",\n    \"amount\": \"<double>\",\n    \"destination_id\": \"<string,null-uuid>\",\n    \"payment_purpose\": \"<string,null>\"\n  },\n  \"name\": \"<string,null>\",\n  \"max_usages\": \"<integer,null-int32>\",\n  \"expires_at\": \"<string,null-date-time>\",\n  \"redirect_url\": \"<string,null>\",\n  \"customer_id\": \"<string,null-uuid>\",\n  \"identifiers\": [\n    {\n      \"type\": \"<string>\",\n      \"display_label\": \"<string,null>\",\n      \"required\": \"<boolean,null>\",\n      \"limit\": \"<integer,null-int32>\"\n    },\n    {\n      \"type\": \"<string>\",\n      \"display_label\": \"<string,null>\",\n      \"required\": \"<boolean,null>\",\n      \"limit\": \"<integer,null-int32>\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "c4569055-f47b-4ef7-a29a-f08414497d70",
+              "name": "Payment link created successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "payment-links",
+                    "v1"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"April Rent Collection\",\n  \"max_usages\": 1,\n  \"expires_at\": \"2026-04-30T23:59:59Z\",\n  \"redirect_url\": \"https://your.domain.com/payments/complete\",\n  \"customer_id\": \"f47ac10b-58cc-4372-a567-0e02b2c3d479\",\n  \"payment_details\": {\n    \"destination_id\": \"9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d\",\n    \"reference\": \"RENT-APR-2024\",\n    \"currency\": \"AED\",\n    \"amount\": 1500,\n    \"payment_purpose\": \"RNT\"\n  },\n  \"identifiers\": [\n    {\n      \"type\": \"EMAIL\",\n      \"display_label\": \"Your email address\",\n      \"required\": true\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\",\n  \"link\": \"https://secure.leantech.me/pay/bed3bf92-3b0a-4f75-8cf2-94355bbb915a\",\n  \"status\": \"ACTIVE\",\n  \"current_usages\": 0,\n  \"name\": \"April Rent Collection\",\n  \"max_usages\": 1,\n  \"expires_at\": \"2026-04-30T23:59:59Z\",\n  \"redirect_url\": \"https://your.domain.com/payments/complete\",\n  \"customer_id\": \"f47ac10b-58cc-4372-a567-0e02b2c3d479\",\n  \"payment_details\": {\n    \"destination_id\": \"9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d\",\n    \"reference\": \"RENT-APR-2024\",\n    \"currency\": \"AED\",\n    \"amount\": 1500,\n    \"payment_purpose\": \"RNT\"\n  },\n  \"identifiers\": [\n    {\n      \"type\": \"EMAIL\",\n      \"display_label\": \"Your email address\",\n      \"required\": true\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "a2c24e55-d40f-40a0-8e9e-88e3ca57dc71",
+          "name": "List Payment Links",
+          "request": {
+            "name": "List Payment Links",
+            "description": {
+              "content": "Returns a paginated list of all payment links created by your application.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "payment-links",
+                "v1"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "page",
+                  "value": "0",
+                  "description": "The page you're requesting - returns page 0 of a response if not specified."
+                },
+                {
+                  "disabled": false,
+                  "key": "size",
+                  "value": "50",
+                  "description": "The number of objects you want to return as a page size."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET"
+          },
+          "response": [
+            {
+              "id": "60bef832-7d98-4db0-b5dd-8ce076906e7d",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "payment-links",
+                    "v1"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "0"
+                    },
+                    {
+                      "key": "size",
+                      "value": "50"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"content\": [\n    {\n      \"current_usages\": 0,\n      \"customer_id\": \"f47ac10b-58cc-4372-a567-0e02b2c3d479\",\n      \"expires_at\": \"2026-04-30T23:59:59Z\",\n      \"id\": \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\",\n      \"identifiers\": [\n        {\n          \"type\": \"EMAIL\",\n          \"display_label\": \"Your email address\",\n          \"required\": true\n        }\n      ],\n      \"link\": \"https://secure.leantech.me/pay/bed3bf92-3b0a-4f75-8cf2-94355bbb915a\",\n      \"max_usages\": 1,\n      \"name\": \"April Rent Collection\",\n      \"payment_details\": {\n        \"destination_id\": \"9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d\",\n        \"reference\": \"RENT-APR-2024\",\n        \"currency\": \"AED\",\n        \"amount\": 1500,\n        \"payment_purpose\": \"RNT\"\n      },\n      \"redirect_url\": \"https://your.domain.com/payments/complete\",\n      \"status\": \"ACTIVE\"\n    }\n  ],\n  \"page\": {\n    \"size\": 20,\n    \"number\": 0,\n    \"total_elements\": 1,\n    \"total_pages\": 1\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "2602cd98-8fec-463b-995c-b067d2992aa7",
+          "name": "Get Payment Link",
+          "request": {
+            "name": "Get Payment Link",
+            "description": {
+              "content": "Retrieves the current state of a payment link, including its status, usage count, and configuration.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "payment-links",
+                "v1",
+                ":payment_link_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "payment_link_id",
+                  "description": "(Required) Unique identifier of the payment link"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET"
+          },
+          "response": [
+            {
+              "id": "49d8ec50-200a-41fe-be3f-4b8e3d32a087",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "payment-links",
+                    "v1",
+                    ":payment_link_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "payment_link_id",
+                      "description": "(Required) Unique identifier of the payment link"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\",\n  \"link\": \"https://secure.leantech.me/pay/bed3bf92-3b0a-4f75-8cf2-94355bbb915a\",\n  \"status\": \"ACTIVE\",\n  \"current_usages\": 0,\n  \"name\": \"April Rent Collection\",\n  \"max_usages\": 1,\n  \"expires_at\": \"2026-04-30T23:59:59Z\",\n  \"redirect_url\": \"https://your.domain.com/payments/complete\",\n  \"customer_id\": \"f47ac10b-58cc-4372-a567-0e02b2c3d479\",\n  \"payment_details\": {\n    \"destination_id\": \"9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d\",\n    \"reference\": \"RENT-APR-2024\",\n    \"currency\": \"AED\",\n    \"amount\": 1500,\n    \"payment_purpose\": \"RNT\"\n  },\n  \"identifiers\": [\n    {\n      \"type\": \"EMAIL\",\n      \"display_label\": \"Your email address\",\n      \"required\": true\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "ce623542-9dfb-463b-8beb-2f11930b6f6c",
+          "name": "Update Payment Link",
+          "request": {
+            "name": "Update Payment Link",
+            "description": {
+              "content": "Changes the status of a payment link. \nSet status to `DISABLED` to immediately stop the link from accepting new payments, or `ACTIVE` to re-enable a previously disabled link. \nLinks in `EXPIRED` or `USED` status cannot be reactivated.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "payment-links",
+                "v1",
+                ":payment_link_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "payment_link_id",
+                  "description": "(Required) Unique identifier of the payment link"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "method": "PUT",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "d3c896d4-696d-4421-a4f0-cd4d33056e6d",
+              "name": "Payment link updated successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "payment-links",
+                    "v1",
+                    ":payment_link_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "payment_link_id",
+                      "description": "(Required) Unique identifier of the payment link"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"DISABLED\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "22aa1942-da95-474a-826a-1f240a82dbbd",
+          "name": "List Payment Link Usages",
+          "request": {
+            "name": "List Payment Link Usages",
+            "description": {
+              "content": "Returns a paginated list of usages for a given payment link.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "payment-links",
+                "v1",
+                ":payment_link_id",
+                "usages"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "page",
+                  "value": "0",
+                  "description": "The page you're requesting - returns page 0 of a response if not specified."
+                },
+                {
+                  "disabled": false,
+                  "key": "size",
+                  "value": "50",
+                  "description": "The number of objects you want to return as a page size."
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "payment_link_id",
+                  "description": "(Required) The unique identifier of the payment link."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET"
+          },
+          "response": [
+            {
+              "id": "b43c9f59-cbc2-4b37-9b95-e0e875bd40b3",
+              "name": "Paginated list of payment link usages returned.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "payment-links",
+                    "v1",
+                    ":payment_link_id",
+                    "usages"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "0"
+                    },
+                    {
+                      "key": "size",
+                      "value": "50"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "payment_link_id",
+                      "description": "(Required) The unique identifier of the payment link."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"content\": [\n    {\n      \"customer_id\": \"a3bb189e-8bf9-3888-9912-ace4e6543002\",\n      \"identifiers\": [\n        {\n          \"type\": \"EMAIL\",\n          \"display_label\": \"Email address\",\n          \"value\": \"payer@example.com\"\n        }\n      ],\n      \"payment_id\": \"7c9e6679-7425-40de-944b-e07fc1f90ae7\",\n      \"payment_link_id\": \"d290f1ee-6c54-4b01-90e6-d701748f0851\",\n      \"payment_status\": \"PENDING\",\n      \"usage_id\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n      \"usage_status\": \"PAYMENT_CREATED\"\n    }\n  ],\n  \"page\": {\n    \"number\": 0,\n    \"size\": 20,\n    \"total_elements\": 1,\n    \"total_pages\": 1\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "a43d46e3-0cf6-40b1-bd63-d342080dee72",
+          "name": "Get Payment Link Usage",
+          "request": {
+            "name": "Get Payment Link Usage",
+            "description": {
+              "content": "Returns the details of a single payment link usage, including its current status,\nthe identifiers collected from the payer during the payment flow, and the resulting\npayment reference once the bank has processed the payment.\n\nThe `payment_id` and `payment_status` fields are populated asynchronously - they will\nbe `null` immediately after usage creation and will be set once the payment has\nbeen processed by the bank.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "payment-links",
+                "v1",
+                ":payment_link_id",
+                "usages",
+                ":usage_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "payment_link_id",
+                  "description": "(Required) The unique identifier of the payment link."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "usage_id",
+                  "description": "(Required) The unique identifier of the payment link usage."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET"
+          },
+          "response": [
+            {
+              "id": "5e95e655-d5bd-465e-9cb5-1a727cb3ba3b",
+              "name": "OK - Payment link usage found and returned.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "payment-links",
+                    "v1",
+                    ":payment_link_id",
+                    "usages",
+                    ":usage_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "payment_link_id",
+                      "description": "(Required) The unique identifier of the payment link."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "usage_id",
+                      "description": "(Required) The unique identifier of the payment link usage."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"usage_id\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n  \"payment_link_id\": \"d290f1ee-6c54-4b01-90e6-d701748f0851\",\n  \"usage_status\": \"PAYMENT_CREATED\",\n  \"customer_id\": \"a3bb189e-8bf9-3888-9912-ace4e6543002\",\n  \"payment_id\": \"7c9e6679-7425-40de-944b-e07fc1f90ae7\",\n  \"payment_status\": \"PENDING\",\n  \"identifiers\": [\n    {\n      \"type\": \"EMAIL\",\n      \"display_label\": \"Email address\",\n      \"value\": \"payer@example.com\"\n    },\n    {\n      \"type\": \"MOBILE_PHONE\",\n      \"display_label\": \"Mobile number\",\n      \"value\": \"+971501234567\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://sandbox.leantech.me",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "ee7f75b8-de0d-4303-9587-8e865faab325",
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Payment Links API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Payment link management operations",
+      "type": "text/plain"
+    }
+  }
+}

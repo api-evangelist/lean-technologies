@@ -1,0 +1,61 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Cashflows API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Cashflows",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get Cashflow",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/insights/v2/assets/cashflows?async=true",
+            "headers": [
+              {
+                "name": "lean-app-token",
+                "value": "ad0832f0-76aa-4b7b-b267-1f002d7104df"
+              }
+            ],
+            "params": [
+              {
+                "name": "entity_id",
+                "value": "bc287977-2094-3bef-82a0-bae3fe8dadfe",
+                "type": "query",
+                "description": "The `entity_id` you're querying for."
+              },
+              {
+                "name": "start_date",
+                "value": "2024-09-01",
+                "type": "query",
+                "description": "The start date in UTC (in the format YYYY-MM-DD) you want to query expenses for."
+              },
+              {
+                "name": "async",
+                "value": "true",
+                "type": "query",
+                "description": "When `true` the API will only return a `results_id` which can be fetched from the `/results` endpoint when ready. \n\nDefaults to true if not provided. Synchronous requests (false) are not supported and will return a 501 error."
+              }
+            ]
+          },
+          "docs": "The Cashflow API provides access to **Personal** and **Business** cash flow data. For personal accounts, it offers insights into monthly cash inflows, outflows, and net cash flow. For business accounts, it offers detailed insights on revenue, expenses, and net cash flow.\n\nYou can use this API to evaluate financial stability, manage cash flow effectively, and assess the account holder’s ability to meet financial obligations.\n\n\nThis API is asynchronous, please read [this guide](https://docs.leante"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

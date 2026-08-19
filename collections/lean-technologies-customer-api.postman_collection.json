@@ -1,0 +1,560 @@
+{
+  "item": [
+    {
+      "id": "701c3f72-462b-4287-9859-f0a8990c252b",
+      "name": "Customer",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "7cb40824-3d46-43ec-9e84-6929c61a3142",
+          "name": "List Customers",
+          "request": {
+            "name": "List Customers",
+            "description": {
+              "content": "Fetch a list of all customers created",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "customers",
+                "v1",
+                ""
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "page_number",
+                  "value": "<integer>",
+                  "description": "(Required) "
+                },
+                {
+                  "disabled": false,
+                  "key": "page_size",
+                  "value": "<integer>",
+                  "description": "(Required) "
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET"
+          },
+          "response": [
+            {
+              "id": "7d3610c8-5bb1-4337-beca-8cebb5b29b2a",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "v1",
+                    ""
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "page_number",
+                      "value": "0"
+                    },
+                    {
+                      "key": "page_size",
+                      "value": "50"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"customer_id\": \"49e8d23e-9b17-4ffe-a2ab-4c5fc1c02431\",\n      \"app_user_id\": \"001\"\n    },\n    {\n      \"customer_id\": \"090e2390-bd5a-47d8-97a6-6d4dd1af35f0\",\n      \"app_user_id\": \"002\"\n    },\n    {\n      \"customer_id\": \"8eeec6bd-332a-40ec-8de3-a5d064d107d6\",\n      \"app_user_id\": \"003\"\n    }\n  ],\n  \"page\": {\n    \"number\": 0,\n    \"size\": 50,\n    \"total_elements\": 3,\n    \"total_pages\": 1\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "e8cf24a3-38a9-4c1f-a8a4-40f7e9cce38d",
+          "name": "Create Customer",
+          "request": {
+            "name": "Create Customer",
+            "description": {
+              "content": "Create a customer object on Lean given the app_user_id which is the identifier (or a hash of the identifier) you use to refer to a user in your own database. The customer object in Lean should map one to one with the user object in your database.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "customers",
+                "v1",
+                ""
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"app_user_id\": \"<string>\",\n  \"government_identifiers\": [\n    {\n      \"type\": \"<string>\",\n      \"value\": \"<string>\"\n    },\n    {\n      \"type\": \"<string>\",\n      \"value\": \"<string>\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "45938018-b6eb-4327-8e1a-54e832d28b49",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "v1",
+                    ""
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"app_user_id\": \"my_first_customer\",\n  \"government_identifier\": [\n    {\n      \"type\": \"EMIRATES_ID\",\n      \"value\": \"784-1232-1232-1232\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"customer_id\": \"49e8d23e-9b17-4ffe-a2ab-4c5fc1c02431\",\n  \"app_user_id\": \"001\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "0e3a0ab2-f059-4d63-9699-5df855f78aca",
+          "name": "Get Customer by ID",
+          "request": {
+            "name": "Get Customer by ID",
+            "description": {
+              "content": "Fetch a Customer object by the customer_id associated",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "customers",
+                "v1",
+                ":customer_id",
+                ""
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "customer_id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET"
+          },
+          "response": [
+            {
+              "id": "9ae70a24-7c56-45e9-b53f-876bf0e619de",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "v1",
+                    ":customer_id",
+                    ""
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "customer_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"customer_id\": \"49e8d23e-9b17-4ffe-a2ab-4c5fc1c02431\",\n  \"app_user_id\": \"001\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "4e37d54f-f51f-4d9b-b336-d9712daaca34",
+          "name": "Update Customer",
+          "request": {
+            "name": "Update Customer",
+            "description": {
+              "content": "This endpoint allows you to update the government identifiers associated with an existing customer.\nGovernment identifiers are required by the UAE Open Finance specification to uniquely identify the customer and must reflect the latest, valid information for the account holder.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "customers",
+                "v1",
+                ":customer_id",
+                ""
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "customer_id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PUT",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"government_identifiers\": [\n    {\n      \"type\": \"<string>\",\n      \"value\": \"<string>\"\n    },\n    {\n      \"type\": \"<string>\",\n      \"value\": \"<string>\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "4dd5a258-aef3-4ac8-aea0-831acafe57f6",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "v1",
+                    ":customer_id",
+                    ""
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "customer_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"government_identifiers\": [\n    {\n      \"type\": \"EMIRATES_ID\",\n      \"value\": \"93V;kFZ$Y?Y\"\n    },\n    {\n      \"type\": \"EMIRATES_ID\",\n      \"value\": \"N-fMy[3\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"customer_id\": \"49e8d23e-9b17-4ffe-a2ab-4c5fc1c02431\",\n  \"app_user_id\": \"001\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "dab4a726-6242-42a5-9e0b-fb67a6f7e3a5",
+          "name": "Get Customer by app_user_id",
+          "request": {
+            "name": "Get Customer by app_user_id",
+            "description": {
+              "content": "Fetch a Customer object by the associated `app_user_id` value",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "customers",
+                "v1",
+                "app-user-id",
+                ":app_user_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "app_user_id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET"
+          },
+          "response": [
+            {
+              "id": "1d6633b4-7ebc-4313-81a5-515afb759ed8",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "v1",
+                    "app-user-id",
+                    ":app_user_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "app_user_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"customer_id\": \"34c11087-b6bc-429b-9a91-725941b1a547\",\n  \"app_user_id\": \"001\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://sandbox.leantech.me",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "6167df98-24de-4e49-b7dc-8b37653c4ac2",
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Customer API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "",
+      "type": "text/plain"
+    }
+  }
+}

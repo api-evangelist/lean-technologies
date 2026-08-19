@@ -1,0 +1,67 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Accounts Raw Data API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Accounts Raw Data",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get Accounts",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/data/v2/accounts",
+            "params": [
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. **Note: it's recommended to use the sync flow (async=false) for all requests by adapting the [data workflow](https://docs.leantech.me/docs/data-workflow) for connected entities.**"
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "The page you're requesting - returns page 0 of a response if not specified."
+              },
+              {
+                "name": "size",
+                "value": "",
+                "type": "query",
+                "description": "The number of objects you want to return as a page size."
+              },
+              {
+                "name": "entity_id",
+                "value": "",
+                "type": "query",
+                "description": "The entity_id you're querying for, which is created by LinkSDK `.connect()` function."
+              },
+              {
+                "name": "meta",
+                "value": "",
+                "type": "query",
+                "description": "Additional data you would like to store against the request. Example: {\"foo\": \"val\"}"
+              }
+            ]
+          },
+          "docs": "The Get Accounts endpoint retrieves a list of bank accounts that have been linked by a user via LinkSDK, identified by their entity_id.\nEach account object contains fields such as account_id, account status, currency, account_sub_type, account identifiers (such as IBAN, ACCOUNT_NUMBER, and NATIONAL_ID) and other data points related accounts. \nYou can use the resulting account_ids to query additional financial data through other Lean APIs such as transactions, balances, beneficiaries, and other d"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,115 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Income API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Income",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get Income",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://sandbox.leantech.me/insights/v2/income",
+            "params": [
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. Note: it's recommended to use the sync flow (async=false) for all requests by adapting the data workflow for connected entities."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "`Get Income` endpoint provides essential income verification data for credit decisioning and underwriting processes. This API analyzes transaction history to produce reliable income insights for a specific borrower identified by their `entity_id`.\n\nThe API returns comprehensive income information including categorization by source (salary vs. non-salary), monthly income patterns, and statistical analysis that helps lenders accurately assess an applicant's ability to pay. These insights can be us"
+        },
+        {
+          "info": {
+            "name": "Get Employment",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/insights/v2/income/employment?async=true",
+            "headers": [
+              {
+                "name": "lean-app-token",
+                "value": "34c3bb0f-1e1a-4c94-9c4d-057c90631b72"
+              }
+            ],
+            "params": [
+              {
+                "name": "entity_id",
+                "value": "a2fca65a-8c9a-4623-a84b-b0b08403669d",
+                "type": "query",
+                "description": "The `entity_id` you are querying for. The entity needs to have permissions `accounts` and `transactions`."
+              },
+              {
+                "name": "start_date",
+                "value": "2023-05-01",
+                "type": "query",
+                "description": "The start date in UTC (in the format YYYY-MM-DD) you want to query transactions for."
+              },
+              {
+                "name": "async",
+                "value": "true",
+                "type": "query",
+                "description": "When `true` the API will only return a `results_id` which can be fetched from the `/results` endpoint when ready.\n\nDefaults to true if not provided. Synchronous requests (false) are not supported and will return a 501 error."
+              }
+            ]
+          },
+          "docs": "Provides insights into employment verification and salary consistency based on bank account, including legal employer name in Arabic and English and salary variance details. (only supported for retail accounts).\n\nThis API is asynchronous, please read [this guide](https://docs.leantech.me/v2.0-KSA/docs/handling-asynchronous-requests) for further information on how to fetch the results.\n\n> **\"Only supported for retail accounts\"**\n> "
+        },
+        {
+          "info": {
+            "name": "Get Employment",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/insights/v2/income/employment",
+            "params": [
+              {
+                "name": "entity_id",
+                "value": "",
+                "type": "query",
+                "description": "The `entity_id` you are querying for. The entity needs to have permissions `accounts` and `transactions`."
+              },
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "The start date in UTC (in the format YYYY-MM-DD) you want to query transactions for."
+              },
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. Note: it''s recommended to use the sync flow (async=false) for all requests by adapting the data workflow for connected entities."
+              }
+            ]
+          },
+          "docs": "Provides insights into employment verification and salary consistency based on bank account, including legal employer name in Arabic and English and salary variance details. (only supported for retail accounts).\n\nThis API is asynchronous, please read [this guide](https://docs.leantech.me/v2.0-KSA/docs/handling-asynchronous-requests) for further information on how to fetch the results."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

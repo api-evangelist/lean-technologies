@@ -1,0 +1,1424 @@
+{
+  "item": [
+    {
+      "id": "8530b258-4bce-4359-9b22-26c763af742a",
+      "name": "Payouts",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "038a20dd-2d42-47c0-9523-e4ebec5752bd",
+          "name": "Create Payout Payment",
+          "request": {
+            "name": "Create Payout Payment",
+            "description": {
+              "content": "",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "payouts",
+                "v1",
+                "payment"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "The Idempotency Key used to mark the transaction call to the API.",
+                "key": "idempotency-key",
+                "value": "<string>"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"payment_details\": [\n    {\n      \"account_id\": \"<string>\",\n      \"destination_details\": [\n        {\n          \"amount\": \"<number>\",\n          \"description\": \"<string>\",\n          \"authorize_payment\": false,\n          \"payment_destination_id\": \"<uuid>\"\n        },\n        {\n          \"amount\": \"<number>\",\n          \"description\": \"<string>\",\n          \"authorize_payment\": false,\n          \"payment_destination_id\": \"<uuid>\"\n        }\n      ]\n    },\n    {\n      \"account_id\": \"<string>\",\n      \"destination_details\": [\n        {\n          \"amount\": \"<number>\",\n          \"description\": \"<string>\",\n          \"authorize_payment\": false,\n          \"payment_destination_id\": \"<uuid>\"\n        },\n        {\n          \"amount\": \"<number>\",\n          \"description\": \"<string>\",\n          \"authorize_payment\": false,\n          \"payment_destination_id\": \"<uuid>\"\n        }\n      ]\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "bfd12be9-f557-47a7-ae9e-0b16a8514348",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "payouts",
+                    "v1",
+                    "payment"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "The Idempotency Key used to mark the transaction call to the API.",
+                    "key": "idempotency-key",
+                    "value": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"payment_details\": [\n    {\n      \"account_id\": \"string\",\n      \"destination_details\": [\n        {\n          \"payment_destination_id\": \"5fd95d40-9ea5-4678-8ffb-6b597f21965b\",\n          \"amount\": 0,\n          \"description\": \"string\",\n          \"authorize_payment\": false\n        }\n      ]\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"end_user_id\": \"560d6943-fa8e-4dd9-9717-50025bf2feae\",\n  \"payouts_payment_details\": [\n    {\n      \"payment_intent_id\": \"c97ccfea-b828-4850-bfe4-a06acfbb024b\",\n      \"initiate_payment_task_id\": \"c4d5d3a9-f1bd-4361-9aff-42d4c7a9c3d0\",\n      \"account_number\": \"338247974759251\",\n      \"iban\": \"AE480484338247974759251\",\n      \"destination_details\": {\n        \"destination_id\": \"2dac22a7-e168-454d-960b-7dfaddab6a54\",\n        \"amount\": 670,\n        \"currency\": \"SAR\",\n        \"payment_status\": \"CREATED\",\n        \"recipient_details\": {\n          \"account_number\": \"1015000000601\",\n          \"iban\": \"SA760260001015000000601\",\n          \"name\": \"Al Fulani\"\n        }\n      },\n      \"bank_identifier\": \"LEAN_SME_MB1_UAE\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "9552d37b-9ca4-427d-9727-48af35ce6d71",
+          "name": "Create Bulk Payout Payment",
+          "request": {
+            "name": "Create Bulk Payout Payment",
+            "description": {
+              "content": "",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "payouts",
+                "v1",
+                "bulk-payments"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"account_id\": \"<string>\",\n  \"authorize_payment\": \"<boolean>\",\n  \"payments\": [\n    {\n      \"destination_details\": {\n        \"id\": \"<uuid>\",\n        \"status\": \"<string>\",\n        \"default\": \"<string>\",\n        \"name\": \"<string>\",\n        \"display_name\": \"<string>\",\n        \"address\": \"<string>\",\n        \"city\": \"<string>\",\n        \"country\": \"<string>\",\n        \"account_number\": \"<string>\",\n        \"branch_address\": \"<string>\",\n        \"iban\": \"<string>\",\n        \"swift_code\": \"<string>\",\n        \"customer_id\": \"<string>\",\n        \"ifsc\": \"<string>\",\n        \"transit_number\": \"<string>\",\n        \"sort_code\": \"<string>\",\n        \"routing_number\": \"<string>\",\n        \"postal_code\": \"<string>\",\n        \"currency\": \"<string>\"\n      },\n      \"amount\": \"<number>\",\n      \"currency\": \"<string>\",\n      \"description\": \"<string>\"\n    },\n    {\n      \"destination_details\": {\n        \"id\": \"<uuid>\",\n        \"status\": \"<string>\",\n        \"default\": \"<string>\",\n        \"name\": \"<string>\",\n        \"display_name\": \"<string>\",\n        \"address\": \"<string>\",\n        \"city\": \"<string>\",\n        \"country\": \"<string>\",\n        \"account_number\": \"<string>\",\n        \"branch_address\": \"<string>\",\n        \"iban\": \"<string>\",\n        \"swift_code\": \"<string>\",\n        \"customer_id\": \"<string>\",\n        \"ifsc\": \"<string>\",\n        \"transit_number\": \"<string>\",\n        \"sort_code\": \"<string>\",\n        \"routing_number\": \"<string>\",\n        \"postal_code\": \"<string>\",\n        \"currency\": \"<string>\"\n      },\n      \"amount\": \"<number>\",\n      \"currency\": \"<string>\",\n      \"description\": \"<string>\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "dbf557a3-0fa8-4160-8b84-aea937cef52f",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "payouts",
+                    "v1",
+                    "bulk-payments"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"account_id\": \"<string>\",\n  \"authorize_payment\": \"<boolean>\",\n  \"payments\": [\n    {\n      \"destination_details\": {\n        \"id\": \"4cdca5b0-b651-1586-2299-3f4a4f1f719b\",\n        \"status\": \"CONFIRMED\",\n        \"default\": \"string\",\n        \"name\": \"string\",\n        \"display_name\": \"string\",\n        \"address\": \"string\",\n        \"city\": \"string\",\n        \"country\": \"string\",\n        \"account_number\": \"string\",\n        \"branch_address\": \"string\",\n        \"iban\": \"string\",\n        \"swift_code\": \"string\",\n        \"customer_id\": \"string\",\n        \"ifsc\": \"string\",\n        \"transit_number\": \"string\",\n        \"sort_code\": \"string\",\n        \"routing_number\": \"string\",\n        \"postal_code\": \"string\",\n        \"currency\": \"string\"\n      },\n      \"amount\": 9197.816407591814,\n      \"currency\": \"string\",\n      \"description\": \"string\"\n    },\n    {\n      \"destination_details\": {\n        \"id\": \"ad250752-c293-7b0e-cae7-b5f378a3202c\",\n        \"status\": \"CONFIRMED\",\n        \"default\": \"string\",\n        \"name\": \"string\",\n        \"display_name\": \"string\",\n        \"address\": \"string\",\n        \"city\": \"string\",\n        \"country\": \"string\",\n        \"account_number\": \"string\",\n        \"branch_address\": \"string\",\n        \"iban\": \"string\",\n        \"swift_code\": \"string\",\n        \"customer_id\": \"string\",\n        \"ifsc\": \"string\",\n        \"transit_number\": \"string\",\n        \"sort_code\": \"string\",\n        \"routing_number\": \"string\",\n        \"postal_code\": \"string\",\n        \"currency\": \"string\"\n      },\n      \"amount\": 56.79221851530802,\n      \"currency\": \"string\",\n      \"description\": \"string\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"bulk_payment_intent_id\": \"971bbe44-bbf5-4dd5-ac5b-7f1586f02a76\",\n  \"mechanism\": \"CSV\",\n  \"sender_details\": {\n    \"bank_identifier\": \"ALINMA_DC_SAU\",\n    \"account_number\": \"1231231231231231\",\n    \"iban\": \"SA940261231231231231231\"\n  },\n  \"payouts_payment_details\": {\n    \"status\": \"AWAITING_AUTHORIZATION\",\n    \"currency\": \"SAR\",\n    \"total_amount\": 500,\n    \"total_payments\": 5\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "d12f11eb-a1a1-46e0-af5b-9b79c1a06758",
+          "name": "List Payouts",
+          "request": {
+            "name": "List Payouts",
+            "description": {
+              "content": "",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "payouts",
+                "v1",
+                "payments"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "page_number",
+                  "value": "0",
+                  "description": "The page number."
+                },
+                {
+                  "disabled": false,
+                  "key": "page_size",
+                  "value": "50",
+                  "description": "The number of Payout payments to return per page."
+                },
+                {
+                  "disabled": false,
+                  "key": "amount_min",
+                  "value": "<double>",
+                  "description": "The lower bound limit on the amount value for Payout payments."
+                },
+                {
+                  "disabled": false,
+                  "key": "amount_max",
+                  "value": "<double>",
+                  "description": "The upper bound limit on the amount value for Payout payments."
+                },
+                {
+                  "disabled": false,
+                  "key": "from",
+                  "value": "<dateTime>",
+                  "description": "A DateTime in ISO-8601 format as the lower bound limit on the created_at value for Payout payments."
+                },
+                {
+                  "disabled": false,
+                  "key": "to",
+                  "value": "<dateTime>",
+                  "description": "A DateTime in ISO-8601 format as the upper bound limit on the created_at value for Payout payments."
+                },
+                {
+                  "disabled": false,
+                  "key": "from_updated_at",
+                  "value": "<dateTime>",
+                  "description": "A DateTime in ISO-8601 format as the lower bound limit on the updated_at value for Payout payments."
+                },
+                {
+                  "disabled": false,
+                  "key": "to_updated_at",
+                  "value": "<dateTime>",
+                  "description": "A DateTime in ISO-8601 format as the upper bound limit on the updated_at value for Payout payments."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET"
+          },
+          "response": [
+            {
+              "id": "69c5b978-7354-4338-9e4f-f597ec06ba80",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "payouts",
+                    "v1",
+                    "payments"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "page_number",
+                      "value": "0"
+                    },
+                    {
+                      "key": "page_size",
+                      "value": "50"
+                    },
+                    {
+                      "key": "amount_min",
+                      "value": "<double>"
+                    },
+                    {
+                      "key": "amount_max",
+                      "value": "<double>"
+                    },
+                    {
+                      "key": "from",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "to",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "from_updated_at",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "to_updated_at",
+                      "value": "<dateTime>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"content\": [\n    {\n      \"recipient_name\": \"SHINRA ELECTRICITY\",\n      \"recipient_bank_name\": \"SHINRA LTD.\",\n      \"recipient_iban\": \"SA04033000001XXXXXXXXXX\",\n      \"description\": \"INV001\",\n      \"currency\": \"SAR\",\n      \"amount\": 21.18,\n      \"created_at\": \"2023-08-21T14:11:35.882645Z\",\n      \"payment_intent_id\": \"7d496fab-4ff5-4221-85d7-43e5af28efdb\",\n      \"auto_authorized\": false,\n      \"status\": \"ACCEPTED_BY_BANK\"\n    }\n  ],\n  \"number\": 0,\n  \"size\": 20,\n  \"total_elements\": 1,\n  \"pageable\": {\n    \"sort\": {\n      \"empty\": true,\n      \"sorted\": false,\n      \"unsorted\": true\n    },\n    \"offset\": 0,\n    \"page_size\": 20,\n    \"page_number\": 0,\n    \"paged\": true,\n    \"unpaged\": false\n  },\n  \"last\": true,\n  \"total_pages\": 1,\n  \"sort\": {\n    \"empty\": true,\n    \"sorted\": false,\n    \"unsorted\": true\n  },\n  \"first\": true,\n  \"number_of_elements\": 1,\n  \"empty\": false\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "f116d20a-608c-4bc7-8a0c-2fd5c3d216a1",
+          "name": "Get Payment History",
+          "request": {
+            "name": "Get Payment History",
+            "description": {
+              "content": "",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "payouts",
+                "v1",
+                "payments",
+                ":payment_id",
+                "history"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "payment_id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET"
+          },
+          "response": [
+            {
+              "id": "db7aa3ba-a562-494a-baf9-465d9cde502f",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "payouts",
+                    "v1",
+                    "payments",
+                    ":payment_id",
+                    "history"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "payment_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"customer_id\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n  \"end_user_id\": \"1c948406-47c2-41b4-8423-003697993ca4\",\n  \"intent_id\": \"67d5c457-14b8-44ad-b13d-23a1d5284cd0\",\n  \"payments\": [\n    {\n      \"payment_id\": \"d651555e-18e6-4426-914a-7e50068000f2\",\n      \"description\": \"LEAN 10 45 AM 982\",\n      \"amount\": 530.5,\n      \"bank_identifier\": \"ALINMA_DC_SAU\",\n      \"status\": \"ACCEPTED_BY_BANK\",\n      \"initiation_timestamp\": \"2024-04-08T05:15:59.777849Z\",\n      \"events\": [\n        {\n          \"payment_id\": \"299693c9-85df-468b-bfd1-38f2574fef6a\",\n          \"event\": \"payment.created\",\n          \"status\": \"AWAITING_AUTHORIZATION\",\n          \"published_at\": \"2024-04-08T05:15:59.784188Z\"\n        },\n        {\n          \"payment_id\": \"299693c9-85df-468b-bfd1-38f2574fef6a\",\n          \"event\": \"payment.updated\",\n          \"status\": \"ACCEPTED_BY_BANK\",\n          \"published_at\": \"2024-04-08T05:20:39.447073Z\"\n        }\n      ]\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "e6706d77-9260-41be-a6ad-42e6ebf42471",
+          "name": "Create Payouts Destination(s)",
+          "request": {
+            "name": "Create Payouts Destination(s)",
+            "description": {
+              "content": "Create payment destinations for use with Payouts. Destinations created with Payouts create a corresponding beneficiary with your bank.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "payouts",
+                "v1",
+                "payment",
+                "destinations"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"name\": \"<string>\",\n    \"iban\": \"<string>\",\n    \"address\": \"<string>\",\n    \"country\": \"<string>\",\n    \"city\": \"<string>\",\n    \"currency_iso_code\": \"<string>\",\n    \"bank_identifier\": \"<string>\",\n    \"display_name\": \"<string>\",\n    \"account_number\": \"<string>\",\n    \"swift_code\": \"<string>\",\n    \"ifsc\": \"<string>\",\n    \"sort_code\": \"<string>\",\n    \"routing_number\": \"<string>\",\n    \"transit_code\": \"<string>\",\n    \"branch_address\": \"<string>\",\n    \"customer_id\": \"<string>\",\n    \"postal_code\": \"<string>\"\n  },\n  {\n    \"name\": \"<string>\",\n    \"iban\": \"<string>\",\n    \"address\": \"<string>\",\n    \"country\": \"<string>\",\n    \"city\": \"<string>\",\n    \"currency_iso_code\": \"<string>\",\n    \"bank_identifier\": \"<string>\",\n    \"display_name\": \"<string>\",\n    \"account_number\": \"<string>\",\n    \"swift_code\": \"<string>\",\n    \"ifsc\": \"<string>\",\n    \"sort_code\": \"<string>\",\n    \"routing_number\": \"<string>\",\n    \"transit_code\": \"<string>\",\n    \"branch_address\": \"<string>\",\n    \"customer_id\": \"<string>\",\n    \"postal_code\": \"<string>\"\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "39a9c058-1421-4ef6-8b58-a0b9c0900414",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "payouts",
+                    "v1",
+                    "payment",
+                    "destinations"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  {\n    \"bank_identifier\": \"LEAN_SME_MB1_KSA\",\n    \"name\": \"Santiago Keebler\",\n    \"iban\": \"AE123030303000\",\n    \"display_name\": \"ABC CORP\",\n    \"account_number\": \"0303030\",\n    \"swift_code\": \"UCHZPL2OXXX\",\n    \"ifsc\": \"HADBC0001234\",\n    \"sort_code\": \"89\",\n    \"routing_number\": \"106519958\",\n    \"transit_code\": \"9\",\n    \"address\": \"Texas Wisokystead Wayne County 802 Washington Street Apt. 205\",\n    \"branch_address\": \"Idaho East Elmore Marion County 59966 E 4th Avenue Suite 288\",\n    \"country\": \"SAU\",\n    \"city\": \"Riyadh\",\n    \"customer_id\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n    \"currency_iso_code\": \"SAR\",\n    \"postal_code\": \"90710\"\n  }\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"add_beneficiary_task_id\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n  \"destination_id\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n  \"bank_identifier\": \"LEAN_SME_MB1_UAE\",\n  \"iban\": \"AE123030303000\",\n  \"account_number\": \"0303030\",\n  \"display_name\": \"ABC CORP\",\n  \"status\": \"CONFIRMED\",\n  \"error_message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "ef4ba6ef-c830-4f15-887d-b242ac41e601",
+          "name": "Get Payouts Destination",
+          "request": {
+            "name": "Get Payouts Destination",
+            "description": {
+              "content": "Create payment destinations for use with Payouts. Destinations created with Payouts create a corresponding beneficiary with your bank.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "payouts",
+                "v1",
+                "payment",
+                "destinations",
+                ":destination_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "destination_id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET"
+          },
+          "response": [
+            {
+              "id": "b400e1c0-1f93-4492-93c2-676686e13807",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "payouts",
+                    "v1",
+                    "payment",
+                    "destinations",
+                    ":destination_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "destination_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n  \"name\": \"Fulani Al Fulani\",\n  \"short_name\": \"Fulani\",\n  \"iban\": \"SA123030303000\",\n  \"account_number\": \"0303030\",\n  \"swift_code\": \"INMASARIXXX\",\n  \"status\": \"ACTIVE\",\n  \"address\": \"123. Fake Street\",\n  \"country\": \"SAU\",\n  \"city\": \"Riyadh\",\n  \"currency_iso_code\": \"SAR\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "ca44ad4d-103e-4581-a445-41105dd11bd4",
+          "name": "Get Payment History",
+          "request": {
+            "name": "Get Payment History",
+            "description": {
+              "content": "Get payment history for a payment intent",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "payouts",
+                "v1",
+                "payments",
+                ":intent_id",
+                "history"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "intent_id",
+                  "description": "(Required) Payment intent ID"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET"
+          },
+          "response": [
+            {
+              "id": "5e9f7861-d407-4413-b89a-4e772f47841c",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "payouts",
+                    "v1",
+                    "payments",
+                    ":intent_id",
+                    "history"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "intent_id",
+                      "description": "(Required) Payment intent ID"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"content\": [\n    {\n      \"payment_id\": \"a5a10ac9-c714-4f17-a74f-1a28152c2837\",\n      \"events\": [\n        {\n          \"event\": \"payment.updated\",\n          \"status\": \"ACCEPTED_BY_BANK\",\n          \"published_at\": \"2025-10-30T07:18:51.859454Z\",\n          \"post_initiation_status\": \"PROCESSED\"\n        },\n        {\n          \"event\": \"payment.created\",\n          \"status\": \"AWAITING_AUTHORIZATION\",\n          \"published_at\": \"2025-10-30T07:15:02.507872Z\",\n          \"post_initiation_status\": \"null\"\n        }\n      ]\n    }\n  ],\n  \"page\": {\n    \"number\": 0,\n    \"size\": 10,\n    \"total_elements\": 1,\n    \"total_pages\": 1,\n    \"sort\": null\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "1c730d17-a73e-4920-bd15-6ef8801c9c3e",
+          "name": "Get Payouts",
+          "request": {
+            "name": "Get Payouts",
+            "description": {
+              "content": "Fetch a single payment",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "payouts",
+                "v1",
+                ":payment_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "payment_id",
+                  "description": "(Required) The unique identifier of the payment"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET"
+          },
+          "response": [
+            {
+              "id": "f6f28179-7b55-44a6-98fe-2005fdab507d",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "payouts",
+                    "v1",
+                    ":payment_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "payment_id",
+                      "description": "(Required) The unique identifier of the payment"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"88c4d3e8-b80c-cd46-ac56-f084879744d6\",\n  \"payment_intent_id\": \"30caf494-d6e0-d83e-907b-9393361c3895\",\n  \"payment_source_id\": \"8d98c54d-b11f-4f39-52bb-6065dc0f4749\",\n  \"sender_details\": {\n    \"account_number\": 101929293,\n    \"iban\": \"AE132353311P10164V8R3\",\n    \"name\": \"Dwight Schrute\"\n  },\n  \"recipient_details\": {\n    \"account_number\": 192929827,\n    \"iban\": \"AE23QQWD1004305268319738\",\n    \"name\": \"Michael Gary Scott\"\n  },\n  \"amount\": 3448.38,\n  \"currency\": \"AED\",\n  \"description\": \"30caf494d6e0d83e907b9393361c3895\",\n  \"submission_timestamp\": \"2024-09-19T11:43:08.933Z\",\n  \"initiation_timestamp\": \"2024-09-19T11:43:17.683Z\",\n  \"status\": \"ACCEPTED_BY_BANK\",\n  \"post_initiation_status\": \"PROCESSED\",\n  \"bank_transaction_reference\": \"WD100430526831\",\n  \"granular_status_code\": \"SUCCESS\",\n  \"status_additional_details\": \"Payment processed successfully\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "6d687cfc-d05b-4359-8792-a8a4065f8ba4",
+          "name": "Get Payout Intent",
+          "request": {
+            "name": "Get Payout Intent",
+            "description": {
+              "content": "The Payment intent is the contract between your backend and Lean to certify that you will request a payment from your customer of a specified amount and currency. In order to initiate a payment, the `payment_intent_id` must be provided into the `pay()` method of the LinkSDK.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "payouts",
+                "v1",
+                "intents",
+                ":payment_intent_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "payment_intent_id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET"
+          },
+          "response": [
+            {
+              "id": "9bb0bd90-5875-4b5d-823a-e26b9c83b609",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "payouts",
+                    "v1",
+                    "intents",
+                    ":payment_intent_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "payment_intent_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"payment_intent_id\": \"77f0c07e-7b7b-4677-bb05-6261f9eead0c\",\n  \"customer_id\": \"89bf7bf8-89cb-42e5-8332-eeef869a2524\",\n  \"amount\": 61.4,\n  \"currency\": \"AED\",\n  \"description\": \"77f0c07e7b7b4677bb056261f9eead0c\",\n  \"payment\": {\n    \"id\": \"25c90cc6-67dc-4193-a6e9-a7c875fcc0af\",\n    \"payment_intent_id\": \"77f0c07e-7b7b-4677-bb05-6261f9eead0c\",\n    \"payment_source_id\": \"b6fba7da-1054-5e82-8a9a-afd3ab4d1710\",\n    \"sender_details\": {\n      \"account_number\": \"XXXXXXXXXXXX\",\n      \"iban\": \"AE940030011XXXXXXXXXXXX\",\n      \"name\": \"John Doe\"\n    },\n    \"recipient_details\": {\n      \"account_number\": \"XXXXXXXXXXXX\",\n      \"iban\": \"AE870200000XXXXXXXXXXXX\",\n      \"name\": \"Al Fulani\"\n    },\n    \"amount\": 61.4,\n    \"currency\": \"AED\",\n    \"description\": \"77f0c07e7b7b4677bb056261f9eead0c\",\n    \"submission_timestamp\": \"2021-05-18T13:58:03.427045Z\",\n    \"initiation_timestamp\": \"2021-05-18T13:58:42.445103Z\",\n    \"status\": \"ACCEPTED_BY_BANK\",\n    \"bank_transaction_reference\": 492981211381081\n  },\n  \"payment_destination\": {\n    \"id\": \"95c29647-c568-40d7-8710-3e330de1b5f2\",\n    \"bank_identifier\": \"HSBC_UAE\",\n    \"name\": \"Acme Corp.\",\n    \"iban\": \"AE870200000XXXXXXXXXXXX\",\n    \"display_name\": \"Acme Corp.\",\n    \"account_number\": \"XXXXXXXXXXXX\",\n    \"swift_code\": \"BBMEAEAD\",\n    \"status\": \"CONFIRMED\",\n    \"address\": \"Acme Towers, 51st Floor\",\n    \"country\": \"ARE\",\n    \"city\": \"Dubai\",\n    \"default\": \"true\",\n    \"owner_type\": \"APPLICATION\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "d2eea33b-faa7-4bb9-b220-e1ce82591b29",
+          "name": "Split Payouts",
+          "request": {
+            "name": "Split Payouts",
+            "description": {
+              "content": "A split payout always divides the payout by either a fixed amount or a percentage split—depending on the strategy provided in the request. In case no strategy is entered in the request, the split will fallback to the preconfigured percentage (requires manual configuration). Additionally, any fee payment resulting from the split is directed to a preconfigured destination.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "payouts",
+                "v1",
+                "split-payments"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"payment_details\": [\n    {\n      \"account_id\": \"<string>\",\n      \"destination_details\": [\n        {\n          \"payment_destination_id\": \"<string>\",\n          \"amount\": \"<integer>\",\n          \"description\": \"<string>\",\n          \"authorize_payment\": \"<boolean>\",\n          \"commission\": {\n            \"strategy\": \"PERCENTAGE\",\n            \"amount\": \"<integer>\"\n          }\n        },\n        {\n          \"payment_destination_id\": \"<string>\",\n          \"amount\": \"<integer>\",\n          \"description\": \"<string>\",\n          \"authorize_payment\": \"<boolean>\",\n          \"commission\": {\n            \"strategy\": \"PERCENTAGE\",\n            \"amount\": \"<integer>\"\n          }\n        }\n      ]\n    },\n    {\n      \"account_id\": \"<string>\",\n      \"destination_details\": [\n        {\n          \"payment_destination_id\": \"<string>\",\n          \"amount\": \"<integer>\",\n          \"description\": \"<string>\",\n          \"authorize_payment\": \"<boolean>\",\n          \"commission\": {\n            \"strategy\": \"PERCENTAGE\",\n            \"amount\": \"<integer>\"\n          }\n        },\n        {\n          \"payment_destination_id\": \"<string>\",\n          \"amount\": \"<integer>\",\n          \"description\": \"<string>\",\n          \"authorize_payment\": \"<boolean>\",\n          \"commission\": {\n            \"strategy\": \"PERCENTAGE\",\n            \"amount\": \"<integer>\"\n          }\n        }\n      ]\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "2288708d-eeb3-46bb-99d7-f5c91662868b",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "payouts",
+                    "v1",
+                    "split-payments"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"payment_details\": [\n    {\n      \"account_id\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n      \"destination_details\": [\n        {\n          \"payment_destination_id\": \"7d9b3c2e-29f3-4b1e-bf93-8a3f2a5e3d2c\",\n          \"amount\": 1500,\n          \"description\": \"Fixed fee strategy request\",\n          \"authorize_payment\": true,\n          \"commission\": {\n            \"strategy\": \"FIXED\",\n            \"amount\": 50\n          }\n        }\n      ]\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"end_user_id\": \"560d6943-fa8e-4dd9-9717-50025bf2feae\",\n  \"payouts_payment_details\": [\n    {\n      \"payment_intent_id\": \"c97ccfea-b828-4850-bfe4-a06acfbb024b\",\n      \"initiate_payment_task_id\": \"c4d5d3a9-f1bd-4361-9aff-42d4c7a9c3d0\",\n      \"account_number\": \"338247974759251\",\n      \"iban\": \"AE480484338247974759251\",\n      \"destination_details\": [\n        {\n          \"destination_id\": \"2dac22a7-e168-454d-960b-7dfaddab6a54\",\n          \"amount\": 1450,\n          \"currency\": \"AED\",\n          \"payment_status\": \"CREATED\",\n          \"recipient_details\": {\n            \"account_number\": \"1015000000601\",\n            \"iban\": \"AE760260001015000000601\",\n            \"name\": \"Al Fulani\"\n          }\n        }\n      ],\n      \"bank_identifier\": \"LEAN_SME_MB1_UAE\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "dee0705c-8589-434c-9cec-a56d0a71888e",
+          "name": "Create Refund ",
+          "request": {
+            "name": "Create Refund ",
+            "description": {
+              "content": "Create a refund",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "payouts",
+                "refunds"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "The Idempotency Key used to mark the transaction call to the API.",
+                "key": "idempotency-key",
+                "value": "<string>"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"payment_id\": \"<uuid>\",\n  \"currency\": \"<string>\",\n  \"amount\": \"<number>\",\n  \"reason_code\": \"<string>\",\n  \"description\": \"<string>\",\n  \"external_reference\": \"<string>\",\n  \"status\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "f88c126e-7b20-4775-aa90-6b56da50de70",
+              "name": "Refund initiated successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "payouts",
+                    "refunds"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "The Idempotency Key used to mark the transaction call to the API.",
+                    "key": "idempotency-key",
+                    "value": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"payment_id\": \"9beeb9c0-b899-4f5b-b870-085167c0c6b5\",\n  \"currency\": \"AED\",\n  \"amount\": 100,\n  \"reason_code\": \"DUPLICATED_PAYMENT\",\n  \"description\": \"Internal refund for duplicate txn\",\n  \"external_reference\": \"REF-12345\",\n  \"status\": \"CREATED\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"refund_id\": \"3496556d-c2ee-4c16-9973-91da59bd773a\",\n  \"payment_id\": \"9beeb9c0-b899-4f5b-b870-085167c0c6b5\",\n  \"status\": \"CREATED\",\n  \"amount\": 15.34,\n  \"currency\": \"AED\",\n  \"reason_code\": \"DUPLICATED_PAYMENT\",\n  \"description\": \"QM@4&D[mZU\",\n  \"external_reference\": \"zrjZrq\",\n  \"beneficiary\": {\n    \"name\": \"Rolf Bogan\",\n    \"iban\": \"AE280003008159427667010\",\n    \"account_id\": \"4ed141cd-a564-41a4-acb0-3e773edb1bd1\",\n    \"city\": \"Dubai\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "c02b3285-7983-4d02-8333-a3ae0e407770",
+          "name": "List Refunds",
+          "request": {
+            "name": "List Refunds",
+            "description": {
+              "content": "List refunds payments",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "payouts",
+                "refunds"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "page_number",
+                  "value": "0",
+                  "description": "The page number."
+                },
+                {
+                  "disabled": false,
+                  "key": "page_size",
+                  "value": "50",
+                  "description": "The number of Payout payments to return per page."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET"
+          },
+          "response": [
+            {
+              "id": "4229efc0-6110-4e73-873d-78ee4ef07f95",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "payouts",
+                    "refunds"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "page_number",
+                      "value": "0"
+                    },
+                    {
+                      "key": "page_size",
+                      "value": "50"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"content\": [\n    {\n      \"recipient_name\": \"SHINRA ELECTRICITY\",\n      \"recipient_bank_name\": \"SHINRA LTD.\",\n      \"recipient_iban\": \"AE04033000001XXXXXXXXXX\",\n      \"description\": \"INV001\",\n      \"currency\": \"AED\",\n      \"amount\": 21.18,\n      \"created_at\": \"2023-08-21T14:11:35.882645Z\",\n      \"payment_intent_id\": \"7d496fab-4ff5-4221-85d7-43e5af28efdb\",\n      \"payment_id\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n      \"auto_authorized\": false,\n      \"status\": \"ACCEPTED_BY_BANK\"\n    }\n  ],\n  \"number\": 0,\n  \"size\": 20,\n  \"total_elements\": 1,\n  \"pageable\": {\n    \"sort\": {\n      \"empty\": true,\n      \"sorted\": false,\n      \"unsorted\": true\n    },\n    \"offset\": 0,\n    \"page_size\": 20,\n    \"page_number\": 0,\n    \"paged\": true,\n    \"unpaged\": false\n  },\n  \"last\": true,\n  \"total_pages\": 1,\n  \"first\": true,\n  \"number_of_elements\": 1,\n  \"empty\": false\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "caf9caa9-50b8-483e-a746-eeb32b5c1d23",
+          "name": "get Payouts Refunds By Refund Id",
+          "request": {
+            "name": "get Payouts Refunds By Refund Id",
+            "description": {
+              "content": "Get refund details by refund ID",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "payouts",
+                "refunds",
+                ":refund_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "refund_id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "2958fb65-2f9d-457c-9c11-06e43d67f22b",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "payouts",
+                    "refunds",
+                    ":refund_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "refund_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"refund_id\": \"8161d683-88f7-4c13-b4f5-1e9cb13a49c1\",\n  \"deposit_amount\": 15.34,\n  \"deposit_currency\": \"AED\",\n  \"payment_id\": \"b16b66fa-3cb0-433e-a8c8-5e0467e4c9d6\",\n  \"status\": \"ACCEPTED_BY_BANK\",\n  \"amount\": 15.34,\n  \"currency\": \"AED\",\n  \"reason_code\": \"FRAUDULENT_PAYMENT\",\n  \"description\": \"8N&[as39q_\",\n  \"external_reference\": \"x8VerE\",\n  \"beneficiary\": {\n    \"name\": \"Rolf Bogan\",\n    \"iban\": \"AE280003008159427667010\",\n    \"city\": \"Dubai\"\n  },\n  \"created_at\": \"2025-05-28T11:36:17.899660Z\",\n  \"created_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n  \"actioned_by\": \"fe0f6434-4bf9-46eb-96ac-1a6e7396d27d\",\n  \"refund_intent_id\": \"f41b1b7a-bd15-432b-9fff-a621b68675a4\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://sandbox.leantech.me",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "e59fb833-d859-4114-9c6e-ecbca7d14747",
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Payouts API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "",
+      "type": "text/plain"
+    }
+  }
+}

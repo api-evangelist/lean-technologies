@@ -1,0 +1,161 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Data refresh API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Data refresh",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get data refreshes",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/data/v2/refreshes",
+            "params": [
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. **Note: it's recommended to use the sync flow (async=false) for all requests by adapting the [data workflow](https://docs.leantech.me/docs/data-workflow) for connected entities.**"
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "The page you're requesting - returns page 0 of a response if not specified."
+              },
+              {
+                "name": "size",
+                "value": "",
+                "type": "query",
+                "description": "The number of objects you want to return as a page size."
+              },
+              {
+                "name": "entity_id",
+                "value": "",
+                "type": "query",
+                "description": "The entity_id you're querying for, which is created by LinkSDK `.connect()` function."
+              },
+              {
+                "name": "meta",
+                "value": "",
+                "type": "query",
+                "description": "Additional data you would like to store against the request. Example: {\"foo\": \"val\"}"
+              }
+            ]
+          },
+          "docs": "Get data refreshes"
+        },
+        {
+          "info": {
+            "name": "Trigger a Manual Data Refresh",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://sandbox.leantech.me/data/v2/refreshes",
+            "params": [
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. **Note: it's recommended to use the sync flow (async=false) for all requests by adapting the [data workflow](https://docs.leantech.me/docs/data-workflow) for connected entities.**"
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "The page you're requesting - returns page 0 of a response if not specified."
+              },
+              {
+                "name": "size",
+                "value": "",
+                "type": "query",
+                "description": "The number of objects you want to return as a page size."
+              },
+              {
+                "name": "entity_id",
+                "value": "",
+                "type": "query",
+                "description": "The entity_id you're querying for, which is created by LinkSDK `.connect()` function."
+              },
+              {
+                "name": "meta",
+                "value": "",
+                "type": "query",
+                "description": "Additional data you would like to store against the request. Example: {\"foo\": \"val\"}"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Trigger on-demand data refresh for an entity that has an active consent"
+        },
+        {
+          "info": {
+            "name": "getDataRefreshStatus",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/data/v2/refreshes/:refresh_id",
+            "params": [
+              {
+                "name": "refresh_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. **Note: it's recommended to use the sync flow (async=false) for all requests by adapting the [data workflow](https://docs.leantech.me/docs/data-workflow) for connected entities.**"
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "The page you're requesting - returns page 0 of a response if not specified."
+              },
+              {
+                "name": "size",
+                "value": "",
+                "type": "query",
+                "description": "The number of objects you want to return as a page size."
+              },
+              {
+                "name": "entity_id",
+                "value": "",
+                "type": "query",
+                "description": "The entity_id you're querying for, which is created by LinkSDK `.connect()` function."
+              },
+              {
+                "name": "meta",
+                "value": "",
+                "type": "query",
+                "description": "Additional data you would like to store against the request. Example: {\"foo\": \"val\"}"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

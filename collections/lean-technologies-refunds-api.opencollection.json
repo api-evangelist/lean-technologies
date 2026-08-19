@@ -1,0 +1,108 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Refunds API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Refunds",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List Refunds",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/payouts/refunds",
+            "params": [
+              {
+                "name": "status",
+                "value": "",
+                "type": "query",
+                "description": "Fetch all refund transactions based on the entered refund payment status."
+              },
+              {
+                "name": "size",
+                "value": "",
+                "type": "query",
+                "description": "Defines the number of transactions per page hence manages payload size"
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "Specifies the page number to retreive. e.g if page=2 and size=50, the API will return records from 101 to 150"
+              }
+            ]
+          },
+          "docs": "Returns a list of all refunds intitated . You can filter the transactions based on status of the refund transaction by passing it in the query parameter. This API allows pagination with the default size of 50 refunds per page."
+        },
+        {
+          "info": {
+            "name": "Create Refunds",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://sandbox.leantech.me/payouts/refunds",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Creates and queues a refund payment for approval or rejection. Refunds are always returned to the originating account of the corresponding payment. The total refund amount cannot exceed the original payment. For processing amounts greater than the original payment, please refer to payouts."
+        },
+        {
+          "info": {
+            "name": "Process Refunds",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://sandbox.leantech.me/payouts/refunds",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Updates the refund status based on the approver's (or checker's) confirmation or rejection. This serves as a fail-safe mechanism to validate the refund decision after the transaction is initiated, rather than processing it immediately. "
+        },
+        {
+          "info": {
+            "name": "Get Refund Reasons",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/payouts/refunds/reasons"
+          },
+          "docs": "Returns the reason code for the created refund, which is then used in the refund request creation."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

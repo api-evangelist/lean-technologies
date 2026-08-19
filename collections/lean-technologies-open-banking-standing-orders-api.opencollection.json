@@ -1,0 +1,73 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Open Banking Standing Orders API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Open Banking Standing Orders",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get Open Banking Account Standing Orders",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/open-banking/account-information/2022.11.01-final-errata2/accounts/:AccountId/standing-orders",
+            "headers": [
+              {
+                "name": "x-fapi-interaction-id",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "AccountId",
+                "value": "",
+                "type": "path",
+                "description": "The Lean account identifier uniquely identifying the account within Lean."
+              },
+              {
+                "name": "EntityId",
+                "value": "",
+                "type": "query",
+                "description": "The entity_id of the connected customer."
+              },
+              {
+                "name": "CustomerId",
+                "value": "",
+                "type": "query",
+                "description": "The customer_id of the connected customer."
+              },
+              {
+                "name": "Page",
+                "value": "",
+                "type": "query",
+                "description": "The page you're requesting - returns page 0 of a response if not specified."
+              },
+              {
+                "name": "Size",
+                "value": "",
+                "type": "query",
+                "description": "The number of objects you want to return as a page size."
+              }
+            ]
+          },
+          "docs": "Retrieves the standing orders for a bank account linked by a user via LinkSDK for the KSA Open Banking (SAMA) ecosystem.\nEach standing order object contains the frequency, status, payment amounts, dates, and creditor details.\nRequires ReadStandingOrdersBasic or ReadStandingOrdersDetail consent permission.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

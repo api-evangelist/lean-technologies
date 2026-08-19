@@ -1,0 +1,65 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Iban Verification API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Iban Verification",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Verify IBAN Ownership",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://sandbox.leantech.me/verifications/v2/iban",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Verifies whether an ID or FULL NAME is the account owner of a provided IBAN.\n"
+        },
+        {
+          "info": {
+            "name": "Get IBAN Verification Bank Configurations",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/verifications/v2/iban/banks"
+          },
+          "docs": "Retrieves the list of banks with their availability and enablement status for IBAN verification"
+        },
+        {
+          "info": {
+            "name": "Update IBAN Verification Bank Configurations",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://sandbox.leantech.me/verifications/v2/iban/banks",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Updates the application-level bank enablement configurations for IBAN verification"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

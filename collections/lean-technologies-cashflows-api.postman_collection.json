@@ -1,0 +1,172 @@
+{
+  "item": [
+    {
+      "id": "c45ad7cd-9f13-4762-abc4-65f79b4ef0bf",
+      "name": "Cashflows",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "eb6dd542-a4ea-45c4-9041-6d88c518b333",
+          "name": "Get Cashflow",
+          "request": {
+            "name": "Get Cashflow",
+            "description": {
+              "content": "The Cashflow API provides access to **Personal** and **Business** cash flow data. For personal accounts, it offers insights into monthly cash inflows, outflows, and net cash flow. For business accounts, it offers detailed insights on revenue, expenses, and net cash flow.\n\nYou can use this API to evaluate financial stability, manage cash flow effectively, and assess the account holder’s ability to meet financial obligations.\n\n\nThis API is asynchronous, please read [this guide](https://docs.leantech.me/v2.0-KSA/docs/handling-asynchronous-requests) for further information on how to fetch the results.\n\n> **\"Supported for both retail and corporate accounts\"**\n> ",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "insights",
+                "v2",
+                "assets",
+                "cashflows"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "key": "async",
+                  "value": "true"
+                },
+                {
+                  "disabled": false,
+                  "key": "entity_id",
+                  "value": "<uuid>",
+                  "description": "(Required) The `entity_id` you're querying for."
+                },
+                {
+                  "disabled": false,
+                  "key": "start_date",
+                  "value": "<date>",
+                  "description": "(Required) The start date in UTC (in the format YYYY-MM-DD) you want to query expenses for."
+                },
+                {
+                  "disabled": false,
+                  "key": "async",
+                  "value": "true",
+                  "description": "When `true` the API will only return a `results_id` which can be fetched from the `/results` endpoint when ready. \n\nDefaults to true if not provided. Synchronous requests (false) are not supported and will return a 501 error."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "(Required) Your Lean app token.",
+                "key": "lean-app-token",
+                "value": "<string>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET"
+          },
+          "response": [
+            {
+              "id": "450825be-a9e6-4df4-812c-cffa63695709",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "insights",
+                    "v2",
+                    "assets",
+                    "cashflows"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "entity_id",
+                      "value": "bc287977-2094-3bef-82a0-bae3fe8dadfe"
+                    },
+                    {
+                      "key": "start_date",
+                      "value": "2024-09-01"
+                    },
+                    {
+                      "key": "async",
+                      "value": "true"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) Your Lean app token.",
+                    "key": "lean-app-token",
+                    "value": "ad0832f0-76aa-4b7b-b267-1f002d7104df"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": \"OK\",\n  \"results_id\": \"52c59732-8e5c-45e1-9c16-6e5a0bfd555a\",\n  \"message\": \"Data successfully retrieved\",\n  \"meta\": null,\n  \"timestamp\": \"2025-03-25T05:38:38.124820906Z\",\n  \"status_detail\": null,\n  \"insights\": {\n    \"total\": {\n      \"inwards\": [\n        {\n          \"category\": \"inflow\",\n          \"amount\": {\n            \"currency\": \"SAR\",\n            \"amount\": 404642.7\n          },\n          \"count\": 24\n        }\n      ],\n      \"outwards\": [\n        {\n          \"category\": \"outflow\",\n          \"amount\": {\n            \"currency\": \"SAR\",\n            \"amount\": 175509.7\n          },\n          \"count\": 472\n        }\n      ],\n      \"net\": {\n        \"overall_amount\": {\n          \"currency\": \"SAR\",\n          \"amount\": 229133\n        },\n        \"net_cashflow\": null\n      }\n    },\n    \"monthly_totals\": [\n      {\n        \"month\": 12,\n        \"year\": 2024,\n        \"is_month_complete\": true,\n        \"inwards\": [\n          {\n            \"category\": \"inflow\",\n            \"amount\": {\n              \"currency\": \"SAR\",\n              \"amount\": 50000\n            },\n            \"count\": 2\n          }\n        ],\n        \"outwards\": [\n          {\n            \"category\": \"outflow\",\n            \"amount\": {\n              \"currency\": \"SAR\",\n              \"amount\": 24131.33\n            },\n            \"count\": 69\n          }\n        ],\n        \"net\": {\n          \"overall_amount\": {\n            \"currency\": \"SAR\",\n            \"amount\": 25868.67\n          },\n          \"net_cashflow\": null\n        }\n      },\n      {\n        \"month\": 11,\n        \"year\": 2024,\n        \"is_month_complete\": true,\n        \"inwards\": [\n          {\n            \"category\": \"inflow\",\n            \"amount\": {\n              \"currency\": \"SAR\",\n              \"amount\": 30000\n            },\n            \"count\": 1\n          }\n        ],\n        \"outwards\": [\n          {\n            \"category\": \"outflow\",\n            \"amount\": {\n              \"currency\": \"SAR\",\n              \"amount\": 18197.72\n            },\n            \"count\": 45\n          }\n        ],\n        \"net\": {\n          \"overall_amount\": {\n            \"currency\": \"SAR\",\n            \"amount\": 11802.28\n          },\n          \"net_cashflow\": null\n        }\n      },\n      {\n        \"month\": 10,\n        \"year\": 2024,\n        \"is_month_complete\": true,\n        \"inwards\": [\n          {\n            \"category\": \"inflow\",\n            \"amount\": {\n              \"currency\": \"SAR\",\n              \"amount\": 30000\n            },\n            \"count\": 1\n          }\n        ],\n        \"outwards\": [\n          {\n            \"category\": \"outflow\",\n            \"amount\": {\n              \"currency\": \"SAR\",\n              \"amount\": 28263.44\n            },\n            \"count\": 61\n          }\n        ],\n        \"net\": {\n          \"overall_amount\": {\n            \"currency\": \"SAR\",\n            \"amount\": 1736.56\n          },\n          \"net_cashflow\": null\n        }\n      },\n      {\n        \"month\": 9,\n        \"year\": 2024,\n        \"is_month_complete\": true,\n        \"inwards\": [\n          {\n            \"category\": \"inflow\",\n            \"amount\": {\n              \"currency\": \"SAR\",\n              \"amount\": 50000\n            },\n            \"count\": 2\n          }\n        ],\n        \"outwards\": [\n          {\n            \"category\": \"outflow\",\n            \"amount\": {\n              \"currency\": \"SAR\",\n              \"amount\": 22255.64\n            },\n            \"count\": 62\n          }\n        ],\n        \"net\": {\n          \"overall_amount\": {\n            \"currency\": \"SAR\",\n            \"amount\": 27744.36\n          },\n          \"net_cashflow\": null\n        }\n      },\n      {\n        \"month\": 8,\n        \"year\": 2024,\n        \"is_month_complete\": true,\n        \"inwards\": [\n          {\n            \"category\": \"inflow\",\n            \"amount\": {\n              \"currency\": \"SAR\",\n              \"amount\": 50000\n            },\n            \"count\": 2\n          }\n        ],\n        \"outwards\": [\n          {\n            \"category\": \"outflow\",\n            \"amount\": {\n              \"currency\": \"SAR\",\n              \"amount\": 17177.14\n            },\n            \"count\": 52\n          }\n        ],\n        \"net\": {\n          \"overall_amount\": {\n            \"currency\": \"SAR\",\n            \"amount\": 32822.86\n          },\n          \"net_cashflow\": null\n        }\n      },\n      {\n        \"month\": 7,\n        \"year\": 2024,\n        \"is_month_complete\": true,\n        \"inwards\": [\n          {\n            \"category\": \"inflow\",\n            \"amount\": {\n              \"currency\": \"SAR\",\n              \"amount\": 50000\n            },\n            \"count\": 2\n          }\n        ],\n        \"outwards\": [\n          {\n            \"category\": \"outflow\",\n            \"amount\": {\n              \"currency\": \"SAR\",\n              \"amount\": 19213.91\n            },\n            \"count\": 51\n          }\n        ],\n        \"net\": {\n          \"overall_amount\": {\n            \"currency\": \"SAR\",\n            \"amount\": 30786.09\n          },\n          \"net_cashflow\": null\n        }\n      },\n      {\n        \"month\": 6,\n        \"year\": 2024,\n        \"is_month_complete\": true,\n        \"inwards\": [\n          {\n            \"category\": \"inflow\",\n            \"amount\": {\n              \"currency\": \"SAR\",\n              \"amount\": 30000\n            },\n            \"count\": 1\n          }\n        ],\n        \"outwards\": [\n          {\n            \"category\": \"outflow\",\n            \"amount\": {\n              \"currency\": \"SAR\",\n              \"amount\": 3240.29\n            },\n            \"count\": 13\n          }\n        ],\n        \"net\": {\n          \"overall_amount\": {\n            \"currency\": \"SAR\",\n            \"amount\": 26759.71\n          },\n          \"net_cashflow\": null\n        }\n      },\n      {\n        \"month\": 3,\n        \"year\": 2025,\n        \"is_month_complete\": false,\n        \"inwards\": [\n          {\n            \"category\": \"inflow\",\n            \"amount\": {\n              \"currency\": \"SAR\",\n              \"amount\": 12118.1\n            },\n            \"count\": 4\n          }\n        ],\n        \"outwards\": [\n          {\n            \"category\": \"outflow\",\n            \"amount\": {\n              \"currency\": \"SAR\",\n              \"amount\": 10459.36\n            },\n            \"count\": 28\n          }\n        ],\n        \"net\": {\n          \"overall_amount\": {\n            \"currency\": \"SAR\",\n            \"amount\": 1658.74\n          },\n          \"net_cashflow\": null\n        }\n      },\n      {\n        \"month\": 2,\n        \"year\": 2025,\n        \"is_month_complete\": true,\n        \"inwards\": [\n          {\n            \"category\": \"inflow\",\n            \"amount\": {\n              \"currency\": \"SAR\",\n              \"amount\": 52524.6\n            },\n            \"count\": 7\n          }\n        ],\n        \"outwards\": [\n          {\n            \"category\": \"outflow\",\n            \"amount\": {\n              \"currency\": \"SAR\",\n              \"amount\": 12228.42\n            },\n            \"count\": 35\n          }\n        ],\n        \"net\": {\n          \"overall_amount\": {\n            \"currency\": \"SAR\",\n            \"amount\": 40296.18\n          },\n          \"net_cashflow\": null\n        }\n      },\n      {\n        \"month\": 1,\n        \"year\": 2025,\n        \"is_month_complete\": true,\n        \"inwards\": [\n          {\n            \"category\": \"inflow\",\n            \"amount\": {\n              \"currency\": \"SAR\",\n              \"amount\": 50000\n            },\n            \"count\": 2\n          }\n        ],\n        \"outwards\": [\n          {\n            \"category\": \"outflow\",\n            \"amount\": {\n              \"currency\": \"SAR\",\n              \"amount\": 20342.45\n            },\n            \"count\": 56\n          }\n        ],\n        \"net\": {\n          \"overall_amount\": {\n            \"currency\": \"SAR\",\n            \"amount\": 29657.55\n          },\n          \"net_cashflow\": null\n        }\n      }\n    ],\n    \"credit_debit_behaviour\": {\n      \"periods\": [\n        {\n          \"period\": \"P12M\",\n          \"grand_average_credit_amount\": {\n            \"currency\": \"SAR\",\n            \"amount\": 18794.42\n          },\n          \"grand_average_credit_count\": 2,\n          \"grand_average_debit_amount\": {\n            \"currency\": \"SAR\",\n            \"amount\": 301.58\n          },\n          \"grand_average_debit_count\": 39,\n          \"grand_average_credit_debit_amount_ratio\": 62.32,\n          \"grand_average_credit_debit_count_ratio\": 0.05,\n          \"total_volume_of_credit\": {\n            \"currency\": \"SAR\",\n            \"amount\": 404642.7\n          },\n          \"total_volume_of_debit\": {\n            \"currency\": \"SAR\",\n            \"amount\": 175509.7\n          },\n          \"total_volume_of_credit_debit_ratio\": 2.31\n        },\n        {\n          \"period\": \"P9M\",\n          \"grand_average_credit_amount\": {\n            \"currency\": \"SAR\",\n            \"amount\": 21725.89\n          },\n          \"grand_average_credit_count\": 2,\n          \"grand_average_debit_amount\": {\n            \"currency\": \"SAR\",\n            \"amount\": 374.41\n          },\n          \"grand_average_debit_count\": 51,\n          \"grand_average_credit_debit_amount_ratio\": 58.03,\n          \"grand_average_credit_debit_count_ratio\": 0.05,\n          \"total_volume_of_credit\": {\n            \"currency\": \"SAR\",\n            \"amount\": 374642.7\n          },\n          \"total_volume_of_debit\": {\n            \"currency\": \"SAR\",\n            \"amount\": 172269.41\n          },\n          \"total_volume_of_credit_debit_ratio\": 2.17\n        },\n        {\n          \"period\": \"P6M\",\n          \"grand_average_credit_amount\": {\n            \"currency\": \"SAR\",\n            \"amount\": 20088.84\n          },\n          \"grand_average_credit_count\": 2,\n          \"grand_average_debit_amount\": {\n            \"currency\": \"SAR\",\n            \"amount\": 383.94\n          },\n          \"grand_average_debit_count\": 49,\n          \"grand_average_credit_debit_amount_ratio\": 52.32,\n          \"grand_average_credit_debit_count_ratio\": 0.06,\n          \"total_volume_of_credit\": {\n            \"currency\": \"SAR\",\n            \"amount\": 224642.7\n          },\n          \"total_volume_of_debit\": {\n            \"currency\": \"SAR\",\n            \"amount\": 113622.72\n          },\n          \"total_volume_of_credit_debit_ratio\": 1.98\n        },\n        {\n          \"period\": \"P3M\",\n          \"grand_average_credit_amount\": {\n            \"currency\": \"SAR\",\n            \"amount\": 11844.35\n          },\n          \"grand_average_credit_count\": 4,\n          \"grand_average_debit_amount\": {\n            \"currency\": \"SAR\",\n            \"amount\": 362.06\n          },\n          \"grand_average_debit_count\": 39,\n          \"grand_average_credit_debit_amount_ratio\": 32.71,\n          \"grand_average_credit_debit_count_ratio\": 0.11,\n          \"total_volume_of_credit\": {\n            \"currency\": \"SAR\",\n            \"amount\": 114642.7\n          },\n          \"total_volume_of_debit\": {\n            \"currency\": \"SAR\",\n            \"amount\": 43030.23\n          },\n          \"total_volume_of_credit_debit_ratio\": 2.66\n        }\n      ]\n    },\n    \"big_payments\": {\n      \"periods\": [\n        {\n          \"period\": \"P12M\",\n          \"average_max_monthly_credit_amount\": {\n            \"currency\": \"SAR\",\n            \"amount\": 23295.29\n          },\n          \"average_max_monthly_debit_amount\": {\n            \"currency\": \"SAR\",\n            \"amount\": 925.22\n          },\n          \"average_max_monthly_credit_debit_amount_ratio\": 25.18\n        },\n        {\n          \"period\": \"P9M\",\n          \"average_max_monthly_credit_amount\": {\n            \"currency\": \"SAR\",\n            \"amount\": 27727.05\n          },\n          \"average_max_monthly_debit_amount\": {\n            \"currency\": \"SAR\",\n            \"amount\": 1164.95\n          },\n          \"average_max_monthly_credit_debit_amount_ratio\": 23.8\n        },\n        {\n          \"period\": \"P6M\",\n          \"average_max_monthly_credit_amount\": {\n            \"currency\": \"SAR\",\n            \"amount\": 26590.58\n          },\n          \"average_max_monthly_debit_amount\": {\n            \"currency\": \"SAR\",\n            \"amount\": 1142.08\n          },\n          \"average_max_monthly_credit_debit_amount_ratio\": 23.28\n        },\n        {\n          \"period\": \"P3M\",\n          \"average_max_monthly_credit_amount\": {\n            \"currency\": \"SAR\",\n            \"amount\": 23181.16\n          },\n          \"average_max_monthly_debit_amount\": {\n            \"currency\": \"SAR\",\n            \"amount\": 1098.98\n          },\n          \"average_max_monthly_credit_debit_amount_ratio\": 21.09\n        }\n      ]\n    }\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://sandbox.leantech.me",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "a7d01136-62ea-4f07-9e56-b9eaa5795ab8",
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Cashflows API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "",
+      "type": "text/plain"
+    }
+  }
+}

@@ -1,0 +1,215 @@
+{
+  "item": [
+    {
+      "id": "a94f7f6b-2784-4c58-b0b9-8b081e641e2e",
+      "name": "Bank",
+      "description": {
+        "content": "Bank discovery and configuration operations",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "256c9635-510a-4d77-8db7-fe8f000ef95a",
+          "name": "List Banks",
+          "request": {
+            "name": "List Banks",
+            "description": {
+              "content": "Fetch a list of all supported Banks for your application, includes status and configuration information.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "banks",
+                "v1"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "customer_id",
+                  "value": "<uuid>",
+                  "description": "Scopes the returned banks to those enabled for the given customer. Used to control bank rollout on a per-customer basis, so that newly onboarded banks can be exposed to selected customers before being made generally available."
+                },
+                {
+                  "disabled": false,
+                  "key": "bank_type",
+                  "value": "<string>",
+                  "description": "Specifies whether the Entity is a Retail or Corporate owned account. "
+                },
+                {
+                  "disabled": false,
+                  "key": "account_types",
+                  "value": "<string>",
+                  "description": "Filters the results to banks that support at least one of the specified account types."
+                },
+                {
+                  "disabled": false,
+                  "key": "account_types",
+                  "value": "<string>",
+                  "description": "Filters the results to banks that support at least one of the specified account types."
+                },
+                {
+                  "disabled": false,
+                  "key": "country_codes",
+                  "value": "<string>",
+                  "description": "Filters the results to banks located in the specified countries. Values must be alpha-3 (3 character) ISO 3166 country codes."
+                },
+                {
+                  "disabled": false,
+                  "key": "country_codes",
+                  "value": "<string>",
+                  "description": "Filters the results to banks located in the specified countries. Values must be alpha-3 (3 character) ISO 3166 country codes."
+                },
+                {
+                  "disabled": false,
+                  "key": "connection_types",
+                  "value": "<string>",
+                  "description": "Filters the results to banks that use one of the specified connection types."
+                },
+                {
+                  "disabled": false,
+                  "key": "connection_types",
+                  "value": "<string>",
+                  "description": "Filters the results to banks that use one of the specified connection types."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "Indicates sandbox vs live environment",
+                "key": "lean-link-sandbox",
+                "value": "<string>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "624358c2-813b-4b05-9e85-5cd0086d1eed",
+              "name": "List of banks",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "banks",
+                    "v1"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "customer_id",
+                      "value": "f1b2c3d4-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+                    },
+                    {
+                      "key": "bank_type",
+                      "value": "RETAIL"
+                    },
+                    {
+                      "key": "account_types",
+                      "value": "PERSONAL"
+                    },
+                    {
+                      "key": "account_types",
+                      "value": "BUSINESS"
+                    },
+                    {
+                      "key": "country_codes",
+                      "value": "SAU"
+                    },
+                    {
+                      "key": "country_codes",
+                      "value": "ARE"
+                    },
+                    {
+                      "key": "connection_types",
+                      "value": "OPEN_BANKING"
+                    },
+                    {
+                      "key": "connection_types",
+                      "value": "DIRECT_CONNECTION"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Indicates sandbox vs live environment",
+                    "key": "lean-link-sandbox",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"account_type\": \"PERSONAL\",\n    \"active\": true,\n    \"arabic_name\": \"بنك الرياض\",\n    \"availability\": {\n      \"active\": {\n        \"data\": true,\n        \"payments\": true\n      },\n      \"enabled\": {\n        \"data\": true,\n        \"payments\": true\n      }\n    },\n    \"background_color\": \"#ffffff\",\n    \"bank_type\": \"RETAIL\",\n    \"commercial_name\": \"Riyad Bank\",\n    \"commercial_name_arabic\": \"بنك الرياض\",\n    \"connection_type\": \"OPEN_BANKING\",\n    \"country_code\": \"SAU\",\n    \"identifier\": \"RIYAD_SAU\",\n    \"international_destinations\": [],\n    \"international_transfer_limits\": [],\n    \"logo\": \"https://cdn.leantech.me/img/bank-assets/sau/glyphs/riyad/g-white-riyad_sau.png\",\n    \"logo_alt\": \"https://cdn.leantech.me/img/bank-assets/sau/glyphs/riyad/g-color-riyad_sau.png\",\n    \"main_color\": \"#16AD98\",\n    \"mock\": false,\n    \"name\": \"Riyad Bank\",\n    \"relates_to\": null,\n    \"supported_account_sub_types\": [\n      \"CHARGE_CARD\",\n      \"CREDIT\",\n      \"CURRENT\",\n      \"EMONEY\",\n      \"LOAN\",\n      \"MORTGAGE\",\n      \"PREPAID\",\n      \"SAVINGS\",\n      \"CALL\"\n    ],\n    \"supported_account_types\": [\n      \"CHARGE_CARD\",\n      \"CREDIT\",\n      \"CURRENT\",\n      \"EMONEY\",\n      \"LOAN\",\n      \"MORTGAGE\",\n      \"PREPAID\",\n      \"SAVINGS\",\n      \"CALL\"\n    ],\n    \"swift_code\": \"RIBLSARI\",\n    \"theme\": \"dark\",\n    \"traits\": [\n      \"auth-redirect\"\n    ],\n    \"transfer_limits\": [\n      {\n        \"currency\": \"AED\",\n        \"min\": 10,\n        \"max\": 100000\n      }\n    ]\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://sandbox.leantech.me",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "a674d658-5bfa-499f-8f23-bd3c97ecd7de",
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Bank API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Bank discovery and configuration operations",
+      "type": "text/plain"
+    }
+  }
+}

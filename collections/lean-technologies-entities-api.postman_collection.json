@@ -1,0 +1,656 @@
+{
+  "item": [
+    {
+      "id": "135edaef-3d73-46ce-a2d7-d16a6101b83c",
+      "name": "Entities",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "912124b1-5827-4aca-a835-26e8dd5bbf39",
+          "name": "Get Entities for Customer",
+          "request": {
+            "name": "Get Entities for Customer",
+            "description": {
+              "content": "An Entity is generated whenever a Customer connects a new bank using the `.connect()` method in the LinkSDK with _any_ data related permissions. ",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "customers",
+                "v1",
+                ":customer_id",
+                "entities"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "customer_id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET"
+          },
+          "response": [
+            {
+              "id": "70973484-1aa1-4feb-a8e7-95109caecc93",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "v1",
+                    ":customer_id",
+                    "entities"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "customer_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": \"efbad0dd-641a-ef83-ef7e-c90ca172759b\",\n    \"customer_id\": \"6bf8f7ae-e0f5-dae4-9519-de82fbc9ee42\",\n    \"bank_identifier\": \"MOCK_UAE\",\n    \"permissions\": {\n      \"identity\": true,\n      \"accounts\": true,\n      \"balance\": true,\n      \"transactions\": false\n    },\n    \"bank_type\": \"RETAIL\"\n  },\n  {\n    \"id\": \"51161c8b-a6c3-6d35-5c89-fa4e03f87390\",\n    \"customer_id\": \"8c7af590-ac88-f41b-8b59-067ab3a12349\",\n    \"bank_identifier\": \"MOCK_UAE\",\n    \"permissions\": {\n      \"identity\": false,\n      \"accounts\": false,\n      \"balance\": true,\n      \"transactions\": true\n    },\n    \"bank_type\": \"CORPORATE\"\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "c604f001-2141-4daf-8cbd-c8dd56230623",
+          "name": "Get Entity by ID",
+          "request": {
+            "name": "Get Entity by ID",
+            "description": {
+              "content": "Returns a single Entity.\n\nAn Entity is generated whenever a Customer connects a new bank using the `.connect()` method in the LinkSDK with _any_ data related permissions. ",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "customers",
+                "v1",
+                ":customer_id",
+                "entities",
+                ":entity_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "customer_id",
+                  "description": "(Required) "
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "entity_id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET"
+          },
+          "response": [
+            {
+              "id": "a853239a-d365-44f7-b639-f03e139e4481",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "v1",
+                    ":customer_id",
+                    "entities",
+                    ":entity_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "customer_id",
+                      "description": "(Required) "
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "entity_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"8d56a41f-7045-7312-a620-abe78414a143\",\n  \"customer_id\": \"3c70d3ed-d761-f231-5fd1-2bdeef42e46e\",\n  \"bank_identifier\": \"MOCK_UAE\",\n  \"permissions\": {\n    \"identity\": true,\n    \"accounts\": true,\n    \"balance\": false,\n    \"transactions\": true\n  },\n  \"bank_type\": \"RETAIL\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "5a49e7e2-4ca5-45c1-bcba-2ca789985627",
+          "name": "Delete Entity",
+          "request": {
+            "name": "Delete Entity",
+            "description": {
+              "content": "Marks the entity as deleted. It can be recreated later by intiating a new .connect() flow from the LinkSDK.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "customers",
+                "v1",
+                ":customer_id",
+                "entities",
+                ":entity_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "customer_id",
+                  "description": "(Required) "
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "entity_id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "DELETE",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "ac93dd11-c23c-4e3a-9b06-178e93b59a05",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "v1",
+                    ":customer_id",
+                    "entities",
+                    ":entity_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "customer_id",
+                      "description": "(Required) "
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "entity_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"reason\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "a4231bb7-e6d3-4c13-b177-36572fae8d4e",
+          "name": "Retrieve all entities for a given time range",
+          "request": {
+            "name": "Retrieve all entities for a given time range",
+            "description": {
+              "content": "Retrieves a list of entities created for a specific application within the provided time range.\nThe entities are paginated, and the query parameters allow filtering by start and end dates.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "customers",
+                "v1",
+                "entities"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "page_number",
+                  "value": "0",
+                  "description": "Indicator of which page of results to return, starts at 0"
+                },
+                {
+                  "disabled": false,
+                  "key": "page_size",
+                  "value": "100",
+                  "description": "Size of a single page of results to return"
+                },
+                {
+                  "disabled": false,
+                  "key": "start_date",
+                  "value": "<date>",
+                  "description": "(Required) The start date must be in the past or present."
+                },
+                {
+                  "disabled": false,
+                  "key": "end_date",
+                  "value": "<date>",
+                  "description": "(Required) The end date must be after the start date and in the past or present."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "41acab0c-6d74-402a-9535-15641ad0a935",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "v1",
+                    "entities"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "page_number",
+                      "value": "0"
+                    },
+                    {
+                      "key": "page_size",
+                      "value": "100"
+                    },
+                    {
+                      "key": "start_date",
+                      "value": "2025-03-01"
+                    },
+                    {
+                      "key": "end_date",
+                      "value": "2025-03-31"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"efbad0dd-641a-ef83-ef7e-c90ca172759b\",\n      \"customer_id\": \"6bf8f7ae-e0f5-dae4-9519-de82fbc9ee42\",\n      \"bank_identifier\": \"MOCK_UAE\",\n      \"permissions\": {\n        \"identity\": true,\n        \"accounts\": true,\n        \"balance\": true,\n        \"transactions\": false,\n        \"identities\": false,\n        \"scheduled_payments\": false,\n        \"standing_orders\": false,\n        \"direct_debits\": false,\n        \"beneficiaries\": false\n      },\n      \"bank_type\": \"RETAIL\",\n      \"status\": \"ACTIVE\",\n      \"created_at\": \"2025-02-25 11:40:31.981\",\n      \"updated_at\": \"2025-02-27 11:40:31.981\",\n      \"consents\": []\n    },\n    {\n      \"id\": \"51161c8b-a6c3-6d35-5c89-fa4e03f87390\",\n      \"customer_id\": \"8c7af590-ac88-f41b-8b59-067ab3a12349\",\n      \"bank_identifier\": \"MOCK_UAE\",\n      \"permissions\": {\n        \"identity\": false,\n        \"accounts\": false,\n        \"balance\": true,\n        \"transactions\": true,\n        \"identities\": false,\n        \"scheduled_payments\": false,\n        \"standing_orders\": false,\n        \"direct_debits\": false,\n        \"beneficiaries\": false\n      },\n      \"bank_type\": \"SME\",\n      \"status\": \"ACTIVE\",\n      \"created_at\": \"2025-02-25 11:40:31.981\",\n      \"updated_at\": \"2025-02-28 11:40:31.981\",\n      \"consents\": []\n    }\n  ],\n  \"page\": {\n    \"number\": 0,\n    \"size\": 2,\n    \"total_elements\": 2,\n    \"total_pages\": 1\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "980d96b1-2fea-469b-9ddb-497bd9e57c71",
+          "name": "Delete Consent",
+          "request": {
+            "name": "Delete Consent",
+            "description": {
+              "content": "Revokes a consent",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "customers",
+                "v1",
+                ":customer_id",
+                "entities",
+                ":entity_id",
+                "consent",
+                ":consent_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "reason",
+                  "value": "<string>",
+                  "description": "(Required) "
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "customer_id",
+                  "description": "(Required) "
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "entity_id",
+                  "description": "(Required) "
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "consent_id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "DELETE"
+          },
+          "response": [
+            {
+              "id": "49396479-334f-4fff-8061-21ba58f1fbe6",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "v1",
+                    ":customer_id",
+                    "entities",
+                    ":entity_id",
+                    "consent",
+                    ":consent_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "reason",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "customer_id",
+                      "description": "(Required) "
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "entity_id",
+                      "description": "(Required) "
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "consent_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://sandbox.leantech.me",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "8ed9cec6-0a88-41f7-b361-6a013f56652f",
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Entities API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "",
+      "type": "text/plain"
+    }
+  }
+}

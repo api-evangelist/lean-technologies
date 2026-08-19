@@ -1,0 +1,86 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Assets API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Assets",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get Cashflow",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/insights/v2/assets/cashflows",
+            "params": [
+              {
+                "name": "entity_id",
+                "value": "",
+                "type": "query",
+                "description": "The `entity_id` you're querying for."
+              },
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. Note: it''s recommended to use the sync flow (async=false) for all requests by adapting the data workflow for connected entities."
+              },
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "The start date in UTC (in the format YYYY-MM-DD) you want to query transactions for."
+              }
+            ]
+          },
+          "docs": "The Cashflow API provides access to **Personal** and **Business** cash flow data. For personal accounts, it offers insights into monthly cash inflows, outflows, and net cash flow. For business accounts, it offers detailed insights on revenue, expenses, and net cash flow.\nYou can use this API to evaluate financial stability, manage cash flow effectively, and assess the account holder's ability to meet financial obligations."
+        },
+        {
+          "info": {
+            "name": "Get Cash Balances",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/insights/v2/assets/balances",
+            "params": [
+              {
+                "name": "entity_id",
+                "value": "",
+                "type": "query",
+                "description": "The `entity_id` you're querying for."
+              },
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. Note: it''s recommended to use the sync flow (async=false) for all requests by adapting the data workflow for connected entities."
+              },
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "The start date in UTC (in the format YYYY-MM-DD) you want to query transactions for."
+              }
+            ]
+          },
+          "docs": "The Cash Balances API provides a comprehensive view of both **Personal** or **Business** cash balances, offering insights into current, historical, and average balances.\nThe data in this API allows financial companies to monitor liquidity trends and assess the financial health of bank accounts over time. Additionally, it provides information on the frequency and amount of contributions. You can use these insights to evaluate repayment capacity.\n> **\"Supported for both retail and corporate accoun"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,104 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Customers API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Customers",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List Customers",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/customers/v1",
+            "headers": [
+              {
+                "name": "lean-app-token",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "page_number",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "page_size",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "List Customers"
+        },
+        {
+          "info": {
+            "name": "Create Customer",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://sandbox.leantech.me/customers/v1",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a customer object on Lean given the app_user_id which is the identifier (or a hash of the identifier) you use to refer to a user in your own database. The customer object in Lean should map one to one with the user object in your database."
+        },
+        {
+          "info": {
+            "name": "Get Customer by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/customers/v1/:customer_id",
+            "params": [
+              {
+                "name": "customer_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get Customer by ID"
+        },
+        {
+          "info": {
+            "name": "Get Customer by app_user_id",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/customers/v1/app-user-id/:app_user_id",
+            "params": [
+              {
+                "name": "app_user_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get Customer by app_user_id"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

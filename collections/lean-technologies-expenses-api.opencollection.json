@@ -1,0 +1,60 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Expenses API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Expenses",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get Expenses",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/insights/v2/expenses",
+            "params": [
+              {
+                "name": "entity_id",
+                "value": "",
+                "type": "query",
+                "description": "The `entity_id` you're querying for."
+              },
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. Note: it''s recommended to use the sync flow (async=false) for all requests by adapting the data workflow for connected entities."
+              },
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "The start date in UTC (in the format YYYY-MM-DD) you want to query expenses for."
+              },
+              {
+                "name": "expense_type",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Provides insights on the expenses (outflows) from a bank account."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

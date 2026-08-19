@@ -1,0 +1,106 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Payment Intents API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Payment Intents",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List Payment Intents",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/payments/v1/intents",
+            "params": [
+              {
+                "name": "page",
+                "value": "0",
+                "type": "query",
+                "description": "Set which page to fetch (indexed to 0)"
+              },
+              {
+                "name": "size",
+                "value": "50",
+                "type": "query",
+                "description": "Set the page size to be returned"
+              },
+              {
+                "name": "customer_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter Payment Intents by Customer"
+              },
+              {
+                "name": "from",
+                "value": "",
+                "type": "query",
+                "description": "Fetch Payment Intents created after this date-time"
+              },
+              {
+                "name": "to",
+                "value": "",
+                "type": "query",
+                "description": "Fetch Payment Intents created before this date-time"
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query",
+                "description": "Filter the results to a specific status"
+              }
+            ]
+          },
+          "docs": "List all Payment Intents"
+        },
+        {
+          "info": {
+            "name": "Create Payment Intent",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://sandbox.leantech.me/payments/v1/intents",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "The Payment intent is the contract between your backend and Lean to certify that you will request a payment from your customer of a specified amount and currency. In order to initiate a payment, the `payment_intent_id` must be provided into the `pay()` method of the LinkSDK."
+        },
+        {
+          "info": {
+            "name": "Get Payment Intent",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/payments/v1/intents/:payment_intent_id",
+            "params": [
+              {
+                "name": "payment_intent_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "The Payment intent is the contract between your backend and Lean to certify that you will request a payment from your customer of a specified amount and currency. In order to initiate a payment, the `payment_intent_id` must be provided into the `pay()` method of the LinkSDK."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

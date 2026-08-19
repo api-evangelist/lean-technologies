@@ -1,0 +1,1161 @@
+{
+  "item": [
+    {
+      "id": "5891ad54-2508-4ce2-baee-c894769b4428",
+      "name": "Open Banking",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "829c7f81-0738-4166-908b-78231de9e296",
+          "name": "Create Connect Link",
+          "request": {
+            "name": "Create Connect Link",
+            "description": {
+              "content": "Creates a redirect URL for a customer to provide consent on the bank.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v2",
+                "accounts-access-consents"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bank_identifier\": \"<string>\",\n  \"success_redirect_url\": \"<uri>\",\n  \"failure_redirect_url\": \"<uri>\",\n  \"permissions\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"customer_id\": \"<uuid>\",\n  \"app_user_id\": \"<string>\",\n  \"expiration_date_time\": \"<dateTime>\",\n  \"transaction_from_date_time\": \"<dateTime>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "4c057146-51d8-4786-9dd8-f7e53a1cbdd9",
+              "name": "Redirect URL created successfully.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v2",
+                    "accounts-access-consents"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"app_user_id\": \"YOUR_IDENTIFIER_FOR_CUSTOMER\",\n  \"bank_identifier\": \"ALINMA_SAU\",\n  \"success_redirect_url\": \"https://www.leantech.me/?success=true\",\n  \"failure_redirect_url\": \"https://www.leantech.me/?success=false\",\n  \"permissions\": [\n    \"accounts\",\n    \"identity\",\n    \"balance\",\n    \"transactions\",\n    \"identities\",\n    \"scheduled_payments\",\n    \"standing_orders\",\n    \"direct_debits\",\n    \"beneficiaries\"\n  ],\n  \"expiration_date_time\": \"2026-04-16T01:10:53+03:00\",\n  \"transaction_from_date_time\": \"2025-04-16T01:29:56.000Z\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"redirect_url\": \"https://m.alinma.com/landing/auth?request_uri=urn:ietf:params:oauth:request_uri:1b859eb3-54e1-48b2-b067-6fca73682162&response_type=code id_token&client_id=422c1444-8d98-4d81-b7cb-5120d21101f4&scope=openid accounts:urn:INMASARI:kac-30e0f1f2-ba31-49e4-9dab-91b62586e56f&redirect_uri=https://obksabank.leantech.me/data/callback/ALINMA_SAU\",\n  \"bank_consent_id\": \"urn:INMASARI:kac-30e0f1f2-ba31-49e4-9dab-91b62586e56f\",\n  \"customer_id\": \"7affbbf9-be53-433c-a598-c06449c2b4b0\",\n  \"app_user_id\": \"YOUR_IDENTIFIER_FOR_CUSTOMER\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d8ccb4a9-fa94-4df4-a66d-522a6f034efc",
+              "name": "Bad Request - Invalid input.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v2",
+                    "accounts-access-consents"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"app_user_id\": \"YOUR_IDENTIFIER_FOR_CUSTOMER\",\n  \"bank_identifier\": \"ALINMA_SAU\",\n  \"success_redirect_url\": \"https://www.leantech.me/?success=true\",\n  \"failure_redirect_url\": \"https://www.leantech.me/?success=false\",\n  \"permissions\": [\n    \"accounts\",\n    \"identity\",\n    \"balance\",\n    \"transactions\",\n    \"identities\",\n    \"scheduled_payments\",\n    \"standing_orders\",\n    \"direct_debits\",\n    \"beneficiaries\"\n  ],\n  \"expiration_date_time\": \"2026-04-16T01:10:53+03:00\",\n  \"transaction_from_date_time\": \"2025-04-16T01:29:56.000Z\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status_code\": 401,\n  \"message\": \"Authentication failed\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a934e756-af44-494d-a961-24a272ce29d9",
+              "name": "Unauthorized - Invalid or missing token.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v2",
+                    "accounts-access-consents"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"app_user_id\": \"YOUR_IDENTIFIER_FOR_CUSTOMER\",\n  \"bank_identifier\": \"ALINMA_SAU\",\n  \"success_redirect_url\": \"https://www.leantech.me/?success=true\",\n  \"failure_redirect_url\": \"https://www.leantech.me/?success=false\",\n  \"permissions\": [\n    \"accounts\",\n    \"identity\",\n    \"balance\",\n    \"transactions\",\n    \"identities\",\n    \"scheduled_payments\",\n    \"standing_orders\",\n    \"direct_debits\",\n    \"beneficiaries\"\n  ],\n  \"expiration_date_time\": \"2026-04-16T01:10:53+03:00\",\n  \"transaction_from_date_time\": \"2025-04-16T01:29:56.000Z\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status_code\": 401,\n  \"message\": \"Authentication failed\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "bc6f6f53-ce12-4145-835f-7c9e4bc32cf6",
+          "name": "List customer consents",
+          "request": {
+            "name": "List customer consents",
+            "description": {
+              "content": "Returns a paginated list of consents across all entities of the given customer. Supports optional filtering by consent status and consent type.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "customers",
+                "v1",
+                ":customerId",
+                "consents"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "pageNumber",
+                  "value": "0",
+                  "description": "Zero-based page number. Defaults to 0."
+                },
+                {
+                  "disabled": false,
+                  "key": "pageSize",
+                  "value": "20",
+                  "description": "Page size. Defaults to 20."
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "customerId",
+                  "description": "(Required) The Lean unique identifier for the customer."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET"
+          },
+          "response": [
+            {
+              "id": "8a16de9b-d1f4-4495-9947-8943780c4424",
+              "name": "Paginated consents for the customer.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "v1",
+                    ":customerId",
+                    "consents"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "pageNumber",
+                      "value": "0"
+                    },
+                    {
+                      "key": "pageSize",
+                      "value": "20"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "customerId",
+                      "description": "(Required) The Lean unique identifier for the customer."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"f3b7a8a2-7e9b-4d2a-9b80-9f0fbd4f1c11\",\n      \"bank_consent_id\": \"urn:INMASARI:kac-30e0f1f2-ba31-49e4-9dab-91b62586e56f\",\n      \"consent_status\": \"ACTIVE\",\n      \"standard_consent_status\": \"AUTHORISED\",\n      \"consent_type\": \"ACCOUNT_ACCESS\",\n      \"permissions\": {\n        \"identity\": true,\n        \"accounts\": true,\n        \"balance\": true,\n        \"transactions\": true,\n        \"identities\": false,\n        \"scheduled_payments\": false,\n        \"standing_orders\": false,\n        \"direct_debits\": false,\n        \"beneficiaries\": false\n      },\n      \"creation_date_time\": \"2026-04-16T01:10:53+03:00\",\n      \"status_update_date_time\": \"2026-04-20T09:15:00+03:00\",\n      \"transaction_from_date_time\": \"2025-04-16T01:29:56.000Z\",\n      \"transaction_to_date_time\": \"2026-04-16T01:29:56.000Z\",\n      \"expiration_date_time\": \"2027-04-16T01:10:53+03:00\",\n      \"accounts\": [\n        {\n          \"scheme_name\": \"IBAN\",\n          \"identification\": \"SA0380000000608010167519\",\n          \"secondary_identification\": \"001\",\n          \"name\": \"John Doe\"\n        }\n      ],\n      \"bank_identifier\": \"ALINMA_SAU\"\n    }\n  ],\n  \"page\": {\n    \"number\": 0,\n    \"size\": 20,\n    \"total_elements\": 1,\n    \"total_pages\": 1\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b94e47d4-03b7-4b98-952b-da294efd49e2",
+              "name": "Unauthorized - Invalid or missing token.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "v1",
+                    ":customerId",
+                    "consents"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "pageNumber",
+                      "value": "0"
+                    },
+                    {
+                      "key": "pageSize",
+                      "value": "20"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "customerId",
+                      "description": "(Required) The Lean unique identifier for the customer."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status_code\": 401,\n  \"message\": \"Authentication failed\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "74284b58-aabc-4779-8425-58b30579d6b6",
+              "name": "Forbidden - Customer does not belong to the authenticated client.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "v1",
+                    ":customerId",
+                    "consents"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "pageNumber",
+                      "value": "0"
+                    },
+                    {
+                      "key": "pageSize",
+                      "value": "20"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "customerId",
+                      "description": "(Required) The Lean unique identifier for the customer."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status_code\": 401,\n  \"message\": \"Authentication failed\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "7b304886-28e9-4a0e-bdd4-6ad7e510e691",
+          "name": "Get consent by id",
+          "request": {
+            "name": "Get consent by id",
+            "description": {
+              "content": "Returns the details of a single consent for the given customer. The consent must belong to one of the customer's entities.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "customers",
+                "v1",
+                ":customerId",
+                "consents",
+                ":consentId"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "customerId",
+                  "description": "(Required) The Lean unique identifier for the customer."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "consentId",
+                  "description": "(Required) The Lean unique identifier for the consent."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET"
+          },
+          "response": [
+            {
+              "id": "3cfbb0a5-346a-415a-b30a-0ea64c23b184",
+              "name": "Consent details.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "v1",
+                    ":customerId",
+                    "consents",
+                    ":consentId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "customerId",
+                      "description": "(Required) The Lean unique identifier for the customer."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "consentId",
+                      "description": "(Required) The Lean unique identifier for the consent."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"f3b7a8a2-7e9b-4d2a-9b80-9f0fbd4f1c11\",\n  \"bank_consent_id\": \"urn:INMASARI:kac-30e0f1f2-ba31-49e4-9dab-91b62586e56f\",\n  \"consent_status\": \"ACTIVE\",\n  \"standard_consent_status\": \"AUTHORISED\",\n  \"consent_type\": \"ACCOUNT_ACCESS\",\n  \"permissions\": {\n    \"identity\": true,\n    \"accounts\": true,\n    \"balance\": true,\n    \"transactions\": true,\n    \"identities\": false,\n    \"scheduled_payments\": false,\n    \"standing_orders\": false,\n    \"direct_debits\": false,\n    \"beneficiaries\": false\n  },\n  \"creation_date_time\": \"2026-04-16T01:10:53+03:00\",\n  \"status_update_date_time\": \"2026-04-20T09:15:00+03:00\",\n  \"transaction_from_date_time\": \"2025-04-16T01:29:56.000Z\",\n  \"transaction_to_date_time\": \"2026-04-16T01:29:56.000Z\",\n  \"expiration_date_time\": \"2027-04-16T01:10:53+03:00\",\n  \"accounts\": [\n    {\n      \"scheme_name\": \"IBAN\",\n      \"identification\": \"SA0380000000608010167519\",\n      \"secondary_identification\": \"001\",\n      \"name\": \"John Doe\"\n    }\n  ],\n  \"bank_identifier\": \"ALINMA_SAU\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "79dd29ce-9e15-4101-b680-63a384d3ee01",
+              "name": "Unauthorized - Invalid or missing token.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "v1",
+                    ":customerId",
+                    "consents",
+                    ":consentId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "customerId",
+                      "description": "(Required) The Lean unique identifier for the customer."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "consentId",
+                      "description": "(Required) The Lean unique identifier for the consent."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status_code\": 401,\n  \"message\": \"Authentication failed\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d42ad529-dec8-4b8b-a786-9f29cba7e5ca",
+              "name": "Forbidden - Customer does not belong to the authenticated client.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "v1",
+                    ":customerId",
+                    "consents",
+                    ":consentId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "customerId",
+                      "description": "(Required) The Lean unique identifier for the customer."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "consentId",
+                      "description": "(Required) The Lean unique identifier for the consent."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status_code\": 401,\n  \"message\": \"Authentication failed\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b74330a7-a958-4c82-aa9a-19f91c281175",
+              "name": "Consent not found, or it does not belong to the given customer.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "v1",
+                    ":customerId",
+                    "consents",
+                    ":consentId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "customerId",
+                      "description": "(Required) The Lean unique identifier for the customer."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "consentId",
+                      "description": "(Required) The Lean unique identifier for the consent."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status_code\": 401,\n  \"message\": \"Authentication failed\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "686fcf27-f1e8-487d-8922-9a38404690ec",
+          "name": "Trigger a Manual Data Refresh",
+          "request": {
+            "name": "Trigger a Manual Data Refresh",
+            "description": {
+              "content": "Trigger on-demand data refresh for an entity that has an active consent",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "data",
+                "v2",
+                "refreshes"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"entity_id\": \"<uuid>\",\n  \"data_types\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "04e38b2d-892a-404f-acb2-4a902705325f",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "data",
+                    "v2",
+                    "refreshes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"entity_id\": \"<uuid>\",\n  \"data_types\": [\n    \"standing_orders\",\n    \"direct_debits\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"refresh_id\": \"79f89fa4-03aa-4beb-b31e-b4f18c953e79\",\n  \"status\": \"OK\",\n  \"message\": \"Data refresh triggered successfully\",\n  \"timestamp\": \"2025-09-12T08:41:32.579538664Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "4fb58be3-c887-4c6f-a383-73514704e40f",
+              "name": "Bad Request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "data",
+                    "v2",
+                    "refreshes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"entity_id\": \"<uuid>\",\n  \"data_types\": [\n    \"standing_orders\",\n    \"direct_debits\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"results_id\": \"516adc40-af36-4284-bfba-46ec69dfe6d3\",\n  \"timestamp\": \"2025-09-10T21:05:59.919233187Z\",\n  \"status\": \"INVALID_PARAMETERS\",\n  \"message\": \"The request is badly formatted or a parameter of the wrong type has been provided, field: entity_id, value: e34d8e49-9af2-4252-a53e-bd2df855134.\",\n  \"metadata\": null\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c849b117-5f5c-4384-85e8-87798cd9ae7d",
+              "name": "Forbidden - Consent expired",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "data",
+                    "v2",
+                    "refreshes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"entity_id\": \"<uuid>\",\n  \"data_types\": [\n    \"standing_orders\",\n    \"direct_debits\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"timestamp\": \"2025-09-12T08:08:40.084979049Z\",\n  \"status\": \"CONSENT_EXPIRED\",\n  \"message\": \"Consent was suspended, revoked, or expired. New consent is required, please connect the entity once again.\",\n  \"metadata\": null\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "0df2ee8b-da19-4770-be4f-91ecc481602a",
+              "name": "Entity not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "data",
+                    "v2",
+                    "refreshes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"entity_id\": \"<uuid>\",\n  \"data_types\": [\n    \"standing_orders\",\n    \"direct_debits\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"results_id\": \"516adc40-af36-4284-bfba-46ec69dfe6d3\",\n  \"timestamp\": \"2025-09-10T21:03:05.413806605Z\",\n  \"status\": \"UNKNOWN_ENTITY\",\n  \"message\": \"The entity_id provided did not match an account in our records.\",\n  \"metadata\": null\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "75349691-bbf8-46f6-bfc9-60c697a0189d",
+              "name": "Too Many Requests - Duplicated request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "data",
+                    "v2",
+                    "refreshes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"entity_id\": \"<uuid>\",\n  \"data_types\": [\n    \"standing_orders\",\n    \"direct_debits\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"timestamp\": \"2025-09-12T08:36:15.261673121Z\",\n  \"status\": \"DUPLICATED_REQUEST\",\n  \"message\": \"Data refresh is already pending.\",\n  \"metadata\": null\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "37788cb3-0d88-4a65-879d-fdf2c7e345c2",
+              "name": "Internal Server Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "data",
+                    "v2",
+                    "refreshes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"entity_id\": \"<uuid>\",\n  \"data_types\": [\n    \"standing_orders\",\n    \"direct_debits\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"results_id\": \"516adc40-af36-4284-bfba-46ec69dfe6d3\",\n  \"timestamp\": \"2025-08-07T13:07:38.834977945Z\",\n  \"status\": \"INTERNAL_SERVER_ERROR\",\n  \"message\": \"Something has gone wrong. If you continue to see this error, please get in touch with Lean.\",\n  \"metadata\": null\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://sandbox.leantech.me",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "ce466516-b48a-4da7-89c0-d957b6c3759f",
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Open Banking API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "",
+      "type": "text/plain"
+    }
+  }
+}

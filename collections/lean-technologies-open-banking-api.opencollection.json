@@ -1,0 +1,110 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Open Banking API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Open Banking",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Create Connect Link",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://sandbox.leantech.me/v2/accounts-access-consents",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Creates a redirect URL for a customer to provide consent on the bank."
+        },
+        {
+          "info": {
+            "name": "List customer consents",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/customers/v1/:customerId/consents",
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path",
+                "description": "The Lean unique identifier for the customer."
+              },
+              {
+                "name": "pageNumber",
+                "value": "",
+                "type": "query",
+                "description": "Zero-based page number. Defaults to 0."
+              },
+              {
+                "name": "pageSize",
+                "value": "",
+                "type": "query",
+                "description": "Page size. Defaults to 20."
+              }
+            ]
+          },
+          "docs": "Returns a paginated list of consents across all entities of the given customer. Supports optional filtering by consent status and consent type."
+        },
+        {
+          "info": {
+            "name": "Get consent by id",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/customers/v1/:customerId/consents/:consentId",
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path",
+                "description": "The Lean unique identifier for the customer."
+              },
+              {
+                "name": "consentId",
+                "value": "",
+                "type": "path",
+                "description": "The Lean unique identifier for the consent."
+              }
+            ]
+          },
+          "docs": "Returns the details of a single consent for the given customer. The consent must belong to one of the customer's entities."
+        },
+        {
+          "info": {
+            "name": "Trigger a Manual Data Refresh",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://sandbox.leantech.me/data/v2/refreshes",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Trigger on-demand data refresh for an entity that has an active consent"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,54 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Corporate Verification API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Corporate Verification",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Business Verification",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://sandbox.leantech.me/verifications/v1/corporates",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Verify corporate entity information using unified number"
+        },
+        {
+          "info": {
+            "name": "Managers Verification",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://sandbox.leantech.me/verifications/v1/corporates/managers",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Verify corporate manager information including permissions using corporate unified number and manager identity"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

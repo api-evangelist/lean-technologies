@@ -1,0 +1,95 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Financial Insights Report API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Financial Insights Report",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Create Reports Customer",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://sandbox.leantech.me/reports/v2/customers",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Generates a HyperLink URL that you can share with your customer so they can connect their bank account."
+        },
+        {
+          "info": {
+            "name": "Get Report",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/reports/v2/customers/:customer_id/reports/:report_id",
+            "params": [
+              {
+                "name": "customer_id",
+                "value": "4afb4b1e-db3f-43f7-88e5-19cf1eba22b8",
+                "type": "path",
+                "description": "Id of the customer that the report was created from."
+              },
+              {
+                "name": "report_id",
+                "value": "a8e9bf82-245a-4f5c-b048-9024fd7910cb",
+                "type": "path",
+                "description": "Id of the report that you want to retrieve."
+              }
+            ]
+          },
+          "docs": "Get a report generated on Lean's platform via report_id."
+        },
+        {
+          "info": {
+            "name": "Get Reports for Customer",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/reports/v2/customers/:customer_id/reports/",
+            "params": [
+              {
+                "name": "customer_id",
+                "value": "4afb4b1e-db3f-43f7-88e5-19cf1eba22b8",
+                "type": "path",
+                "description": "Id of the customer that the report was created from."
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "The page you're requesting - returns page 0 of a response if not specified."
+              },
+              {
+                "name": "size",
+                "value": "",
+                "type": "query",
+                "description": "The number of objects you want to return as a page size."
+              }
+            ]
+          },
+          "docs": "Get the list of report IDs for all reports generated on Lean's platform for a specific customer."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,39 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Beneficiary Name Verification API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Beneficiary Name Verification",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get Beneficiary Name",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://sandbox.leantech.me/verifications/v2/beneficiary-name",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Retrieves the beneficiary name and account status for a given IBAN"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,125 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) reconciliation API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "reconciliation",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Returns a summary of payments based on the received payment query",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://sandbox.leantech.me/reconciliation/v1/payments",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Returns a summary of payments based on the received payment query."
+        },
+        {
+          "info": {
+            "name": "Returns details of a payment",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/reconciliation/v1/payments/:paymentId",
+            "params": [
+              {
+                "name": "paymentId",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier for this payment."
+              }
+            ]
+          },
+          "docs": "Returns details of a payment."
+        },
+        {
+          "info": {
+            "name": "Retrieve Deposits",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/reconciliation/v1/deposits/",
+            "params": [
+              {
+                "name": "page",
+                "value": "0",
+                "type": "query",
+                "description": "Page to retrieve"
+              },
+              {
+                "name": "size",
+                "value": "50",
+                "type": "query",
+                "description": "Total number of items per page"
+              },
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "Start date to pull deposits from"
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "End date to pull deposits from"
+              },
+              {
+                "name": "local_timezone",
+                "value": "Asia/Dubai",
+                "type": "query",
+                "description": "Timezone to populate local_timezone. Always Continent/City pair"
+              },
+              {
+                "name": "reconciliation_status",
+                "value": "NOT_RECONCILED",
+                "type": "query",
+                "description": "Filter responses based on reconciliation status"
+              }
+            ]
+          },
+          "docs": "Retrieve deposits from your connected bank accounts"
+        },
+        {
+          "info": {
+            "name": "Get Payment",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/reconciliation/v1/payments/:payment_id",
+            "params": [
+              {
+                "name": "payment_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Retrieve a specific payment from your connected bank accounts"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

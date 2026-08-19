@@ -1,0 +1,253 @@
+{
+  "item": [
+    {
+      "id": "779b8f1a-1153-440a-9873-4597c7d70850",
+      "name": "Account On File",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "2dcd9f0c-b0e8-4ebe-9f65-c6dd5f61cfae",
+          "name": "Create a new non-authorized AoF consent",
+          "request": {
+            "name": "Create a new non-authorized AoF consent",
+            "description": {
+              "content": "This operation will result in creation of non-authorized consent of Account-On-File type.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "consents",
+                "account-on-file"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customer_id\": \"<uuid>\",\n  \"destination_account_id\": \"<uuid>\",\n  \"currency\": \"<string>\",\n  \"reference\": \"<string>\",\n  \"purpose\": \"<string>\",\n  \"control_parameters\": {\n    \"period_type\": \"<string>\",\n    \"max_individual_amount\": \"<number>\",\n    \"max_cumulative_amount\": \"<number>\",\n    \"max_cumulative_number_of_payments\": \"<integer>\",\n    \"max_cumulative_amount_per_period\": \"<number>\",\n    \"max_cumulative_number_of_payments_per_period\": \"<integer>\"\n  },\n  \"government_identifier\": {\n    \"type\": \"<string>\",\n    \"value\": \"<string>\"\n  },\n  \"start_date_time\": \"<dateTime>\",\n  \"expiration_date_time\": \"<dateTime>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "ad17a32b-42a6-46e9-80ef-bc016f1a2d3a",
+              "name": "Consent created successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "consents",
+                    "account-on-file"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customer_id\": \"acc176ca-7716-4fbb-a735-d0e3dec24b40\",\n  \"destination_account_id\": \"911f30d8-8fc8-4fe9-86a1-3f9fea11a674\",\n  \"currency\": \"AED\",\n  \"reference\": \"ACME-ACCOUNT-LINK-2025-001\",\n  \"purpose\": \"GDS\",\n  \"control_parameters\": {\n    \"period_type\": \"Day\",\n    \"max_individual_amount\": \"1000.00\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"123e4567-e89b-12d3-a456-426655440000\",\n  \"status\": \"AWAITING_AUTHORISATION\",\n  \"customer_id\": \"acc176ca-7716-4fbb-a735-d0e3dec24b40\",\n  \"destination_account_id\": \"911f30d8-8fc8-4fe9-86a1-3f9fea11a674\",\n  \"currency\": \"AED\",\n  \"reference\": \"ACME-ACCOUNT-LINK-2025-001\",\n  \"purpose\": \"GDS\",\n  \"control_parameters\": {\n    \"period_type\": \"Day\",\n    \"max_individual_amount\": \"1000.00\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "2fa257a5-fdfb-4286-bcb6-39904dad280e",
+          "name": "Initiate a AoF payment",
+          "request": {
+            "name": "Initiate a AoF payment",
+            "description": {
+              "content": "Endpoint responsible for initiating a AoF payment against an existing, authorized consent",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "payments",
+                "account-on-file"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "(Required) Unique key used to ensure idempotency of requests.\nMust be unique per operation.\n",
+                "key": "Idempotency-Key",
+                "value": "<string>"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"consent_id\": \"<uuid>\",\n  \"amount\": \"<double>\",\n  \"risk_details\": {\n    \"debtor_indicators\": {\n      \"authentication\": {\n        \"authentication_channel\": \"<string>\",\n        \"possession_factor\": {\n          \"is_used\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"type\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        },\n        \"knowledge_factor\": {\n          \"is_used\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"type\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        },\n        \"inherence_factor\": {\n          \"is_used\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"type\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        },\n        \"challenge_outcome\": \"<string>\",\n        \"authentication_flow\": \"<string>\",\n        \"authentication_value\": \"<string>\",\n        \"challenge_date_time\": \"<dateTime>\"\n      },\n      \"user_name\": {\n        \"en\": \"<string>\",\n        \"ar\": \"<string>\"\n      },\n      \"geo_location\": {\n        \"latitude\": \"<double>\",\n        \"longitude\": \"<double>\"\n      },\n      \"device_information\": {\n        \"device_id\": \"<string>\",\n        \"alternative_device_id\": \"<string>\",\n        \"device_operating_system\": \"<string>\",\n        \"device_operating_system_version\": \"<string>\",\n        \"device_binding_id\": \"<string>\",\n        \"last_binding_date_time\": \"<dateTime>\",\n        \"binding_duration\": \"<string>\",\n        \"binding_status\": \"<string>\",\n        \"device_type\": \"<string>\",\n        \"device_manufacturer\": {\n          \"model\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"manufacturer\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        },\n        \"device_language\": \"<string>\",\n        \"device_local_date_time\": \"<string>\",\n        \"connection_type\": \"<string>\",\n        \"screen_information\": {\n          \"pixel_density\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"orientation\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        },\n        \"battery_status\": {\n          \"level\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"is_charging\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        },\n        \"touch_support\": {\n          \"supported\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"max_touch_points\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        },\n        \"motion_sensors\": {\n          \"status\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"accelerometer\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"gyroscope\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        },\n        \"device_environment_context\": [\n          {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        ]\n      },\n      \"biometric_capabilities\": {\n        \"supports_biometric\": \"<boolean>\",\n        \"biometric_types\": [\n          {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        ]\n      },\n      \"app_information\": {\n        \"app_version\": \"<string>\",\n        \"package_name\": \"<string>\",\n        \"build_number\": \"<string>\"\n      },\n      \"browser_information\": {\n        \"user_agent\": \"<string>\",\n        \"is_cookies_enabled\": \"<boolean>\",\n        \"available_fonts\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"plugins\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"pixel_ratio\": \"<double>\"\n      },\n      \"user_behavior\": {\n        \"scroll_behavior\": {\n          \"direction\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"speed\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"frequency\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        }\n      },\n      \"account_risk_indicators\": {\n        \"user_onboarding_date_time\": \"<dateTime>\",\n        \"last_account_change_date\": \"<string>\",\n        \"last_password_change_date\": \"<string>\",\n        \"suspicious_activity\": \"<string>\",\n        \"transaction_history\": {\n          \"last_day\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"last_year\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        }\n      },\n      \"supplementary_data\": \"<object>\"\n    },\n    \"destination_delivery_address\": {\n      \"recipient_type\": \"<string>\",\n      \"recipient_name\": {\n        \"en\": \"<string>\",\n        \"ar\": \"<string>\"\n      },\n      \"national_address\": [\n        {\n          \"address_line\": \"<string>\",\n          \"country\": \"<string>\",\n          \"address_type\": \"<string>\",\n          \"building_number\": \"<string>\",\n          \"building_name\": \"<string>\",\n          \"floor\": \"<string>\",\n          \"street_name\": \"<string>\",\n          \"district_name\": \"<string>\",\n          \"post_box\": \"<string>\",\n          \"town_name\": \"<string>\",\n          \"region\": \"<string>\"\n        },\n        {\n          \"address_line\": \"<string>\",\n          \"country\": \"<string>\",\n          \"address_type\": \"<string>\",\n          \"building_number\": \"<string>\",\n          \"building_name\": \"<string>\",\n          \"floor\": \"<string>\",\n          \"street_name\": \"<string>\",\n          \"district_name\": \"<string>\",\n          \"post_box\": \"<string>\",\n          \"town_name\": \"<string>\",\n          \"region\": \"<string>\"\n        }\n      ]\n    },\n    \"transaction_indicators\": {\n      \"channel\": \"<string>\",\n      \"is_customer_present\": \"<boolean>\",\n      \"is_contract_present\": \"<boolean>\",\n      \"channel_type\": \"<string>\",\n      \"sub_channel_type\": \"<string>\",\n      \"merchant_risk\": {\n        \"delivery_timeframe\": \"<string>\",\n        \"reorder_items_indicator\": \"<string>\",\n        \"pre_order_purchase_indicator\": \"<string>\",\n        \"is_gift_card_purchase\": \"<boolean>\",\n        \"address_match_level\": \"<string>\",\n        \"is_delivery_address_matching_billing\": \"<boolean>\"\n      },\n      \"supplementary_data\": \"<object>\"\n    }\n  },\n  \"purpose\": \"<string>\",\n  \"reference\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "8c873fbf-6491-443f-b4a9-84cacc0f8254",
+              "name": "Indicates that request was processed and payment initiation request was sent to the bank. \nThis does not mean that the payment was successful!",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "payments",
+                    "account-on-file"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) Unique key used to ensure idempotency of requests.\nMust be unique per operation.\n",
+                    "key": "Idempotency-Key",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"consent_id\": \"123e4567-e89b-12d3-a456-426655440000\",\n  \"amount\": 130.52,\n  \"purpose\": \"GDS\",\n  \"reference\": \"INV-2025-004321\",\n  \"risk_details\": {\n    \"transaction_indicators\": {\n      \"channel\": \"WEB\"\n    },\n    \"debtor_indicators\": {\n      \"geo_location\": {\n        \"latitude\": 25.2048,\n        \"longitude\": 55.2708\n      }\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"341c3308-408d-48d9-ae44-c98eb1aa9a6f\",\n  \"account_id\": \"911f30d8-8fc8-4fe9-86a1-3f9fea11a674\",\n  \"application_id\": \"21ecf613-adaa-4c6b-8cd5-827de43bbe52\",\n  \"consent_id\": \"123e4567-e89b-12d3-a456-426655440000\",\n  \"status\": \"CREATED\",\n  \"reference\": \"ACME-ACCOUNT-LINK-2025-001\",\n  \"amount\": {\n    \"currency\": \"AED\",\n    \"value\": 130.52\n  },\n  \"type\": \"ACCOUNT_ON_FILE\",\n  \"sender_customer_id\": \"acc176ca-7716-4fbb-a735-d0e3dec24b40\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://sandbox.leantech.me",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "63b5dc8c-1676-4239-a3ca-938e2c2e6abb",
+    "name": "Consents Account Controls (New) Account Controls (New) Account On File API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "",
+      "type": "text/plain"
+    }
+  }
+}

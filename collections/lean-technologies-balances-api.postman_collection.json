@@ -1,0 +1,168 @@
+{
+  "item": [
+    {
+      "id": "2b75b728-d0a5-44b0-bff7-b94337238783",
+      "name": "Balances",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "3cded8aa-e670-4634-9b05-35520da1169f",
+          "name": "Get Cash Balances",
+          "request": {
+            "name": "Get Cash Balances",
+            "description": {
+              "content": "The Cash Balances API provides a comprehensive view of both **Personal** or **Business** cash balances, offering insights into current, historical, and average balances. \n\nThe data in this API allows financial companies to monitor liquidity trends and assess the financial health of bank accounts over time. Additionally, it provides information on  the frequency and amount of contributions. You can use these insights to evaluate repayment capacity.\n\n\nThis API is asynchronous, please read [this guide](https://docs.leantech.me/v2.0-KSA/docs/handling-asynchronous-requests) for further information on how to fetch the results.\n\n> **\"Supported for both retail and corporate accounts\"**\n> ",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "insights",
+                "v2",
+                "assets",
+                "balances"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "entity_id",
+                  "value": "<string>",
+                  "description": "(Required) The `entity_id` you're querying for."
+                },
+                {
+                  "disabled": false,
+                  "key": "start_date",
+                  "value": "<date>",
+                  "description": "The start date in UTC (in the format YYYY-MM-DD) you want to query expenses for."
+                },
+                {
+                  "disabled": false,
+                  "key": "async",
+                  "value": "<boolean>",
+                  "description": "When `true` the API will only return a `results_id` which can be fetched from the `/results` endpoint when ready."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "(Required) Your Lean app token.",
+                "key": "lean-app-token",
+                "value": "<string>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET"
+          },
+          "response": [
+            {
+              "id": "4b3c1f5b-ebe5-4812-970f-0441a99fd6c7",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "insights",
+                    "v2",
+                    "assets",
+                    "balances"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "entity_id",
+                      "value": "bc287977-2094-3bef-82a0-bae3fe8dadfe"
+                    },
+                    {
+                      "key": "start_date",
+                      "value": "2024-09-01"
+                    },
+                    {
+                      "key": "async",
+                      "value": "<boolean>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) Your Lean app token.",
+                    "key": "lean-app-token",
+                    "value": "ad0832f0-76aa-4b7b-b267-1f002d7104df"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": \"OK\",\n  \"results_id\": \"84ea61bf-ae3f-4002-8396-ce11e37cc798\",\n  \"message\": \"Data successfully retrieved\",\n  \"meta\": null,\n  \"timestamp\": \"2024-11-19T10:06:54.395185689Z\",\n  \"status_detail\": null,\n  \"insights\": {\n    \"total\": {\n      \"average_balance\": {\n        \"currency\": \"SAR\",\n        \"amount\": 329558.57\n      },\n      \"initial_balance\": {\n        \"currency\": \"SAR\",\n        \"amount\": 546438.29\n      },\n      \"current_balance\": {\n        \"currency\": \"SAR\",\n        \"amount\": 680498.14\n      },\n      \"available_balance\": {\n        \"currency\": \"SAR\",\n        \"amount\": 676771.25\n      },\n      \"frequency_of_contributions\": \"weekly\"\n    },\n    \"monthly_totals\": [\n      {\n        \"month\": 8,\n        \"year\": 2024,\n        \"is_month_complete\": true,\n        \"monthly_growth_rate\": 0.04,\n        \"contribution_amount\": {\n          \"currency\": \"SAR\",\n          \"amount\": 36439.97\n        },\n        \"average_balance\": {\n          \"currency\": \"SAR\",\n          \"amount\": 176376.33\n        },\n        \"initial_balance\": {\n          \"currency\": \"SAR\",\n          \"amount\": 533894.93\n        }\n      },\n      {\n        \"month\": 9,\n        \"year\": 2024,\n        \"is_month_complete\": true,\n        \"monthly_growth_rate\": 0,\n        \"contribution_amount\": {\n          \"currency\": \"SAR\",\n          \"amount\": 85588.01\n        },\n        \"average_balance\": {\n          \"currency\": \"SAR\",\n          \"amount\": 389083.36\n        },\n        \"initial_balance\": {\n          \"currency\": \"SAR\",\n          \"amount\": 592818.06\n        }\n      },\n      {\n        \"month\": 10,\n        \"year\": 2024,\n        \"is_month_complete\": true,\n        \"monthly_growth_rate\": 0.03,\n        \"contribution_amount\": {\n          \"currency\": \"SAR\",\n          \"amount\": 5576523.99\n        },\n        \"average_balance\": {\n          \"currency\": \"SAR\",\n          \"amount\": 387400.33\n        },\n        \"initial_balance\": {\n          \"currency\": \"SAR\",\n          \"amount\": 662850.33\n        }\n      },\n      {\n        \"month\": 11,\n        \"year\": 2024,\n        \"is_month_complete\": false,\n        \"monthly_growth_rate\": 0,\n        \"contribution_amount\": {\n          \"currency\": \"SAR\",\n          \"amount\": 120000\n        },\n        \"average_balance\": {\n          \"currency\": \"SAR\",\n          \"amount\": 35815.69\n        },\n        \"initial_balance\": {\n          \"currency\": \"SAR\",\n          \"amount\": 680498.14\n        }\n      }\n    ]\n  },\n  \"balance_factors\": {\n    \"periods\": [\n      {\n        \"period\": \"P3M\",\n        \"average_balance\": 28630.95\n      },\n      {\n        \"period\": \"P6M\",\n        \"average_balance\": 28630.95\n      },\n      {\n        \"period\": \"P9M\",\n        \"average_balance\": 28630.95\n      },\n      {\n        \"period\": \"P12M\",\n        \"average_balance\": 28630.95\n      }\n    ],\n    \"balance_trend\": 7,\n    \"balance_trend_average_month_on_month\": 1817,\n    \"current_balance\": 36211.63,\n    \"inflow_factors\": {\n      \"median_transaction_amount\": 53.93,\n      \"max_transaction_amount\": 21894,\n      \"min_transaction_amount\": 13.31,\n      \"weekday_transaction_count\": 131,\n      \"weekend_transaction_count\": 53,\n      \"average_time\": 6.83,\n      \"percent_greater_than_x\": 33,\n      \"recurring_average\": 0,\n      \"median_days\": 4,\n      \"percent_salary_transaction\": 98\n    },\n    \"outflow_factors\": {\n      \"median_transaction_amount\": 46,\n      \"max_transaction_amount\": 5000,\n      \"min_transaction_amount\": 0.08,\n      \"weekday_transaction_count\": 130,\n      \"weekend_transaction_count\": 53,\n      \"average_time\": 1,\n      \"percent_greater_than_x\": 20,\n      \"recurring_average\": 0,\n      \"median_days\": 1,\n      \"spike_transactions\": [\n        {\n          \"month\": 11,\n          \"year\": 2024,\n          \"amount\": 15749.05\n        }\n      ]\n    },\n    \"daily_net_cashflow_estimate\": 138.53\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://sandbox.leantech.me",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "4dae2653-a8be-428b-a30e-ce11517759c6",
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Balances API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "",
+      "type": "text/plain"
+    }
+  }
+}

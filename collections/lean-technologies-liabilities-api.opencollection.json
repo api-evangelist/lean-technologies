@@ -1,0 +1,86 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Liabilities API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Liabilities",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get Credit Obligations",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/insights/v2/liabilities/credit-obligations",
+            "params": [
+              {
+                "name": "entity_id",
+                "value": "",
+                "type": "query",
+                "description": "The `entity_id` you're querying for."
+              },
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "The start date in UTC (in the format YYYY-MM-DD) you want to query credit obligations for."
+              },
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. Note: it''s recommended to use the sync flow (async=false) for all requests by adapting the data workflow for connected entities."
+              }
+            ]
+          },
+          "docs": "The Credit Obligations API allows you to fetch a businesses debt obligations, including loan repayments, credit card usage, and balances. You can use this to understand a company's credit exposure, repayment behaviour, and overall financial health."
+        },
+        {
+          "info": {
+            "name": "Get Non-Credit Obligations",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/insights/v2/liabilities/non-credit-obligations",
+            "params": [
+              {
+                "name": "entity_id",
+                "value": "",
+                "type": "query",
+                "description": "The `entity_id` you're querying for."
+              },
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "The start date in UTC (in the format YYYY-MM-DD) you want to query non-credit obligations for."
+              },
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. Note: it''s recommended to use the sync flow (async=false) for all requests by adapting the data workflow for connected entities."
+              }
+            ]
+          },
+          "docs": "The Non Credit Obligations API allows you to fetch a recurring personal obligations, including labor wage, monthly external and domestic remittances."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,61 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Balances API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Balances",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get Cash Balances",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/insights/v2/assets/balances",
+            "headers": [
+              {
+                "name": "lean-app-token",
+                "value": "ad0832f0-76aa-4b7b-b267-1f002d7104df"
+              }
+            ],
+            "params": [
+              {
+                "name": "entity_id",
+                "value": "bc287977-2094-3bef-82a0-bae3fe8dadfe",
+                "type": "query",
+                "description": "The `entity_id` you're querying for."
+              },
+              {
+                "name": "start_date",
+                "value": "2024-09-01",
+                "type": "query",
+                "description": "The start date in UTC (in the format YYYY-MM-DD) you want to query expenses for."
+              },
+              {
+                "name": "async",
+                "value": "false",
+                "type": "query",
+                "description": "When `true` the API will only return a `results_id` which can be fetched from the `/results` endpoint when ready."
+              }
+            ]
+          },
+          "docs": "The Cash Balances API provides a comprehensive view of both **Personal** or **Business** cash balances, offering insights into current, historical, and average balances. \n\nThe data in this API allows financial companies to monitor liquidity trends and assess the financial health of bank accounts over time. Additionally, it provides information on  the frequency and amount of contributions. You can use these insights to evaluate repayment capacity.\n\n\nThis API is asynchronous, please read [this gu"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

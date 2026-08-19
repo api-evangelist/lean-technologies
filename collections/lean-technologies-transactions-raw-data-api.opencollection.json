@@ -1,0 +1,85 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Transactions Raw Data API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Transactions Raw Data",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get Transactions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/data/v2/accounts/:account_id/transactions",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The account_id used to fetch requested data"
+              },
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. **Note: it's recommended to use the sync flow (async=false) for all requests by adapting the [data workflow](https://docs.leantech.me/docs/data-workflow) for connected entities.**"
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "The page you're requesting - returns page 0 of a response if not specified."
+              },
+              {
+                "name": "size",
+                "value": "",
+                "type": "query",
+                "description": "The number of objects you want to return as a page size."
+              },
+              {
+                "name": "entity_id",
+                "value": "",
+                "type": "query",
+                "description": "The entity_id you're querying for, which is created by LinkSDK `.connect()` function."
+              },
+              {
+                "name": "meta",
+                "value": "",
+                "type": "query",
+                "description": "Additional data you would like to store against the request. Example: {\"foo\": \"val\"}"
+              },
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "The start date in UTC (in the format YYYY-MM-DD) you want to query transactions for."
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "The end date in UTC (in the format YYYY-MM-DD) you want to query transactions for."
+              }
+            ]
+          },
+          "docs": "The `Get Transactions `endpoint retrieves a list of historical transactions associated with a specific bank account linked by a user via LinkSDK, identified by both the entity_id and the account_id. Each transaction object contains fields such as amount, status, balance after each transaction, transaction category and type, and additional information. Requires an active entity with the `transactions` permission to use.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

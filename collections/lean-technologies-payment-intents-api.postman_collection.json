@@ -1,0 +1,385 @@
+{
+  "item": [
+    {
+      "id": "fe2b63a2-9ee2-4d90-9ea9-6cc497bb4f5c",
+      "name": "Payment Intents",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "e830b9d3-74a2-4f85-bed0-b9d0ef1c9771",
+          "name": "Create Payment Intent",
+          "request": {
+            "name": "Create Payment Intent",
+            "description": {
+              "content": "The Payment intent is the contract between your backend and Lean to certify that you will request a payment from your customer of a specified amount and currency. In order to initiate a payment, the `payment_intent_id` must be provided into the `pay()` method of the LinkSDK.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "payments",
+                "v1",
+                "intents"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customer_id\": \"<uuid>\",\n  \"amount\": \"<float>\",\n  \"currency\": \"<string>\",\n  \"description\": \"<string>\",\n  \"payment_destination_id\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "43a01c2f-aba0-4588-903a-90d752e305d2",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "payments",
+                    "v1",
+                    "intents"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customer_id\": \"<uuid>\",\n  \"amount\": \"<float>\",\n  \"currency\": \"<string>\",\n  \"description\": \"<string>\",\n  \"payment_destination_id\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"payment_intent_id\": \"77f0c07e-7b7b-4677-bb05-6261f9eead0c\",\n  \"customer_id\": \"89bf7bf8-89cb-42e5-8332-eeef869a2524\",\n  \"amount\": 61.4,\n  \"currency\": \"AED\",\n  \"description\": \"77f0c07e7b7b4677bb056261f9eead0c\",\n  \"payments\": [],\n  \"payment_destination\": {\n    \"id\": \"95c29647-c568-40d7-8710-3e330de1b5f2\",\n    \"bank_identifier\": \"HSBC_UAE\",\n    \"name\": \"Acme Corp.\",\n    \"iban\": \"AE870200000XXXXXXXXXXXX\",\n    \"display_name\": \"Acme Corp.\",\n    \"account_number\": \"XXXXXXXXXXXX\",\n    \"swift_code\": \"BBMEAEAD\",\n    \"status\": \"ACTIVE\",\n    \"address\": \"Acme Towers, 51st Floor\",\n    \"country\": \"ARE\",\n    \"city\": \"Dubai\",\n    \"default\": true,\n    \"owner_type\": \"APPLICATION\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "6b4634f5-7897-4edc-84eb-e921463de33f",
+          "name": "List Payment Intents",
+          "request": {
+            "name": "List Payment Intents",
+            "description": {
+              "content": "List all Payment Intents",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "payments",
+                "v1",
+                "intents"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "page",
+                  "value": "<integer>",
+                  "description": "(Required) Set which page to fetch (indexed to 0)"
+                },
+                {
+                  "disabled": false,
+                  "key": "size",
+                  "value": "<integer>",
+                  "description": "(Required) Set the page size to be returned"
+                },
+                {
+                  "disabled": false,
+                  "key": "customer_id",
+                  "value": "<uuid>",
+                  "description": "Filter Payment Intents by Customer"
+                },
+                {
+                  "disabled": false,
+                  "key": "from",
+                  "value": "<dateTime>",
+                  "description": "Fetch Payment Intents created after this date-time"
+                },
+                {
+                  "disabled": false,
+                  "key": "to",
+                  "value": "<dateTime>",
+                  "description": "Fetch Payment Intents created before this date-time"
+                },
+                {
+                  "disabled": false,
+                  "key": "status",
+                  "value": "<string>",
+                  "description": "Filter the results to a specific status"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "a8e94748-51c5-4fec-af5f-7f396924c91a",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "payments",
+                    "v1",
+                    "intents"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "0"
+                    },
+                    {
+                      "key": "size",
+                      "value": "50"
+                    },
+                    {
+                      "key": "customer_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "from",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "to",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "status",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"payment_intent_id\": \"77f0c07e-7b7b-4677-bb05-6261f9eead0c\",\n      \"customer_id\": \"89bf7bf8-89cb-42e5-8332-eeef869a2524\",\n      \"amount\": 61.4,\n      \"currency\": \"AED\",\n      \"description\": \"77f0c07e7b7b4677bb056261f9eead0c\",\n      \"payments\": [\n        {\n          \"id\": \"25c90cc6-67dc-4193-a6e9-a7c875fcc0af\",\n          \"payment_intent_id\": \"77f0c07e-7b7b-4677-bb05-6261f9eead0c\",\n          \"payment_source_id\": \"b6fba7da-1054-5e82-8a9a-afd3ab4d1710\",\n          \"sender_details\": {\n            \"account_number\": \"XXXXXXXXXXXX\",\n            \"iban\": \"AE940030011XXXXXXXXXXXX\",\n            \"name\": \"John Doe\"\n          },\n          \"recipient_details\": {\n            \"account_number\": \"XXXXXXXXXXXX\",\n            \"iban\": \"AE870200000XXXXXXXXXXXX\",\n            \"name\": \"Al Fulani\"\n          },\n          \"amount\": 61.4,\n          \"currency\": \"AED\",\n          \"description\": \"77f0c07e7b7b4677bb056261f9eead0c\",\n          \"submission_timestamp\": \"2021-05-18T13:58:03.427045Z\",\n          \"initiation_timestamp\": \"2021-05-18T13:58:42.445103Z\",\n          \"status\": \"ACCEPTED_BY_BANK\",\n          \"bank_transaction_reference\": 492981211381081\n        }\n      ],\n      \"payment_destination\": {\n        \"id\": \"95c29647-c568-40d7-8710-3e330de1b5f2\",\n        \"bank_identifier\": \"HSBC_UAE\",\n        \"name\": \"Acme Corp.\",\n        \"iban\": \"AE870200000XXXXXXXXXXXX\",\n        \"display_name\": \"Acme Corp.\",\n        \"account_number\": \"XXXXXXXXXXXX\",\n        \"swift_code\": \"BBMEAEAD\",\n        \"status\": \"ACTIVE\",\n        \"address\": \"Acme Towers, 51st Floor\",\n        \"country\": \"ARE\",\n        \"city\": \"Dubai\",\n        \"default\": true,\n        \"owner_type\": \"APPLICATION\"\n      }\n    }\n  ],\n  \"page\": {\n    \"number\": 0,\n    \"size\": 50,\n    \"total_elements\": 1,\n    \"total_pages\": 1\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "0deb4e64-36ab-4b8c-aa82-67591066ab53",
+          "name": "Get Payment Intent",
+          "request": {
+            "name": "Get Payment Intent",
+            "description": {
+              "content": "The Payment intent is the contract between your backend and Lean to certify that you will request a payment from your customer of a specified amount and currency. In order to initiate a payment, the `payment_intent_id` must be provided into the `pay()` method of the LinkSDK.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "payments",
+                "v1",
+                "intents",
+                ":payment_intent_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "payment_intent_id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "c1396a0d-279d-461b-bccd-736ac12e304a",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "payments",
+                    "v1",
+                    "intents",
+                    ":payment_intent_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "payment_intent_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"payment_intent_id\": \"77f0c07e-7b7b-4677-bb05-6261f9eead0c\",\n  \"customer_id\": \"89bf7bf8-89cb-42e5-8332-eeef869a2524\",\n  \"amount\": 61.4,\n  \"currency\": \"AED\",\n  \"description\": \"77f0c07e7b7b4677bb056261f9eead0c\",\n  \"payments\": [\n    {\n      \"id\": \"25c90cc6-67dc-4193-a6e9-a7c875fcc0af\",\n      \"payment_intent_id\": \"77f0c07e-7b7b-4677-bb05-6261f9eead0c\",\n      \"payment_source_id\": \"b6fba7da-1054-5e82-8a9a-afd3ab4d1710\",\n      \"sender_details\": {\n        \"account_number\": \"XXXXXXXXXXXX\",\n        \"iban\": \"AE940030011XXXXXXXXXXXX\",\n        \"name\": \"John Doe\"\n      },\n      \"recipient_details\": {\n        \"account_number\": \"XXXXXXXXXXXX\",\n        \"iban\": \"AE870200000XXXXXXXXXXXX\",\n        \"name\": \"Al Fulani\"\n      },\n      \"amount\": 61.4,\n      \"currency\": \"AED\",\n      \"description\": \"77f0c07e7b7b4677bb056261f9eead0c\",\n      \"submission_timestamp\": \"2021-05-18T13:58:03.427045Z\",\n      \"initiation_timestamp\": \"2021-05-18T13:58:42.445103Z\",\n      \"status\": \"ACCEPTED_BY_BANK\",\n      \"bank_transaction_reference\": 492981211381081\n    }\n  ],\n  \"payment_destination\": {\n    \"id\": \"95c29647-c568-40d7-8710-3e330de1b5f2\",\n    \"bank_identifier\": \"HSBC_UAE\",\n    \"name\": \"Acme Corp.\",\n    \"iban\": \"AE870200000XXXXXXXXXXXX\",\n    \"display_name\": \"Acme Corp.\",\n    \"account_number\": \"XXXXXXXXXXXX\",\n    \"swift_code\": \"BBMEAEAD\",\n    \"status\": \"ACTIVE\",\n    \"address\": \"Acme Towers, 51st Floor\",\n    \"country\": \"ARE\",\n    \"city\": \"Dubai\",\n    \"default\": true,\n    \"owner_type\": \"APPLICATION\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://sandbox.leantech.me",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "ffdf4753-16a3-4ce6-8309-40a0baf2e7af",
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Payment Intents API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "",
+      "type": "text/plain"
+    }
+  }
+}

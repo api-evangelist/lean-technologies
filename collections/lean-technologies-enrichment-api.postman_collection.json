@@ -1,0 +1,266 @@
+{
+  "item": [
+    {
+      "id": "09bf995c-9bc0-4184-9496-063ea681de36",
+      "name": "Enrichment",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "38ad3ad3-b811-4acc-91de-2e78575f0fec",
+          "name": "Get Income",
+          "request": {
+            "name": "Get Income",
+            "description": {
+              "content": "Provides insights on the salary and non-salary income received in the bank account.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "insights",
+                "v2",
+                "income"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "async",
+                  "value": "<boolean>",
+                  "description": "When true the API will only return a results_id which can be fetched from the /results endpoint when ready."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estimated_monthly_income\": \"<number>\",\n  \"start_date\": \"<date>\",\n  \"entity_id\": \"<uuid>\",\n  \"income_type\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "ca5287d2-9003-4e32-87d0-acd004657c04",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "insights",
+                    "v2",
+                    "income"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "async",
+                      "value": "<boolean>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"estimated_monthly_income\": \"<number>\",\n  \"start_date\": \"<date>\",\n  \"entity_id\": \"<uuid>\",\n  \"income_type\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": \"OK\",\n  \"message\": \"Data successfully retrieved\",\n  \"timestamp\": \"2023-10-20T07:59:14.304154468Z\",\n  \"insights\": {\n    \"salary\": {\n      \"currency\": \"AED\",\n      \"total\": {\n        \"amount\": 18000,\n        \"count\": 1,\n        \"last_date_time\": \"2023-08-25T11:18:25Z\",\n        \"first_date_time\": \"2023-08-25T11:18:25Z\",\n        \"average_monthly_amount\": 18000,\n        \"average_monthly_count\": 1,\n        \"maximum_monthly_amount\": {\n          \"month\": 8,\n          \"year\": 2023,\n          \"amount\": 18000\n        },\n        \"minimum_monthly_amount\": {\n          \"month\": 8,\n          \"year\": 2023,\n          \"amount\": 18000\n        }\n      },\n      \"monthly_totals\": [\n        {\n          \"month\": 10,\n          \"year\": 2023,\n          \"amount\": 0,\n          \"count\": 0,\n          \"is_month_complete\": false\n        },\n        {\n          \"month\": 9,\n          \"year\": 2023,\n          \"amount\": 0,\n          \"count\": 0,\n          \"is_month_complete\": true\n        },\n        {\n          \"month\": 8,\n          \"year\": 2023,\n          \"amount\": 18000,\n          \"count\": 1,\n          \"is_month_complete\": false\n        }\n      ],\n      \"transactions\": [\n        {\n          \"account_id\": \"571e3eec-35f3-4158-b54d-015a5c08474e\",\n          \"transaction_id\": \"11747f8c-b6c9-47ca-afad-a651a2c912c9\",\n          \"transaction_information\": \"incoming inward TT REF: HFT2323772535 /REF/AUGSAL\",\n          \"booking_date_time\": \"2023-08-25T11:18:25Z\",\n          \"amount\": 18000\n        }\n      ]\n    }\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "e1c864bd-6dee-4a90-928e-a4979b8d4332",
+          "name": "Get Expenses",
+          "request": {
+            "name": "Get Expenses",
+            "description": {
+              "content": "Provides insights on the expenses from a bank account (only supported for retail bank accounts).",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "insights",
+                "v2",
+                "expenses"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "async",
+                  "value": "<boolean>",
+                  "description": "When true the API will only return a results_id which can be fetched from the /results endpoint when ready."
+                },
+                {
+                  "disabled": false,
+                  "key": "start_date",
+                  "value": "<date>",
+                  "description": "The start date in UTC (in the format YYYY-MM-DD) you want to query expenses for."
+                },
+                {
+                  "disabled": false,
+                  "key": "entity_id",
+                  "value": "<uuid>",
+                  "description": "The entity_id you're querying for."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET"
+          },
+          "response": [
+            {
+              "id": "f878054c-6efa-4d0e-930c-e5b05d706a24",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "insights",
+                    "v2",
+                    "expenses"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "async",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "start_date",
+                      "value": "2023-05-01"
+                    },
+                    {
+                      "key": "entity_id",
+                      "value": "<uuid>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": \"OK\",\n  \"message\": \"The request completed successfully.\",\n  \"timestamp\": \"2023-10-20T08:40:40.392167892Z\",\n  \"meta\": {},\n  \"insights\": {\n    \"currency\": \"AED\",\n    \"total\": {\n      \"amount\": 327110.87,\n      \"count\": 423,\n      \"last_date_time\": \"2023-10-18T16:26:26Z\",\n      \"first_date_time\": \"2023-05-01T17:22:17Z\",\n      \"average_monthly_amount\": 54518.48,\n      \"average_monthly_count\": 70.5,\n      \"maximum_monthly_amount\": {\n        \"month\": 6,\n        \"year\": 2023,\n        \"amount\": 124948.66\n      },\n      \"minimum_monthly_amount\": {\n        \"month\": 7,\n        \"year\": 2023,\n        \"amount\": 3418.33\n      },\n      \"breakdown\": [\n        {\n          \"by\": \"category\",\n          \"breakdowns\": [\n            {\n              \"category\": \"OTHER\",\n              \"amount\": 64427.96,\n              \"count\": 72,\n              \"fraction_of_total_expenses\": 0.2,\n              \"average_days_between_transactions\": 2.3661921296296295,\n              \"last_date_time\": \"2023-10-18T04:02:29Z\",\n              \"first_date_time\": \"2023-05-03T04:02:46Z\",\n              \"average_monthly_amount\": 10737.99,\n              \"average_monthly_count\": 12,\n              \"maximum_monthly_amount\": {\n                \"month\": 9,\n                \"year\": 2023,\n                \"amount\": 21265.28\n              },\n              \"minimum_monthly_amount\": {\n                \"month\": 7,\n                \"year\": 2023,\n                \"amount\": 164.4\n              }\n            },\n            {\n              \"category\": \"RESTAURANTS_DINING\",\n              \"amount\": 7964.15,\n              \"count\": 49,\n              \"fraction_of_total_expenses\": 0.02,\n              \"average_days_between_transactions\": 3.4500462962962963,\n              \"last_date_time\": \"2023-10-14T07:50:12Z\",\n              \"first_date_time\": \"2023-05-01T17:22:17Z\",\n              \"average_monthly_amount\": 1327.36,\n              \"average_monthly_count\": 8.166666666666666,\n              \"maximum_monthly_amount\": {\n                \"month\": 5,\n                \"year\": 2023,\n                \"amount\": 2566.6\n              },\n              \"minimum_monthly_amount\": {\n                \"month\": 10,\n                \"year\": 2023,\n                \"amount\": 222.81\n              }\n            },\n            {\n              \"category\": \"TRANSPORT\",\n              \"amount\": 8288.46,\n              \"count\": 141,\n              \"fraction_of_total_expenses\": 0.03,\n              \"average_days_between_transactions\": 1.2027893518518518,\n              \"last_date_time\": \"2023-10-18T04:14:01Z\",\n              \"first_date_time\": \"2023-05-02T18:50:50Z\",\n              \"average_monthly_amount\": 1381.41,\n              \"average_monthly_count\": 23.5,\n              \"maximum_monthly_amount\": {\n                \"month\": 5,\n                \"year\": 2023,\n                \"amount\": 2339.08\n              },\n              \"minimum_monthly_amount\": {\n                \"month\": 7,\n                \"year\": 2023,\n                \"amount\": 181.5\n              }\n            },\n            {\n              \"category\": \"LOAN\",\n              \"amount\": 90800,\n              \"count\": 5,\n              \"fraction_of_total_expenses\": 0.28,\n              \"average_days_between_transactions\": 30.997974537037038,\n              \"last_date_time\": \"2023-09-25T00:09:44Z\",\n              \"first_date_time\": \"2023-05-24T00:21:23Z\",\n              \"average_monthly_amount\": 15133.33,\n              \"average_monthly_count\": 0.8333333333333334,\n              \"maximum_monthly_amount\": {\n                \"month\": 9,\n                \"year\": 2023,\n                \"amount\": 36320\n              },\n              \"minimum_monthly_amount\": {\n                \"month\": 10,\n                \"year\": 2023,\n                \"amount\": 0\n              }\n            },\n            {\n              \"category\": \"TRAVEL\",\n              \"amount\": 28186.18,\n              \"count\": 16,\n              \"fraction_of_total_expenses\": 0.09,\n              \"average_days_between_transactions\": 9.801122685185184,\n              \"last_date_time\": \"2023-10-13T20:00:00Z\",\n              \"first_date_time\": \"2023-05-19T19:35:42Z\",\n              \"average_monthly_amount\": 4697.7,\n              \"average_monthly_count\": 2.6666666666666665,\n              \"maximum_monthly_amount\": {\n                \"month\": 6,\n                \"year\": 2023,\n                \"amount\": 16326.97\n              },\n              \"minimum_monthly_amount\": {\n                \"month\": 7,\n                \"year\": 2023,\n                \"amount\": 262\n              }\n            },\n            {\n              \"category\": \"ENTERTAINMENT\",\n              \"amount\": 619.71,\n              \"count\": 17,\n              \"fraction_of_total_expenses\": 0,\n              \"average_days_between_transactions\": 10.16125,\n              \"last_date_time\": \"2023-10-14T23:31:26Z\",\n              \"first_date_time\": \"2023-05-05T09:36:13Z\",\n              \"average_monthly_amount\": 103.29,\n              \"average_monthly_count\": 2.8333333333333335,\n              \"maximum_monthly_amount\": {\n                \"month\": 9,\n                \"year\": 2023,\n                \"amount\": 379.33\n              },\n              \"minimum_monthly_amount\": {\n                \"month\": 8,\n                \"year\": 2023,\n                \"amount\": 24.47\n              }\n            },\n            {\n              \"category\": \"RETAIL\",\n              \"amount\": 5618.82,\n              \"count\": 31,\n              \"fraction_of_total_expenses\": 0.02,\n              \"average_days_between_transactions\": 5.2353125,\n              \"last_date_time\": \"2023-10-18T16:26:26Z\",\n              \"first_date_time\": \"2023-05-14T15:00:36Z\",\n              \"average_monthly_amount\": 936.47,\n              \"average_monthly_count\": 5.166666666666667,\n              \"maximum_monthly_amount\": {\n                \"month\": 9,\n                \"year\": 2023,\n                \"amount\": 1842.49\n              },\n              \"minimum_monthly_amount\": {\n                \"month\": 5,\n                \"year\": 2023,\n                \"amount\": 488.11\n              }\n            },\n            {\n              \"category\": \"GROCERIES\",\n              \"amount\": 341.72,\n              \"count\": 6,\n              \"fraction_of_total_expenses\": 0,\n              \"average_days_between_transactions\": 25.472175925925924,\n              \"last_date_time\": \"2023-10-08T18:40:19Z\",\n              \"first_date_time\": \"2023-06-03T10:00:36Z\",\n              \"average_monthly_amount\": 56.95,\n              \"average_monthly_count\": 1,\n              \"maximum_monthly_amount\": {\n                \"month\": 6,\n                \"year\": 2023,\n                \"amount\": 166.27\n              },\n              \"minimum_monthly_amount\": {\n                \"month\": 5,\n                \"year\": 2023,\n                \"amount\": 0\n              }\n            },\n            {\n              \"category\": \"TRANSFER\",\n              \"amount\": 95394.84,\n              \"count\": 52,\n              \"fraction_of_total_expenses\": 0.29,\n              \"average_days_between_transactions\": 3.2032175925925928,\n              \"last_date_time\": \"2023-10-12T12:49:26.941Z\",\n              \"first_date_time\": \"2023-05-02T04:04:28Z\",\n              \"average_monthly_amount\": 15899.14,\n              \"average_monthly_count\": 8.666666666666666,\n              \"maximum_monthly_amount\": {\n                \"month\": 6,\n                \"year\": 2023,\n                \"amount\": 67480.75\n              },\n              \"minimum_monthly_amount\": {\n                \"month\": 7,\n                \"year\": 2023,\n                \"amount\": 66.05\n              }\n            },\n            {\n              \"category\": \"HEALTH_AND_WELLBEING\",\n              \"amount\": 3434,\n              \"count\": 2,\n              \"fraction_of_total_expenses\": 0.01,\n              \"average_days_between_transactions\": 61.95715277777778,\n              \"last_date_time\": \"2023-08-17T05:24:22Z\",\n              \"first_date_time\": \"2023-06-16T06:26:04Z\",\n              \"average_monthly_amount\": 572.33,\n              \"average_monthly_count\": 0.3333333333333333,\n              \"maximum_monthly_amount\": {\n                \"month\": 8,\n                \"year\": 2023,\n                \"amount\": 3299\n              },\n              \"minimum_monthly_amount\": {\n                \"month\": 5,\n                \"year\": 2023,\n                \"amount\": 0\n              }\n            },\n            {\n              \"category\": \"RENT_AND_SERVICES\",\n              \"amount\": 22035.03,\n              \"count\": 32,\n              \"fraction_of_total_expenses\": 0.07,\n              \"average_days_between_transactions\": 5.245995370370371,\n              \"last_date_time\": \"2023-10-16T09:30:33Z\",\n              \"first_date_time\": \"2023-05-06T18:29:15Z\",\n              \"average_monthly_amount\": 3672.51,\n              \"average_monthly_count\": 5.333333333333333,\n              \"maximum_monthly_amount\": {\n                \"month\": 8,\n                \"year\": 2023,\n                \"amount\": 12447.52\n              },\n              \"minimum_monthly_amount\": {\n                \"month\": 5,\n                \"year\": 2023,\n                \"amount\": 861.06\n              }\n            }\n          ]\n        }\n      ]\n    },\n    \"monthly_totals\": [\n      {\n        \"month\": 10,\n        \"year\": 2023,\n        \"amount\": 43869.25,\n        \"count\": 67,\n        \"is_month_complete\": false,\n        \"breakdown\": [\n          {\n            \"by\": \"category\",\n            \"breakdowns\": [\n              {\n                \"category\": \"OTHER\",\n                \"amount\": 16130.48,\n                \"count\": 18,\n                \"fraction_of_total_expenses\": 0.37\n              },\n              {\n                \"category\": \"RESTAURANTS_DINING\",\n                \"amount\": 222.81,\n                \"count\": 1,\n                \"fraction_of_total_expenses\": 0.01\n              },\n              {\n                \"category\": \"TRANSPORT\",\n                \"amount\": 1545.8,\n                \"count\": 21,\n                \"fraction_of_total_expenses\": 0.04\n              },\n              {\n                \"category\": \"TRAVEL\",\n                \"amount\": 537,\n                \"count\": 1,\n                \"fraction_of_total_expenses\": 0.01\n              },\n              {\n                \"category\": \"ENTERTAINMENT\",\n                \"amount\": 78.5,\n                \"count\": 4,\n                \"fraction_of_total_expenses\": 0\n              },\n              {\n                \"category\": \"RETAIL\",\n                \"amount\": 1329.36,\n                \"count\": 10,\n                \"fraction_of_total_expenses\": 0.03\n              },\n              {\n                \"category\": \"GROCERIES\",\n                \"amount\": 46,\n                \"count\": 1,\n                \"fraction_of_total_expenses\": 0\n              },\n              {\n                \"category\": \"TRANSFER\",\n                \"amount\": 21184.1,\n                \"count\": 4,\n                \"fraction_of_total_expenses\": 0.48\n              },\n              {\n                \"category\": \"RENT_AND_SERVICES\",\n                \"amount\": 2795.2,\n                \"count\": 7,\n                \"fraction_of_total_expenses\": 0.06\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"month\": 9,\n        \"year\": 2023,\n        \"amount\": 76909.09,\n        \"count\": 103,\n        \"is_month_complete\": true,\n        \"breakdown\": [\n          {\n            \"by\": \"category\",\n            \"breakdowns\": [\n              {\n                \"category\": \"OTHER\",\n                \"amount\": 21265.28,\n                \"count\": 19,\n                \"fraction_of_total_expenses\": 0.28\n              },\n              {\n                \"category\": \"TRANSPORT\",\n                \"amount\": 1711.48,\n                \"count\": 25,\n                \"fraction_of_total_expenses\": 0.02\n              },\n              {\n                \"category\": \"RESTAURANTS_DINING\",\n                \"amount\": 791.22,\n                \"count\": 6,\n                \"fraction_of_total_expenses\": 0.01\n              },\n              {\n                \"category\": \"RETAIL\",\n                \"amount\": 1842.49,\n                \"count\": 7,\n                \"fraction_of_total_expenses\": 0.02\n              },\n              {\n                \"category\": \"TRAVEL\",\n                \"amount\": 9638.09,\n                \"count\": 3,\n                \"fraction_of_total_expenses\": 0.13\n              },\n              {\n                \"category\": \"ENTERTAINMENT\",\n                \"amount\": 379.33,\n                \"count\": 5,\n                \"fraction_of_total_expenses\": 0\n              },\n              {\n                \"category\": \"LOAN\",\n                \"amount\": 36320,\n                \"count\": 2,\n                \"fraction_of_total_expenses\": 0.47\n              },\n              {\n                \"category\": \"GROCERIES\",\n                \"amount\": 42.69,\n                \"count\": 3,\n                \"fraction_of_total_expenses\": 0\n              },\n              {\n                \"category\": \"TRANSFER\",\n                \"amount\": 987.14,\n                \"count\": 22,\n                \"fraction_of_total_expenses\": 0.01\n              },\n              {\n                \"category\": \"RENT_AND_SERVICES\",\n                \"amount\": 3931.37,\n                \"count\": 11,\n                \"fraction_of_total_expenses\": 0.05\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"month\": 8,\n        \"year\": 2023,\n        \"amount\": 49553.54,\n        \"count\": 56,\n        \"is_month_complete\": true,\n        \"breakdown\": [\n          {\n            \"by\": \"category\",\n            \"breakdowns\": [\n              {\n                \"category\": \"OTHER\",\n                \"amount\": 7319.6,\n                \"count\": 6,\n                \"fraction_of_total_expenses\": 0.15\n              },\n              {\n                \"category\": \"RESTAURANTS_DINING\",\n                \"amount\": 2389.4,\n                \"count\": 10,\n                \"fraction_of_total_expenses\": 0.05\n              },\n              {\n                \"category\": \"TRANSPORT\",\n                \"amount\": 1218.55,\n                \"count\": 27,\n                \"fraction_of_total_expenses\": 0.02\n              },\n              {\n                \"category\": \"ENTERTAINMENT\",\n                \"amount\": 24.47,\n                \"count\": 1,\n                \"fraction_of_total_expenses\": 0\n              },\n              {\n                \"category\": \"RETAIL\",\n                \"amount\": 527.24,\n                \"count\": 4,\n                \"fraction_of_total_expenses\": 0.01\n              },\n              {\n                \"category\": \"TRAVEL\",\n                \"amount\": 1081,\n                \"count\": 2,\n                \"fraction_of_total_expenses\": 0.02\n              },\n              {\n                \"category\": \"LOAN\",\n                \"amount\": 18160,\n                \"count\": 1,\n                \"fraction_of_total_expenses\": 0.37\n              },\n              {\n                \"category\": \"GROCERIES\",\n                \"amount\": 86.76,\n                \"count\": 1,\n                \"fraction_of_total_expenses\": 0\n              },\n              {\n                \"category\": \"TRANSFER\",\n                \"amount\": 3000,\n                \"count\": 1,\n                \"fraction_of_total_expenses\": 0.06\n              },\n              {\n                \"category\": \"HEALTH_AND_WELLBEING\",\n                \"amount\": 3299,\n                \"count\": 1,\n                \"fraction_of_total_expenses\": 0.07\n              },\n              {\n                \"category\": \"RENT_AND_SERVICES\",\n                \"amount\": 12447.52,\n                \"count\": 2,\n                \"fraction_of_total_expenses\": 0.25\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"month\": 7,\n        \"year\": 2023,\n        \"amount\": 3418.33,\n        \"count\": 23,\n        \"is_month_complete\": true,\n        \"breakdown\": [\n          {\n            \"by\": \"category\",\n            \"breakdowns\": [\n              {\n                \"category\": \"OTHER\",\n                \"amount\": 164.4,\n                \"count\": 3,\n                \"fraction_of_total_expenses\": 0.05\n              },\n              {\n                \"category\": \"TRANSPORT\",\n                \"amount\": 181.5,\n                \"count\": 4,\n                \"fraction_of_total_expenses\": 0.05\n              },\n              {\n                \"category\": \"RESTAURANTS_DINING\",\n                \"amount\": 957.73,\n                \"count\": 6,\n                \"fraction_of_total_expenses\": 0.28\n              },\n              {\n                \"category\": \"ENTERTAINMENT\",\n                \"amount\": 40.47,\n                \"count\": 2,\n                \"fraction_of_total_expenses\": 0.01\n              },\n              {\n                \"category\": \"TRAVEL\",\n                \"amount\": 262,\n                \"count\": 1,\n                \"fraction_of_total_expenses\": 0.08\n              },\n              {\n                \"category\": \"RETAIL\",\n                \"amount\": 717.45,\n                \"count\": 3,\n                \"fraction_of_total_expenses\": 0.21\n              },\n              {\n                \"category\": \"TRANSFER\",\n                \"amount\": 66.05,\n                \"count\": 1,\n                \"fraction_of_total_expenses\": 0.02\n              },\n              {\n                \"category\": \"RENT_AND_SERVICES\",\n                \"amount\": 1028.73,\n                \"count\": 3,\n                \"fraction_of_total_expenses\": 0.3\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"month\": 6,\n        \"year\": 2023,\n        \"amount\": 124948.66,\n        \"count\": 73,\n        \"is_month_complete\": true,\n        \"breakdown\": [\n          {\n            \"by\": \"category\",\n            \"breakdowns\": [\n              {\n                \"category\": \"OTHER\",\n                \"amount\": 18625.44,\n                \"count\": 12,\n                \"fraction_of_total_expenses\": 0.15\n              },\n              {\n                \"category\": \"TRANSPORT\",\n                \"amount\": 1292.05,\n                \"count\": 26,\n                \"fraction_of_total_expenses\": 0.01\n              },\n              {\n                \"category\": \"RESTAURANTS_DINING\",\n                \"amount\": 1036.39,\n                \"count\": 9,\n                \"fraction_of_total_expenses\": 0.01\n              },\n              {\n                \"category\": \"ENTERTAINMENT\",\n                \"amount\": 40.47,\n                \"count\": 2,\n                \"fraction_of_total_expenses\": 0\n              },\n              {\n                \"category\": \"LOAN\",\n                \"amount\": 18160,\n                \"count\": 1,\n                \"fraction_of_total_expenses\": 0.15\n              },\n              {\n                \"category\": \"RETAIL\",\n                \"amount\": 714.17,\n                \"count\": 4,\n                \"fraction_of_total_expenses\": 0.01\n              },\n              {\n                \"category\": \"TRAVEL\",\n                \"amount\": 16326.97,\n                \"count\": 6,\n                \"fraction_of_total_expenses\": 0.13\n              },\n              {\n                \"category\": \"GROCERIES\",\n                \"amount\": 166.27,\n                \"count\": 1,\n                \"fraction_of_total_expenses\": 0\n              },\n              {\n                \"category\": \"TRANSFER\",\n                \"amount\": 67480.75,\n                \"count\": 7,\n                \"fraction_of_total_expenses\": 0.54\n              },\n              {\n                \"category\": \"HEALTH_AND_WELLBEING\",\n                \"amount\": 135,\n                \"count\": 1,\n                \"fraction_of_total_expenses\": 0\n              },\n              {\n                \"category\": \"RENT_AND_SERVICES\",\n                \"amount\": 971.15,\n                \"count\": 4,\n                \"fraction_of_total_expenses\": 0.01\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"month\": 5,\n        \"year\": 2023,\n        \"amount\": 28412,\n        \"count\": 101,\n        \"is_month_complete\": true,\n        \"breakdown\": [\n          {\n            \"by\": \"category\",\n            \"breakdowns\": [\n              {\n                \"category\": \"OTHER\",\n                \"amount\": 922.76,\n                \"count\": 14,\n                \"fraction_of_total_expenses\": 0.03\n              },\n              {\n                \"category\": \"RESTAURANTS_DINING\",\n                \"amount\": 2566.6,\n                \"count\": 17,\n                \"fraction_of_total_expenses\": 0.09\n              },\n              {\n                \"category\": \"TRANSPORT\",\n                \"amount\": 2339.08,\n                \"count\": 38,\n                \"fraction_of_total_expenses\": 0.08\n              },\n              {\n                \"category\": \"ENTERTAINMENT\",\n                \"amount\": 56.47,\n                \"count\": 3,\n                \"fraction_of_total_expenses\": 0\n              },\n              {\n                \"category\": \"LOAN\",\n                \"amount\": 18160,\n                \"count\": 1,\n                \"fraction_of_total_expenses\": 0.64\n              },\n              {\n                \"category\": \"TRAVEL\",\n                \"amount\": 341.12,\n                \"count\": 3,\n                \"fraction_of_total_expenses\": 0.01\n              },\n              {\n                \"category\": \"RETAIL\",\n                \"amount\": 488.11,\n                \"count\": 3,\n                \"fraction_of_total_expenses\": 0.02\n              },\n              {\n                \"category\": \"TRANSFER\",\n                \"amount\": 2676.8,\n                \"count\": 17,\n                \"fraction_of_total_expenses\": 0.09\n              },\n              {\n                \"category\": \"RENT_AND_SERVICES\",\n                \"amount\": 861.06,\n                \"count\": 5,\n                \"fraction_of_total_expenses\": 0.03\n              }\n            ]\n          }\n        ]\n      }\n    ]\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://sandbox.leantech.me",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "a8b290b9-2e88-4521-891a-5059bb37895e",
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Enrichment API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "",
+      "type": "text/plain"
+    }
+  }
+}

@@ -1,0 +1,212 @@
+{
+  "item": [
+    {
+      "id": "0807ef74-df15-4af4-9e13-7463c00aec6e",
+      "name": "Banks",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "b87d8881-b736-4b61-8300-65e731e1ef03",
+          "name": "List Banks",
+          "request": {
+            "name": "List Banks",
+            "description": {
+              "content": "Fetch a list of all supported Banks for your application, includes status and configuration information.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "banks",
+                "v1"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET"
+          },
+          "response": [
+            {
+              "id": "5af4b679-b78d-435c-b551-b661ee15dc11",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "banks",
+                    "v1"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"identifier\": \"MOCK_ARE\",\n    \"name\": \"Mock Bank\",\n    \"arabic_name\": \"بنك\",\n    \"logo\": \"https://cdn.leantech.me/img/bank-assets/sau/glyphs/bilad/mock.png\",\n    \"logo_alt\": \"https://cdn.leantech.me/img/bank-assets/sau/glyphs/bilad/mockDark.png\",\n    \"main_color\": \"#CF202E\",\n    \"background_color\": \"#FFFFFF\",\n    \"theme\": \"light\",\n    \"country_code\": \"SAU\",\n    \"active\": true,\n    \"mock\": false,\n    \"bank_type\": \"RETAIL\",\n    \"traits\": [\n      \"auth-redirect\",\n      \"decoupled-auth-redirect\"\n    ],\n    \"supported_account_types\": [\n      \"CREDIT\",\n      \"SAVINGS\",\n      \"CURRENT\"\n    ],\n    \"transfer_limits\": [],\n    \"international_transfer_limits\": [],\n    \"international_destinations\": [],\n    \"account_type\": \"PERSONAL\",\n    \"supported_account_sub_types\": [\n      \"CURRENT\",\n      \"SAVINGS\",\n      \"CREDIT\"\n    ],\n    \"availability\": {\n      \"active\": {\n        \"payments\": true,\n        \"data\": true\n      },\n      \"enabled\": {\n        \"payments\": true,\n        \"data\": true\n      }\n    }\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "a518e15d-8d82-4ae4-a2c6-204fc08d74ba",
+          "name": "List Banks",
+          "request": {
+            "name": "List Banks",
+            "description": {
+              "content": "",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "banks",
+                "v1",
+                ""
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "account_types",
+                  "value": "<string>",
+                  "description": "If you want to get the list of business or personal banks (default value is PERSONAL)."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET"
+          },
+          "response": [
+            {
+              "id": "f79f8102-56bc-4558-a5b1-38fd3bb8d667",
+              "name": "Successful response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "banks",
+                    "v1",
+                    ""
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "account_types",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"identifier\": \"string\",\n    \"name\": \"string\",\n    \"arabic_name\": \"string\",\n    \"logo\": \"string\",\n    \"logo_alt\": \"string\",\n    \"main_color\": \"string\",\n    \"background_color\": \"string\",\n    \"theme\": \"string\",\n    \"country_code\": \"string\",\n    \"active\": false,\n    \"traits\": [\n      \"string\",\n      \"string\"\n    ],\n    \"supported_account_types\": \"CURRENT\",\n    \"supported_account_sub_types\": \"string\",\n    \"bank_type\": \"SME\",\n    \"account_type\": \"BUSINESS\",\n    \"availability\": {\n      \"active\": {\n        \"payments\": true,\n        \"data\": false\n      },\n      \"enabled\": {\n        \"payments\": true,\n        \"data\": false\n      }\n    }\n  },\n  {\n    \"identifier\": \"string\",\n    \"name\": \"string\",\n    \"arabic_name\": \"string\",\n    \"logo\": \"string\",\n    \"logo_alt\": \"string\",\n    \"main_color\": \"string\",\n    \"background_color\": \"string\",\n    \"theme\": \"string\",\n    \"country_code\": \"string\",\n    \"active\": false,\n    \"traits\": [\n      \"string\",\n      \"string\"\n    ],\n    \"supported_account_types\": \"SAVINGS\",\n    \"supported_account_sub_types\": \"string\",\n    \"bank_type\": \"SME\",\n    \"account_type\": \"PERSONAL\",\n    \"availability\": {\n      \"active\": {\n        \"payments\": false,\n        \"data\": false\n      },\n      \"enabled\": {\n        \"payments\": true,\n        \"data\": true\n      }\n    }\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://sandbox.leantech.me",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "bbabf6c9-b3d7-4197-b57c-97318435a7ac",
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Banks API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "",
+      "type": "text/plain"
+    }
+  }
+}

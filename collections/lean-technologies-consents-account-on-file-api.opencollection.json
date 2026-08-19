@@ -1,0 +1,39 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Account Controls (New) Account Controls (New) Consents Account On File API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Consents Account On File",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Create a new AoF consent",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://sandbox.leantech.me/consents/v1/account-on-file",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Creates a new Account-on-File consent that can be authorized later."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

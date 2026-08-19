@@ -1,0 +1,238 @@
+{
+  "item": [
+    {
+      "id": "66887f82-b3ca-40d4-a31c-69b4a47c614a",
+      "name": "Sessions",
+      "description": {
+        "content": "Create and inspect payment sessions. \nEach session has a limited lifetime and progresses through a defined lifecycle from `CREATED` to `COMPLETED` or `EXPIRED`.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "92928d69-ace2-43fb-ba81-8ef06c5496f1",
+          "name": "Create Session",
+          "request": {
+            "name": "Create Session",
+            "description": {
+              "content": "Creates a new session that guides a customer through a payment flow.\nThe session begins in `CREATED` state and transitions to `ACTIVE` once the customer opens the redirect URL. \nRedirect your customer to the returned `session_url` to begin the flow.\nSessions expire after a fixed period if not completed.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "sessions",
+                "v1"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customer_id\": \"<uuid>\",\n  \"flow\": {\n    \"type\": \"<string>\",\n    \"payload\": {\n      \"payment_intent_id\": \"<string,null-uuid>\"\n    }\n  },\n  \"redirect_url\": \"<uri>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "ee1befd2-eab2-4be6-ba26-78bade5d0edc",
+              "name": "Session created successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sessions",
+                    "v1"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customer_id\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n  \"flow\": {\n    \"type\": \"PAY\",\n    \"payload\": {\n      \"payment_intent_id\": \"7d4e2c19-8f2a-4b3c-9d1e-6f8a2b4c6d8e\"\n    }\n  },\n  \"redirect_url\": \"https://example.com/checkout/complete?order_id=ord_1234\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"9a1b3c5d-7e8f-4a2b-8c6d-0e1f2a3b4c5d\",\n  \"session_url\": \"https://secure.leantech.me/9a1b3c5d-7e8f-4a2b-8c6d-0e1f2a3b4c5d\",\n  \"redirect_url\": \"https://example.com/checkout/complete?order_id=ord_1234\",\n  \"expires_at\": \"2026-03-20T15:30:00Z\",\n  \"flow\": {\n    \"type\": \"PAY\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "7214b107-1cb6-4a1f-935a-d6925d9505f3",
+          "name": "Get Session",
+          "request": {
+            "name": "Get Session",
+            "description": {
+              "content": "Retrieves the current state of a session by its identifier.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "sessions",
+                "v1",
+                ":session_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "session_id",
+                  "description": "(Required) Unique identifier of the session"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET"
+          },
+          "response": [
+            {
+              "id": "aded7723-0b1e-448f-a36e-ebd503131fd8",
+              "name": "OK - Session retrieved successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sessions",
+                    "v1",
+                    ":session_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "session_id",
+                      "description": "(Required) Unique identifier of the session"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"9a1b3c5d-7e8f-4a2b-8c6d-0e1f2a3b4c5d\",\n  \"state\": \"COMPLETED\",\n  \"customer_id\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n  \"type\": \"PAY\",\n  \"session_url\": \"https://secure.leantech.me/9a1b3c5d-7e8f-4a2b-8c6d-0e1f2a3b4c5d\",\n  \"redirect_url\": \"https://example.com/checkout/complete?order_id=ord_1234\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://sandbox.leantech.me",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "e952c85e-772e-4d13-9065-087d379a6db4",
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Sessions API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Create and inspect payment sessions. \nEach session has a limited lifetime and progresses through a defined lifecycle from `CREATED` to `COMPLETED` or `EXPIRED`.",
+      "type": "text/plain"
+    }
+  }
+}

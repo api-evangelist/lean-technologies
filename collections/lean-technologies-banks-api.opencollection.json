@@ -1,0 +1,54 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Banks API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Banks",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List Banks",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/banks/v1"
+          },
+          "docs": "Fetch a list of all supported Banks for your application, includes status and configuration information."
+        },
+        {
+          "info": {
+            "name": "List Banks",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/banks/v1/",
+            "params": [
+              {
+                "name": "account_types",
+                "value": "",
+                "type": "query",
+                "description": "If you want to get the list of business or personal banks (default value is PERSONAL)."
+              }
+            ]
+          },
+          "docs": "List Banks"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,78 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Enrichment API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Enrichment",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get Income",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://sandbox.leantech.me/insights/v2/income",
+            "params": [
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "When true the API will only return a results_id which can be fetched from the /results endpoint when ready."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Provides insights on the salary and non-salary income received in the bank account."
+        },
+        {
+          "info": {
+            "name": "Get Expenses",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/insights/v2/expenses",
+            "params": [
+              {
+                "name": "async",
+                "value": "false",
+                "type": "query",
+                "description": "When true the API will only return a results_id which can be fetched from the /results endpoint when ready."
+              },
+              {
+                "name": "start_date",
+                "value": "2023-05-01",
+                "type": "query",
+                "description": "The start date in UTC (in the format YYYY-MM-DD) you want to query expenses for."
+              },
+              {
+                "name": "entity_id",
+                "value": "",
+                "type": "query",
+                "description": "The entity_id you're querying for."
+              }
+            ]
+          },
+          "docs": "Provides insights on the expenses from a bank account (only supported for retail bank accounts)."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,120 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Account On File Account Controls (New) Account Controls (New) Consents API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Consents",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Retrieve consent details",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/consents/v1/:consent_id",
+            "params": [
+              {
+                "name": "consent_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier for the consent. Provided as a UUID."
+              }
+            ]
+          },
+          "docs": "Retrieves a payment consent and its consumption data. Consumption data is returned only for authorized consents."
+        },
+        {
+          "info": {
+            "name": "Retrieve balance of consent-linked account",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/consents/v1/:consent_id/balance",
+            "params": [
+              {
+                "name": "consent_id",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier of the authorized consent."
+              }
+            ]
+          },
+          "docs": "Retrieves the balance of the account associated with the specified authorized consent."
+        },
+        {
+          "info": {
+            "name": "List customers consents",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/consents/v1",
+            "params": [
+              {
+                "name": "customer_id",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "page_number",
+                "value": "",
+                "type": "query",
+                "description": "Indicator of which page of results to return, starts at 0"
+              },
+              {
+                "name": "page_size",
+                "value": "",
+                "type": "query",
+                "description": "Size of a single page of results to return"
+              }
+            ]
+          },
+          "docs": "Retrieves a paginated list of payment consents for the specified customer."
+        },
+        {
+          "info": {
+            "name": "Revoke a consent",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://sandbox.leantech.me/consents/v1/:consent_id/revocation",
+            "params": [
+              {
+                "name": "consent_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the consent to revoke. Provided as a UUID."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Revokes an authorised payment consent. The consent must be in `AUTHORISED` state."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

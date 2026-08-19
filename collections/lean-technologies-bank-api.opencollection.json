@@ -1,0 +1,73 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Bank API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Bank",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List Banks",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/banks/v1",
+            "headers": [
+              {
+                "name": "lean-link-sandbox",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customer_id",
+                "value": "",
+                "type": "query",
+                "description": "Scopes the returned banks to those enabled for the given customer. Used to control bank rollout on a per-customer basis, so that newly onboarded banks can be exposed to selected customers before being made generally available."
+              },
+              {
+                "name": "bank_type",
+                "value": "",
+                "type": "query",
+                "description": "Specifies whether the Entity is a Retail or Corporate owned account. "
+              },
+              {
+                "name": "account_types",
+                "value": "",
+                "type": "query",
+                "description": "Filters the results to banks that support at least one of the specified account types."
+              },
+              {
+                "name": "country_codes",
+                "value": "",
+                "type": "query",
+                "description": "Filters the results to banks located in the specified countries. Values must be alpha-3 (3 character) ISO 3166 country codes."
+              },
+              {
+                "name": "connection_types",
+                "value": "",
+                "type": "query",
+                "description": "Filters the results to banks that use one of the specified connection types."
+              }
+            ]
+          },
+          "docs": "Fetch a list of all supported Banks for your application, includes status and configuration information."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

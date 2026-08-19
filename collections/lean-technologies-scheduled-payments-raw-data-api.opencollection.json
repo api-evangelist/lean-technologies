@@ -1,0 +1,73 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Scheduled Payments Raw Data API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Scheduled Payments Raw Data",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get Scheduled Payments",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/data/v2/accounts/:account_id/scheduled-payments",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The account_id used to fetch requested data"
+              },
+              {
+                "name": "async",
+                "value": "",
+                "type": "query",
+                "description": "When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. **Note: it's recommended to use the sync flow (async=false) for all requests by adapting the [data workflow](https://docs.leantech.me/docs/data-workflow) for connected entities.**"
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "The page you're requesting - returns page 0 of a response if not specified."
+              },
+              {
+                "name": "size",
+                "value": "",
+                "type": "query",
+                "description": "The number of objects you want to return as a page size."
+              },
+              {
+                "name": "entity_id",
+                "value": "",
+                "type": "query",
+                "description": "The entity_id you're querying for, which is created by LinkSDK `.connect()` function."
+              },
+              {
+                "name": "meta",
+                "value": "",
+                "type": "query",
+                "description": "Additional data you would like to store against the request. Example: {\"foo\": \"val\"}"
+              }
+            ]
+          },
+          "docs": "Get the scheduled payments for a specific account given an accountId. \nThe accountId can be found by making a call to the /accounts endpoint. \nRequires the following permissions: `scheduled_payments`\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

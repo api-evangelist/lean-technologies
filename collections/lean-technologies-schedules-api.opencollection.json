@@ -1,0 +1,287 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Schedules API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Schedules",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List schedules",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/schedules/v1",
+            "params": [
+              {
+                "name": "consentId",
+                "value": "",
+                "type": "query",
+                "description": "Filter schedules to a single consent."
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query",
+                "description": "Filter schedules by status."
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "The page you're requesting - returns page 0 of a response if not specified."
+              },
+              {
+                "name": "size",
+                "value": "",
+                "type": "query",
+                "description": "The number of objects you want to return as a page size."
+              }
+            ]
+          },
+          "docs": "Returns a paginated list of schedules for the calling application, optionally filtered by\nconsent and status."
+        },
+        {
+          "info": {
+            "name": "Register a schedule",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://sandbox.leantech.me/schedules/v1",
+            "headers": [
+              {
+                "name": "Idempotency-Key",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Registers a new schedule (recurring or explicit) against an existing, authorized consent."
+        },
+        {
+          "info": {
+            "name": "Get schedule details",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/schedules/v1/:schedule_id",
+            "params": [
+              {
+                "name": "schedule_id",
+                "value": "",
+                "type": "path",
+                "description": "The id of the schedule."
+              }
+            ]
+          },
+          "docs": "Returns the full details of a single schedule."
+        },
+        {
+          "info": {
+            "name": "Cancel a schedule",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://sandbox.leantech.me/schedules/v1/:schedule_id/cancel",
+            "params": [
+              {
+                "name": "schedule_id",
+                "value": "",
+                "type": "path",
+                "description": "The id of the schedule."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Cancels a schedule. No further payments will be attempted."
+        },
+        {
+          "info": {
+            "name": "Pause a schedule",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://sandbox.leantech.me/schedules/v1/:schedule_id/pause",
+            "params": [
+              {
+                "name": "schedule_id",
+                "value": "",
+                "type": "path",
+                "description": "The id of the schedule."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Pauses an active schedule. Payments will not be attempted until resumed."
+        },
+        {
+          "info": {
+            "name": "Resume a schedule",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://sandbox.leantech.me/schedules/v1/:schedule_id/resume",
+            "params": [
+              {
+                "name": "schedule_id",
+                "value": "",
+                "type": "path",
+                "description": "The id of the schedule."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Resumes a paused schedule."
+        },
+        {
+          "info": {
+            "name": "List upcoming payments",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/schedules/v1/:schedule_id/upcoming-payments",
+            "params": [
+              {
+                "name": "schedule_id",
+                "value": "",
+                "type": "path",
+                "description": "The id of the schedule."
+              },
+              {
+                "name": "fromDate",
+                "value": "",
+                "type": "query",
+                "description": "Only return upcoming payments due on or after this date (inclusive)."
+              },
+              {
+                "name": "toDate",
+                "value": "",
+                "type": "query",
+                "description": "Only return upcoming payments due on or before this date (inclusive)."
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "The page you're requesting - returns page 0 of a response if not specified."
+              },
+              {
+                "name": "size",
+                "value": "",
+                "type": "query",
+                "description": "The number of objects you want to return as a page size."
+              }
+            ]
+          },
+          "docs": "Returns a paginated list of upcoming (not yet executed) payments for a schedule."
+        },
+        {
+          "info": {
+            "name": "List scheduled payments",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/schedules/v1/:schedule_id/payments",
+            "params": [
+              {
+                "name": "schedule_id",
+                "value": "",
+                "type": "path",
+                "description": "The id of the schedule."
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query",
+                "description": "Filter scheduled payments by status."
+              },
+              {
+                "name": "fromDate",
+                "value": "",
+                "type": "query",
+                "description": "Only return scheduled payments due on or after this date (inclusive)."
+              },
+              {
+                "name": "toDate",
+                "value": "",
+                "type": "query",
+                "description": "Only return scheduled payments due on or before this date (inclusive)."
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "The page you're requesting - returns page 0 of a response if not specified."
+              },
+              {
+                "name": "size",
+                "value": "",
+                "type": "query",
+                "description": "The number of objects you want to return as a page size."
+              }
+            ]
+          },
+          "docs": "Returns a paginated list of the scheduled payments belonging to a schedule, optionally\nfiltered by status and due-date range."
+        },
+        {
+          "info": {
+            "name": "Get scheduled payment details",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/schedules/v1/:schedule_id/payments/:scheduled_payment_id",
+            "params": [
+              {
+                "name": "schedule_id",
+                "value": "",
+                "type": "path",
+                "description": "The id of the schedule."
+              },
+              {
+                "name": "scheduled_payment_id",
+                "value": "",
+                "type": "path",
+                "description": "The id of the scheduled payment."
+              }
+            ]
+          },
+          "docs": "Returns the current view of a single scheduled payment, including its identity within the\nschedule, due date, amount, reference, status and number of recorded attempts."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

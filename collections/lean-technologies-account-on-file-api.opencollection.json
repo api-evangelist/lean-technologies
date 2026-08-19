@@ -1,0 +1,60 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account Controls (New) Account Controls (New) Account On File API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Account On File",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Create a new non-authorized AoF consent",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://sandbox.leantech.me/consents/account-on-file",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "This operation will result in creation of non-authorized consent of Account-On-File type."
+        },
+        {
+          "info": {
+            "name": "Initiate a AoF payment",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://sandbox.leantech.me/payments/account-on-file",
+            "headers": [
+              {
+                "name": "Idempotency-Key",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Endpoint responsible for initiating a AoF payment against an existing, authorized consent"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

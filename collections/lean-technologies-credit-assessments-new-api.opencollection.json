@@ -1,0 +1,55 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Consents Account On File Account Controls (New) Account Controls (New) Credit Assessments (New) API",
+    "version": "v0.2.3"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Credit Assessments (New)",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get Credit Assessments",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://sandbox.leantech.me/insights/v3/credit-assessments",
+            "params": [
+              {
+                "name": "entity_id",
+                "value": "",
+                "type": "query",
+                "description": "The `entity_id` you're querying for."
+              },
+              {
+                "name": "start_date",
+                "value": "",
+                "type": "query",
+                "description": "The start date in UTC (in the format YYYY-MM-DD) of the analysis window. When omitted, defaults to the earliest transaction available for the entity."
+              },
+              {
+                "name": "end_date",
+                "value": "",
+                "type": "query",
+                "description": "The end date in UTC (in the format YYYY-MM-DD) of the analysis window (inclusive — transactions on this date are included). When omitted, defaults to the current time."
+              }
+            ]
+          },
+          "docs": "Aggregates income, expenses, and balance into pre-computed credit indicators for DBR, affordability ratio, \nnet cashflow, and max installment capacity. This endpoint offers configuration capabilities in order to fit and calibrate to your credit policy."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
