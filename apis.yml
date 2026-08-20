@@ -55,6 +55,8 @@ apis:
   humanURL: https://docs.leantech.me
   baseURL: https://api2.leantech.me
   tags:
+  - Account on File
+  tags_raw:
   - Account On File
   properties:
   - type: OpenAPI
@@ -180,6 +182,8 @@ apis:
   humanURL: https://docs.leantech.me
   baseURL: https://api2.leantech.me
   tags:
+  - Cash Flows
+  tags_raw:
   - Cashflows
   properties:
   - type: OpenAPI
@@ -244,6 +248,8 @@ apis:
   humanURL: https://docs.leantech.me
   baseURL: https://api2.leantech.me
   tags:
+  - Customers
+  tags_raw:
   - Customer
   properties:
   - type: OpenAPI
@@ -264,6 +270,8 @@ apis:
   humanURL: https://docs.leantech.me
   baseURL: https://api2.leantech.me
   tags:
+  - Data Refresh
+  tags_raw:
   - Data refresh
   properties:
   - type: OpenAPI
@@ -325,6 +333,8 @@ apis:
   humanURL: https://docs.leantech.me
   baseURL: https://api2.leantech.me
   tags:
+  - Event
+  tags_raw:
   - Events
   properties:
   - type: OpenAPI
@@ -663,6 +673,8 @@ apis:
   humanURL: https://docs.leantech.me
   baseURL: https://api2.leantech.me
   tags:
+  - Reconciliation
+  tags_raw:
   - reconciliation
   properties:
   - type: OpenAPI
