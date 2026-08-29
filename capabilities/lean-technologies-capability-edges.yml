@@ -1,0 +1,162 @@
+slug: lean-technologies
+provider: Lean Technologies
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Banking & Capital Markets
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 15
+edges:
+- tag: Payment Intents
+  spec_file: lean-technologies-payment-intents-api-openapi.yml
+  capability_id: BC-1340.10
+  capability_id_l1: BC-1340
+  capability_name: Payment Initiation Management
+  confidence: 0.85
+  evidence: POST /payments/v1/intents  createPaymentIntent  Create Payment Intent
+  reason: Payment intents are the capture/authorisation of a payment instruction on an open-banking payment
+    rail, i.e. payment initiation.
+- tag: Payments Account On File
+  spec_file: lean-technologies-payments-account-on-file-api-openapi.yml
+  capability_id: BC-1340.10
+  capability_id_l1: BC-1340
+  capability_name: Payment Initiation Management
+  confidence: 0.85
+  evidence: POST /payments/v1/account-on-file  initiateAccountOnFilePayment  Initiate an AoF payment
+  reason: Initiates a payment against a stored account-on-file consent, with authentication and risk context
+    schemas — payment instruction capture, validation and authorisation.
+- tag: Account On File
+  spec_file: lean-technologies-account-on-file-api-openapi.yml
+  capability_id: BC-1340.10
+  capability_id_l1: BC-1340
+  capability_name: Payment Initiation Management
+  confidence: 0.82
+  evidence: POST /payments/account-on-file 'Initiate a AoF payment'; POST /consents/account-on-file 'Create
+    a new non-authorized AoF consent'
+  reason: Operations capture and authorise payment instructions (consent + initiation) over open-banking
+    rails, which is payment initiation management. Sub-capability choice between initiation and processing
+    is the only ambiguity.
+- tag: Payment Links
+  spec_file: lean-technologies-payment-links-api-openapi.yml
+  capability_id: BC-1340.10
+  capability_id_l1: BC-1340
+  capability_name: Payment Initiation Management
+  confidence: 0.8
+  evidence: '"API for creating and managing reusable payment links"; POST /payment-links/v1 createPaymentLink'
+  reason: Payment links are a mechanism for initiating/collecting payments from payers; operations create,
+    update and track link usages that carry PaymentDetails and Currency.
+- tag: Payments
+  spec_file: lean-technologies-payments-api-openapi.yml
+  capability_id: BC-1340
+  capability_id_l1: BC-1340
+  capability_name: Payments & Card Management
+  confidence: 0.8
+  evidence: 'GET /payments/v1/{payment_id}  getPaymentById  Get Payment; schemas: Payment, Payment_2'
+  reason: Retrieval of a payment record on a pay-by-bank payments platform — payments domain, but a single
+    read operation is too thin to pick a sub-capability.
+- tag: Payouts
+  spec_file: lean-technologies-payouts-api-openapi.yml
+  capability_id: BC-1340.10
+  capability_id_l1: BC-1340
+  capability_name: Payment Initiation Management
+  confidence: 0.8
+  evidence: POST /payouts/v1/payment  createPayout  Create Payout Payment; POST /payouts/v1/bulk-payments  createBulkPayout
+  reason: Creates single, bulk and split outbound payout payments plus refunds — payment instruction initiation
+    and execution.
+- tag: Refunds
+  spec_file: lean-technologies-refunds-api-openapi.yml
+  capability_id: BC-1340
+  capability_id_l1: BC-1340
+  capability_name: Payments & Card Management
+  confidence: 0.8
+  evidence: POST /payouts/refunds  createRefund  Create Refunds; PUT /payouts/refunds  processRefunds  Process
+    Refunds
+  reason: Creation and processing of refunds against payouts on a payments platform; payments domain is
+    clear but refund handling straddles initiation and processing sub-capabilities.
+- tag: Schedules
+  spec_file: lean-technologies-schedules-api-openapi.yml
+  capability_id: BC-1340.10
+  capability_id_l1: BC-1340
+  capability_name: Payment Initiation Management
+  confidence: 0.8
+  evidence: '"allows you to register, manage and inspect scheduled (recurring or explicit) payments executed
+    against an authorized consent"; createSchedule, cancelSchedule, pauseSchedule, listUpcomingPayments'
+  reason: Registration, authorisation-linked capture and lifecycle control of recurring payment instructions
+    is payment instruction capture and authorisation, i.e. Payment Initiation Management.
+- tag: Credit Assessments (New)
+  spec_file: lean-technologies-credit-assessments-new-api-openapi.yml
+  capability_id: BC-1320.20
+  capability_id_l1: BC-1320
+  capability_name: Credit Underwriting & Decisioning Management
+  confidence: 0.78
+  evidence: GET /insights/v3/credit-assessments  getCreditAssessments  Get Credit Assessments; schemas
+    CreditAssessmentComputedIndicators, CreditObligationsRepaymentBreakdown, EmployerDetails
+  reason: Computes credit assessment indicators (obligations, repayment behaviour, employer/income factors)
+    from bank data — inputs to underwriting and credit decisioning rather than loan servicing.
+- tag: Consents
+  spec_file: lean-technologies-consents-api-openapi.yml
+  capability_id: BC-1340.10
+  capability_id_l1: BC-1340
+  capability_name: Payment Initiation Management
+  confidence: 0.75
+  evidence: POST /consents/v1/{consent_id}/revocation  revokeConsent; schemas GetPaymentConsentResponse,
+    PaymentPurpose, ImmediatePayment, ConsentedAccount
+  reason: The consents here are payment consents (payment purpose, immediate payment, control parameters,
+    consented account) — the authorisation artefact that permits payment initiation from a linked bank
+    account, which is payment instruction capture/authorisation. Some chance the intended framing is customer
+    consent management rather than payment initiation.
+- tag: Consents Account On File
+  spec_file: lean-technologies-consents-account-on-file-api-openapi.yml
+  capability_id: BC-1340.10
+  capability_id_l1: BC-1340
+  capability_name: Payment Initiation Management
+  confidence: 0.72
+  evidence: POST /consents/v1/account-on-file  createAccountOnFileConsent  Create a new AoF consent; schemas
+    ImmediatePayment, AccountOnFileControlParameters, PaymentPurposeCode
+  reason: Creates an Account-on-File payment consent with payment purpose and control parameters — the
+    mandate/authorisation step preceding pay-by-bank payment initiation.
+- tag: Account Controls (New)
+  spec_file: lean-technologies-account-controls-new-api-openapi.yml
+  capability_id: BC-1320.20
+  capability_id_l1: BC-1320
+  capability_name: Credit Underwriting & Decisioning Management
+  confidence: 0.7
+  evidence: CreditAssessmentComputedIndicators, CreditObligationsRepaymentBreakdown, CashFlowNet, EmployerDetails
+  reason: Despite the generic 'Account Controls' tag, the schemas are credit assessment indicators, obligations
+    and cashflow behaviour used for underwriting decisions.
+- tag: Corporate Verification
+  spec_file: lean-technologies-corporate-verification-api-openapi.yml
+  capability_id: BC-1300.20
+  capability_id_l1: BC-1300
+  capability_name: KYC & Customer Due Diligence Management
+  confidence: 0.7
+  evidence: POST /verifications/v1/corporates  Business Verification; POST /verifications/v1/corporates/managers  Managers
+    Verification; schemas CorporateIdentification, CompanyStatus, ManagementBoard, StockCapital
+  reason: Verification of a business entity and its managers/management board against registry data is
+    know-your-business / customer due diligence. Could alternatively be read as onboarding identity verification
+    (BC-1300.10), hence not higher.
+- tag: KYC
+  spec_file: lean-technologies-kyc-api-openapi.yml
+  capability_id: BC-1300.20
+  capability_id_l1: BC-1300
+  capability_name: KYC & Customer Due Diligence Management
+  confidence: 0.7
+  evidence: GET /files/kyc/poa/{document_id}.pdf  getPoaDocument  Retrieve Proof of Address Document
+  reason: Retrieval of KYC proof-of-address documentation is squarely customer due-diligence evidence
+    handling. Only a single document-fetch operation, so it is a supporting rather than full CDD surface.
+- tag: Payment Destination
+  spec_file: lean-technologies-payment-destination-api-openapi.yml
+  capability_id: BC-1340.10
+  capability_id_l1: BC-1340
+  capability_name: Payment Initiation Management
+  confidence: 0.7
+  evidence: 'POST /payments/v1/destinations  createPaymentDestination  Create Payment Destination; schemas:
+    PaymentDestination, CustomerPaymentDestination'
+  reason: Manages the beneficiary/destination records used when initiating pay-by-bank payments — part
+    of payment instruction capture and setup, not a technical concern.

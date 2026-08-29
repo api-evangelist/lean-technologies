@@ -775,6 +775,9 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: CapabilityMap
+  url: capabilities/lean-technologies-capability-edges.yml
+  name: Lean Technologies Business Capability Map
 - type: PostmanWorkspace
   url: https://www.postman.com/kinlaneapi/lean-technologies/overview
 - type: DeveloperPortal
