@@ -1,14 +1,13 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Consents Account On File Account Controls (New) Account Controls (New) Payments API
-  version: v0.2.3
+  title: Lean Technologies Payments API
+  version: 1.0.0
+  description: 'Operations tagged Payments across 2 of this provider''s published API definitions: lean-technologies-payments-core-openapi.yml, lean-technologies-payments-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://sandbox.leantech.me
   description: Sandbox
 - url: https://api2.leantech.me
   description: Production
-security:
-- bearerAuth: []
 tags:
 - name: Payments
   x-displayName: Payments
@@ -55,6 +54,13 @@ paths:
       deprecated: false
       tags:
       - Payments
+      security:
+      - bearerAuth: []
+    servers:
+    - url: https://sandbox.leantech.me
+      description: Sandbox
+    - url: https://api2.leantech.me
+      description: Production
 components:
   schemas:
     Payment:
@@ -143,7 +149,97 @@ components:
       - initiation_timestamp
       - status
       - bank_transaction_reference
+    Payment_2:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier for this payment.
+          format: uuid
+        payment_intent_id:
+          type: string
+          description: The Payment Intent identifier responsible for generating the Payment.
+          format: uuid
+        payment_source_id:
+          type: string
+          description: The identifier for the payment source object from which the payment was initiatied.
+          format: uuid
+        sender_details:
+          type: object
+          properties:
+            account_number:
+              type: string
+            iban:
+              type: string
+            name:
+              type: string
+          required:
+          - account_number
+          - iban
+          - name
+          description: The account details for the customer sending the payment. Includes account number, name of the account holder and IBAN.
+        recipient_details:
+          type: object
+          properties:
+            account_number:
+              type: string
+            iban:
+              type: string
+            name:
+              type: string
+          required:
+          - account_number
+          - iban
+          - name
+          description: Details for the recipient of the Payment, generated from the details available in the payment_destination.
+        amount:
+          type: number
+          description: The amount the charge was initiated for.
+        currency:
+          type: string
+          description: The currency the payment was initiated with.
+        description:
+          type: string
+          description: The description submitted to the bank as a reference when initiating a payment. Can be used for reconciliation. By default this value is a the Payment Intent UUID without hyphens but you can also specify the description upon creation of a payment intent.
+        submission_timestamp:
+          type: string
+          description: The time the Payment Initiation was submitted.
+        initiation_timestamp:
+          type: string
+          description: The time the Payment Initiation was started.
+        status:
+          type: string
+          enum:
+          - AWAITING_LOGIN_MFA
+          - AWAITING_PAYMENT_MFA
+          - AWAITING_APP_AUTH
+          - FAILED
+          - PENDING_WITH_BANK
+          - ACCEPTED_BY_BANK
+          description: 'The current status of the payment - see Payments Errors for a list of available MFAs. '
+        bank_transaction_reference:
+          type: string
+          description: The transaction reference number supplied by the initiating bank on successful initiation of a transfer. Can be used for reconciliation.
+      required:
+      - id
+      - payment_intent_id
+      - payment_source_id
+      - sender_details
+      - recipient_details
+      - amount
+      - currency
+      - description
+      - submission_timestamp
+      - initiation_timestamp
+      - status
+      - bank_transaction_reference
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
+    bearer:
+      type: http
+      scheme: bearer
+x-refined-from:
+- lean-technologies-payments-core-openapi.yml
+- lean-technologies-payments-openapi.yml

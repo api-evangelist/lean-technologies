@@ -1,14 +1,13 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Consents Account On File Account Controls (New) Account Controls (New) Payment Source API
-  version: v0.2.3
+  title: Lean Technologies Payment Source API
+  version: '1.0'
+  description: 'Operations tagged Payment Source across 2 of this provider''s published API definitions: lean-technologies-payments-customers-openapi.yml, lean-technologies-payments-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://sandbox.leantech.me
   description: Sandbox
 - url: https://api2.leantech.me
   description: Production
-security:
-- bearerAuth: []
 tags:
 - name: Payment Source
   x-displayName: Payment Source
@@ -70,6 +69,8 @@ paths:
                       balance_last_updated: '2021-02-12T13:20:57.370659Z'
       tags:
       - Payment Source
+      security:
+      - bearerAuth: []
   /customers/v1/{customer_id}/payment-sources/{payment_source_id}:
     servers: []
     get:
@@ -128,6 +129,8 @@ paths:
                       currency: USD
       tags:
       - Payment Source
+      security:
+      - bearerAuth: []
     delete:
       operationId: deletePaymentSource
       summary: Delete Payment Source
@@ -153,6 +156,8 @@ paths:
           x-lean-docs-discrepancy: response object
       tags:
       - Payment Source
+      security:
+      - bearerAuth: []
 components:
   schemas:
     PaymentSource:
@@ -286,7 +291,126 @@ components:
       - beneficiary_cool_off_expiry
       - beneficiaries
       - bank_identifier
+    PaymentSource_2:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The id of the Payment Source
+          format: uuid
+        customer_id:
+          type: string
+          description: The unique identifier for the Customer that owns the Payment Source
+          format: uuid
+        app_id:
+          type: string
+          description: The application associated with the Payment Source
+        status:
+          type: string
+          description: The current status of the beneficiary. Indicates whether the Payment Destination and Payment Source channel is chargeable.
+          deprecated: true
+          enum:
+          - AWAITING_BENEFICIARY_COOL_OFF
+          - ACTIVE
+        beneficiary_cool_off_expiry:
+          type: string
+          deprecated: true
+          format: date-time
+          description: The time that the beneficiary cool down period will, or did, expire. After this time the beneficiary will be chargeable.
+        bank_identifier:
+          type: string
+          description: Identifier that specifies the financial institution that holds the accounts
+        beneficiaries:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+                description: A unique identifier for the beneficiary
+              payment_destination_id:
+                type: string
+                format: uuid
+                description: The identifier for the associated Payment Destination resource
+              status:
+                type: string
+                description: The current status of the beneficiary
+                enum:
+                - AWAITING_BENEFICIARY_COOL_OFF
+                - ACTIVE
+              beneficiary_cool_off_expiry:
+                type: string
+                description: The time that the beneficiary cool down period will, or did, expire. After this time the beneficiary will be chargeable.
+                format: date-time
+            required:
+            - id
+            - payment_destination_id
+            - status
+          description: 'An array of beneficiaries that have been added to the Payment Source.
+
+            A beneficiary is the representation of the connection between a Payment Source and a Payment Destination.
+
+            The beneficiary object belongs to the payment source object and is linked to a Payment Destination object.
+
+            A payment can only be initiated from a payment source to a Destination which is linked to one of the Payment Source''s beneficiaries.'
+        accounts:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: The unique identifier for the account.
+              account_id:
+                type: string
+                description: A secondary identifier for the account.
+                deprecated: true
+              account_name:
+                type: string
+                description: The friendly name for the account - for example "Gold Savings Account".
+              account_number:
+                type: string
+                description: The bank account number for the account.
+              iban:
+                type: string
+                description: The IBAN number for the account.
+              balance:
+                type: number
+                deprecated: true
+                format: double
+                description: The balance available on the account at the last payment.
+              currency:
+                type: string
+                description: The currency that the account supports.
+              balance_last_updated:
+                type: string
+                description: The last date the balance was refreshed.
+                deprecated: true
+            required:
+            - id
+            - account_id
+            - account_name
+            - account_number
+            - iban
+            - balance
+            - currency
+            - balance_last_updated
+      required:
+      - id
+      - customer_id
+      - app_id
+      - status
+      - beneficiary_cool_off_expiry
+      - beneficiaries
+      - bank_identifier
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
+    bearer:
+      type: http
+      scheme: bearer
+x-refined-from:
+- lean-technologies-payments-customers-openapi.yml
+- lean-technologies-payments-openapi.yml

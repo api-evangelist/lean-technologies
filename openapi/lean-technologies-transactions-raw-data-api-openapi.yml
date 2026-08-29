@@ -1,7 +1,7 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Consents Account On File Account Controls (New) Account Controls (New) Transactions Raw Data API
-  version: v0.2.3
+  title: Lean Transactions Raw Data API
+  version: v3.0.0
 servers:
 - url: https://sandbox.leantech.me
   description: Sandbox
@@ -356,29 +356,76 @@ paths:
       - Transactions Raw Data
 components:
   schemas:
-    DataResult:
+    CardInstrument:
+      type: object
+      properties:
+        authorization_type:
+          description: Type of card authorization performed for the transaction.
+          type: string
+        card_scheme_name:
+          description: Name of the card scheme.
+          type: string
+        identification:
+          description: Identification assigned by an institution to identify the card instrument.
+          type: string
+        name:
+          description: Name of the cardholder using the card.
+          type: string
+    FetchTransactionsResultV2:
       type: object
       allOf:
-      - $ref: '#/components/schemas/Result'
-      - type: object
-        properties:
-          refreshed_at:
-            description: The datetime of when the data was refreshed
-            type:
-            - string
-            - 'null'
-            format: date-time
-          type:
-            description: The endpoint the original request was made to.
-            type:
-            - string
-            - 'null'
-    Currency:
-      description: The ISO 3 letter currency code
+      - $ref: '#/components/schemas/DataResult'
+      - properties:
+          data:
+            $ref: '#/components/schemas/TransactionsData'
+        type: object
+      x-toBuilder: true
+    ResultStatus:
+      description: The status of the request
       type: string
-      examples:
-      - AED
-      pattern: ^[A-Z]{3}$
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - RECONNECT_REQUIRED
+      - PROCESSING_STARTED
+    MerchantDetails:
+      type: object
+      properties:
+        merchant_category_code:
+          description: Category code conform to ISO 18245, related to the type of services or goods the merchant provides for the transaction.
+          type: string
+        merchant_name:
+          description: Name by which the merchant is known and which is usually used to identify that merchant.
+          type: string
+    PostalAddress:
+      type: object
+      properties:
+        address_type:
+          description: Identifies the nature of the postal address.
+          type: string
+        address_line:
+          description: Information that locates and identifies a specific address.
+          type: string
+        building_number:
+          description: Number that identifies the position of a building on a street.
+          type: string
+        country:
+          description: Nation with its own government.
+          type: string
+        country_subdivision:
+          description: Identifies a subdivision of a country such as state, region, county.
+          type: string
+        post_code:
+          description: Identifier consisting of a group of letters and/or numbers that is added to a postal address.
+          type: string
+        street_name:
+          description: Name of a street or thoroughfare.
+          type: string
+        town_name:
+          description: Name of a built-up area, with defined boundaries, and a local government.
+          type: string
     TransactionChargeAmount:
       type: object
       properties:
@@ -422,26 +469,37 @@ components:
       - size
       - total_elements
       - total_pages
-    MerchantDetails:
+    Currency:
+      description: The ISO 3 letter currency code
+      type: string
+      examples:
+      - AED
+      pattern: ^[A-Z]{3}$
+    CurrencyExchange:
       type: object
       properties:
-        merchant_category_code:
-          description: Category code conform to ISO 18245, related to the type of services or goods the merchant provides for the transaction.
+        source_currency:
+          description: Currency from which an amount is to be converted in a currency conversion.
           type: string
-        merchant_name:
-          description: Name by which the merchant is known and which is usually used to identify that merchant.
+        target_currency:
+          description: Currency into which an amount is to be converted in a currency conversion.
           type: string
-    TransactionBalance:
-      type: object
-      properties:
-        type:
-          description: The type of balance for the transaction
+        unit_currency:
+          description: Currency in which the rate of exchange is expressed in a currency exchange.
           type: string
-        credit_debit_indicator:
-          $ref: '#/components/schemas/CreditDebitIndicator'
-        amount:
+        exchange_rate:
+          description: Factor used to convert an amount from one currency into another.
+          type: number
+          format: decimal
+        contract_identification:
+          description: Unique identification to unambiguously identify the foreign exchange contract.
+          type: string
+        quotation_date:
+          description: Date and time at which an exchange rate is quoted.
+          type: string
+          format: date-time
+        instructed_amount:
           $ref: '#/components/schemas/CurrencyAmount'
-      x-toBuilder: true
     ProprietaryBankTransactionCode:
       type: object
       properties:
@@ -450,47 +508,6 @@ components:
           type: string
         issuer:
           description: Identification of the issuer of the proprietary bank transaction code.
-          type: string
-    Categorisation:
-      description: Category enriched information when insights parameter is set to true.
-      type: object
-      properties:
-        description_cleansed:
-          description: A cleaned and standardized version of the transaction description.
-          type: string
-        category:
-          description: High-level classification of the transaction including BANK_FEES_AND_CHARGES CHARITY EDUCATION ENTERTAINMENT GOVERNMENT GROCERIES HEALTH_AND_WELLBEING LOANS_AND_INVESTMENT RENT_AND_SERVICES RESTAURANTS_DINING RETAIL SALARY_AND_REVENUE TRANSFER TRANSPORT TRAVEL OTHER
-          type: string
-        category_confidence:
-          description: Confidence of category expressed as a percentage between 0 and 1.
-          type: number
-          format: decimal
-    PostalAddress:
-      type: object
-      properties:
-        address_type:
-          description: Identifies the nature of the postal address.
-          type: string
-        address_line:
-          description: Information that locates and identifies a specific address.
-          type: string
-        building_number:
-          description: Number that identifies the position of a building on a street.
-          type: string
-        country:
-          description: Nation with its own government.
-          type: string
-        country_subdivision:
-          description: Identifies a subdivision of a country such as state, region, county.
-          type: string
-        post_code:
-          description: Identifier consisting of a group of letters and/or numbers that is added to a postal address.
-          type: string
-        street_name:
-          description: Name of a street or thoroughfare.
-          type: string
-        town_name:
-          description: Name of a built-up area, with defined boundaries, and a local government.
           type: string
     CurrencyAmount:
       type: object
@@ -503,15 +520,60 @@ components:
       required:
       - currency
       - amount
-    FetchTransactionsResultV2:
+    TransactionBalance:
       type: object
-      allOf:
-      - $ref: '#/components/schemas/DataResult'
-      - properties:
-          data:
-            $ref: '#/components/schemas/TransactionsData'
-        type: object
+      properties:
+        type:
+          description: The type of balance for the transaction
+          type: string
+        credit_debit_indicator:
+          $ref: '#/components/schemas/CreditDebitIndicator'
+        amount:
+          $ref: '#/components/schemas/CurrencyAmount'
       x-toBuilder: true
+    StatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        granular_status_code:
+          description: Granular status code
+          type:
+          - string
+          - 'null'
+        status_additional_info:
+          description: Additional information about the status
+          type:
+          - string
+          - 'null'
+    CreditDebitIndicator:
+      description: Indicates whether the balance is a credit or debit balance
+      type: string
+      enum:
+      - CREDIT
+      - DEBIT
+      - UNSUPPORTED
+    Agent:
+      type: object
+      properties:
+        scheme_name:
+          description: Name of the identification scheme, in a coded form as published in an external list.
+          type: string
+        identification:
+          description: Unique and unambiguous identification of the agent.
+          type: string
+        name:
+          description: Name by which the agent is known and which is usually used to identify that agent.
+          type: string
+        postal_address:
+          $ref: '#/components/schemas/PostalAddress'
+    TransactionMutability:
+      description: Specifies whether the transaction details may change after posting (e.g., pending transactions can update upon settlement).
+      type: string
+      enum:
+      - IMMUTABLE
+      - MUTABLE
+      - UNSUPPORTED
     TransactionsData:
       type: object
       properties:
@@ -529,13 +591,6 @@ components:
       required:
       - type
       - page
-    TransactionMutability:
-      description: Specifies whether the transaction details may change after posting (e.g., pending transactions can update upon settlement).
-      type: string
-      enum:
-      - IMMUTABLE
-      - MUTABLE
-      - UNSUPPORTED
     Result:
       type: object
       properties:
@@ -571,69 +626,6 @@ components:
       - results_id
       - message
       - timestamp
-    BankTransactionCode:
-      type: object
-      properties:
-        code:
-          description: Bank transaction code used by the bank to categorize the transaction.
-          type: string
-        sub_code:
-          description: Sub-category of the bank transaction code providing further details.
-          type: string
-    TransactionAccountIdentifier:
-      type: object
-      properties:
-        name:
-          description: Name of the account, as assigned by the account servicing institution.
-          type: string
-        scheme_name:
-          description: Name of the identification scheme, in a coded form as published in an external list.
-          type: string
-        identification:
-          description: Identification assigned by an institution to identify an account.
-          type: string
-    CurrencyExchange:
-      type: object
-      properties:
-        source_currency:
-          description: Currency from which an amount is to be converted in a currency conversion.
-          type: string
-        target_currency:
-          description: Currency into which an amount is to be converted in a currency conversion.
-          type: string
-        unit_currency:
-          description: Currency in which the rate of exchange is expressed in a currency exchange.
-          type: string
-        exchange_rate:
-          description: Factor used to convert an amount from one currency into another.
-          type: number
-          format: decimal
-        contract_identification:
-          description: Unique identification to unambiguously identify the foreign exchange contract.
-          type: string
-        quotation_date:
-          description: Date and time at which an exchange rate is quoted.
-          type: string
-          format: date-time
-        instructed_amount:
-          $ref: '#/components/schemas/CurrencyAmount'
-    CreditDebitIndicator:
-      description: Indicates whether the balance is a credit or debit balance
-      type: string
-      enum:
-      - CREDIT
-      - DEBIT
-      - UNSUPPORTED
-    ResultStatus:
-      description: The status of the request
-      type: string
-      enum:
-      - OK
-      - PENDING
-      - FAILED
-      - CONSENT_EXPIRED
-      - RECONNECT_REQUIRED
-      - PROCESSING_STARTED
     Transaction:
       type: object
       properties:
@@ -763,60 +755,111 @@ components:
       - amount
       - status
       x-toBuilder: true
-    Agent:
+    BankTransactionCode:
       type: object
       properties:
+        code:
+          description: Bank transaction code used by the bank to categorize the transaction.
+          type: string
+        sub_code:
+          description: Sub-category of the bank transaction code providing further details.
+          type: string
+    DataResult:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          refreshed_at:
+            description: The datetime of when the data was refreshed
+            type:
+            - string
+            - 'null'
+            format: date-time
+          type:
+            description: The endpoint the original request was made to.
+            type:
+            - string
+            - 'null'
+    Categorisation:
+      description: Category enriched information when insights parameter is set to true.
+      type: object
+      properties:
+        description_cleansed:
+          description: A cleaned and standardized version of the transaction description.
+          type: string
+        category:
+          description: High-level classification of the transaction including BANK_FEES_AND_CHARGES CHARITY EDUCATION ENTERTAINMENT GOVERNMENT GROCERIES HEALTH_AND_WELLBEING LOANS_AND_INVESTMENT RENT_AND_SERVICES RESTAURANTS_DINING RETAIL SALARY_AND_REVENUE TRANSFER TRANSPORT TRAVEL OTHER
+          type: string
+        category_confidence:
+          description: Confidence of category expressed as a percentage between 0 and 1.
+          type: number
+          format: decimal
+    TransactionAccountIdentifier:
+      type: object
+      properties:
+        name:
+          description: Name of the account, as assigned by the account servicing institution.
+          type: string
         scheme_name:
           description: Name of the identification scheme, in a coded form as published in an external list.
           type: string
         identification:
-          description: Unique and unambiguous identification of the agent.
+          description: Identification assigned by an institution to identify an account.
           type: string
-        name:
-          description: Name by which the agent is known and which is usually used to identify that agent.
-          type: string
-        postal_address:
-          $ref: '#/components/schemas/PostalAddress'
-    StatusDetail:
-      type:
-      - object
-      - 'null'
-      properties:
-        granular_status_code:
-          description: Granular status code
-          type:
-          - string
-          - 'null'
-        status_additional_info:
-          description: Additional information about the status
-          type:
-          - string
-          - 'null'
-    CardInstrument:
-      type: object
-      properties:
-        authorization_type:
-          description: Type of card authorization performed for the transaction.
-          type: string
-        card_scheme_name:
-          description: Name of the card scheme.
-          type: string
-        identification:
-          description: Identification assigned by an institution to identify the card instrument.
-          type: string
-        name:
-          description: Name of the cardholder using the card.
-          type: string
+  parameters:
+    MetaParameter:
+      name: meta
+      description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
+      in: query
+      required: false
+      schema:
+        type: string
+    PageParameter:
+      name: page
+      in: query
+      description: The page you're requesting - returns page 0 of a response if not specified.
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+    AsyncParameter:
+      name: async
+      in: query
+      description: 'When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. **Note: it''s recommended to use the sync flow (async=false) for all requests by adapting the [data workflow](https://docs.leantech.me/docs/data-workflow) for connected entities.**'
+      required: false
+      schema:
+        type: boolean
+        default: false
+      deprecated: true
+    AccountIdParameter:
+      name: account_id
+      description: The account_id used to fetch requested data
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    EntityIdParameter:
+      name: entity_id
+      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
+      in: query
+      required: false
+      schema:
+        type: string
+        format: uuid
+    SizeParameter:
+      name: size
+      description: The number of objects you want to return as a page size.
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 50
+        maximum: 100
+        minimum: 1
   examples:
-    InternalServerErrorExample:
-      summary: Internal server error response
-      description: Response when an unexpected server error occurs
-      value:
-        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
-        timestamp: '2025-08-07T13:07:38.834977945Z'
-        status: INTERNAL_SERVER_ERROR
-        message: Something has gone wrong. If you continue to see this error, please get in touch with Lean.
-        metadata: null
     UnknownAccountExample:
       summary: Account not found error response
       description: Response when the provided account_id does not match an account for the entity_id
@@ -835,15 +878,6 @@ components:
         status: UNKNOWN_ENTITY
         message: The entity_id provided did not match an account in our records.
         metadata: null
-    InvalidParametersExample:
-      summary: Invalid parameters error response
-      description: Response when required parameters are missing or invalid
-      value:
-        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
-        timestamp: '2025-09-10T21:05:59.919233187Z'
-        status: INVALID_PARAMETERS
-        message: 'The request is badly formatted or a parameter of the wrong type has been provided, field: entity_id, value: e34d8e49-9af2-4252-a53e-bd2df855134.'
-        metadata: null
     AsyncProcessingV2Example:
       summary: Asynchronous processing response with async=true
       description: Response to request with async=true
@@ -857,58 +891,24 @@ components:
         data: null
         type: null
         refreshed_at: null
-  parameters:
-    MetaParameter:
-      name: meta
-      description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
-      in: query
-      required: false
-      schema:
-        type: string
-    AccountIdParameter:
-      name: account_id
-      description: The account_id used to fetch requested data
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
-    SizeParameter:
-      name: size
-      description: The number of objects you want to return as a page size.
-      in: query
-      required: false
-      schema:
-        type: integer
-        default: 50
-        maximum: 100
-        minimum: 1
-    EntityIdParameter:
-      name: entity_id
-      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
-      in: query
-      required: false
-      schema:
-        type: string
-        format: uuid
-    AsyncParameter:
-      name: async
-      in: query
-      description: 'When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. **Note: it''s recommended to use the sync flow (async=false) for all requests by adapting the [data workflow](https://docs.leantech.me/docs/data-workflow) for connected entities.**'
-      required: false
-      schema:
-        type: boolean
-        default: false
-      deprecated: true
-    PageParameter:
-      name: page
-      in: query
-      description: The page you're requesting - returns page 0 of a response if not specified.
-      required: false
-      schema:
-        type: integer
-        default: 0
-        minimum: 0
+    InternalServerErrorExample:
+      summary: Internal server error response
+      description: Response when an unexpected server error occurs
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-08-07T13:07:38.834977945Z'
+        status: INTERNAL_SERVER_ERROR
+        message: Something has gone wrong. If you continue to see this error, please get in touch with Lean.
+        metadata: null
+    InvalidParametersExample:
+      summary: Invalid parameters error response
+      description: Response when required parameters are missing or invalid
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-10T21:05:59.919233187Z'
+        status: INVALID_PARAMETERS
+        message: 'The request is badly formatted or a parameter of the wrong type has been provided, field: entity_id, value: e34d8e49-9af2-4252-a53e-bd2df855134.'
+        metadata: null
   securitySchemes:
     bearerAuth:
       type: http

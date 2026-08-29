@@ -1,8 +1,8 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Consents Account On File Account Controls (New) Account Controls (New) Bank API
-  version: v0.2.3
-  description: Bank discovery and configuration operations
+  title: Lean Bank API
+  description: Lean API for retrieving supported banks
+  version: v2.0.0
 servers:
 - url: https://sandbox.leantech.me
   description: Sandbox
@@ -143,49 +143,6 @@ paths:
       - Bank
 components:
   schemas:
-    ConnectionType:
-      description: The type of connection used by the bank for data access.
-      type: string
-      enum:
-      - REVERSE_ENGINEERED
-      - OPEN_BANKING
-      - DIRECT_CONNECTION
-    BankAvailability:
-      description: Whether the Bank is currently available for use with the Payments and Data API. Changes to this status trigger banks.availability.updated webhooks.
-      type: object
-      properties:
-        active:
-          description: Whether Lean has enabled the or disabled the Bank for Payments and Data functionality. When this is false, Lean has taken the bank offline due to stability, maintenance or regulatory reasons.
-          type: object
-          properties:
-            payments:
-              type: boolean
-            data:
-              type: boolean
-          required:
-          - payments
-          - data
-        enabled:
-          description: Whether the bank has been enabled in the application dashboard or not. If you want to hide a bank or disable it from use for any reason - you can log in to the [Application Dashboard](https://dev.leantech.me) to enable and disable visibility and functionality of a bank on your platform.
-          type: object
-          properties:
-            payments:
-              type: boolean
-            data:
-              type: boolean
-          required:
-          - payments
-          - data
-      required:
-      - active
-      - enabled
-    BankType:
-      description: Specifies whether the bank is for retail or business (SME) customers.
-      type: string
-      deprecated: true
-      enum:
-      - RETAIL
-      - SME
     TransferLimit:
       type: object
       properties:
@@ -202,6 +159,19 @@ components:
       - currency
       - min
       - max
+    ConnectionType:
+      description: The type of connection used by the bank for data access.
+      type: string
+      enum:
+      - REVERSE_ENGINEERED
+      - OPEN_BANKING
+      - DIRECT_CONNECTION
+    BankAccountType:
+      description: Specifies the type of account (PERSONAL or BUSINESS).
+      type: string
+      enum:
+      - PERSONAL
+      - BUSINESS
     BankAccountSubType:
       description: Specifies the sub type of account, i.e. product family group such as CURRENT, SAVINGS, CREDIT.
       type: string
@@ -215,6 +185,13 @@ components:
       - PREPAID
       - SAVINGS
       - CALL
+    BankType:
+      description: Specifies whether the bank is for retail or business (SME) customers.
+      type: string
+      deprecated: true
+      enum:
+      - RETAIL
+      - SME
     Bank:
       type: object
       properties:
@@ -344,12 +321,35 @@ components:
       - international_destinations
       - availability
       - arabic_name
-    BankAccountType:
-      description: Specifies the type of account (PERSONAL or BUSINESS).
-      type: string
-      enum:
-      - PERSONAL
-      - BUSINESS
+    BankAvailability:
+      description: Whether the Bank is currently available for use with the Payments and Data API. Changes to this status trigger banks.availability.updated webhooks.
+      type: object
+      properties:
+        active:
+          description: Whether Lean has enabled the or disabled the Bank for Payments and Data functionality. When this is false, Lean has taken the bank offline due to stability, maintenance or regulatory reasons.
+          type: object
+          properties:
+            payments:
+              type: boolean
+            data:
+              type: boolean
+          required:
+          - payments
+          - data
+        enabled:
+          description: Whether the bank has been enabled in the application dashboard or not. If you want to hide a bank or disable it from use for any reason - you can log in to the [Application Dashboard](https://dev.leantech.me) to enable and disable visibility and functionality of a bank on your platform.
+          type: object
+          properties:
+            payments:
+              type: boolean
+            data:
+              type: boolean
+          required:
+          - payments
+          - data
+      required:
+      - active
+      - enabled
   securitySchemes:
     bearerAuth:
       type: http

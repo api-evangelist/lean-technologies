@@ -1,12 +1,12 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Consents Account On File Account Controls (New) Account Controls (New) Beneficiary Name Verification API
-  version: v0.2.3
-  description: Beneficiary name retrieval operations
+  title: Lean Beneficiary Name Verification API
+  description: API for retrieving beneficiary name from an IBAN
+  version: v2.0.0
 servers:
-- url: https://sandbox.leantech.me
+- url: https://sandbox.sa.leantech.me
   description: Sandbox
-- url: https://api2.leantech.me
+- url: https://api2.sa.leantech.me
   description: Production
 security:
 - bearerAuth: []
@@ -153,6 +153,27 @@ components:
       - results_id
       - message
       - timestamp
+    BeneficiaryNamePayload:
+      description: Beneficiary name and account status retrieved from the bank
+      type: object
+      properties:
+        beneficiary_name:
+          description: Name of the account holder
+          type: string
+        account_status:
+          description: Status of the bank account
+          type: string
+      required:
+      - beneficiary_name
+      - account_status
+    BeneficiaryNameRequest:
+      type: object
+      properties:
+        iban:
+          description: International Bank Account Number to retrieve beneficiary name for
+          type: string
+      required:
+      - iban
     StatusDetail:
       type:
       - object
@@ -168,14 +189,6 @@ components:
           type:
           - string
           - 'null'
-    BeneficiaryNameRequest:
-      type: object
-      properties:
-        iban:
-          description: International Bank Account Number to retrieve beneficiary name for
-          type: string
-      required:
-      - iban
     VerificationResponseBeneficiaryNamePayload:
       allOf:
       - $ref: '#/components/schemas/Result'
@@ -183,19 +196,6 @@ components:
         properties:
           verifications:
             $ref: '#/components/schemas/BeneficiaryNamePayload'
-    BeneficiaryNamePayload:
-      description: Beneficiary name and account status retrieved from the bank
-      type: object
-      properties:
-        beneficiary_name:
-          description: Name of the account holder
-          type: string
-        account_status:
-          description: Status of the bank account
-          type: string
-      required:
-      - beneficiary_name
-      - account_status
   securitySchemes:
     bearerAuth:
       type: http

@@ -1,11 +1,12 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Consents Account On File Account Controls (New) Account Controls (New) Freelancer API
-  version: v0.2.3
+  title: Insights API - Account Controls Freelancer API
+  version: v2.0.0
+  description: Offers overview signals and configurable thresholds on a connected account, returning a simple eligible/not-eligible verdict before any downstream process begins.
 servers:
-- url: https://sandbox.leantech.me
+- url: https://sandbox.sa.leantech.me
   description: Sandbox
-- url: https://api2.leantech.me
+- url: https://api2.sa.leantech.me
   description: Production
 security:
 - bearerAuth: []
@@ -214,6 +215,88 @@ paths:
       - Freelancer
 components:
   schemas:
+    FreelancerCashFlowTotal:
+      type: object
+      properties:
+        current_balance_amount:
+          description: Current balance amount
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_monthly_balance_amount:
+          description: Average monthly balance calculated across available months
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        inflows:
+          $ref: '#/components/schemas/FreelancerInflowsOutflows'
+        outflows:
+          $ref: '#/components/schemas/FreelancerInflowsOutflows'
+    FreelancerPeriodFactors:
+      type: object
+      properties:
+        period:
+          $ref: '#/components/schemas/Period'
+        total_amount:
+          description: Total amount for the period
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_amount:
+          description: Average amount for the period
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+    FreelancerInflowsOutflows:
+      type: object
+      properties:
+        total_amount:
+          description: Total amount of inflows/outflows
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        transactions_count:
+          description: Total number of transactions
+          type: integer
+        periods:
+          description: Historical data for different periods
+          type: array
+          items:
+            $ref: '#/components/schemas/FreelancerPeriodFactors'
+    FreelancerCashFlowResult:
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          insights:
+            type:
+            - object
+            - 'null'
+            allOf:
+            - $ref: '#/components/schemas/FreelancerCashFlow'
+    FreelancerMonthlyBalance:
+      type: object
+      properties:
+        monthly_average_amount:
+          description: Average balance amount for the month
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        initial_balance_amount:
+          description: Initial balance amount at the start of the month
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+    InsightsResultType:
+      description: type of insight
+      type: string
+      enum:
+      - income
+      - employment
+      - cashflow
+      - credits-obligations
+      - non-credits-obligations
+      - expenses
+      - cash-balances
+      - freelancer-cashflow
+      - behaviors
+      - cashflow-patterns
+      - credit-assessments
+      - account-controls
+      - credit-obligations
     ResultStatus:
       description: The status of the request
       type: string
@@ -223,6 +306,12 @@ components:
       - FAILED
       - CONSENT_EXPIRED
       - PROCESSING_STARTED
+    Currency:
+      description: The ISO 3 letter currency code
+      type: string
+      examples:
+      - AED
+      pattern: ^[A-Z]{3}$
     Result:
       type: object
       properties:
@@ -258,30 +347,32 @@ components:
       - results_id
       - message
       - timestamp
-    FreelancerPeriodFactors:
+    FreelancerAccountInformation:
       type: object
       properties:
-        period:
-          $ref: '#/components/schemas/Period'
-        total_amount:
-          description: Total amount for the period
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-        average_amount:
-          description: Average amount for the period
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-    FreelancerCashFlowResult:
-      allOf:
-      - $ref: '#/components/schemas/Result'
-      - type: object
-        properties:
-          insights:
-            type:
-            - object
-            - 'null'
-            allOf:
-            - $ref: '#/components/schemas/FreelancerCashFlow'
+        account_holder_full_name:
+          description: Full name of the account holder
+          type: string
+        account_holder_short_name:
+          description: Short form of the account holder name
+          type: string
+        account_opening_date:
+          description: Date when the account was opened
+          type: string
+          format: date-time
+    FreelancerCashFlow:
+      type: object
+      properties:
+        account_information:
+          $ref: '#/components/schemas/FreelancerAccountInformation'
+        total:
+          $ref: '#/components/schemas/FreelancerCashFlowTotal'
+        monthly_totals:
+          description: Monthly breakdown of cashflow data
+          type: array
+          items:
+            $ref: '#/components/schemas/FreelancerCashFlowMonthlyTotal'
+      additionalProperties: false
     Period:
       description: Time period for historical data
       type: string
@@ -290,21 +381,6 @@ components:
       - P9M
       - P6M
       - P3M
-    FreelancerInflowsOutflows:
-      type: object
-      properties:
-        total_amount:
-          description: Total amount of inflows/outflows
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-        transactions_count:
-          description: Total number of transactions
-          type: integer
-        periods:
-          description: Historical data for different periods
-          type: array
-          items:
-            $ref: '#/components/schemas/FreelancerPeriodFactors'
     FreelancerMonthlyFlows:
       type: object
       properties:
@@ -319,42 +395,6 @@ components:
         transactions_count:
           description: Total number of inflow/outflow transactions in the month
           type: integer
-    Currency:
-      description: The ISO 3 letter currency code
-      type: string
-      examples:
-      - AED
-      pattern: ^[A-Z]{3}$
-    FreelancerCashFlowTotal:
-      type: object
-      properties:
-        current_balance_amount:
-          description: Current balance amount
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-        average_monthly_balance_amount:
-          description: Average monthly balance calculated across available months
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-        inflows:
-          $ref: '#/components/schemas/FreelancerInflowsOutflows'
-        outflows:
-          $ref: '#/components/schemas/FreelancerInflowsOutflows'
-    StatusDetail:
-      type:
-      - object
-      - 'null'
-      properties:
-        granular_status_code:
-          description: Granular status code
-          type:
-          - string
-          - 'null'
-        status_additional_info:
-          description: Additional information about the status
-          type:
-          - string
-          - 'null'
     CurrencyAmount:
       type: object
       properties:
@@ -366,19 +406,6 @@ components:
       required:
       - currency
       - amount
-    FreelancerCashFlow:
-      type: object
-      properties:
-        account_information:
-          $ref: '#/components/schemas/FreelancerAccountInformation'
-        total:
-          $ref: '#/components/schemas/FreelancerCashFlowTotal'
-        monthly_totals:
-          description: Monthly breakdown of cashflow data
-          type: array
-          items:
-            $ref: '#/components/schemas/FreelancerCashFlowMonthlyTotal'
-      additionalProperties: false
     FreelancerCashFlowMonthlyTotal:
       type: object
       properties:
@@ -403,47 +430,21 @@ components:
       - month
       - year
       - is_month_complete
-    InsightsResultType:
-      description: type of insight
-      type: string
-      enum:
-      - income
-      - employment
-      - cashflow
-      - credits-obligations
-      - non-credits-obligations
-      - expenses
-      - cash-balances
-      - freelancer-cashflow
-      - behaviors
-      - cashflow-patterns
-      - credit-assessments
-      - account-controls
-      - credit-obligations
-    FreelancerMonthlyBalance:
-      type: object
+    StatusDetail:
+      type:
+      - object
+      - 'null'
       properties:
-        monthly_average_amount:
-          description: Average balance amount for the month
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-        initial_balance_amount:
-          description: Initial balance amount at the start of the month
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-    FreelancerAccountInformation:
-      type: object
-      properties:
-        account_holder_full_name:
-          description: Full name of the account holder
-          type: string
-        account_holder_short_name:
-          description: Short form of the account holder name
-          type: string
-        account_opening_date:
-          description: Date when the account was opened
-          type: string
-          format: date-time
+        granular_status_code:
+          description: Granular status code
+          type:
+          - string
+          - 'null'
+        status_additional_info:
+          description: Additional information about the status
+          type:
+          - string
+          - 'null'
   responses:
     UnsupportedByBankResponse:
       description: Not Implemented

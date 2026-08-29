@@ -1,14 +1,17 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Consents Account On File Account Controls (New) Account Controls (New) Liabilities API
-  version: v0.2.3
+  title: Lean Technologies Liabilities API
+  version: '1.0'
+  description: 'Operations tagged Liabilities across 3 of this provider''s published API definitions: lean-technologies-insights-openapi.yml, lean-technologies-ksa-enrichment-openapi.yml, lean-technologies-ksa-insights-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://sandbox.leantech.me
   description: Sandbox
 - url: https://api2.leantech.me
   description: Production
-security:
-- bearerAuth: []
+- url: https://sandbox.sa.leantech.me
+  description: Sandbox
+- url: https://api2.sa.leantech.me
+  description: Production / Pre-Live
 tags:
 - name: Liabilities
   x-displayName: Liabilities
@@ -159,6 +162,8 @@ paths:
       tags:
       - Liabilities
       x-spring-response-entity: true
+      security:
+      - bearerAuth: []
   /insights/v2/liabilities/non-credit-obligations:
     servers: []
     get:
@@ -302,138 +307,37 @@ paths:
       tags:
       - Liabilities
       x-spring-response-entity: true
+      security:
+      - bearerAuth: []
 components:
   schemas:
-    NonCreditObligations:
-      type: object
-      properties:
-        total:
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/NonCreditObligationsTotal'
-        monthly_totals:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/NonCreditObligationsMonthlyTotal'
-      additionalProperties: false
-    FrequencyTime:
-      description: Frequency of contributions
+    InsightsResultType:
+      description: type of insight
       type: string
       enum:
-      - MONTHLY
-      - WEEKLY
-      - DAILY
-    Currency:
-      description: The ISO 3 letter currency code
+      - income
+      - employment
+      - cashflow
+      - credits-obligations
+      - non-credits-obligations
+      - expenses
+      - cash-balances
+      - freelancer-cashflow
+      - behaviors
+      - cashflow-patterns
+      - credit-assessments
+      - account-controls
+      - credit-obligations
+    ResultStatus:
+      description: The status of the request
       type: string
-      examples:
-      - AED
-      pattern: ^[A-Z]{3}$
-    CreditObligationsMonthlyTotal:
-      type: object
-      properties:
-        month:
-          description: The month number (1-12)
-          type: integer
-          format: int32
-        year:
-          description: The year
-          type: integer
-          format: int32
-        is_month_complete:
-          description: Indicates if the month has complete data
-          type: boolean
-        loan_repayments:
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/AmountCount'
-        loan_received:
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/AmountCount'
-        credit_cards_repayments:
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/AmountCount'
-        credit_cards_spending:
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/AmountCount'
-        credit_cards_balance:
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/BalanceInsights'
-    NonCreditObligationsBreakdown:
-      type: object
-      properties:
-        transaction_name:
-          description: Name of the recurring transaction
-          type: string
-        amount:
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-        count:
-          description: Total number of transactions
-          type: integer
-          format: int64
-        fraction_of_total_obligations:
-          description: Fraction of this transaction type relative to total obligations
-          type:
-          - number
-          - 'null'
-        average_monthly_amount:
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-        average_monthly_count:
-          description: Average number of transactions per month
-          type: integer
-          format: int64
-        maximum_monthly_amount:
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/NonCreditObligationsMonthlyAmount'
-        minimum_monthly_amount:
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/NonCreditObligationsMonthlyAmount'
-      required:
-      - count
-      - average_monthly_count
-    CurrencyAmount:
-      type: object
-      properties:
-        currency:
-          $ref: '#/components/schemas/Currency'
-        amount:
-          description: The amount of money in the currency specified.
-          type: number
-      required:
-      - currency
-      - amount
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - RECONNECT_REQUIRED
+      - PROCESSING_STARTED
     NonCreditObligationsTotal:
       type: object
       properties:
@@ -490,70 +394,6 @@ components:
             $ref: '#/components/schemas/NonCreditObligationsBreakdownBy'
       required:
       - average_monthly_amount
-    InsightsResultType:
-      description: type of insight
-      type: string
-      enum:
-      - income
-      - employment
-      - cashflow
-      - credits-obligations
-      - non-credits-obligations
-      - expenses
-      - cash-balances
-      - freelancer-cashflow
-      - behaviors
-      - cashflow-patterns
-      - credit-assessments
-      - account-controls
-      - credit-obligations
-    Result:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/ResultStatus'
-        results_id:
-          description: The unique identifier for the request
-          type: string
-          format: uuid
-        message:
-          description: A message describing the status of the request
-          type: string
-        meta:
-          description: Meta information about the request
-          type:
-          - object
-          - 'null'
-          additionalProperties:
-            type: string
-        timestamp:
-          description: The datetime of when the request was made
-          type: string
-          format: date-time
-        status_detail:
-          description: Additional information about the status
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/StatusDetail'
-      required:
-      - status
-      - results_id
-      - message
-      - timestamp
-    NonCreditObligationsMonthlyAmount:
-      type: object
-      properties:
-        month:
-          description: The month name (e.g., "September", "October")
-          type: string
-        amount:
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
     AmountCount:
       type: object
       properties:
@@ -568,7 +408,147 @@ components:
           format: int32
       required:
       - amount
-    NonCreditObligationsMonthlyTotal:
+    NonCreditObligationsMonthlyAmount:
+      type: object
+      properties:
+        month:
+          description: The month name (e.g., "September", "October")
+          type: string
+        amount:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+    BalanceInsights:
+      type: object
+      properties:
+        average_balance:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        initial_balance:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        current_balance:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        available_balance:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        frequency_of_contributions:
+          description: Frequency of balance contributions (MONTHLY, WEEKLY, or DAILY)
+          type:
+          - string
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/FrequencyTime'
+    Currency:
+      description: The ISO 3 letter currency code
+      type: string
+      examples:
+      - AED
+      pattern: ^[A-Z]{3}$
+    CurrentCreditCardsBalance:
+      type: object
+      properties:
+        amount:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+    CurrencyAmount:
+      type: object
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          description: The amount of money in the currency specified.
+          type: number
+      required:
+      - currency
+      - amount
+    StatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        granular_status_code:
+          description: Granular status code
+          type:
+          - string
+          - 'null'
+        status_additional_info:
+          description: Additional information about the status
+          type:
+          - string
+          - 'null'
+    FrequencyTime:
+      description: Frequency of contributions
+      type: string
+      enum:
+      - MONTHLY
+      - WEEKLY
+      - DAILY
+    NonCreditObligationsBreakdown:
+      type: object
+      properties:
+        transaction_name:
+          description: Name of the recurring transaction
+          type: string
+        amount:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        count:
+          description: Total number of transactions
+          type: integer
+          format: int64
+        fraction_of_total_obligations:
+          description: Fraction of this transaction type relative to total obligations
+          type:
+          - number
+          - 'null'
+        average_monthly_amount:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_monthly_count:
+          description: Average number of transactions per month
+          type: integer
+          format: int64
+        maximum_monthly_amount:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/NonCreditObligationsMonthlyAmount'
+        minimum_monthly_amount:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/NonCreditObligationsMonthlyAmount'
+      required:
+      - count
+      - average_monthly_count
+    CreditObligationsMonthlyTotal:
       type: object
       properties:
         month:
@@ -582,61 +562,36 @@ components:
         is_month_complete:
           description: Indicates if the month has complete data
           type: boolean
-        amount:
+        loan_repayments:
           type:
           - object
           - 'null'
           allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-        count:
-          description: Total number of transactions for this month
-          type: integer
-          format: int64
-      required:
-      - count
-    ResultStatus:
-      description: The status of the request
-      type: string
-      enum:
-      - OK
-      - PENDING
-      - FAILED
-      - CONSENT_EXPIRED
-      - RECONNECT_REQUIRED
-      - PROCESSING_STARTED
-    CreditObligations:
-      type: object
-      properties:
-        current_credit_cards_balance:
+          - $ref: '#/components/schemas/AmountCount'
+        loan_received:
           type:
           - object
           - 'null'
           allOf:
-          - $ref: '#/components/schemas/CurrentCreditCardsBalance'
-        number_of_credit_cards:
-          description: Total number of credit cards
-          type:
-          - integer
-          - 'null'
-          format: int32
-        total:
+          - $ref: '#/components/schemas/AmountCount'
+        credit_cards_repayments:
           type:
           - object
           - 'null'
           allOf:
-          - $ref: '#/components/schemas/CreditObligationsTotal'
-        monthly_totals:
+          - $ref: '#/components/schemas/AmountCount'
+        credit_cards_spending:
           type:
-          - array
+          - object
           - 'null'
-          items:
-            $ref: '#/components/schemas/CreditObligationsMonthlyTotal'
-      additionalProperties: false
-      required:
-      - current_credit_cards_balance
-      - number_of_credit_cards
-      - total
-      - monthly_totals
+          allOf:
+          - $ref: '#/components/schemas/AmountCount'
+        credit_cards_balance:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/BalanceInsights'
     CreditObligationsTotal:
       type: object
       properties:
@@ -718,64 +673,6 @@ components:
           - 'null'
           allOf:
           - $ref: '#/components/schemas/BalanceInsights'
-    BalanceInsights:
-      type: object
-      properties:
-        average_balance:
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-        initial_balance:
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-        current_balance:
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-        available_balance:
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-        frequency_of_contributions:
-          description: Frequency of balance contributions (MONTHLY, WEEKLY, or DAILY)
-          type:
-          - string
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/FrequencyTime'
-    StatusDetail:
-      type:
-      - object
-      - 'null'
-      properties:
-        granular_status_code:
-          description: Granular status code
-          type:
-          - string
-          - 'null'
-        status_additional_info:
-          description: Additional information about the status
-          type:
-          - string
-          - 'null'
-    CurrentCreditCardsBalance:
-      type: object
-      properties:
-        amount:
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
     NonCreditObligationsBreakdownBy:
       type: object
       properties:
@@ -788,6 +685,480 @@ components:
           - 'null'
           items:
             $ref: '#/components/schemas/NonCreditObligationsBreakdown'
+    NonCreditObligationsMonthlyTotal:
+      type: object
+      properties:
+        month:
+          description: The month number (1-12)
+          type: integer
+          format: int32
+        year:
+          description: The year
+          type: integer
+          format: int32
+        is_month_complete:
+          description: Indicates if the month has complete data
+          type: boolean
+        amount:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        count:
+          description: Total number of transactions for this month
+          type: integer
+          format: int64
+      required:
+      - count
+    Result:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ResultStatus'
+        results_id:
+          description: The unique identifier for the request
+          type: string
+          format: uuid
+        message:
+          description: A message describing the status of the request
+          type: string
+        meta:
+          description: Meta information about the request
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: string
+        timestamp:
+          description: The datetime of when the request was made
+          type: string
+          format: date-time
+        status_detail:
+          description: Additional information about the status
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/StatusDetail'
+      required:
+      - status
+      - results_id
+      - message
+      - timestamp
+    NonCreditObligations:
+      type: object
+      properties:
+        total:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/NonCreditObligationsTotal'
+        monthly_totals:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/NonCreditObligationsMonthlyTotal'
+      additionalProperties: false
+    CreditObligations:
+      type: object
+      properties:
+        current_credit_cards_balance:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CurrentCreditCardsBalance'
+        number_of_credit_cards:
+          description: Total number of credit cards
+          type:
+          - integer
+          - 'null'
+          format: int32
+        total:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CreditObligationsTotal'
+        monthly_totals:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/CreditObligationsMonthlyTotal'
+      additionalProperties: false
+      required:
+      - current_credit_cards_balance
+      - number_of_credit_cards
+      - total
+      - monthly_totals
+    CreditCardsSpending:
+      description: Total amount spent on credit cards and number of credit card spending transactions
+      type: object
+      properties:
+        amount:
+          description: Total amount spent on credit cards.
+          $ref: '#/components/schemas/AmountObject'
+        count:
+          description: Number of credit card spending transactions.
+          type: integer
+    LoanRepayments:
+      description: Totals for loan repayments
+      type: object
+      properties:
+        amount:
+          description: Total amount of loan repayments
+          $ref: '#/components/schemas/AmountObject'
+        count:
+          description: Number of loan repayment transactions
+          type: integer
+    TotalCreditObligations:
+      description: ''
+      type: object
+      properties:
+        loan_repayments:
+          $ref: '#/components/schemas/LoanRepayments'
+          description: Total amount of loan repayments and count of repayments
+        loan_received:
+          $ref: '#/components/schemas/LoansReceived'
+          description: Total amount of loans received and count of loans received
+        credit_cards_repayments:
+          $ref: '#/components/schemas/CreditCardsRepayments'
+          description: Total amount of credit card repayments identified and count of card repayments
+        credit_cards_spending:
+          $ref: '#/components/schemas/CreditCardsSpending'
+          description: Total amount of spend on credit cards and number of spending transactions
+        credit_cards_balance:
+          $ref: '#/components/schemas/CreditCardsBalance'
+          description: Initial and average balance held on cards
+    LoansReceived:
+      description: Total amount of loans received and count of loans
+      type: object
+      properties:
+        amount:
+          description: Total amount of loans received
+          $ref: '#/components/schemas/AmountObject'
+        count:
+          description: Number of loan receiving transactions
+          type: integer
+    MonthlyTotalsCreditObligations:
+      description: ''
+      type: object
+      properties:
+        month:
+          description: The month of the reporting period
+          type: integer
+          examples:
+          - 1 (Jan)
+        year:
+          description: The year of the reporting period
+          type: integer
+          examples:
+          - '2024'
+        is_month_complete:
+          description: Indicates whether the data for this month is complete.
+          type: boolean
+          examples:
+          - 'true'
+        loan_repayments:
+          $ref: '#/components/schemas/LoanRepayments'
+          description: 'Amount and count of loan repayments for month '
+        loan_received:
+          $ref: '#/components/schemas/LoanRepayments'
+          description: 'Amount and count of loans received for month '
+        credit_cards_repayments:
+          $ref: '#/components/schemas/CreditCardsRepayments'
+          description: Amount and count of credit card repayments for month
+        credit_cards_spending:
+          $ref: '#/components/schemas/CreditCardsSpending'
+          description: Amount credit card spend and count of card spending transactions
+        credit_cards_balance:
+          $ref: '#/components/schemas/CreditCardsBalance'
+          description: Average and initial card balance for the month
+    CreditObligationsResponse:
+      title: CreditObligationsResponse
+      description: Credit obligation response
+      type: object
+      properties:
+        status:
+          description: The status of the request.
+          enum:
+          - OK
+          - FAILED
+          - PENDING
+          - CONSENT_EXPIRED
+          type: string
+        results_id:
+          description: The ID for this result, this is used when retrieving results from the `/results` endpoint.
+          type: string
+          examples:
+          - 5e99047e-c45f-4aef-9cae-837e52aaa415
+        message:
+          description: Further explanation of the response
+          type: string
+          examples:
+          - Data successfully retrieved
+        meta:
+          type: string
+        timestamp:
+          format: date-time
+          description: The timestamp of when the response was retrieved
+          type: string
+          examples:
+          - '2024-07-25T13:06:10.800823472Z'
+        status_detail:
+          $ref: '#/components/schemas/StatusDetailObject'
+          description: Further detail on the error if status=FAILED
+        insights:
+          $ref: '#/components/schemas/InsightsCreditObligations'
+      examples:
+      - status: OK
+        results_id: b6b6d545-4305-4d5e-bd43-eb8c4047ac78
+        message: Data successfully retrieved
+        timestamp: '2024-09-16T06:40:16.995409316Z'
+        insights:
+          currency: SAR
+          current_credit_cards_balance: 667630.64
+          number_of_credit_cards: 6
+          total:
+            loan_repayments:
+              amount: 14878.1
+              count: 38
+            loan_received:
+              amount: 3258.68
+              count: 5
+            credit_cards_repayments:
+              amount: 17505848.33
+              count: 5683
+            credit_cards_spending:
+              amount: 7800699.15
+              count: 22084
+            credit_cards_balance:
+              average_balance: 310318.24
+              initial_balance: 498629.62
+          monthly_totals:
+          - month: 1
+            year: 2024
+            is_month_complete: true
+            loan_repayments:
+              amount: 0
+              count: 0
+            loan_received:
+              amount: 0
+              count: 0
+            credit_cards_repayments:
+              amount: 30000
+              count: 1
+            credit_cards_spending:
+              amount: 4416.83
+              count: 12
+            credit_cards_balance:
+              average_balance: 110260.44
+              initial_balance: 463290.59
+          - month: 2
+            year: 2024
+            is_month_complete: true
+            loan_repayments:
+              amount: 0
+              count: 0
+            loan_received:
+              amount: 0
+              count: 0
+            credit_cards_repayments:
+              amount: 50000
+              count: 2
+            credit_cards_spending:
+              amount: 22254.66
+              count: 54
+            credit_cards_balance:
+              average_balance: 347953.88
+              initial_balance: 509078.04
+          - month: 3
+            year: 2024
+            is_month_complete: true
+            loan_repayments:
+              amount: 0
+              count: 0
+            loan_received:
+              amount: 0
+              count: 0
+            credit_cards_repayments:
+              amount: 20000
+              count: 1
+            credit_cards_spending:
+              amount: 19985.45
+              count: 48
+            credit_cards_balance:
+              average_balance: 290489.46
+              initial_balance: 535138.07
+          - month: 4
+            year: 2024
+            is_month_complete: true
+            loan_repayments:
+              amount: 0
+              count: 0
+            loan_received:
+              amount: 0
+              count: 0
+            credit_cards_repayments:
+              amount: 50000
+              count: 2
+            credit_cards_spending:
+              amount: 14619.44
+              count: 44
+            credit_cards_balance:
+              average_balance: 334881.34
+              initial_balance: 561789.46
+          - month: 5
+            year: 2024
+            is_month_complete: true
+            loan_repayments:
+              amount: 0
+              count: 0
+            loan_received:
+              amount: 0
+              count: 0
+            credit_cards_repayments:
+              amount: 50000
+              count: 2
+            credit_cards_spending:
+              amount: 22265.48
+              count: 47
+            credit_cards_balance:
+              average_balance: 343141.9
+              initial_balance: 594711.22
+          - month: 6
+            year: 2024
+            is_month_complete: true
+            loan_repayments:
+              amount: 0
+              count: 0
+            loan_received:
+              amount: 0
+              count: 0
+            credit_cards_repayments:
+              amount: 50000
+              count: 2
+            credit_cards_spending:
+              amount: 22680.36
+              count: 60
+            credit_cards_balance:
+              average_balance: 449483.76
+              initial_balance: 620273.83
+          - month: 7
+            year: 2024
+            is_month_complete: true
+            loan_repayments:
+              amount: 0
+              count: 0
+            loan_received:
+              amount: 0
+              count: 0
+            credit_cards_repayments:
+              amount: 50000
+              count: 2
+            credit_cards_spending:
+              amount: 26330.02
+              count: 61
+            credit_cards_balance:
+              average_balance: 455087.92
+              initial_balance: 645303.05
+          - month: 8
+            year: 2024
+            is_month_complete: true
+            loan_repayments:
+              amount: 14878.1
+              count: 38
+            loan_received:
+              amount: 3258.68
+              count: 5
+            credit_cards_repayments:
+              amount: 17205848.33
+              count: 5671
+            credit_cards_spending:
+              amount: 7668146.91
+              count: 21758
+            credit_cards_balance:
+              average_balance: 151247.24
+              initial_balance: 702425.15
+    StatusDetailObject:
+      description: Status Details
+      type: object
+      properties:
+        granular_status_code:
+          description: Detailed error code
+          type: string
+        status_additional_info:
+          description: Further detail on the encountered error
+          type: string
+    CreditCardsRepayments:
+      description: Total amount of credit card repayments identified and count of repayment transactions
+      type: object
+      properties:
+        amount:
+          description: Total amount of credit card repayments.
+          $ref: '#/components/schemas/AmountObject'
+        count:
+          description: Number of credit card repayment transactions.
+          type: integer
+    InsightsCreditObligations:
+      description: ''
+      type: object
+      properties:
+        current_credit_cards_balance:
+          type: object
+          properties:
+            amount:
+              type: object
+              properties:
+                currency:
+                  type: string
+                amount:
+                  type: number
+          description: Current balance across all identified credit cards
+        number_of_credit_cards:
+          type: integer
+          description: Total number of credit cards linked to account
+        total:
+          $ref: '#/components/schemas/TotalCreditObligations'
+          description: Total amount
+        monthly_totals:
+          type: array
+          items:
+            $ref: '#/components/schemas/MonthlyTotalsCreditObligations'
+          description: Totals broken down by month
+    CreditCardsBalance:
+      description: Average balance on credit cards and initial balance at start of reporting period
+      type: object
+      properties:
+        initial_balance:
+          description: The initial balance at the start of the reporting period.
+          $ref: '#/components/schemas/AmountObject'
+        average_balance:
+          description: The average balance of the credit cards.
+          $ref: '#/components/schemas/AmountObject'
+    AmountObject:
+      type: object
+      properties:
+        currency:
+          type: string
+          description: The currency in which the amount is represented.
+        amount:
+          type: number
+          description: The decimal amount for the transaction
+      description: The total amount for the category.
+    ResultStatus_2:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - PROCESSING_STARTED
   responses:
     UnsupportedByBankResponse:
       description: Not Implemented
@@ -808,3 +1179,10 @@ components:
     bearerAuth:
       type: http
       scheme: bearer
+    bearer:
+      type: http
+      scheme: bearer
+x-refined-from:
+- lean-technologies-insights-openapi.yml
+- lean-technologies-ksa-enrichment-openapi.yml
+- lean-technologies-ksa-insights-openapi.yml

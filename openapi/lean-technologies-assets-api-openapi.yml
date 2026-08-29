@@ -1,11 +1,16 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Consents Account On File Account Controls (New) Account Controls (New) Assets API
-  version: v0.2.3
+  title: Lean Technologies Assets API
+  version: v2.0.0
+  description: 'Operations tagged Assets across 2 of this provider''s published API definitions: lean-technologies-insights-openapi.yml, lean-technologies-ksa-insights-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://sandbox.leantech.me
   description: Sandbox
 - url: https://api2.leantech.me
+  description: Production
+- url: https://sandbox.sa.leantech.me
+  description: Sandbox
+- url: https://api2.sa.leantech.me
   description: Production
 security:
 - bearerAuth: []
@@ -337,15 +342,158 @@ paths:
       - Assets
 components:
   schemas:
-    CashFlowNet:
+    CashBalanceInflowFactors:
       type: object
       properties:
-        overall_amount:
+        percent_salary_transaction:
+          description: Percentage of salary inflows
+          type: number
+      allOf:
+      - $ref: '#/components/schemas/BaseInflowOutflowFactors'
+      required:
+      - pct_salary
+      x-child: true
+    CashFlowCategoryAmountCount:
+      type: object
+      properties:
+        category:
+          description: The category of the cash flow
+          type: string
+        amount:
           allOf:
           - $ref: '#/components/schemas/CurrencyAmount'
-        net_cashflow:
+        count:
+          description: The count of transactions in this category
+          type: integer
+    ResultStatus:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - RECONNECT_REQUIRED
+      - PROCESSING_STARTED
+    BigPayments:
+      type: object
+      properties:
+        periods:
+          type: array
+          items:
+            $ref: '#/components/schemas/BigPaymentsPeriod'
+      required:
+      - periods
+    CreditDebitBehaviourPeriod:
+      type: object
+      properties:
+        period:
+          description: The time period
+          type: string
+        grand_average_credit_amount:
           allOf:
           - $ref: '#/components/schemas/CurrencyAmount'
+        grand_average_credit_count:
+          description: The average credit transaction count
+          type: integer
+        grand_average_debit_amount:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        grand_average_debit_count:
+          description: The average debit transaction count
+          type: integer
+        grand_average_credit_debit_amount_ratio:
+          description: The ratio of credit to debit amounts
+          type: number
+        grand_average_credit_debit_count_ratio:
+          description: The ratio of credit to debit transaction counts
+          type: number
+        total_volume_of_credit:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        total_volume_of_debit:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        total_volume_of_credit_debit_ratio:
+          description: The ratio of total credit to debit volumes
+          type: number
+      required:
+      - period
+      - grand_average_credit_amount
+      - grand_average_credit_count
+      - grand_average_debit_amount
+      - grand_average_debit_count
+      - grand_average_credit_debit_amount_ratio
+      - grand_average_credit_debit_count_ratio
+      - total_volume_of_credit
+      - total_volume_of_debit
+      - total_volume_of_credit_debit_ratio
+    CashBalanceMonthlyTotal:
+      type: object
+      properties:
+        month:
+          description: The month of the reporting period
+          type: integer
+        year:
+          description: The year of the reporting period
+          type: integer
+        is_month_complete:
+          description: Indicates whether the data for this month is complete
+          type: boolean
+        monthly_growth_rate:
+          description: The growth rate for the month
+          type: number
+        contribution_amount:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_balance:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        initial_balance:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+    BalanceFactors:
+      type: object
+      properties:
+        periods:
+          type: array
+          items:
+            $ref: '#/components/schemas/BalanceFactorsPeriod'
+        balance_trend_average_month_on_month:
+          description: Ratio of average percentage of positive balance trends to negative balance trends.
+          type: number
+        current_balance:
+          description: The current balance amount
+          type: number
+        balance_trend:
+          description: Number of times the balance increased month over month
+          type: integer
+        inflow_factors:
+          description: Factors corresponding to all inflow transactions
+          allOf:
+          - $ref: '#/components/schemas/CashBalanceInflowFactors'
+        outflow_factors:
+          description: Factors corresponding to all outflow transactions
+          allOf:
+          - $ref: '#/components/schemas/CashBalanceOutflowFactors'
+        daily_net_cashflow_estimate:
+          description: Total difference between inflows and outflows
+          type: number
+          format: double
+      required:
+      - periods
+      - balance_trend_average_month_on_month
+      - current_balance
+      - balance_trend
+      - inflow_factors
+      - outflow_factors
+      - daily_net_cashflow_estimate
+    Currency:
+      description: The ISO 3 letter currency code
+      type: string
+      examples:
+      - AED
+      pattern: ^[A-Z]{3}$
     CashBalanceTotal:
       type: object
       properties:
@@ -364,55 +512,44 @@ components:
         frequency_of_contributions:
           description: How often deposits are made to the account
           type: string
-    CashFlowMonthlyTotal:
+    CurrencyAmount:
       type: object
       properties:
-        month:
-          description: The month of the reporting period
-          type: integer
-        year:
-          description: The year of the reporting period
-          type: integer
-        is_month_complete:
-          description: Indicates whether the data for this month is complete
-          type: boolean
-        inwards:
-          type: array
-          items:
-            $ref: '#/components/schemas/CashFlowCategoryAmountCount'
-        outwards:
-          type: array
-          items:
-            $ref: '#/components/schemas/CashFlowCategoryAmountCount'
-        net:
-          $ref: '#/components/schemas/CashFlowNet'
-    CashBalance:
-      type: object
-      properties:
-        total:
-          $ref: '#/components/schemas/CashBalanceTotal'
-        monthly_totals:
-          type: array
-          items:
-            $ref: '#/components/schemas/CashBalanceMonthlyTotal'
-        balance_factors:
-          $ref: '#/components/schemas/BalanceFactors'
-      additionalProperties: false
-    Currency:
-      description: The ISO 3 letter currency code
-      type: string
-      examples:
-      - AED
-      pattern: ^[A-Z]{3}$
-    BigPayments:
-      type: object
-      properties:
-        periods:
-          type: array
-          items:
-            $ref: '#/components/schemas/BigPaymentsPeriod'
+        currency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          description: The amount of money in the currency specified.
+          type: number
       required:
-      - periods
+      - currency
+      - amount
+    StatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        granular_status_code:
+          description: Granular status code
+          type:
+          - string
+          - 'null'
+        status_additional_info:
+          description: Additional information about the status
+          type:
+          - string
+          - 'null'
+    CashBalanceOutflowFactors:
+      type: object
+      properties:
+        spike_transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/MonthlyAmount'
+      allOf:
+      - $ref: '#/components/schemas/BaseInflowOutflowFactors'
+      required:
+      - spike_transactions
+      x-child: true
     CreditDebitBehaviour:
       type: object
       properties:
@@ -422,6 +559,70 @@ components:
             $ref: '#/components/schemas/CreditDebitBehaviourPeriod'
       required:
       - periods
+    CashFlowNet:
+      type: object
+      properties:
+        overall_amount:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        net_cashflow:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+    BigPaymentsPeriod:
+      type: object
+      properties:
+        period:
+          description: The time period
+          type: string
+        average_max_monthly_credit_amount:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_max_monthly_debit_amount:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_max_monthly_credit_debit_amount_ratio:
+          description: The ratio of credit to debit amounts
+          type: number
+      required:
+      - period
+      - average_max_monthly_credit_amount
+      - average_max_monthly_debit_amount
+      - average_max_monthly_credit_debit_amount_ratio
+    BalanceFactorsPeriod:
+      type: object
+      properties:
+        period:
+          description: The time period
+          type: string
+        average_balance:
+          description: The average balance for the period
+          type: number
+      x-class-extra-annotation: '@lombok.AllArgsConstructor'
+    CashFlow:
+      type: object
+      properties:
+        total:
+          type: object
+          properties:
+            inwards:
+              type: array
+              items:
+                $ref: '#/components/schemas/CashFlowCategoryAmountCount'
+            outwards:
+              type: array
+              items:
+                $ref: '#/components/schemas/CashFlowCategoryAmountCount'
+            net:
+              $ref: '#/components/schemas/CashFlowNet'
+        monthly_totals:
+          type: array
+          items:
+            $ref: '#/components/schemas/CashFlowMonthlyTotal'
+        credit_debit_behaviour:
+          $ref: '#/components/schemas/CreditDebitBehaviour'
+        big_payments:
+          $ref: '#/components/schemas/BigPayments'
+      additionalProperties: false
     BaseInflowOutflowFactors:
       type: object
       properties:
@@ -479,84 +680,6 @@ components:
           description: The transaction amount
           type: number
       x-class-extra-annotation: '@lombok.AllArgsConstructor'
-    CurrencyAmount:
-      type: object
-      properties:
-        currency:
-          $ref: '#/components/schemas/Currency'
-        amount:
-          description: The amount of money in the currency specified.
-          type: number
-      required:
-      - currency
-      - amount
-    BalanceFactors:
-      type: object
-      properties:
-        periods:
-          type: array
-          items:
-            $ref: '#/components/schemas/BalanceFactorsPeriod'
-        balance_trend_average_month_on_month:
-          description: Ratio of average percentage of positive balance trends to negative balance trends.
-          type: number
-        current_balance:
-          description: The current balance amount
-          type: number
-        balance_trend:
-          description: Number of times the balance increased month over month
-          type: integer
-        inflow_factors:
-          description: Factors corresponding to all inflow transactions
-          allOf:
-          - $ref: '#/components/schemas/CashBalanceInflowFactors'
-        outflow_factors:
-          description: Factors corresponding to all outflow transactions
-          allOf:
-          - $ref: '#/components/schemas/CashBalanceOutflowFactors'
-        daily_net_cashflow_estimate:
-          description: Total difference between inflows and outflows
-          type: number
-          format: double
-      required:
-      - periods
-      - balance_trend_average_month_on_month
-      - current_balance
-      - balance_trend
-      - inflow_factors
-      - outflow_factors
-      - daily_net_cashflow_estimate
-    BigPaymentsPeriod:
-      type: object
-      properties:
-        period:
-          description: The time period
-          type: string
-        average_max_monthly_credit_amount:
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-        average_max_monthly_debit_amount:
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-        average_max_monthly_credit_debit_amount_ratio:
-          description: The ratio of credit to debit amounts
-          type: number
-      required:
-      - period
-      - average_max_monthly_credit_amount
-      - average_max_monthly_debit_amount
-      - average_max_monthly_credit_debit_amount_ratio
-    CashFlowResult:
-      allOf:
-      - $ref: '#/components/schemas/Result'
-      - type: object
-        properties:
-          insights:
-            type:
-            - object
-            - 'null'
-            allOf:
-            - $ref: '#/components/schemas/CashFlow'
     Result:
       type: object
       properties:
@@ -592,121 +715,7 @@ components:
       - results_id
       - message
       - timestamp
-    CashBalanceOutflowFactors:
-      type: object
-      properties:
-        spike_transactions:
-          type: array
-          items:
-            $ref: '#/components/schemas/MonthlyAmount'
-      allOf:
-      - $ref: '#/components/schemas/BaseInflowOutflowFactors'
-      required:
-      - spike_transactions
-      x-child: true
-    CashFlowCategoryAmountCount:
-      type: object
-      properties:
-        category:
-          description: The category of the cash flow
-          type: string
-        amount:
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-        count:
-          description: The count of transactions in this category
-          type: integer
-    ResultStatus:
-      description: The status of the request
-      type: string
-      enum:
-      - OK
-      - PENDING
-      - FAILED
-      - CONSENT_EXPIRED
-      - RECONNECT_REQUIRED
-      - PROCESSING_STARTED
-    BalanceFactorsPeriod:
-      type: object
-      properties:
-        period:
-          description: The time period
-          type: string
-        average_balance:
-          description: The average balance for the period
-          type: number
-      x-class-extra-annotation: '@lombok.AllArgsConstructor'
-    CreditDebitBehaviourPeriod:
-      type: object
-      properties:
-        period:
-          description: The time period
-          type: string
-        grand_average_credit_amount:
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-        grand_average_credit_count:
-          description: The average credit transaction count
-          type: integer
-        grand_average_debit_amount:
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-        grand_average_debit_count:
-          description: The average debit transaction count
-          type: integer
-        grand_average_credit_debit_amount_ratio:
-          description: The ratio of credit to debit amounts
-          type: number
-        grand_average_credit_debit_count_ratio:
-          description: The ratio of credit to debit transaction counts
-          type: number
-        total_volume_of_credit:
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-        total_volume_of_debit:
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-        total_volume_of_credit_debit_ratio:
-          description: The ratio of total credit to debit volumes
-          type: number
-      required:
-      - period
-      - grand_average_credit_amount
-      - grand_average_credit_count
-      - grand_average_debit_amount
-      - grand_average_debit_count
-      - grand_average_credit_debit_amount_ratio
-      - grand_average_credit_debit_count_ratio
-      - total_volume_of_credit
-      - total_volume_of_debit
-      - total_volume_of_credit_debit_ratio
-    StatusDetail:
-      type:
-      - object
-      - 'null'
-      properties:
-        granular_status_code:
-          description: Granular status code
-          type:
-          - string
-          - 'null'
-        status_additional_info:
-          description: Additional information about the status
-          type:
-          - string
-          - 'null'
-    CashBalanceInflowFactors:
-      type: object
-      properties:
-        percent_salary_transaction:
-          description: Percentage of salary inflows
-          type: number
-      allOf:
-      - $ref: '#/components/schemas/BaseInflowOutflowFactors'
-      required:
-      - pct_salary
-      x-child: true
-    CashBalanceMonthlyTotal:
+    CashFlowMonthlyTotal:
       type: object
       properties:
         month:
@@ -718,43 +727,16 @@ components:
         is_month_complete:
           description: Indicates whether the data for this month is complete
           type: boolean
-        monthly_growth_rate:
-          description: The growth rate for the month
-          type: number
-        contribution_amount:
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-        average_balance:
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-        initial_balance:
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-    CashFlow:
-      type: object
-      properties:
-        total:
-          type: object
-          properties:
-            inwards:
-              type: array
-              items:
-                $ref: '#/components/schemas/CashFlowCategoryAmountCount'
-            outwards:
-              type: array
-              items:
-                $ref: '#/components/schemas/CashFlowCategoryAmountCount'
-            net:
-              $ref: '#/components/schemas/CashFlowNet'
-        monthly_totals:
+        inwards:
           type: array
           items:
-            $ref: '#/components/schemas/CashFlowMonthlyTotal'
-        credit_debit_behaviour:
-          $ref: '#/components/schemas/CreditDebitBehaviour'
-        big_payments:
-          $ref: '#/components/schemas/BigPayments'
-      additionalProperties: false
+            $ref: '#/components/schemas/CashFlowCategoryAmountCount'
+        outwards:
+          type: array
+          items:
+            $ref: '#/components/schemas/CashFlowCategoryAmountCount'
+        net:
+          $ref: '#/components/schemas/CashFlowNet'
     CashBalanceResult:
       allOf:
       - $ref: '#/components/schemas/Result'
@@ -766,6 +748,38 @@ components:
             - 'null'
             allOf:
             - $ref: '#/components/schemas/CashBalance'
+    CashBalance:
+      type: object
+      properties:
+        total:
+          $ref: '#/components/schemas/CashBalanceTotal'
+        monthly_totals:
+          type: array
+          items:
+            $ref: '#/components/schemas/CashBalanceMonthlyTotal'
+        balance_factors:
+          $ref: '#/components/schemas/BalanceFactors'
+      additionalProperties: false
+    CashFlowResult:
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          insights:
+            type:
+            - object
+            - 'null'
+            allOf:
+            - $ref: '#/components/schemas/CashFlow'
+    ResultStatus_2:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - PROCESSING_STARTED
   responses:
     UnsupportedByBankResponse:
       description: Not Implemented
@@ -786,3 +800,6 @@ components:
     bearerAuth:
       type: http
       scheme: bearer
+x-refined-from:
+- lean-technologies-insights-openapi.yml
+- lean-technologies-ksa-insights-openapi.yml

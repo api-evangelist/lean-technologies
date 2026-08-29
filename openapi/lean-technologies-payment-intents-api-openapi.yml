@@ -1,14 +1,13 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Consents Account On File Account Controls (New) Account Controls (New) Payment Intents API
-  version: v0.2.3
+  title: Lean Technologies Payment Intents API
+  version: 1.0.0
+  description: 'Operations tagged Payment Intents across 2 of this provider''s published API definitions: lean-technologies-payments-core-openapi.yml, lean-technologies-payments-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://sandbox.leantech.me
   description: Sandbox
 - url: https://api2.leantech.me
   description: Production
-security:
-- bearerAuth: []
 tags:
 - name: Payment Intents
   x-displayName: Payment Intents
@@ -80,6 +79,8 @@ paths:
       deprecated: false
       tags:
       - Payment Intents
+      security:
+      - bearerAuth: []
     get:
       operationId: listPaymentIntents
       summary: List Payment Intents
@@ -219,6 +220,13 @@ paths:
       deprecated: false
       tags:
       - Payment Intents
+      security:
+      - bearerAuth: []
+    servers:
+    - url: https://sandbox.leantech.me
+      description: Sandbox
+    - url: https://api2.leantech.me
+      description: Production
   /payments/v1/intents/{payment_intent_id}:
     get:
       operationId: getPaymentIntentById
@@ -281,8 +289,101 @@ paths:
       deprecated: false
       tags:
       - Payment Intents
+      security:
+      - bearerAuth: []
+    servers:
+    - url: https://sandbox.leantech.me
+      description: Sandbox
+    - url: https://api2.leantech.me
+      description: Production
 components:
   schemas:
+    Payment:
+      type: object
+      properties:
+        id:
+          description: The unique identifier for this payment.
+          type: string
+          format: uuid
+        payment_intent_id:
+          description: The Payment Intent identifier responsible for generating the Payment.
+          type: string
+          format: uuid
+        payment_source_id:
+          description: The identifier for the payment source object from which the payment was initiatied.
+          type: string
+          format: uuid
+        sender_details:
+          description: The account details for the customer sending the payment. Includes account number, name of the account holder and IBAN.
+          type: object
+          properties:
+            account_number:
+              type: string
+            iban:
+              type: string
+            name:
+              type: string
+          required:
+          - account_number
+          - iban
+          - name
+        recipient_details:
+          description: Details for the recipient of the Payment, generated from the details available in the payment_destination.
+          type: object
+          properties:
+            account_number:
+              type: string
+            iban:
+              type: string
+            name:
+              type: string
+          required:
+          - account_number
+          - iban
+          - name
+        amount:
+          description: The amount the charge was initiated for.
+          type: number
+        currency:
+          description: The currency the payment was initiated with.
+          type: string
+        description:
+          description: The description submitted to the bank as a reference when initiating a payment. Can be used for reconciliation. By default this value is a the Payment Intent UUID without hyphens but you can also specify the description upon creation of a payment intent.
+          type: string
+        submission_timestamp:
+          description: The time the Payment Initiation was submitted.
+          type: string
+          format: date-time
+        initiation_timestamp:
+          description: The time the Payment Initiation was started.
+          type: string
+          format: date-time
+        status:
+          description: 'The current status of the payment - see Payments Errors for a list of available MFAs. '
+          type: string
+          enum:
+          - AWAITING_LOGIN_MFA
+          - AWAITING_PAYMENT_MFA
+          - AWAITING_APP_AUTH
+          - FAILED
+          - PENDING_WITH_BANK
+          - ACCEPTED_BY_BANK
+        bank_transaction_reference:
+          description: The transaction reference number supplied by the initiating bank on successful initiation of a transfer. Can be used for reconciliation.
+          type: string
+      required:
+      - id
+      - payment_intent_id
+      - payment_source_id
+      - sender_details
+      - recipient_details
+      - amount
+      - currency
+      - description
+      - submission_timestamp
+      - initiation_timestamp
+      - status
+      - bank_transaction_reference
     PaymentIntent:
       type: object
       properties:
@@ -397,37 +498,36 @@ components:
       - size
       - total_elements
       - total_pages
-    Payment:
+    Payment_2:
       type: object
       properties:
         id:
-          description: The unique identifier for this payment.
           type: string
+          description: The unique identifier for this payment.
           format: uuid
         payment_intent_id:
-          description: The Payment Intent identifier responsible for generating the Payment.
           type: string
+          description: The Payment Intent identifier responsible for generating the Payment.
           format: uuid
         payment_source_id:
-          description: The identifier for the payment source object from which the payment was initiatied.
           type: string
+          description: The identifier for the payment source object from which the payment was initiatied.
           format: uuid
         sender_details:
+          type: object
+          properties:
+            account_number:
+              type: string
+            iban:
+              type: string
+            name:
+              type: string
+          required:
+          - account_number
+          - iban
+          - name
           description: The account details for the customer sending the payment. Includes account number, name of the account holder and IBAN.
-          type: object
-          properties:
-            account_number:
-              type: string
-            iban:
-              type: string
-            name:
-              type: string
-          required:
-          - account_number
-          - iban
-          - name
         recipient_details:
-          description: Details for the recipient of the Payment, generated from the details available in the payment_destination.
           type: object
           properties:
             account_number:
@@ -440,25 +540,23 @@ components:
           - account_number
           - iban
           - name
+          description: Details for the recipient of the Payment, generated from the details available in the payment_destination.
         amount:
-          description: The amount the charge was initiated for.
           type: number
+          description: The amount the charge was initiated for.
         currency:
+          type: string
           description: The currency the payment was initiated with.
-          type: string
         description:
+          type: string
           description: The description submitted to the bank as a reference when initiating a payment. Can be used for reconciliation. By default this value is a the Payment Intent UUID without hyphens but you can also specify the description upon creation of a payment intent.
-          type: string
         submission_timestamp:
+          type: string
           description: The time the Payment Initiation was submitted.
-          type: string
-          format: date-time
         initiation_timestamp:
-          description: The time the Payment Initiation was started.
           type: string
-          format: date-time
+          description: The time the Payment Initiation was started.
         status:
-          description: 'The current status of the payment - see Payments Errors for a list of available MFAs. '
           type: string
           enum:
           - AWAITING_LOGIN_MFA
@@ -467,9 +565,10 @@ components:
           - FAILED
           - PENDING_WITH_BANK
           - ACCEPTED_BY_BANK
+          description: 'The current status of the payment - see Payments Errors for a list of available MFAs. '
         bank_transaction_reference:
-          description: The transaction reference number supplied by the initiating bank on successful initiation of a transfer. Can be used for reconciliation.
           type: string
+          description: The transaction reference number supplied by the initiating bank on successful initiation of a transfer. Can be used for reconciliation.
       required:
       - id
       - payment_intent_id
@@ -483,7 +582,112 @@ components:
       - initiation_timestamp
       - status
       - bank_transaction_reference
+    PaymentIntent_2:
+      type: object
+      properties:
+        payment_intent_id:
+          type: string
+          format: uuid
+          description: The unique identifier for the Payment Intent.
+        customer_id:
+          type: string
+          description: The Customer object associated with the Payment Intent.
+        amount:
+          type: number
+          description: The amount that should be charged to the customer.
+          format: float
+        currency:
+          type: string
+          minLength: 3
+          maxLength: 3
+          examples:
+          - AED
+          - USD
+          description: The currency that the customer will make the payment in.
+        description:
+          type: string
+          description: The description submitted to the bank as a reference when initiating a payment. Can be used for reconciliation. By default this value is a the Payment Intent UUID without hyphens but you can also specify the description upon creation of a payment intent.
+        payments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Payment_2'
+          description: An array of Payment Initiation(s) - currently there will only ever be one Payment object within the array once a user has started to complete a payment.
+        payment_destination:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+              description: The unique identifier for the Payment Destination object.
+            status:
+              type: string
+              enum:
+              - CONFIRMED
+              - PENDING
+              description: The status of the Destination
+            default:
+              type: string
+              description: When `true` this Destination is automatically populated into Payment Intents where an alternative `payment_destination_id` is not provided.
+            name:
+              type: string
+              description: The name of the legal entity that owns the account.
+            iban:
+              type: string
+              description: 'The IBAN of the account.
+
+                This is required for all countries except for the US.'
+            display_name:
+              type: string
+              description: The friendly display name for the account. This is rendered in the LinkSDK when referencing the Destination.
+            address:
+              type: string
+              description: The address of the owner of the destination bank account has registered with the bank.
+            city:
+              type: string
+              description: The city that the holding financial institution is located in.
+            country:
+              type: string
+              description: The three letter ISO code for the holding financial institution's country.
+            swift_code:
+              type: string
+              description: The SWIFT Code for the bank account - required for most international destinations
+            account_number:
+              type: string
+              description: The account number for the account.
+            customer_id:
+              type: string
+              description: The Customer object associated with this account. This field is optional, and will designate the Destination as owned by the application if not provided.
+            owner_type:
+              type: string
+              description: Establishes the ownership of the Destination
+              enum:
+              - APPLICATION
+              - CUSTOMER
+          required:
+          - id
+          - status
+          - default
+          - name
+          - display_name
+          - address
+          - city
+          - country
+          - account_number
+      required:
+      - payment_intent_id
+      - customer_id
+      - amount
+      - currency
+      - description
+      - payments
+      - payment_destination
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
+    bearer:
+      type: http
+      scheme: bearer
+x-refined-from:
+- lean-technologies-payments-core-openapi.yml
+- lean-technologies-payments-openapi.yml

@@ -1,11 +1,11 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Consents Account On File Account Controls (New) Account Controls (New) Open Banking Balances API
-  version: v0.2.3
+  title: Lean Open Banking Balances API
+  version: v2.0.0
 servers:
-- url: https://sandbox.leantech.me
+- url: https://sandbox.sa.leantech.me
   description: Sandbox
-- url: https://api2.leantech.me
+- url: https://api2.sa.leantech.me
   description: Production
 security:
 - bearerAuth: []
@@ -155,84 +155,7 @@ paths:
       tags:
       - Open Banking Balances
 components:
-  parameters:
-    AccountId:
-      name: AccountId
-      in: path
-      description: The Lean account identifier uniquely identifying the account within Lean.
-      required: true
-      schema:
-        type: string
-        format: uuid
-    OBPageParm:
-      name: Page
-      in: query
-      description: The page you're requesting - returns page 0 of a response if not specified.
-      required: false
-      schema:
-        type: integer
-        default: 0
-        minimum: 0
-    FapiInteractionId:
-      name: x-fapi-interaction-id
-      in: header
-      description: An RFC4122 UID used as a correlation id.
-      required: false
-      schema:
-        type: string
-    OBSizeParam:
-      name: Size
-      description: The number of objects you want to return as a page size.
-      in: query
-      required: false
-      schema:
-        type: integer
-        default: 50
-        maximum: 100
-        minimum: 1
-    CustomerId:
-      name: CustomerId
-      in: query
-      description: The customer_id of the connected customer.
-      required: false
-      schema:
-        type: string
-        format: uuid
-    EntityId:
-      name: EntityId
-      in: query
-      description: The entity_id of the connected customer.
-      required: false
-      schema:
-        type: string
-        format: uuid
   schemas:
-    OBAmount:
-      description: Active or historic currency and amount.
-      type: object
-      properties:
-        Amount:
-          description: A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.
-          type: string
-          pattern: ^\d{1,13}$|^\d{1,13}\.\d{1,5}$
-        Currency:
-          description: ISO 4217 currency code in which the amount is expressed.
-          type: string
-          examples:
-          - SAR
-          pattern: ^[A-Z]{3,3}$
-      required:
-      - Amount
-      - Currency
-    OBCreditLineTypeCode:
-      description: Limit type, in a coded form.
-      type: string
-      enum:
-      - KSAOB.Available
-      - KSAOB.Credit
-      - KSAOB.Emergency
-      - KSAOB.Pre-Agreed
-      - KSAOB.Temporary
     OBGetBalancesResponse:
       description: Response envelope for the Open Banking account balances.
       type: object
@@ -291,51 +214,6 @@ components:
       - Status
       - Message
       - Timestamp
-    OBLinks:
-      description: Links relevant to the resource for pagination navigation.
-      type: object
-      properties:
-        Self:
-          description: A link to the current resource.
-          type: string
-          format: uri
-        First:
-          description: A link to the first page in a paginated result set.
-          type:
-          - string
-          - 'null'
-          format: uri
-        Prev:
-          description: A link to the previous page in a paginated result set.
-          type:
-          - string
-          - 'null'
-          format: uri
-        Next:
-          description: A link to the next page in a paginated result set.
-          type:
-          - string
-          - 'null'
-          format: uri
-        Last:
-          description: A link to the last page in a paginated result set.
-          type:
-          - string
-          - 'null'
-          format: uri
-      required:
-      - Self
-    OBMeta:
-      description: Metadata relevant to the resource.
-      type: object
-      properties:
-        TotalPages:
-          description: Total number of pages where a result set is paginated.
-          type:
-          - integer
-          - 'null'
-          format: int32
-          minimum: 0
     OBBalancesData:
       description: Container for the list of Open Banking account balances.
       type: object
@@ -353,6 +231,29 @@ components:
             $ref: '#/components/schemas/OBBalance'
       required:
       - Balance
+    OBCreditDebitCode:
+      description: Indicates whether the transaction is a credit or a debit.
+      type: string
+      enum:
+      - KSAOB.Credit
+      - KSAOB.Debit
+    OBAmount:
+      description: Active or historic currency and amount.
+      type: object
+      properties:
+        Amount:
+          description: A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.
+          type: string
+          pattern: ^\d{1,13}$|^\d{1,13}\.\d{1,5}$
+        Currency:
+          description: ISO 4217 currency code in which the amount is expressed.
+          type: string
+          examples:
+          - SAR
+          pattern: ^[A-Z]{3,3}$
+      required:
+      - Amount
+      - Currency
     OBBalance:
       description: Set of elements used to define the balance details of an account.
       type: object
@@ -391,27 +292,65 @@ components:
       - Type
       - DateTime
       - Amount
-    OBStatusDetail:
-      type:
-      - object
-      - 'null'
+    OBCreditLine:
+      description: Set of elements used to provide details on the credit line.
+      type: object
       properties:
-        GranularStatusCode:
-          description: Granular status code providing additional information on the request status.
+        Included:
+          description: Indicates whether or not the credit line is included in the balance of the account.
+          type: boolean
+        Type:
+          description: Limit type, in a coded form.
           type:
           - string
           - 'null'
-        StatusAdditionalInfo:
-          description: Additional human-readable information about the status.
+          allOf:
+          - $ref: '#/components/schemas/OBCreditLineTypeCode'
+        Amount:
+          description: Amount of money of the credit line.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBAmount'
+      required:
+      - Included
+      - Type
+      - Amount
+    OBLinks:
+      description: Links relevant to the resource for pagination navigation.
+      type: object
+      properties:
+        Self:
+          description: A link to the current resource.
+          type: string
+          format: uri
+        First:
+          description: A link to the first page in a paginated result set.
           type:
           - string
           - 'null'
-    OBCreditDebitCode:
-      description: Indicates whether the transaction is a credit or a debit.
-      type: string
-      enum:
-      - KSAOB.Credit
-      - KSAOB.Debit
+          format: uri
+        Prev:
+          description: A link to the previous page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+        Next:
+          description: A link to the next page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+        Last:
+          description: A link to the last page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+      required:
+      - Self
     OBBalanceTypeCode:
       description: 'Balance type, in a coded form:
 
@@ -457,31 +396,92 @@ components:
       - KSAOB.OpeningBooked
       - KSAOB.OpeningCleared
       - KSAOB.PreviouslyClosedBooked
-    OBCreditLine:
-      description: Set of elements used to provide details on the credit line.
+    OBCreditLineTypeCode:
+      description: Limit type, in a coded form.
+      type: string
+      enum:
+      - KSAOB.Available
+      - KSAOB.Credit
+      - KSAOB.Emergency
+      - KSAOB.Pre-Agreed
+      - KSAOB.Temporary
+    OBMeta:
+      description: Metadata relevant to the resource.
       type: object
       properties:
-        Included:
-          description: Indicates whether or not the credit line is included in the balance of the account.
-          type: boolean
-        Type:
-          description: Limit type, in a coded form.
+        TotalPages:
+          description: Total number of pages where a result set is paginated.
+          type:
+          - integer
+          - 'null'
+          format: int32
+          minimum: 0
+    OBStatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        GranularStatusCode:
+          description: Granular status code providing additional information on the request status.
           type:
           - string
           - 'null'
-          allOf:
-          - $ref: '#/components/schemas/OBCreditLineTypeCode'
-        Amount:
-          description: Amount of money of the credit line.
+        StatusAdditionalInfo:
+          description: Additional human-readable information about the status.
           type:
-          - object
+          - string
           - 'null'
-          allOf:
-          - $ref: '#/components/schemas/OBAmount'
-      required:
-      - Included
-      - Type
-      - Amount
+  parameters:
+    CustomerId:
+      name: CustomerId
+      in: query
+      description: The customer_id of the connected customer.
+      required: false
+      schema:
+        type: string
+        format: uuid
+    OBSizeParam:
+      name: Size
+      description: The number of objects you want to return as a page size.
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 50
+        maximum: 100
+        minimum: 1
+    OBPageParm:
+      name: Page
+      in: query
+      description: The page you're requesting - returns page 0 of a response if not specified.
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+    FapiInteractionId:
+      name: x-fapi-interaction-id
+      in: header
+      description: An RFC4122 UID used as a correlation id.
+      required: false
+      schema:
+        type: string
+    AccountId:
+      name: AccountId
+      in: path
+      description: The Lean account identifier uniquely identifying the account within Lean.
+      required: true
+      schema:
+        type: string
+        format: uuid
+    EntityId:
+      name: EntityId
+      in: query
+      description: The entity_id of the connected customer.
+      required: false
+      schema:
+        type: string
+        format: uuid
   securitySchemes:
     bearerAuth:
       type: http

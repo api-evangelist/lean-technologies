@@ -1,14 +1,15 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Consents Account On File Account Controls (New) Account Controls (New) Enrichment API
-  version: v0.2.3
+  title: UAE - V2 Enrichment API
+  description: ''
+  version: 1.0.0
 servers:
 - url: https://sandbox.leantech.me
   description: Sandbox
 - url: https://api2.leantech.me
-  description: Production
+  description: Production / Pre-live
 security:
-- bearerAuth: []
+- bearer: []
 tags:
 - name: Enrichment
 paths:
@@ -1259,6 +1260,6 @@ components:
       - monthly_totals
       - transactions
   securitySchemes:
-    bearerAuth:
+    bearer:
       type: http
       scheme: bearer

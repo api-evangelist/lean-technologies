@@ -1,14 +1,15 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Consents Account On File Account Controls (New) Account Controls (New) Financial Insights Report API
-  version: v0.2.3
+  title: KSA Financial Insights Report API
+  description: ''
+  version: 1.0.0
 servers:
-- url: https://sandbox.leantech.me
+- url: https://sandbox.sa.leantech.me
   description: Sandbox
-- url: https://api2.leantech.me
-  description: Production
+- url: https://api2.sa.leantech.me
+  description: Production / Pre-Live
 security:
-- bearerAuth: []
+- bearer: []
 tags:
 - name: Financial Insights Report
 paths:
@@ -130,31 +131,6 @@ paths:
       - bearer: []
 components:
   schemas:
-    ReportsCustomersRequest:
-      required:
-      - account_type
-      type: object
-      properties:
-        identifiers:
-          description: Identifiers for a customer. Note that if account_type=PERSONAL, you will need to provide NATIONAL_ID as the identifier; if account_type=BUSINESS, then you will need to provide both COMMERCIAL_REGISTRATION and UNIFIED_NUMBER as identifiers
-          type: array
-          items:
-            $ref: '#/components/schemas/ReportsCustomerIdentifier'
-        account_type:
-          description: 'Indicates whether the account to be connected is a personal consumer account or a business account. '
-          enum:
-          - PERSONAL
-          - BUSINESS
-          type: string
-    ReportsCustomersResponse:
-      type: object
-      properties:
-        customer_id:
-          description: The id that Lean assigns to the customer that you can use to identify the customer across the Lean platform.
-          type: string
-        hyperlink:
-          description: URL that you can share with your customer so they can connect their bank account.
-          type: string
     ReportsCustomerIdentifier:
       description: ''
       required:
@@ -172,12 +148,6 @@ components:
         value:
           description: the identifier for the end user
           type: string
-    ReportsReponse:
-      type: object
-      properties:
-        reports:
-          $ref: '#/components/schemas/Reports'
-          description: Reports for customer
     Reports:
       type: object
       properties:
@@ -192,6 +162,12 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Report'
+    ReportsReponse:
+      type: object
+      properties:
+        reports:
+          $ref: '#/components/schemas/Reports'
+          description: Reports for customer
     Report:
       type: object
       properties:
@@ -202,7 +178,32 @@ components:
           format: date-time
           description: Created date time.
           type: string
+    ReportsCustomersResponse:
+      type: object
+      properties:
+        customer_id:
+          description: The id that Lean assigns to the customer that you can use to identify the customer across the Lean platform.
+          type: string
+        hyperlink:
+          description: URL that you can share with your customer so they can connect their bank account.
+          type: string
+    ReportsCustomersRequest:
+      required:
+      - account_type
+      type: object
+      properties:
+        identifiers:
+          description: Identifiers for a customer. Note that if account_type=PERSONAL, you will need to provide NATIONAL_ID as the identifier; if account_type=BUSINESS, then you will need to provide both COMMERCIAL_REGISTRATION and UNIFIED_NUMBER as identifiers
+          type: array
+          items:
+            $ref: '#/components/schemas/ReportsCustomerIdentifier'
+        account_type:
+          description: 'Indicates whether the account to be connected is a personal consumer account or a business account. '
+          enum:
+          - PERSONAL
+          - BUSINESS
+          type: string
   securitySchemes:
-    bearerAuth:
+    bearer:
       type: http
       scheme: bearer

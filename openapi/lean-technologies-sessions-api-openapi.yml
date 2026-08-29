@@ -1,8 +1,8 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Consents Account On File Account Controls (New) Account Controls (New) Sessions API
-  version: v0.2.3
-  description: "Create and inspect payment sessions. \nEach session has a limited lifetime and progresses through a defined lifecycle from `CREATED` to `COMPLETED` or `EXPIRED`."
+  title: Lean Sessions API
+  description: "API for creating and managing payment sessions. \nA session represents a short-lived, secure context that guides a customer through a payment flow. \nSessions are created server-side and presented to your customer via a redirect URL."
+  version: v1.0.0
 servers:
 - url: https://sandbox.leantech.me
   description: Sandbox
@@ -87,6 +87,22 @@ paths:
       - Sessions
 components:
   schemas:
+    SessionType:
+      description: "The type of flow this session guides the customer through.\n\n- PAY: Starts a Lean-hosted Single Instant Payment session. The customer reviews\n  the payment details and authorizes the transaction directly through their bank.\n  `payment_intent_id` in the flow payload is required and determines the amount,\n  destination, and customer for the payment."
+      type: string
+      const: PAY
+    FlowPayload:
+      description: Additional parameters for the selected flow type.
+      type: object
+      properties:
+        payment_intent_id:
+          description: The identifier of the payment intent to process. Required for `PAY` flow.
+          type:
+          - string
+          - 'null'
+          format: uuid
+          examples:
+          - 7d4e2c19-8f2a-4b3c-9d1e-6f8a2b4c6d8e
     FlowInfo:
       description: A summary of the flow associated with this session.
       type: object
@@ -95,6 +111,17 @@ components:
           $ref: '#/components/schemas/SessionType'
       required:
       - type
+    Flow:
+      description: Defines the session flow type and its associated configuration payload.
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/SessionType'
+        payload:
+          $ref: '#/components/schemas/FlowPayload'
+      required:
+      - type
+      - payload
     SessionState:
       description: 'The lifecycle state of the session.
 
@@ -115,34 +142,6 @@ components:
       - AUTHORIZED
       - EXPIRED
       - COMPLETED
-    SessionType:
-      description: "The type of flow this session guides the customer through.\n\n- PAY: Starts a Lean-hosted Single Instant Payment session. The customer reviews\n  the payment details and authorizes the transaction directly through their bank.\n  `payment_intent_id` in the flow payload is required and determines the amount,\n  destination, and customer for the payment."
-      type: string
-      const: PAY
-    CreateSessionRequest:
-      description: Configuration for a new session. Provide a customer, a flow type, and a redirect URL to receive the customer after the flow completes.
-      type: object
-      properties:
-        customer_id:
-          description: The identifier of the customer this session is created for. All activity within the session will be attributed to this customer.
-          type: string
-          format: uuid
-          examples:
-          - 3fa85f64-5717-4562-b3fc-2c963f66afa6
-        flow:
-          $ref: '#/components/schemas/Flow'
-        redirect_url:
-          description: 'The URL your customer is redirected to after completing or cancelling the session flow.
-
-            Must be an absolute URL. You can append query parameters to carry context (e.g., an order ID) back to your server when the customer returns.'
-          type: string
-          format: uri
-          examples:
-          - https://example.com/checkout/complete?order_id=ord_1234
-      required:
-      - customer_id
-      - flow
-      - redirect_url
     CreateSessionResponse:
       description: The created session, including the session URL to redirect your customer to and the session's expiry time.
       type: object
@@ -182,6 +181,30 @@ components:
       - redirect_url
       - expires_at
       - flow
+    CreateSessionRequest:
+      description: Configuration for a new session. Provide a customer, a flow type, and a redirect URL to receive the customer after the flow completes.
+      type: object
+      properties:
+        customer_id:
+          description: The identifier of the customer this session is created for. All activity within the session will be attributed to this customer.
+          type: string
+          format: uuid
+          examples:
+          - 3fa85f64-5717-4562-b3fc-2c963f66afa6
+        flow:
+          $ref: '#/components/schemas/Flow'
+        redirect_url:
+          description: 'The URL your customer is redirected to after completing or cancelling the session flow.
+
+            Must be an absolute URL. You can append query parameters to carry context (e.g., an order ID) back to your server when the customer returns.'
+          type: string
+          format: uri
+          examples:
+          - https://example.com/checkout/complete?order_id=ord_1234
+      required:
+      - customer_id
+      - flow
+      - redirect_url
     GetPublicSessionResponse:
       description: The current state of a session, including its lifecycle state, associated customer, and flow type.
       type: object
@@ -221,30 +244,14 @@ components:
       - type
       - session_url
       - redirect_url
-    Flow:
-      description: Defines the session flow type and its associated configuration payload.
-      type: object
-      properties:
-        type:
-          $ref: '#/components/schemas/SessionType'
-        payload:
-          $ref: '#/components/schemas/FlowPayload'
-      required:
-      - type
-      - payload
-    FlowPayload:
-      description: Additional parameters for the selected flow type.
-      type: object
-      properties:
-        payment_intent_id:
-          description: The identifier of the payment intent to process. Required for `PAY` flow.
-          type:
-          - string
-          - 'null'
-          format: uuid
-          examples:
-          - 7d4e2c19-8f2a-4b3c-9d1e-6f8a2b4c6d8e
   securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: /auth/token
+          scopes:
+            api: API access
     bearerAuth:
       type: http
       scheme: bearer

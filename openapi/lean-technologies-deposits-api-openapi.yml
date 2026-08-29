@@ -1,7 +1,8 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Consents Account On File Account Controls (New) Account Controls (New) Deposits API
-  version: v0.2.3
+  title: Incoming Transactions Deposits API
+  version: v1.0.0
+  description: Retrieve deposit records belonging to an application.
 servers:
 - url: https://sandbox.leantech.me
   description: Sandbox
@@ -55,91 +56,6 @@ paths:
       - Deposits
 components:
   schemas:
-    Reconciliation:
-      description: The reconciliation status of the deposit.
-      type: object
-      properties:
-        payment_id:
-          description: The unique identifier for the payment.
-          type: string
-          format: uuid
-        status:
-          description: The reconciliation status of the payment with this deposit.
-          type: string
-          enum:
-          - RECONCILED
-          - NOT_RECONCILED
-      required:
-      - status
-      - payment_id
-    BeneficiaryAccount:
-      description: The account that the deposit was made to.
-      type: object
-      properties:
-        account_id:
-          description: The account ID referencing the account number.
-          type: string
-          format: uuid
-        iban:
-          description: The International Bank Account Number (IBAN) of the account.
-          type: string
-      required:
-      - account_id
-      - iban
-    PageableResponse:
-      type: object
-      properties:
-        data:
-          description: The list of deposits.
-          type: array
-          items:
-            $ref: '#/components/schemas/DepositResponse'
-        page:
-          $ref: '#/components/schemas/PageMetadata'
-    SenderAccount:
-      description: The account that the deposit was made from.
-      type: object
-      properties:
-        account_number:
-          description: The account ID referencing the account number.
-          type: string
-        iban:
-          description: The International Bank Account Number (IBAN) of the account.
-          type: string
-      required:
-      - account_number
-      - iban
-      x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)'
-    PageMetadata:
-      description: Metadata about the current page of results
-      type: object
-      properties:
-        number:
-          description: The current page being returned by the API
-          type: integer
-          format: int32
-        size:
-          description: The page size requested
-          type: integer
-          format: int32
-        total_elements:
-          description: The total number of elements in all pages
-          type: integer
-          format: int64
-        total_pages:
-          description: The total number of pages retrievable
-          type: integer
-          format: int32
-        sort:
-          description: Sort parameters applied to the results
-          type: array
-          items:
-            type: string
-      required:
-      - number
-      - size
-      - total_elements
-      - total_pages
     DepositsQuery:
       type: object
       properties:
@@ -193,6 +109,67 @@ components:
       x-explicit-constructor: true
       x-implements:
       - me.leantech.api.validation.LocalDateRange
+    PageMetadata:
+      description: Metadata about the current page of results
+      type: object
+      properties:
+        number:
+          description: The current page being returned by the API
+          type: integer
+          format: int32
+        size:
+          description: The page size requested
+          type: integer
+          format: int32
+        total_elements:
+          description: The total number of elements in all pages
+          type: integer
+          format: int64
+        total_pages:
+          description: The total number of pages retrievable
+          type: integer
+          format: int32
+        sort:
+          description: Sort parameters applied to the results
+          type: array
+          items:
+            type: string
+      required:
+      - number
+      - size
+      - total_elements
+      - total_pages
+    BeneficiaryAccount:
+      description: The account that the deposit was made to.
+      type: object
+      properties:
+        account_id:
+          description: The account ID referencing the account number.
+          type: string
+          format: uuid
+        iban:
+          description: The International Bank Account Number (IBAN) of the account.
+          type: string
+      required:
+      - account_id
+      - iban
+    Reconciliation:
+      description: The reconciliation status of the deposit.
+      type: object
+      properties:
+        payment_id:
+          description: The unique identifier for the payment.
+          type: string
+          format: uuid
+        status:
+          description: The reconciliation status of the payment with this deposit.
+          type: string
+          enum:
+          - RECONCILED
+          - NOT_RECONCILED
+      required:
+      - status
+      - payment_id
     DepositResponse:
       type: object
       properties:
@@ -242,6 +219,30 @@ components:
       - beneficiary_account
       - reconciliation
       - deposit_source_id
+    PageableResponse:
+      type: object
+      properties:
+        data:
+          description: The list of deposits.
+          type: array
+          items:
+            $ref: '#/components/schemas/DepositResponse'
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+    SenderAccount:
+      description: The account that the deposit was made from.
+      type: object
+      properties:
+        account_number:
+          description: The account ID referencing the account number.
+          type: string
+        iban:
+          description: The International Bank Account Number (IBAN) of the account.
+          type: string
+      required:
+      - account_number
+      - iban
+      x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)'
   securitySchemes:
     bearerAuth:
       type: http

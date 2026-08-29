@@ -1,14 +1,17 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Consents Account On File Account Controls (New) Account Controls (New) Pending & Asynchronous Requests API
-  version: v0.2.3
+  title: Lean Technologies Pending & Asynchronous Requests API
+  version: '1.0'
+  description: 'Operations tagged Pending & Asynchronous Requests across 2 of this provider''s published API definitions: lean-technologies-data-openapi.yml, lean-technologies-ksa-core-resources-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://sandbox.leantech.me
   description: Sandbox
 - url: https://api2.leantech.me
   description: Production
-security:
-- bearerAuth: []
+- url: https://sandbox.sa.leantech.me
+  description: Sandbox
+- url: https://api2.sa.leantech.me
+  description: Production / Pre-Live
 tags:
 - name: Pending & Asynchronous Requests
   x-displayName: Pending & Asynchronous Requests
@@ -122,45 +125,10 @@ paths:
       deprecated: false
       tags:
       - Pending & Asynchronous Requests
+      security:
+      - bearerAuth: []
 components:
   parameters:
-    AsyncParameter:
-      name: async
-      in: query
-      description: 'When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. **Note: it''s recommended to use the sync flow (async=false) for all requests by adapting the [data workflow](https://docs.leantech.me/docs/data-workflow) for connected entities.**'
-      required: false
-      schema:
-        type: boolean
-        default: false
-      deprecated: true
-    PageParameter:
-      name: page
-      in: query
-      description: The page you're requesting - returns page 0 of a response if not specified.
-      required: false
-      schema:
-        type: integer
-        default: 0
-        minimum: 0
-    ResultsIdParameter:
-      name: results_id
-      in: path
-      description: results_id was returned from a request with `async=true`
-      required: true
-      example: 549fd28b-1268-4ab3-a34d-bed7d4710c00
-      schema:
-        type: string
-        format: uuid
-    SizeParameter:
-      name: size
-      description: The number of objects you want to return as a page size.
-      in: query
-      required: false
-      schema:
-        type: integer
-        default: 50
-        maximum: 100
-        minimum: 1
     EntityIdParameter:
       name: entity_id
       description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
@@ -176,6 +144,43 @@ components:
       required: false
       schema:
         type: string
+    PageParameter:
+      name: page
+      in: query
+      description: The page you're requesting - returns page 0 of a response if not specified.
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+    SizeParameter:
+      name: size
+      description: The number of objects you want to return as a page size.
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 50
+        maximum: 100
+        minimum: 1
+    AsyncParameter:
+      name: async
+      in: query
+      description: 'When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. **Note: it''s recommended to use the sync flow (async=false) for all requests by adapting the [data workflow](https://docs.leantech.me/docs/data-workflow) for connected entities.**'
+      required: false
+      schema:
+        type: boolean
+        default: false
+      deprecated: true
+    ResultsIdParameter:
+      name: results_id
+      in: path
+      description: results_id was returned from a request with `async=true`
+      required: true
+      example: 549fd28b-1268-4ab3-a34d-bed7d4710c00
+      schema:
+        type: string
+        format: uuid
   examples:
     UnknownResultExample:
       summary: Result not found error response
@@ -195,7 +200,220 @@ components:
         status: INTERNAL_SERVER_ERROR
         message: Something has gone wrong. If you continue to see this error, please get in touch with Lean.
         metadata: null
+  schemas:
+    DirectDebitsResponse:
+      allOf:
+      - type: object
+        properties:
+          data:
+            type: object
+            properties: {}
+      - $ref: '#/components/schemas/DataResponse'
+    AccountsData:
+      allOf:
+      - type: object
+        properties: {}
+      - type: object
+        properties:
+          accounts:
+            description: An array of accounts associated with the Entity
+            type: array
+            items:
+              $ref: '#/components/schemas/Account'
+    StatusDetailObject:
+      description: Status Details
+      type: object
+      properties:
+        granular_status_code:
+          description: Detailed error code
+          type: string
+        status_additional_info:
+          description: Further detail on the encountered error
+          type: string
+    Account:
+      type: object
+      properties:
+        account_id:
+          description: The unique identifier for the account. Provided as a UUID.
+          type: string
+        status:
+          description: The current status of the account. Indicating whether it is in active use or not.
+          enum:
+          - DELETED
+          - DISABLED
+          - ENABLED
+          - PENDING
+          - PROFORMA
+          - UNSUPPORTED
+          type: string
+        status_update_date_time:
+          type:
+          - string
+          - 'null'
+          description: The datetime that the status was last updated.
+          format: date-time
+        currency:
+          description: The ISO 3 letter currency code that the account stores value in.
+          type: string
+        account_type:
+          description: 'Indicates whether the account is a retail consumer account or a business account. '
+          enum:
+          - PERSONAL
+          - BUSINESS
+          - UNSUPPORTED
+          type: string
+        account_sub_type:
+          type: string
+          description: Indicates the type of account.
+          enum:
+          - CURRENT
+          - CREDIT
+          - SAVINGS
+          - CHARGE_CARD
+          - EMONEY
+          - LOAN
+          - MORTGAGE
+          - PREPAID
+          - CALL
+          - UNSUPPORTED
+        nickname:
+          type:
+          - string
+          - 'null'
+          description: The name for this account as set by the owner of the account. This name is known to the user.
+        description:
+          type:
+          - string
+          - 'null'
+          description: Specifies the description of the account sub-type.
+        opening_date:
+          type:
+          - string
+          - 'null'
+          description: The date and time the account was opened.
+          format: date-time
+          examples:
+          - 2013-03-15 22:00:00.000 +0400
+        maturity_date:
+          type:
+          - string
+          - 'null'
+          description: Maturity date of the account.
+          format: date-time
+        account:
+          type: array
+          items:
+            type: object
+            properties: {}
+          description: Identification for the account assigned by the Bank based on the Account Scheme Name
+        servicer:
+          $ref: '#/components/schemas/AgentIdentifier'
+          description: Party that manages the account on behalf of the account owner, that is manages the registration and booking of entries on the account, calculates balances on the account and provides information about the account.
+        regional_data:
+          description: Region specific data response. Only provided when `verbose=true` in the originating request.
+          $ref: '#/components/schemas/AccountRegionalData'
+    StandardSau:
+      type: object
+      properties:
+        standard:
+          description: A description of the standard the regional data is returned in formatted as `"{ISO 3 Letter Country Code}.{Standard}.{Version}"`. In the KSA V2 API this will always return as `"SAU.SAMA.V1"`
+          type: string
+          examples:
+          - SAU.SAMA.V1
+    AccountRegionalData:
+      allOf:
+      - type: object
+        properties:
+          data:
+            type: object
+            properties: {}
+      - $ref: '#/components/schemas/StandardSau'
+    DataResponse:
+      type: object
+      properties:
+        status:
+          description: The status of the results. For async requests, initially returns PENDING.
+          enum:
+          - OK
+          - FAILED
+          - PENDING
+          - CONSENT_EXPIRED
+          type: string
+        results_id:
+          type: string
+          description: The ID for this result, this is used when retrieving results from the `/results` endpoint.
+          format: uuid
+        message:
+          description: A message describing the status of the request.
+          type: string
+        meta:
+          type:
+          - string
+          - 'null'
+          description: Optional metadata associated with the result.
+        timestamp:
+          format: date-time
+          description: The timestamp with timezone offset indicating when the response was generated.
+          type: string
+        status_detail:
+          description: Further detail on the error if status=FAILED
+          $ref: '#/components/schemas/StatusDetailObject'
+      required:
+      - status
+      - results_id
+      - message
+      - meta
+      - timestamp
+      - status_detail
+    ResultsResponse:
+      anyOf:
+      - $ref: '#/components/schemas/AccountsResponse'
+      - type: object
+        properties: {}
+      - type: object
+        properties: {}
+      - type: object
+        properties: {}
+      - type: object
+        properties: {}
+      - type: object
+        properties: {}
+      - type: object
+        properties: {}
+      - type: object
+        properties: {}
+      - $ref: '#/components/schemas/DirectDebitsResponse'
+      title: Results Response
+      description: ''
+    AgentIdentifier:
+      type: object
+      properties:
+        scheme_name:
+          type: string
+          description: The name of the identification scheme for the Bank
+          enum:
+          - BICFI
+          - OTHER
+          - UNSUPPORTED
+          examples:
+          - BICFI
+        identification:
+          type: string
+          description: Unique and unambiguous identification of the Bank
+    AccountsResponse:
+      allOf:
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/AccountsData'
+      - $ref: '#/components/schemas/DataResponse'
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
+    bearer:
+      type: http
+      scheme: bearer
+x-refined-from:
+- lean-technologies-data-openapi.yml
+- lean-technologies-ksa-core-resources-openapi.yml

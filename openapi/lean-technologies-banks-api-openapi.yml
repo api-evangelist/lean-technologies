@@ -1,14 +1,19 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Consents Account On File Account Controls (New) Account Controls (New) Banks API
-  version: v0.2.3
+  title: Lean Technologies Banks API
+  version: '1.0'
+  description: 'Operations tagged Banks across 2 of this provider''s published API definitions: lean-technologies-core-resources-openapi.yml, lean-technologies-ksa-core-resources-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://sandbox.leantech.me
   description: Sandbox
 - url: https://api2.leantech.me
-  description: Production
+  description: Production / Pre-live
+- url: https://sandbox.sa.leantech.me
+  description: Sandbox
+- url: https://api2.sa.leantech.me
+  description: Production / Pre-Live
 security:
-- bearerAuth: []
+- bearer: []
 tags:
 - name: Banks
 paths:
@@ -68,6 +73,11 @@ paths:
           headers: {}
       security:
       - bearer: []
+    servers:
+    - url: https://sandbox.leantech.me
+      description: Sandbox
+    - url: https://api2.leantech.me
+      description: Production / Pre-live
   /banks/v1/:
     get:
       summary: List Banks
@@ -98,6 +108,11 @@ paths:
           headers: {}
       security:
       - bearer: []
+    servers:
+    - url: https://sandbox.sa.leantech.me
+      description: Sandbox
+    - url: https://api2.sa.leantech.me
+      description: Production / Pre-Live
 components:
   schemas:
     TransferLimit:
@@ -116,104 +131,6 @@ components:
       - currency
       - min
       - max
-    BankResponse:
-      title: BankResponse
-      description: ''
-      type: object
-      properties:
-        identifier:
-          description: The unique identifier for the bank.
-          type: string
-        name:
-          description: The user-friendly name of the bank.
-          type: string
-        arabic_name:
-          description: The user-friendly name of the bank in Arabic.
-          type: string
-        logo:
-          description: A black logo for the bank.
-          type: string
-        logo_alt:
-          description: A white logo for the bank
-          type: string
-        main_color:
-          description: The hex code for the main brand colour for the bank.
-          type: string
-        background_color:
-          description: The hex code for the secondary brand colour for the bank.
-          type: string
-        theme:
-          description: '`dark` indicates that white text should be overlayed over the `main_color`, `light` indicates that black text should be overlayed over the `main_color`.'
-          type: string
-        country_code:
-          description: The 3 letter ISO for the country the bank is located in.
-          type: string
-        active:
-          description: Whether the Bank is currently operational.
-          type: boolean
-        traits:
-          description: An array of traits that are used internally to determine the type of bank connection.
-          type: array
-          items:
-            type: string
-        supported_account_types:
-          deprecated: true
-          description: 'Indicates the account types Lean supports for this bank. Accepted values are: `CURRENT`, `SAVINGS`, and `CREDIT`.'
-          enum:
-          - CURRENT
-          - SAVINGS
-          - CREDIT
-          type: string
-        supported_account_sub_types:
-          description: Indicates the account types Lean supports for this bank.
-          type: string
-        bank_type:
-          deprecated: true
-          description: '[DEPRECATED] If the bank identifier corresponds to a retail or SME bank.'
-          enum:
-          - RETAIL
-          - SME
-          type: string
-        account_type:
-          description: If the bank identifier corresponds to a business or personal bank.
-          enum:
-          - BUSINESS
-          - PERSONAL
-          type: string
-        availability:
-          description: 'Whether the Bank is currently available for use with the Data API. Changes to this status trigger `banks.availability.updated` webhooks.
-
-
-
-            **Active** `object`
-
-
-            Whether Lean has enabled the or disabled the Data functionality. When this is false, Lean has taken the bank offline due to stability, maintenance or regulatory reasons.
-
-
-            ---
-
-
-            **Enabled** `object`
-
-
-            Whether the bank has been enabled in the application dashboard or not. If you want to hide a bank or disable it from use for any reason - you can log in to the [Application Dashboard](https://dev.leantech.me) to enable and disable visibility and functionality of a bank on your platform.'
-          type: object
-          properties:
-            active:
-              type: object
-              properties:
-                payments:
-                  type: boolean
-                data:
-                  type: boolean
-            enabled:
-              type: object
-              properties:
-                payments:
-                  type: boolean
-                data:
-                  type: boolean
     Bank:
       type: object
       properties:
@@ -335,7 +252,108 @@ components:
       - international_destinations
       - availability
       - arabic_name
+    BankResponse:
+      title: BankResponse
+      description: ''
+      type: object
+      properties:
+        identifier:
+          description: The unique identifier for the bank.
+          type: string
+        name:
+          description: The user-friendly name of the bank.
+          type: string
+        arabic_name:
+          description: The user-friendly name of the bank in Arabic.
+          type: string
+        logo:
+          description: A black logo for the bank.
+          type: string
+        logo_alt:
+          description: A white logo for the bank
+          type: string
+        main_color:
+          description: The hex code for the main brand colour for the bank.
+          type: string
+        background_color:
+          description: The hex code for the secondary brand colour for the bank.
+          type: string
+        theme:
+          description: '`dark` indicates that white text should be overlayed over the `main_color`, `light` indicates that black text should be overlayed over the `main_color`.'
+          type: string
+        country_code:
+          description: The 3 letter ISO for the country the bank is located in.
+          type: string
+        active:
+          description: Whether the Bank is currently operational.
+          type: boolean
+        traits:
+          description: An array of traits that are used internally to determine the type of bank connection.
+          type: array
+          items:
+            type: string
+        supported_account_types:
+          deprecated: true
+          description: 'Indicates the account types Lean supports for this bank. Accepted values are: `CURRENT`, `SAVINGS`, and `CREDIT`.'
+          enum:
+          - CURRENT
+          - SAVINGS
+          - CREDIT
+          type: string
+        supported_account_sub_types:
+          description: Indicates the account types Lean supports for this bank.
+          type: string
+        bank_type:
+          deprecated: true
+          description: '[DEPRECATED] If the bank identifier corresponds to a retail or SME bank.'
+          enum:
+          - RETAIL
+          - SME
+          type: string
+        account_type:
+          description: If the bank identifier corresponds to a business or personal bank.
+          enum:
+          - BUSINESS
+          - PERSONAL
+          type: string
+        availability:
+          description: 'Whether the Bank is currently available for use with the Data API. Changes to this status trigger `banks.availability.updated` webhooks.
+
+
+
+            **Active** `object`
+
+
+            Whether Lean has enabled the or disabled the Data functionality. When this is false, Lean has taken the bank offline due to stability, maintenance or regulatory reasons.
+
+
+            ---
+
+
+            **Enabled** `object`
+
+
+            Whether the bank has been enabled in the application dashboard or not. If you want to hide a bank or disable it from use for any reason - you can log in to the [Application Dashboard](https://dev.leantech.me) to enable and disable visibility and functionality of a bank on your platform.'
+          type: object
+          properties:
+            active:
+              type: object
+              properties:
+                payments:
+                  type: boolean
+                data:
+                  type: boolean
+            enabled:
+              type: object
+              properties:
+                payments:
+                  type: boolean
+                data:
+                  type: boolean
   securitySchemes:
-    bearerAuth:
+    bearer:
       type: http
       scheme: bearer
+x-refined-from:
+- lean-technologies-core-resources-openapi.yml
+- lean-technologies-ksa-core-resources-openapi.yml

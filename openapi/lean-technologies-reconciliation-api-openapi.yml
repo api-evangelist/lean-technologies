@@ -1,14 +1,13 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Consents Account On File Account Controls (New) Account Controls (New) reconciliation API
-  version: v0.2.3
+  title: Lean Technologies Reconciliation API
+  version: '1.0'
+  description: 'Operations tagged reconciliation across 2 of this provider''s published API definitions: lean-technologies-reconciliation-extended-openapi.yml, lean-technologies-reconciliation-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://sandbox.leantech.me
   description: Sandbox
 - url: https://api2.leantech.me
   description: Production
-security:
-- bearerAuth: []
 tags:
 - name: reconciliation
   x-displayName: reconciliation
@@ -58,6 +57,8 @@ paths:
                       total_results: 100
       tags:
       - reconciliation
+      security:
+      - bearerAuth: []
   /reconciliation/v1/payments/{paymentId}:
     servers: []
     get:
@@ -102,6 +103,8 @@ paths:
           description: Payment not found
       tags:
       - reconciliation
+      security:
+      - bearerAuth: []
   /reconciliation/v1/deposits/:
     get:
       summary: Retrieve Deposits
@@ -259,6 +262,11 @@ paths:
           headers: {}
       security:
       - bearer: []
+    servers:
+    - url: https://sandbox.leantech.me
+      description: Sandbox
+    - url: https://api2.leantech.me
+      description: Production / Pre-live
   /reconciliation/v1/payments/{payment_id}:
     get:
       summary: Get Payment
@@ -366,48 +374,13 @@ paths:
           headers: {}
       security:
       - bearer: []
+    servers:
+    - url: https://sandbox.leantech.me
+      description: Sandbox
+    - url: https://api2.leantech.me
+      description: Production / Pre-live
 components:
   schemas:
-    DateRequest:
-      type: object
-      properties:
-        from:
-          description: Min datetime in ISO format yyyy-MM-dd
-          type: string
-          format: date
-          examples:
-          - '2025-09-15'
-        to:
-          description: Max datetime in ISO format yyyy-MM-dd
-          type: string
-          format: date
-          examples:
-          - '2025-10-01'
-      required:
-      - from
-      - to
-    Payment:
-      type: object
-      properties:
-        id:
-          description: Payment Id
-          type: string
-          format: uuid
-        customer_id:
-          description: Customer Id
-          type: string
-          format: uuid
-        payment_initiation_timestamp:
-          description: Timestamp the payment was initiated.
-          type: string
-          format: date-time
-        reconciliation:
-          $ref: '#/components/schemas/PaymentReconciliation'
-      required:
-      - id
-      - customer_id
-      - payment_initiation_timestamp
-      - reconciliation
     PaymentQuery:
       type: object
       properties:
@@ -480,6 +453,41 @@ components:
           - 'null'
       required:
       - payment_initiation_date
+    Payment:
+      type: object
+      properties:
+        id:
+          description: Payment Id
+          type: string
+          format: uuid
+        customer_id:
+          description: Customer Id
+          type: string
+          format: uuid
+        payment_initiation_timestamp:
+          description: Timestamp the payment was initiated.
+          type: string
+          format: date-time
+        reconciliation:
+          $ref: '#/components/schemas/PaymentReconciliation'
+      required:
+      - id
+      - customer_id
+      - payment_initiation_timestamp
+      - reconciliation
+    AmountRequest:
+      type: object
+      properties:
+        minimum:
+          description: Minimum amount (inclusive)
+          type:
+          - number
+          - 'null'
+        maximum:
+          description: Maximum amount (inclusive)
+          type:
+          - number
+          - 'null'
     PaymentsSummary:
       type: object
       properties:
@@ -508,6 +516,24 @@ components:
       - page_number
       - results_per_page
       - total_results
+    DateRequest:
+      type: object
+      properties:
+        from:
+          description: Min datetime in ISO format yyyy-MM-dd
+          type: string
+          format: date
+          examples:
+          - '2025-09-15'
+        to:
+          description: Max datetime in ISO format yyyy-MM-dd
+          type: string
+          format: date
+          examples:
+          - '2025-10-01'
+      required:
+      - from
+      - to
     Deposit:
       type: object
       properties:
@@ -534,19 +560,6 @@ components:
       - timestamp
       - amount
       - currency_code
-    AmountRequest:
-      type: object
-      properties:
-        minimum:
-          description: Minimum amount (inclusive)
-          type:
-          - number
-          - 'null'
-        maximum:
-          description: Maximum amount (inclusive)
-          type:
-          - number
-          - 'null'
     PaymentReconciliation:
       type: object
       properties:
@@ -584,3 +597,9 @@ components:
     bearerAuth:
       type: http
       scheme: bearer
+    bearer:
+      type: http
+      scheme: bearer
+x-refined-from:
+- lean-technologies-reconciliation-extended-openapi.yml
+- lean-technologies-reconciliation-openapi.yml

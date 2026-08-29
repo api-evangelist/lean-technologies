@@ -1,14 +1,15 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Consents Account On File Account Controls (New) Account Controls (New) Customers API
-  version: v0.2.3
+  title: Core Resources Customers API
+  description: ''
+  version: 2.0.0
 servers:
-- url: https://sandbox.leantech.me
+- url: https://sandbox.sa.leantech.me
   description: Sandbox
-- url: https://api2.leantech.me
-  description: Production
+- url: https://api2.sa.leantech.me
+  description: Production / Pre-Live
 security:
-- bearerAuth: []
+- bearer: []
 tags:
 - name: Customers
 paths:
@@ -249,6 +250,6 @@ components:
       - customer_id: 34c11087-b6bc-429b-9a91-725941b1a547
         app_user_id: sandbox_user_1
   securitySchemes:
-    bearerAuth:
+    bearer:
       type: http
       scheme: bearer

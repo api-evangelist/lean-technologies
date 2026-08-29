@@ -1,7 +1,7 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Consents Account On File Account Controls (New) Account Controls (New) Schedules API
-  version: v0.2.3
+  title: Schedules API
+  version: v0.1.0
   description: 'The schedules API allows you to register, manage and inspect scheduled (recurring or
 
     explicit) payments executed against an authorized consent.'
@@ -285,45 +285,57 @@ paths:
       - Schedules
 components:
   schemas:
-    ScheduleRecurrence:
-      description: Describes the cadence of a recurring schedule.
-      type: object
-      properties:
-        unit:
-          $ref: '#/components/schemas/RecurrencePeriodUnit'
-      required:
-      - unit
-    ScheduleStatus:
-      description: 'The lifecycle status of a schedule.
+    ScheduledPaymentStatus:
+      description: 'The lifecycle status of a scheduled payment.
 
 
-        - `PENDING` — registered, not yet active.
+        - `PLANNED` — the payment has been planned but has not yet been scheduled for execution.
 
-        - `ACTIVE` — active; payments are attempted on their due dates.
+        - `SCHEDULED` — the payment is scheduled and waiting to be attempted.
 
-        - `PAUSED` — temporarily paused; no payments attempted until resumed.
+        - `PROCESSING` — the payment is currently being attempted.
 
-        - `CONSENT_BLOCKED` — the underlying consent is no longer usable.
+        - `COMPLETED` — the payment completed successfully.
 
-        - `CANCELLED` — terminated by the client or due to consent state.
+        - `FAILED` — the payment reached a failed terminal state.
 
-        - `COMPLETED` — all planned payments have been executed.'
+        - `SKIPPED` — the payment was skipped and will not be attempted.
+
+        - `EXPIRED` — the payment expired before completion.
+
+        - `CANCELLED` — the payment was cancelled before completion.'
       type: string
       enum:
-      - PENDING
-      - ACTIVE
-      - PAUSED
-      - CONSENT_BLOCKED
-      - CANCELLED
+      - PLANNED
+      - SCHEDULED
+      - PROCESSING
       - COMPLETED
-    ScheduleActionRequest:
+      - FAILED
+      - SKIPPED
+      - EXPIRED
+      - CANCELLED
+    ScheduleKind:
+      description: Discriminates between recurring and explicit schedules.
+      type: string
+      enum:
+      - RECURRING
+      - EXPLICIT
+    ScheduleAmount:
+      description: A monetary amount for a scheduled payment.
       type: object
       properties:
-        reason:
-          description: An optional human readable reason for the action.
-          type:
-          - string
-          - 'null'
+        value:
+          description: The amount of money in the currency specified.
+          type: number
+          format: decimal
+          minimum: 1
+        currency:
+          description: The currency of the amount.
+          type: string
+          x-field-extra-annotation: '@NotBlank'
+      required:
+      - value
+      - currency
     PageMetadata:
       description: Metadata about the current page of results
       type: object
@@ -354,35 +366,134 @@ components:
       - size
       - total_elements
       - total_pages
-    ScheduledPaymentStatus:
-      description: 'The lifecycle status of a scheduled payment.
-
-
-        - `PLANNED` — the payment has been planned but has not yet been scheduled for execution.
-
-        - `SCHEDULED` — the payment is scheduled and waiting to be attempted.
-
-        - `PROCESSING` — the payment is currently being attempted.
-
-        - `COMPLETED` — the payment completed successfully.
-
-        - `FAILED` — the payment reached a failed terminal state.
-
-        - `SKIPPED` — the payment was skipped and will not be attempted.
-
-        - `EXPIRED` — the payment expired before completion.
-
-        - `CANCELLED` — the payment was cancelled before completion.'
-      type: string
-      enum:
-      - PLANNED
-      - SCHEDULED
-      - PROCESSING
-      - COMPLETED
-      - FAILED
-      - SKIPPED
-      - EXPIRED
-      - CANCELLED
+    ScheduleDetailsResponse:
+      type: object
+      properties:
+        schedule_id:
+          description: The id of the schedule.
+          type: string
+          format: uuid
+        consent_id:
+          description: The id of the consent the schedule belongs to.
+          type: string
+          format: uuid
+        application_id:
+          description: The id of the application that owns the schedule.
+          type: string
+          format: uuid
+        kind:
+          $ref: '#/components/schemas/ScheduleKind'
+        status:
+          $ref: '#/components/schemas/ScheduleStatus'
+        plan_summary:
+          $ref: '#/components/schemas/SchedulePlanSummary'
+        pending_payment:
+          description: The currently pending payment, when one exists.
+          allOf:
+          - $ref: '#/components/schemas/PendingScheduledPayment'
+        created_at:
+          description: The date and time the schedule was created.
+          type: string
+          format: date-time
+          x-java-type: java.time.Instant
+        updated_at:
+          description: The date and time the schedule was last updated.
+          type:
+          - string
+          - 'null'
+          format: date-time
+          x-java-type: java.time.Instant
+      required:
+      - schedule_id
+      - consent_id
+      - application_id
+      - kind
+      - status
+      - plan_summary
+      - created_at
+    ScheduleExecutionEntry:
+      description: A single planned payment execution.
+      type: object
+      properties:
+        execute_on:
+          description: The date on which this payment should be executed.
+          type: string
+          format: date
+        amount:
+          allOf:
+          - $ref: '#/components/schemas/ScheduleAmount'
+          x-field-extra-annotation: '@Valid'
+        reference:
+          description: Optional per-execution reference passed to the bank.
+          type:
+          - string
+          - 'null'
+      required:
+      - execute_on
+      - amount
+    CreateScheduleRequest:
+      type: object
+      properties:
+        reference:
+          description: A default reference applied to payments created by this schedule.
+          type:
+          - string
+          - 'null'
+        purpose:
+          description: The payment purpose code applied to payments created by this schedule. Optional; omit when not applicable.
+          type:
+          - string
+          - 'null'
+        consent_id:
+          description: The id of the authorized consent the schedule is registered against.
+          type: string
+          format: uuid
+        schedule:
+          allOf:
+          - $ref: '#/components/schemas/ScheduleDefinition'
+          x-field-extra-annotation: '@Valid'
+      required:
+      - consent_id
+      - schedule
+    RecurringScheduleDefinition:
+      description: A schedule that repeats on a fixed cadence for a fixed amount.
+      type: object
+      properties:
+        kind:
+          description: The schedule kind discriminator. Always `RECURRING` for this variant.
+          type: string
+        recurrence:
+          allOf:
+          - $ref: '#/components/schemas/ScheduleRecurrence'
+          x-field-extra-annotation: '@Valid'
+        amount:
+          allOf:
+          - $ref: '#/components/schemas/ScheduleAmount'
+          x-field-extra-annotation: '@Valid'
+        start_date:
+          description: The date of the first payment.
+          type:
+          - string
+          - 'null'
+          format: date
+        end_date:
+          description: The date after which no further payments are made. Open-ended when omitted.
+          type:
+          - string
+          - 'null'
+          format: date
+      required:
+      - kind
+      - recurrence
+      - amount
+    ScheduleActionRequest:
+      type: object
+      properties:
+        reason:
+          description: An optional human readable reason for the action.
+          type:
+          - string
+          - 'null'
     ScheduleUpcomingPayment:
       type: object
       properties:
@@ -400,26 +511,211 @@ components:
       required:
       - due_date
       - amount
-    CreateScheduleResponse:
+    ScheduleActionResponse:
       type: object
       properties:
         schedule_id:
-          description: The id of the newly registered schedule.
-          type: string
-          format: uuid
-        consent_id:
-          description: The id of the consent the schedule was registered against.
+          description: The id of the schedule the action was applied to.
           type: string
           format: uuid
         status:
           $ref: '#/components/schemas/ScheduleStatus'
+        updated_at:
+          description: The date and time the schedule was last updated.
+          type: string
+          format: date-time
+          x-java-type: java.time.Instant
         links:
           $ref: '#/components/schemas/ScheduleLinks'
       required:
       - schedule_id
-      - consent_id
       - status
+      - updated_at
       - links
+    ScheduleSummaryListResponse:
+      type: object
+      properties:
+        content:
+          description: The page of schedule summaries.
+          items:
+            $ref: '#/components/schemas/ScheduleSummaryResponse'
+          type: array
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+      required:
+      - content
+      - page
+    ScheduleRecurrence:
+      description: Describes the cadence of a recurring schedule.
+      type: object
+      properties:
+        unit:
+          $ref: '#/components/schemas/RecurrencePeriodUnit'
+      required:
+      - unit
+    RecurrencePeriodUnit:
+      description: 'The time unit on which a recurring schedule repeats.
+
+
+        - `DAY` — the schedule repeats every day.
+
+        - `WEEK` — the schedule repeats every week.
+
+        - `MONTH` — the schedule repeats every month.
+
+        - `YEAR` — the schedule repeats every year.'
+      type: string
+      enum:
+      - DAY
+      - WEEK
+      - MONTH
+      - YEAR
+    ScheduleLinks:
+      description: 'Hypermedia links for the actions available on a schedule. Only `self` is always present;
+
+        the remaining links are included only when the corresponding action is currently available.'
+      type: object
+      properties:
+        self:
+          description: Link to the schedule itself.
+          type: string
+        cancel:
+          description: Link to cancel the schedule, when the action is available.
+          type:
+          - string
+          - 'null'
+        pause:
+          description: Link to pause the schedule, when the action is available.
+          type:
+          - string
+          - 'null'
+        resume:
+          description: Link to resume the schedule, when the action is available.
+          type:
+          - string
+          - 'null'
+        upcoming_payments:
+          description: Link to the upcoming payments of the schedule, when available.
+          type:
+          - string
+          - 'null'
+      required:
+      - self
+    UpcomingPaymentListResponse:
+      type: object
+      properties:
+        content:
+          description: The page of upcoming payments.
+          items:
+            $ref: '#/components/schemas/ScheduleUpcomingPayment'
+          type: array
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+      required:
+      - content
+      - page
+    ScheduleDefinition:
+      description: The definition of the schedule to register. Discriminated by `kind`.
+      type: object
+      discriminator:
+        propertyName: kind
+        mapping:
+          RECURRING: '#/components/schemas/RecurringScheduleDefinition'
+          EXPLICIT: '#/components/schemas/ExplicitScheduleDefinition'
+      oneOf:
+      - $ref: '#/components/schemas/RecurringScheduleDefinition'
+      - $ref: '#/components/schemas/ExplicitScheduleDefinition'
+    ScheduleSummaryResponse:
+      type: object
+      properties:
+        schedule_id:
+          description: The id of the schedule.
+          type: string
+          format: uuid
+        consent_id:
+          description: The id of the consent the schedule belongs to.
+          type: string
+          format: uuid
+        kind:
+          $ref: '#/components/schemas/ScheduleKind'
+        status:
+          $ref: '#/components/schemas/ScheduleStatus'
+        created_at:
+          description: The date and time the schedule was created.
+          type: string
+          format: date-time
+          x-java-type: java.time.Instant
+        plan_summary:
+          $ref: '#/components/schemas/SchedulePlanSummary'
+        next_payment:
+          description: The next upcoming payment, when one is scheduled.
+          allOf:
+          - $ref: '#/components/schemas/ScheduleExecutionEntry'
+      required:
+      - schedule_id
+      - consent_id
+      - kind
+      - status
+      - created_at
+      - plan_summary
+    ExplicitScheduleDefinition:
+      description: A schedule made up of an explicit list of dated payments.
+      type: object
+      properties:
+        kind:
+          description: The schedule kind discriminator. Always `EXPLICIT` for this variant.
+          type: string
+        executions:
+          description: The explicit list of planned payment executions.
+          type: array
+          items:
+            $ref: '#/components/schemas/ScheduleExecutionEntry'
+          x-field-extra-annotation: '@Valid'
+      required:
+      - kind
+      - executions
+    ScheduledPaymentSummaryResponse:
+      type: object
+      properties:
+        scheduled_payment_id:
+          description: The id of the scheduled payment.
+          type: string
+          format: uuid
+        occurrence_index:
+          description: The zero-based index of this payment within the schedule.
+          type: integer
+          format: int32
+        due_date:
+          description: The date the payment is due to be executed.
+          type: string
+          format: date
+        amount:
+          $ref: '#/components/schemas/ScheduleAmount'
+        reference:
+          description: The reference applied to the payment, when set.
+          type:
+          - string
+          - 'null'
+        status:
+          $ref: '#/components/schemas/ScheduledPaymentStatus'
+        attempt_count:
+          description: The number of execution attempts made for this payment.
+          type: integer
+          format: int32
+        updated_at:
+          description: The date and time the scheduled payment was last updated.
+          type:
+          - string
+          - 'null'
+          format: date-time
+          x-java-type: java.time.Instant
+      required:
+      - scheduled_payment_id
+      - occurrence_index
+      - due_date
+      - amount
+      - status
+      - attempt_count
     ScheduledPaymentDetailsResponse:
       type: object
       properties:
@@ -475,131 +771,26 @@ components:
       - attempt_count
       - created_at
       - updated_at
-    RecurrencePeriodUnit:
-      description: 'The time unit on which a recurring schedule repeats.
-
-
-        - `DAY` — the schedule repeats every day.
-
-        - `WEEK` — the schedule repeats every week.
-
-        - `MONTH` — the schedule repeats every month.
-
-        - `YEAR` — the schedule repeats every year.'
-      type: string
-      enum:
-      - DAY
-      - WEEK
-      - MONTH
-      - YEAR
-    ScheduleDetailsResponse:
+    CreateScheduleResponse:
       type: object
       properties:
         schedule_id:
-          description: The id of the schedule.
+          description: The id of the newly registered schedule.
           type: string
           format: uuid
         consent_id:
-          description: The id of the consent the schedule belongs to.
+          description: The id of the consent the schedule was registered against.
           type: string
           format: uuid
-        application_id:
-          description: The id of the application that owns the schedule.
-          type: string
-          format: uuid
-        kind:
-          $ref: '#/components/schemas/ScheduleKind'
         status:
           $ref: '#/components/schemas/ScheduleStatus'
-        plan_summary:
-          $ref: '#/components/schemas/SchedulePlanSummary'
-        pending_payment:
-          description: The currently pending payment, when one exists.
-          allOf:
-          - $ref: '#/components/schemas/PendingScheduledPayment'
-        created_at:
-          description: The date and time the schedule was created.
-          type: string
-          format: date-time
-          x-java-type: java.time.Instant
-        updated_at:
-          description: The date and time the schedule was last updated.
-          type:
-          - string
-          - 'null'
-          format: date-time
-          x-java-type: java.time.Instant
+        links:
+          $ref: '#/components/schemas/ScheduleLinks'
       required:
       - schedule_id
       - consent_id
-      - application_id
-      - kind
       - status
-      - plan_summary
-      - created_at
-    ScheduleKind:
-      description: Discriminates between recurring and explicit schedules.
-      type: string
-      enum:
-      - RECURRING
-      - EXPLICIT
-    ScheduleLinks:
-      description: 'Hypermedia links for the actions available on a schedule. Only `self` is always present;
-
-        the remaining links are included only when the corresponding action is currently available.'
-      type: object
-      properties:
-        self:
-          description: Link to the schedule itself.
-          type: string
-        cancel:
-          description: Link to cancel the schedule, when the action is available.
-          type:
-          - string
-          - 'null'
-        pause:
-          description: Link to pause the schedule, when the action is available.
-          type:
-          - string
-          - 'null'
-        resume:
-          description: Link to resume the schedule, when the action is available.
-          type:
-          - string
-          - 'null'
-        upcoming_payments:
-          description: Link to the upcoming payments of the schedule, when available.
-          type:
-          - string
-          - 'null'
-      required:
-      - self
-    UpcomingPaymentListResponse:
-      type: object
-      properties:
-        content:
-          description: The page of upcoming payments.
-          items:
-            $ref: '#/components/schemas/ScheduleUpcomingPayment'
-          type: array
-        page:
-          $ref: '#/components/schemas/PageMetadata'
-      required:
-      - content
-      - page
-    ScheduleSummaryListResponse:
-      type: object
-      properties:
-        content:
-          description: The page of schedule summaries.
-          items:
-            $ref: '#/components/schemas/ScheduleSummaryResponse'
-          type: array
-        page:
-          $ref: '#/components/schemas/PageMetadata'
-      required:
-      - content
-      - page
+      - links
     SchedulePlanSummary:
       description: 'Summary of the schedule''s plan. The populated fields depend on the schedule `kind`:
 
@@ -646,157 +837,42 @@ components:
           - string
           - 'null'
           format: date
-    ScheduleDefinition:
-      description: The definition of the schedule to register. Discriminated by `kind`.
-      type: object
-      discriminator:
-        propertyName: kind
-        mapping:
-          RECURRING: '#/components/schemas/RecurringScheduleDefinition'
-          EXPLICIT: '#/components/schemas/ExplicitScheduleDefinition'
-      oneOf:
-      - $ref: '#/components/schemas/RecurringScheduleDefinition'
-      - $ref: '#/components/schemas/ExplicitScheduleDefinition'
-    ExplicitScheduleDefinition:
-      description: A schedule made up of an explicit list of dated payments.
+    ScheduleStatus:
+      description: 'The lifecycle status of a schedule.
+
+
+        - `PENDING` — registered, not yet active.
+
+        - `ACTIVE` — active; payments are attempted on their due dates.
+
+        - `PAUSED` — temporarily paused; no payments attempted until resumed.
+
+        - `CONSENT_BLOCKED` — the underlying consent is no longer usable.
+
+        - `CANCELLED` — terminated by the client or due to consent state.
+
+        - `COMPLETED` — all planned payments have been executed.'
+      type: string
+      enum:
+      - PENDING
+      - ACTIVE
+      - PAUSED
+      - CONSENT_BLOCKED
+      - CANCELLED
+      - COMPLETED
+    ScheduledPaymentListResponse:
       type: object
       properties:
-        kind:
-          description: The schedule kind discriminator. Always `EXPLICIT` for this variant.
-          type: string
-        executions:
-          description: The explicit list of planned payment executions.
-          type: array
+        content:
+          description: The page of scheduled payments.
           items:
-            $ref: '#/components/schemas/ScheduleExecutionEntry'
-          x-field-extra-annotation: '@Valid'
+            $ref: '#/components/schemas/ScheduledPaymentSummaryResponse'
+          type: array
+        page:
+          $ref: '#/components/schemas/PageMetadata'
       required:
-      - kind
-      - executions
-    ScheduleExecutionEntry:
-      description: A single planned payment execution.
-      type: object
-      properties:
-        execute_on:
-          description: The date on which this payment should be executed.
-          type: string
-          format: date
-        amount:
-          allOf:
-          - $ref: '#/components/schemas/ScheduleAmount'
-          x-field-extra-annotation: '@Valid'
-        reference:
-          description: Optional per-execution reference passed to the bank.
-          type:
-          - string
-          - 'null'
-      required:
-      - execute_on
-      - amount
-    CreateScheduleRequest:
-      type: object
-      properties:
-        reference:
-          description: A default reference applied to payments created by this schedule.
-          type:
-          - string
-          - 'null'
-        purpose:
-          description: The payment purpose code applied to payments created by this schedule. Optional; omit when not applicable.
-          type:
-          - string
-          - 'null'
-        consent_id:
-          description: The id of the authorized consent the schedule is registered against.
-          type: string
-          format: uuid
-        schedule:
-          allOf:
-          - $ref: '#/components/schemas/ScheduleDefinition'
-          x-field-extra-annotation: '@Valid'
-      required:
-      - consent_id
-      - schedule
-    ScheduleSummaryResponse:
-      type: object
-      properties:
-        schedule_id:
-          description: The id of the schedule.
-          type: string
-          format: uuid
-        consent_id:
-          description: The id of the consent the schedule belongs to.
-          type: string
-          format: uuid
-        kind:
-          $ref: '#/components/schemas/ScheduleKind'
-        status:
-          $ref: '#/components/schemas/ScheduleStatus'
-        created_at:
-          description: The date and time the schedule was created.
-          type: string
-          format: date-time
-          x-java-type: java.time.Instant
-        plan_summary:
-          $ref: '#/components/schemas/SchedulePlanSummary'
-        next_payment:
-          description: The next upcoming payment, when one is scheduled.
-          allOf:
-          - $ref: '#/components/schemas/ScheduleExecutionEntry'
-      required:
-      - schedule_id
-      - consent_id
-      - kind
-      - status
-      - created_at
-      - plan_summary
-    RecurringScheduleDefinition:
-      description: A schedule that repeats on a fixed cadence for a fixed amount.
-      type: object
-      properties:
-        kind:
-          description: The schedule kind discriminator. Always `RECURRING` for this variant.
-          type: string
-        recurrence:
-          allOf:
-          - $ref: '#/components/schemas/ScheduleRecurrence'
-          x-field-extra-annotation: '@Valid'
-        amount:
-          allOf:
-          - $ref: '#/components/schemas/ScheduleAmount'
-          x-field-extra-annotation: '@Valid'
-        start_date:
-          description: The date of the first payment.
-          type:
-          - string
-          - 'null'
-          format: date
-        end_date:
-          description: The date after which no further payments are made. Open-ended when omitted.
-          type:
-          - string
-          - 'null'
-          format: date
-      required:
-      - kind
-      - recurrence
-      - amount
-    ScheduleAmount:
-      description: A monetary amount for a scheduled payment.
-      type: object
-      properties:
-        value:
-          description: The amount of money in the currency specified.
-          type: number
-          format: decimal
-          minimum: 1
-        currency:
-          description: The currency of the amount.
-          type: string
-          x-field-extra-annotation: '@NotBlank'
-      required:
-      - value
-      - currency
+      - content
+      - page
     PendingScheduledPayment:
       type: object
       properties:
@@ -819,83 +895,16 @@ components:
       - scheduled_payment_id
       - due_date
       - amount
-    ScheduledPaymentListResponse:
-      type: object
-      properties:
-        content:
-          description: The page of scheduled payments.
-          items:
-            $ref: '#/components/schemas/ScheduledPaymentSummaryResponse'
-          type: array
-        page:
-          $ref: '#/components/schemas/PageMetadata'
-      required:
-      - content
-      - page
-    ScheduledPaymentSummaryResponse:
-      type: object
-      properties:
-        scheduled_payment_id:
-          description: The id of the scheduled payment.
-          type: string
-          format: uuid
-        occurrence_index:
-          description: The zero-based index of this payment within the schedule.
-          type: integer
-          format: int32
-        due_date:
-          description: The date the payment is due to be executed.
-          type: string
-          format: date
-        amount:
-          $ref: '#/components/schemas/ScheduleAmount'
-        reference:
-          description: The reference applied to the payment, when set.
-          type:
-          - string
-          - 'null'
-        status:
-          $ref: '#/components/schemas/ScheduledPaymentStatus'
-        attempt_count:
-          description: The number of execution attempts made for this payment.
-          type: integer
-          format: int32
-        updated_at:
-          description: The date and time the scheduled payment was last updated.
-          type:
-          - string
-          - 'null'
-          format: date-time
-          x-java-type: java.time.Instant
-      required:
-      - scheduled_payment_id
-      - occurrence_index
-      - due_date
-      - amount
-      - status
-      - attempt_count
-    ScheduleActionResponse:
-      type: object
-      properties:
-        schedule_id:
-          description: The id of the schedule the action was applied to.
-          type: string
-          format: uuid
-        status:
-          $ref: '#/components/schemas/ScheduleStatus'
-        updated_at:
-          description: The date and time the schedule was last updated.
-          type: string
-          format: date-time
-          x-java-type: java.time.Instant
-        links:
-          $ref: '#/components/schemas/ScheduleLinks'
-      required:
-      - schedule_id
-      - status
-      - updated_at
-      - links
   parameters:
+    PageParameter:
+      name: page
+      in: query
+      description: The page you're requesting - returns page 0 of a response if not specified.
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
     ScheduleIdParameter:
       name: schedule_id
       in: path
@@ -914,23 +923,7 @@ components:
         default: 50
         maximum: 100
         minimum: 1
-    PageParameter:
-      name: page
-      in: query
-      description: The page you're requesting - returns page 0 of a response if not specified.
-      required: false
-      schema:
-        type: integer
-        default: 0
-        minimum: 0
   requestBodies:
-    ScheduleAction:
-      description: Optional request body carrying a reason for the lifecycle action.
-      required: false
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ScheduleActionRequest'
     CreateSchedule:
       description: Request to register a new schedule.
       required: true
@@ -969,7 +962,21 @@ components:
                       value: 200
                       currency: AED
                     reference: pay-2
+    ScheduleAction:
+      description: Optional request body carrying a reason for the lifecycle action.
+      required: false
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ScheduleActionRequest'
   securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: /auth/token
+          scopes:
+            api: API access
     bearerAuth:
       type: http
       scheme: bearer

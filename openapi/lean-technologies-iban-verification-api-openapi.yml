@@ -1,9 +1,13 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Consents Account On File Account Controls (New) Account Controls (New) Iban Verification API
-  version: v0.2.3
-  description: IBAN ownership verification operations
+  title: Lean Technologies Iban Verification API
+  version: v2.0.0
+  description: 'Operations tagged Iban Verification across 2 of this provider''s published API definitions: lean-technologies-ksa-verifications-openapi.yml, lean-technologies-verifications-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
+- url: https://sandbox.sa.leantech.me
+  description: Sandbox
+- url: https://api2.sa.leantech.me
+  description: Production
 - url: https://sandbox.leantech.me
   description: Sandbox
 - url: https://api2.leantech.me
@@ -343,6 +347,72 @@ paths:
       - Iban Verification
 components:
   schemas:
+    IbanVerificationEnablement:
+      description: Enablement status indicating whether a feature is enabled or disabled
+      type: string
+      enum:
+      - ENABLED
+      - DISABLED
+    IbanVerificationResponsePayload:
+      type: object
+      properties:
+        iban_ownership_verified:
+          description: Verifying whether the account holder name provided owns the IBAN checked. Allowed values true and false
+          type: boolean
+        matching:
+          $ref: '#/components/schemas/MatchingResult'
+        swift_code:
+          description: Swift code that identifies the bank for international transfers
+          type: string
+        bank_name:
+          $ref: '#/components/schemas/Translation'
+        bank_code:
+          description: Bank code identifier
+          type: string
+        account_status:
+          description: Status of the bank account
+          type: string
+        account_holder_name:
+          description: Name of the account holder
+          type: string
+        verification_method:
+          description: The verification method used to verify the entity's ownership
+          type: string
+          enum:
+          - CONFIRMATION_OF_PAYEE_SERVICE
+          - OPEN_BANKING
+          - SARIE
+          - SARIE_AND_CONFIRMATION_OF_PAYEE_SERVICE
+    IbanVerificationBankAvailability:
+      description: Availability status of the bank for IBAN verification
+      type: object
+      properties:
+        global:
+          $ref: '#/components/schemas/IbanVerificationEnablement'
+        account_type:
+          $ref: '#/components/schemas/IbanVerificationAccountTypeAvailability'
+      required:
+      - global
+      - account_type
+    AvsIdentificationType:
+      description: "`NATIONAL_ID`: Saudi ID or Iqama \n`FULL_NAME`: Full name \n`COMMERCIAL_REGISTRATION`: Commercial registration number\n`UNIFIED_NUMBER`: Unified number\n`FREELANCER_NUMBER`: Freelancer certificate number\n"
+      type: string
+    ApplicationBankAvailability:
+      description: Application-level bank enablement configuration
+      type: object
+      properties:
+        country_code:
+          description: ISO 3166-1 alpha-2 country code where the bank is located
+          type: string
+        bank_code:
+          description: Unique identifier code for the bank
+          type: string
+        enablement:
+          $ref: '#/components/schemas/IbanVerificationEnablement'
+      required:
+      - country_code
+      - bank_code
+      - enablement
     ResultStatus:
       description: The status of the request
       type: string
@@ -352,6 +422,40 @@ components:
       - FAILED
       - CONSENT_EXPIRED
       - PROCESSING_STARTED
+    AvsIdentificationDto:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/AvsIdentificationType'
+        value:
+          description: Identification value
+          type: string
+          minLength: 1
+    IbanVerificationMatchAvailability:
+      description: Availability status for match and no-match scenarios
+      type: object
+      properties:
+        match:
+          $ref: '#/components/schemas/IbanVerificationEnablement'
+        no_match:
+          $ref: '#/components/schemas/IbanVerificationEnablement'
+      required:
+      - match
+      - no_match
+    IbanVerificationAccountTypeAvailability:
+      description: Availability status per account type for IBAN verification
+      type: object
+      properties:
+        personal:
+          $ref: '#/components/schemas/IbanVerificationMatchAvailability'
+        freelancer:
+          $ref: '#/components/schemas/IbanVerificationMatchAvailability'
+        business:
+          $ref: '#/components/schemas/IbanVerificationMatchAvailability'
+      required:
+      - personal
+      - freelancer
+      - business
     Result:
       type: object
       properties:
@@ -387,123 +491,13 @@ components:
       - results_id
       - message
       - timestamp
-    Translation:
-      type: object
-      properties:
-        en:
-          description: English translation
-          type: string
-        ar:
-          description: Arabic translation
-          type:
-          - string
-          - 'null'
-      required:
-      - en
-    IbanVerificationBankConfiguration:
-      description: Bank configuration for IBAN verification including availability and enablement status
-      type: object
-      properties:
-        country_code:
-          description: ISO 3166-1 alpha-2 country code where the bank is located
-          type: string
-        bank_code:
-          description: Unique identifier code for the bank
-          type: string
-        bank_name:
-          $ref: '#/components/schemas/Translation'
-        availability:
-          $ref: '#/components/schemas/IbanVerificationBankAvailability'
-        application_enablement:
-          $ref: '#/components/schemas/IbanVerificationEnablement'
-      required:
-      - country_code
-      - bank_code
-      - bank_name
-      - availability
-      - application_enablement
-    IbanVerificationEnablement:
-      description: Enablement status indicating whether a feature is enabled or disabled
-      type: string
-      enum:
-      - ENABLED
-      - DISABLED
-    IbanVerificationAccountTypeAvailability:
-      description: Availability status per account type for IBAN verification
-      type: object
-      properties:
-        personal:
-          $ref: '#/components/schemas/IbanVerificationMatchAvailability'
-        freelancer:
-          $ref: '#/components/schemas/IbanVerificationMatchAvailability'
-        business:
-          $ref: '#/components/schemas/IbanVerificationMatchAvailability'
-      required:
-      - personal
-      - freelancer
-      - business
-    IbanVerificationMatchAvailability:
-      description: Availability status for match and no-match scenarios
-      type: object
-      properties:
-        match:
-          $ref: '#/components/schemas/IbanVerificationEnablement'
-        no_match:
-          $ref: '#/components/schemas/IbanVerificationEnablement'
-      required:
-      - match
-      - no_match
-    IbanVerificationResponsePayload:
-      type: object
-      properties:
-        iban_ownership_verified:
-          description: Verifying whether the account holder name provided owns the IBAN checked. Allowed values true and false
-          type: boolean
-        matching:
-          $ref: '#/components/schemas/MatchingResult'
-        swift_code:
-          description: Swift code that identifies the bank for international transfers
-          type: string
-        bank_name:
-          $ref: '#/components/schemas/Translation'
-        bank_code:
-          description: Bank code identifier
-          type: string
-        account_status:
-          description: Status of the bank account
-          type: string
-        account_holder_name:
-          description: Name of the account holder
-          type: string
-        verification_method:
-          description: The verification method used to verify the entity's ownership
-          type: string
-          enum:
-          - CONFIRMATION_OF_PAYEE_SERVICE
-          - OPEN_BANKING
-          - SARIE
-          - SARIE_AND_CONFIRMATION_OF_PAYEE_SERVICE
-    MatchingResult:
-      description: Where `iban_ownership_verified` is false the matching attribute will identify whether there is a 'partial' or 'no match'
-      type:
-      - object
-      - 'null'
-      properties:
-        type:
-          description: Identifies whether there is a partial match or no match
-          type: string
-          enum:
-          - PARTIAL
-          - NO_MATCH
-        score:
-          description: Similarity score on a scale of 0 to 1, with 0 being no similarity and 1 being high similarity.
-          type: number
-          format: double
-          maximum: 1
-          minimum: 0
-    AvsIdentificationType:
-      description: "`NATIONAL_ID`: Saudi ID or Iqama \n`FULL_NAME`: Full name \n`COMMERCIAL_REGISTRATION`: Commercial registration number\n`UNIFIED_NUMBER`: Unified number\n`FREELANCER_NUMBER`: Freelancer certificate number\n"
-      type: string
+    VerificationResponseIbanVerificationResponsePayload:
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          verifications:
+            $ref: '#/components/schemas/IbanVerificationResponsePayload'
     IbanVerificationRequest:
       type: object
       properties:
@@ -530,13 +524,35 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AvsIdentificationDto'
-    VerificationResponseIbanVerificationResponsePayload:
-      allOf:
-      - $ref: '#/components/schemas/Result'
-      - type: object
-        properties:
-          verifications:
-            $ref: '#/components/schemas/IbanVerificationResponsePayload'
+    UpdateIbanVerificationBankConfigurationRequest:
+      description: Request body for updating application-level bank configurations
+      type: object
+      properties:
+        availabilities:
+          description: List of bank availability configurations to update
+          type: array
+          items:
+            $ref: '#/components/schemas/ApplicationBankAvailability'
+      required:
+      - availabilities
+    MatchingResult:
+      description: Where `iban_ownership_verified` is false the matching attribute will identify whether there is a 'partial' or 'no match'
+      type:
+      - object
+      - 'null'
+      properties:
+        type:
+          description: Identifies whether there is a partial match or no match
+          type: string
+          enum:
+          - PARTIAL
+          - NO_MATCH
+        score:
+          description: Similarity score on a scale of 0 to 1, with 0 being no similarity and 1 being high similarity.
+          type: number
+          format: double
+          maximum: 1
+          minimum: 0
     StatusDetail:
       type:
       - object
@@ -552,28 +568,8 @@ components:
           type:
           - string
           - 'null'
-    UpdateIbanVerificationBankConfigurationRequest:
-      description: Request body for updating application-level bank configurations
-      type: object
-      properties:
-        availabilities:
-          description: List of bank availability configurations to update
-          type: array
-          items:
-            $ref: '#/components/schemas/ApplicationBankAvailability'
-      required:
-      - availabilities
-    AvsIdentificationDto:
-      type: object
-      properties:
-        type:
-          $ref: '#/components/schemas/AvsIdentificationType'
-        value:
-          description: Identification value
-          type: string
-          minLength: 1
-    ApplicationBankAvailability:
-      description: Application-level bank enablement configuration
+    IbanVerificationBankConfiguration:
+      description: Bank configuration for IBAN verification including availability and enablement status
       type: object
       properties:
         country_code:
@@ -582,24 +578,68 @@ components:
         bank_code:
           description: Unique identifier code for the bank
           type: string
-        enablement:
+        bank_name:
+          $ref: '#/components/schemas/Translation'
+        availability:
+          $ref: '#/components/schemas/IbanVerificationBankAvailability'
+        application_enablement:
           $ref: '#/components/schemas/IbanVerificationEnablement'
       required:
       - country_code
       - bank_code
-      - enablement
-    IbanVerificationBankAvailability:
-      description: Availability status of the bank for IBAN verification
+      - bank_name
+      - availability
+      - application_enablement
+    Translation:
       type: object
       properties:
-        global:
-          $ref: '#/components/schemas/IbanVerificationEnablement'
-        account_type:
-          $ref: '#/components/schemas/IbanVerificationAccountTypeAvailability'
+        en:
+          description: English translation
+          type: string
+        ar:
+          description: Arabic translation
+          type:
+          - string
+          - 'null'
       required:
-      - global
-      - account_type
+      - en
+    AvsIdentificationType_2:
+      description: "`FULL_NAME`: Complete name of the account holder \n`EMIRATES_ID`: Emirates identification number \n`TRADE_LICENCE`: Trade licence number\n"
+      type: string
+    ResultStatus_2:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - RECONNECT_REQUIRED
+      - PROCESSING_STARTED
+    IbanVerificationRequest_2:
+      type: object
+      properties:
+        type:
+          description: 'Will take the value PERSONAL for retail accounts and BUSINESS for corporate accounts. If omitted, the default behavior of the API will be applied based on the account information provided.
+
+            '
+          type: string
+        iban:
+          description: 'The International Bank Account Number (IBAN) for the account you want to verify. Must be a valid UAE IBAN.
+
+            '
+          type: string
+        identifications:
+          description: 'List of identifiers for your customers.
+
+            '
+          type: array
+          items:
+            $ref: '#/components/schemas/AvsIdentificationDto'
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
+x-refined-from:
+- lean-technologies-ksa-verifications-openapi.yml
+- lean-technologies-verifications-openapi.yml

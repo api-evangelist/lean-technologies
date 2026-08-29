@@ -1,8 +1,8 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Consents Account On File Account Controls (New) Account Controls (New) KYC API
-  version: v0.2.3
-  description: Endpoints for retrieving KYC documents
+  title: Lean KYC API
+  version: '1.0'
+  description: API for retrieving documents
 servers:
 - url: https://sandbox.leantech.me
   description: Sandbox

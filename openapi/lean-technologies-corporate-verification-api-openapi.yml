@@ -1,11 +1,12 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Consents Account On File Account Controls (New) Account Controls (New) Corporate Verification API
-  version: v0.2.3
+  title: Lean API - Beneficiary Name Verification Corporate Verification API
+  description: API for retrieving beneficiary name from an IBAN
+  version: v2.0.0
 servers:
-- url: https://sandbox.leantech.me
+- url: https://sandbox.sa.leantech.me
   description: Sandbox
-- url: https://api2.leantech.me
+- url: https://api2.sa.leantech.me
   description: Production
 security:
 - bearerAuth: []
@@ -1704,276 +1705,244 @@ paths:
       - Corporate Verification
 components:
   schemas:
-    PartnerProfitLossDistribution:
-      description: Partner profit and loss distribution
-      type:
-      - object
-      - 'null'
-      properties:
-        profit_distribution:
-          description: Profit percentage
-          type:
-          - number
-          - 'null'
-        loss_distribution:
-          description: Loss percentage
-          type:
-          - number
-          - 'null'
-      required:
-      - profit_distribution
-      - loss_distribution
-    Stock:
+    EStore:
       type: object
-      allOf:
-      - $ref: '#/components/schemas/TypeIdNamePair'
-      - type: object
-        properties:
-          count:
-            type:
-            - integer
-            - 'null'
-          value:
-            type:
-            - number
-            - 'null'
-          class_reference_id:
-            type:
-            - integer
-            - 'null'
-          class_name:
-            description: Stock class
-            allOf:
-            - $ref: '#/components/schemas/LocalizedText'
-    FiscalYear:
-      type:
-      - object
-      - 'null'
       properties:
-        is_first:
-          description: Whether this is the first fiscal year
+        authentication_platform_url:
+          description: Authentication platform URL
           type:
-          - boolean
+          - string
           - 'null'
-        calendar_type_id:
-          description: Calendar type ID
+        store_url:
+          description: Store URL
           type:
-          - integer
+          - string
           - 'null'
-        calendar_type:
-          description: Calendar type
-          allOf:
-          - $ref: '#/components/schemas/LocalizedText'
-        end_month:
-          description: End month of fiscal year (1-12)
-          type:
-          - integer
-          - 'null'
-          maximum: 12
-          minimum: 1
-        end_day:
-          description: End day of fiscal year (1-31)
-          type:
-          - integer
-          - 'null'
-          maximum: 31
-          minimum: 1
-        end_year:
-          description: End year of fiscal year
-          type:
-          - integer
-          - 'null'
-    Nationality:
-      type:
-      - object
-      - 'null'
-      properties:
-        id:
-          description: Nationality ID
-          type:
-          - integer
-          - 'null'
-        type:
-          description: Nationality type
-          allOf:
-          - $ref: '#/components/schemas/LocalizedText'
-    DirectorsBoard:
-      description: Directors board information
-      type:
-      - object
-      - 'null'
-      properties:
-        member_count:
-          description: Board member count
-          type:
-          - integer
-          - 'null'
-        term_years:
-          description: Board term in years
-          type:
-          - integer
-          - 'null'
-        value:
-          description: Board reward value
-          type:
-          - integer
-          - 'null'
-        value_max:
-          description: Maximum board reward value
-          type:
-          - integer
-          - 'null'
-        way_of_work:
-          description: Board way of work
-          allOf:
-          - $ref: '#/components/schemas/LocalizedText'
-        meeting_place:
-          description: Board meeting place
-          allOf:
-          - $ref: '#/components/schemas/LocalizedText'
-        meeting_quorum:
-          description: Meeting quorum
-          type:
-          - integer
-          - 'null'
-        meeting_legal_quorum:
-          description: Meeting legal quorum
-          type:
-          - integer
-          - 'null'
-        can_delegate_attendance:
-          description: Whether attendance can be delegated
-          type:
-          - boolean
-          - 'null'
-        board_call_mechanism:
-          description: Board call mechanism
-          allOf:
-          - $ref: '#/components/schemas/LocalizedText'
-        membership_expiry_terms:
-          description: Membership expiry terms
-          allOf:
-          - $ref: '#/components/schemas/LocalizedText'
-        additional_text:
-          description: Additional text
-          allOf:
-          - $ref: '#/components/schemas/LocalizedText'
-        rewards:
-          description: List of board rewards
+        store_activities:
+          description: Store activities
           type:
           - array
           - 'null'
           items:
-            $ref: '#/components/schemas/BoardReward'
-        positions:
-          description: List of board positions
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/BoardPosition'
-      required:
-      - member_count
-      - term_years
-      - value
-      - value_max
-      - way_of_work
-      - meeting_place
-      - meeting_quorum
-      - meeting_legal_quorum
-      - can_delegate_attendance
-      - board_call_mechanism
-      - membership_expiry_terms
-      - additional_text
-      - rewards
-      - positions
-    Liquidator:
-      description: Liquidator information
+            $ref: '#/components/schemas/StoreActivity'
+    CorporateManagerIdentificationType:
+      description: Types of identification accepted for corporate manager verification
+      type: string
+      enum:
+      - UNIFIED_NUMBER
+      - NATIONAL_ID
+      - RESIDENT_ID
+      - PASSPORT
+      - GCC_ID
+      - ENDOWMENT_DEED_NO
+      - LICENSE_NO
+      - CR_NATIONAL_ID
+      - FOREIGN_CR_NO
+      - NATIONAL_NUMBER
+      - BOARDER_NUMBER
+      - CR_NUMBER
+      - UNDEFINED
+    Manager:
       type: object
       properties:
         name:
-          description: Liquidator name
+          description: Manager name
           allOf:
           - $ref: '#/components/schemas/LocalizedText'
         type_id:
-          description: Liquidator type ID
+          description: Manager type ID
           type:
           - integer
           - 'null'
         type:
-          description: Liquidator type
+          description: Manager type
           allOf:
           - $ref: '#/components/schemas/LocalizedText'
+        is_licensed:
+          description: Whether manager is licensed
+          type:
+          - boolean
+          - 'null'
         identity:
-          description: Liquidator identity
-          allOf:
-          - $ref: '#/components/schemas/Identity'
+          $ref: '#/components/schemas/Identity'
         nationality:
-          description: Liquidator nationality
-          allOf:
-          - $ref: '#/components/schemas/Nationality'
+          $ref: '#/components/schemas/Nationality'
         positions:
-          description: Liquidator positions
           type:
           - array
           - 'null'
           items:
             $ref: '#/components/schemas/Position'
-    SetAsideDetails:
-      description: Set aside percentage details for profit allocation
+    ResultStatus:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - PROCESSING_STARTED
+    DatePair:
       type:
       - object
       - 'null'
       properties:
-        is_set_aside_enabled:
-          description: Whether set aside percentage is enabled
+        gregorian:
+          description: Gregorian date in ISO 8601 format (YYYY-MM-DD)
           type:
-          - boolean
+          - string
           - 'null'
-        profit_allocation:
-          $ref: '#/components/schemas/ProfitAllocation'
+          format: date
+        hijri:
+          description: Hijri date in ISO 8601 format (YYYY-MM-DD)
+          type:
+          - string
+          - 'null'
+          format: date
+    CorporateManagerVerificationRequest:
+      type: object
+      properties:
+        identifications:
+          description: Identifications for corporate manager verification. Must contain one UNIFIED_NUMBER (corporate) and one manager identity type.
+          type: array
+          items:
+            $ref: '#/components/schemas/CorporateManagerIdentification'
+        permission_id:
+          description: Optional permission role ID to filter returned permissions
+          type:
+          - string
+          - 'null'
+        language:
+          $ref: '#/components/schemas/CorporateVerificationLanguage'
       required:
-      - is_set_aside_enabled
-      - profit_allocation
-    Guardian:
-      description: Guardian information
+      - identifications
+      - language
+    Identity:
       type:
       - object
       - 'null'
       properties:
-        name:
-          description: Guardian name
+        id:
+          description: Identity ID
+          type:
+          - string
+          - 'null'
+        type_id:
+          description: Identity type ID
+          type:
+          - integer
+          - 'null'
+        type:
+          description: Identity type
           allOf:
           - $ref: '#/components/schemas/LocalizedText'
-        identity:
-          $ref: '#/components/schemas/Identity'
-        nationality:
-          $ref: '#/components/schemas/Nationality'
-        is_father_guardian:
-          description: Whether the guardian is the father
+    TypeIdNamePair:
+      description: Type field
+      allOf:
+      - $ref: '#/components/schemas/LocalizedText'
+      - type: object
+        properties:
+          type_id:
+            description: Type ID
+            type:
+            - integer
+            - 'null'
+    Position:
+      description: Manager position
+      allOf:
+      - $ref: '#/components/schemas/LocalizedText'
+      - type: object
+        properties:
+          id:
+            description: Position ID
+            type:
+            - integer
+            - 'null'
+    AdditionalArticle:
+      type: object
+      properties:
+        title:
+          description: Additional article title
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        text:
+          description: Additional article text
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        part_id:
+          description: Part ID
           type:
-          - boolean
+          - integer
           - 'null'
+        part_name:
+          description: Additional article part name
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
       required:
-      - name
-      - identity
-      - nationality
-      - is_father_guardian
-    LocalizedText:
+      - title
+      - text
+      - part_id
+      - part_name
+    Article:
+      type: object
+      properties:
+        id:
+          description: Article ID
+          type:
+          - integer
+          - 'null'
+        text:
+          description: Article text
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        part_id:
+          description: Part ID
+          type:
+          - integer
+          - 'null'
+        part_name:
+          description: Part name
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+      required:
+      - id
+      - text
+      - part_id
+      - part_name
+    StockCapital:
       type:
       - object
       - 'null'
-      properties:
-        en:
-          description: English text
-          type:
-          - string
-          - 'null'
-        ar:
-          description: Arabic text
-          type:
-          - string
-          - 'null'
+      allOf:
+      - $ref: '#/components/schemas/TypeIdNamePair'
+      - type: object
+        properties:
+          capital:
+            type:
+            - number
+            - 'null'
+          announced_capital:
+            type:
+            - number
+            - 'null'
+          paid_capital:
+            type:
+            - number
+            - 'null'
+          cash_capital:
+            type:
+            - number
+            - 'null'
+          in_kind_capital:
+            type:
+            - number
+            - 'null'
+          stocks:
+            type:
+            - array
+            - 'null'
+            items:
+              $ref: '#/components/schemas/Stock'
     ManagementBoard:
       description: Management board information
       type:
@@ -2027,87 +1996,76 @@ components:
       - meeting_place
       - additional_text
       - positions
-    Manager:
-      type: object
+    CorporateVerificationLanguage:
+      description: Language preference for response content
+      type:
+      - string
+      - 'null'
+      default: ar
+      enum:
+      - ar
+      - AR
+      - en
+      - EN
+    ManagementInfo:
+      type:
+      - object
+      - 'null'
       properties:
-        name:
-          description: Manager name
-          allOf:
-          - $ref: '#/components/schemas/LocalizedText'
-        type_id:
-          description: Manager type ID
+        structure_id:
+          description: Management structure ID
           type:
           - integer
           - 'null'
-        type:
-          description: Manager type
+        structure_name:
+          description: Management structure name
           allOf:
           - $ref: '#/components/schemas/LocalizedText'
-        is_licensed:
-          description: Whether manager is licensed
-          type:
-          - boolean
-          - 'null'
-        identity:
-          $ref: '#/components/schemas/Identity'
-        nationality:
-          $ref: '#/components/schemas/Nationality'
-        positions:
+        dismissal_method:
+          description: Dismissal method
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        managers:
           type:
           - array
           - 'null'
           items:
-            $ref: '#/components/schemas/Position'
-    Activity:
-      description: Activity Name
-      allOf:
-      - $ref: '#/components/schemas/LocalizedText'
-      - type: object
-        properties:
-          id:
-            description: Activity ID (ISIC code)
-            type:
-            - string
-            - 'null'
-    Identity:
+            $ref: '#/components/schemas/Manager'
+        management_board:
+          $ref: '#/components/schemas/ManagementBoard'
+        directors_board:
+          $ref: '#/components/schemas/DirectorsBoard'
+      required:
+      - structure_id
+      - structure_name
+      - dismissal_method
+      - managers
+      - management_board
+      - directors_board
+    Guardian:
+      description: Guardian information
       type:
       - object
       - 'null'
       properties:
-        id:
-          description: Identity ID
-          type:
-          - string
-          - 'null'
-        type_id:
-          description: Identity type ID
-          type:
-          - integer
-          - 'null'
-        type:
-          description: Identity type
+        name:
+          description: Guardian name
           allOf:
           - $ref: '#/components/schemas/LocalizedText'
-    PartnerShare:
-      type:
-      - object
-      - 'null'
-      properties:
-        cash_contribution_count:
-          description: Cash contribution count
+        identity:
+          $ref: '#/components/schemas/Identity'
+        nationality:
+          $ref: '#/components/schemas/Nationality'
+        is_father_guardian:
+          description: Whether the guardian is the father
           type:
-          - number
+          - boolean
           - 'null'
-        in_kind_contribution_count:
-          description: In-kind contribution count
-          type:
-          - number
-          - 'null'
-        total_contribution_count:
-          description: Total contribution count
-          type:
-          - number
-          - 'null'
+      required:
+      - name
+      - identity
+      - nationality
+      - is_father_guardian
     CompanyStatus:
       description: Commercial Registration Status Description
       type:
@@ -2129,28 +2087,92 @@ components:
           type:
           - integer
           - 'null'
-    CapitalInfo:
-      type:
-      - object
-      - 'null'
+    CorporateVerificationErrorResponse:
+      type: object
       properties:
-        currency_id:
-          description: Currency ID
-          type:
-          - integer
-          - 'null'
-        currency:
-          description: Currency
-          allOf:
-          - $ref: '#/components/schemas/LocalizedText'
-        contribution_capital:
-          $ref: '#/components/schemas/ContributionCapital'
-        stock_capital:
+        status:
+          description: Status of the response
+          type: string
+        message:
+          description: Error message describing the issue
+          type: string
+        timestamp:
+          description: Timestamp when the error occurred
+          type: string
+          format: date-time
+        metadata:
+          description: Additional metadata
           type:
           - object
           - 'null'
+      required:
+      - status
+      - message
+      - timestamp
+    CorporateIdentification:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/CorporateIdentificationType'
+        value:
+          description: Identification value
+          type: string
+          minLength: 1
+      required:
+      - type
+      - value
+    Stock:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/TypeIdNamePair'
+      - type: object
+        properties:
+          count:
+            type:
+            - integer
+            - 'null'
+          value:
+            type:
+            - number
+            - 'null'
+          class_reference_id:
+            type:
+            - integer
+            - 'null'
+          class_name:
+            description: Stock class
+            allOf:
+            - $ref: '#/components/schemas/LocalizedText'
+    BoardPosition:
+      type: object
+      properties:
+        id:
+          description: Position ID
+          type:
+          - integer
+          - 'null'
+        name:
+          description: Board position name
           allOf:
-          - $ref: '#/components/schemas/StockCapital'
+          - $ref: '#/components/schemas/LocalizedText'
+      required:
+      - id
+      - name
+    BoardReward:
+      type: object
+      properties:
+        id:
+          description: Board reward ID
+          type:
+          - string
+          - 'null'
+        name:
+          description: Board Reward name
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+      required:
+      - id
+      - name
     ManagerPermission:
       type: object
       properties:
@@ -2194,227 +2216,6 @@ components:
       - special_condition_text
       - exercise_method_id
       - exercise_method_description
-    CorporateIdentification:
-      type: object
-      properties:
-        type:
-          $ref: '#/components/schemas/CorporateIdentificationType'
-        value:
-          description: Identification value
-          type: string
-          minLength: 1
-      required:
-      - type
-      - value
-    EStore:
-      type: object
-      properties:
-        authentication_platform_url:
-          description: Authentication platform URL
-          type:
-          - string
-          - 'null'
-        store_url:
-          description: Store URL
-          type:
-          - string
-          - 'null'
-        store_activities:
-          description: Store activities
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/StoreActivity'
-    BoardReward:
-      type: object
-      properties:
-        id:
-          description: Board reward ID
-          type:
-          - string
-          - 'null'
-        name:
-          description: Board Reward name
-          allOf:
-          - $ref: '#/components/schemas/LocalizedText'
-      required:
-      - id
-      - name
-    StoreActivity:
-      description: Activity name
-      allOf:
-      - $ref: '#/components/schemas/LocalizedText'
-      - type: object
-        properties:
-          id:
-            description: Store activity ID (ISIC code)
-            type:
-            - string
-            - 'null'
-    IdNamePair:
-      description: Name field
-      allOf:
-      - $ref: '#/components/schemas/LocalizedText'
-      - type: object
-        properties:
-          id:
-            description: ID
-            type:
-            - integer
-            - 'null'
-    CorporateVerificationErrorResponse:
-      type: object
-      properties:
-        status:
-          description: Status of the response
-          type: string
-        message:
-          description: Error message describing the issue
-          type: string
-        timestamp:
-          description: Timestamp when the error occurred
-          type: string
-          format: date-time
-        metadata:
-          description: Additional metadata
-          type:
-          - object
-          - 'null'
-      required:
-      - status
-      - message
-      - timestamp
-    CorporateVerificationRequest:
-      type: object
-      properties:
-        type:
-          description: Type of requested information
-          type: string
-          enum:
-          - FULL
-          - BASIC
-          - CONTRACT
-          - ADDRESS
-        identifications:
-          description: Identifications for corporate verification
-          type: array
-          items:
-            $ref: '#/components/schemas/CorporateIdentification'
-          minItems: 1
-        language:
-          $ref: '#/components/schemas/CorporateVerificationLanguage'
-      required:
-      - type
-      - identifications
-      - language
-    Partnership:
-      description: Partnership information
-      allOf:
-      - $ref: '#/components/schemas/LocalizedText'
-      - type: object
-        properties:
-          id:
-            description: Partnership ID
-            type:
-            - integer
-            - 'null'
-    Result:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/ResultStatus'
-        results_id:
-          description: The unique identifier for the request
-          type: string
-          format: uuid
-        message:
-          description: A message describing the status of the request
-          type: string
-        meta:
-          description: Meta information about the request
-          type:
-          - object
-          - 'null'
-          additionalProperties:
-            type: string
-        timestamp:
-          description: The datetime of when the request was made
-          type: string
-          format: date-time
-        status_detail:
-          description: Additional information about the status
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/StatusDetail'
-      required:
-      - status
-      - results_id
-      - message
-      - timestamp
-    ProfitAllocation:
-      type:
-      - object
-      - 'null'
-      properties:
-        percentage:
-          description: Set aside profit percentage
-          type:
-          - integer
-          - 'null'
-        purpose:
-          description: Set aside purpose
-          allOf:
-          - $ref: '#/components/schemas/LocalizedText'
-      required:
-      - percentage
-      - purpose
-    EntityType:
-      type:
-      - object
-      - 'null'
-      properties:
-        id:
-          description: Entity type ID
-          type:
-          - integer
-          - 'null'
-        name:
-          description: Entity type
-          allOf:
-          - $ref: '#/components/schemas/LocalizedText'
-        form_id:
-          description: Entity form ID
-          type:
-          - integer
-          - 'null'
-        form_name:
-          description: Entity form
-          allOf:
-          - $ref: '#/components/schemas/LocalizedText'
-        characters:
-          description: Characteristics associated with the entity
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/IdNamePair'
-    ManagerWithPermissions:
-      allOf:
-      - $ref: '#/components/schemas/Manager'
-      - type: object
-        required:
-        - permissions
-        properties:
-          permissions:
-            description: List of manager permissions
-            type:
-            - array
-            - 'null'
-            items:
-              $ref: '#/components/schemas/ManagerPermission'
     ECommerceInfo:
       type:
       - object
@@ -2428,285 +2229,6 @@ components:
             $ref: '#/components/schemas/EStore'
           x-field-extra-annotation: '@JsonProperty("e_store")'
       x-field-extra-annotation: '@JsonProperty("e_commerce")'
-    PartnerDecision:
-      type: object
-      properties:
-        id:
-          description: Partner decision ID
-          type:
-          - integer
-          - 'null'
-        name:
-          description: Partner decision
-          allOf:
-          - $ref: '#/components/schemas/LocalizedText'
-        approve_percentage:
-          description: Approve percentage required for decision
-          type:
-          - string
-          - 'null'
-        approve_additional_text:
-          description: Additional text for approval
-          allOf:
-          - $ref: '#/components/schemas/LocalizedText'
-      required:
-      - id
-      - name
-      - approve_percentage
-      - approve_additional_text
-    ManagementInfo:
-      type:
-      - object
-      - 'null'
-      properties:
-        structure_id:
-          description: Management structure ID
-          type:
-          - integer
-          - 'null'
-        structure_name:
-          description: Management structure name
-          allOf:
-          - $ref: '#/components/schemas/LocalizedText'
-        dismissal_method:
-          description: Dismissal method
-          allOf:
-          - $ref: '#/components/schemas/LocalizedText'
-        managers:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/Manager'
-        management_board:
-          $ref: '#/components/schemas/ManagementBoard'
-        directors_board:
-          $ref: '#/components/schemas/DirectorsBoard'
-      required:
-      - structure_id
-      - structure_name
-      - dismissal_method
-      - managers
-      - management_board
-      - directors_board
-    CorporateIdentificationType:
-      description: Types of identification accepted for corporate verification
-      type: string
-      const: UNIFIED_NUMBER
-    CorporateManagerIdentification:
-      type: object
-      properties:
-        type:
-          $ref: '#/components/schemas/CorporateManagerIdentificationType'
-        value:
-          description: Identification value
-          type: string
-          minLength: 1
-      required:
-      - type
-      - value
-    CorporateVerificationResponse:
-      allOf:
-      - $ref: '#/components/schemas/Result'
-      - type: object
-        properties:
-          verifications:
-            $ref: '#/components/schemas/CorporateVerificationResult'
-    CorporateManagerVerificationRequest:
-      type: object
-      properties:
-        identifications:
-          description: Identifications for corporate manager verification. Must contain one UNIFIED_NUMBER (corporate) and one manager identity type.
-          type: array
-          items:
-            $ref: '#/components/schemas/CorporateManagerIdentification'
-        permission_id:
-          description: Optional permission role ID to filter returned permissions
-          type:
-          - string
-          - 'null'
-        language:
-          $ref: '#/components/schemas/CorporateVerificationLanguage'
-      required:
-      - identifications
-      - language
-    NotificationChannel:
-      type: object
-      properties:
-        id:
-          description: Notification method ID
-          type:
-          - integer
-          - 'null'
-        name:
-          description: Notification method
-          allOf:
-          - $ref: '#/components/schemas/LocalizedText'
-      required:
-      - id
-      - name
-    ContactInfo:
-      type:
-      - object
-      - 'null'
-      properties:
-        phone_number:
-          description: Phone number
-          type:
-          - string
-          - 'null'
-        mobile_number:
-          description: Mobile number
-          type:
-          - string
-          - 'null'
-        email:
-          description: Email address
-          type:
-          - string
-          - 'null'
-          format: email
-        website_url:
-          description: Website URL
-          type:
-          - string
-          - 'null'
-    ResultStatus:
-      description: The status of the request
-      type: string
-      enum:
-      - OK
-      - PENDING
-      - FAILED
-      - CONSENT_EXPIRED
-      - PROCESSING_STARTED
-    BoardPosition:
-      type: object
-      properties:
-        id:
-          description: Position ID
-          type:
-          - integer
-          - 'null'
-        name:
-          description: Board position name
-          allOf:
-          - $ref: '#/components/schemas/LocalizedText'
-      required:
-      - id
-      - name
-    StockCapital:
-      type:
-      - object
-      - 'null'
-      allOf:
-      - $ref: '#/components/schemas/TypeIdNamePair'
-      - type: object
-        properties:
-          capital:
-            type:
-            - number
-            - 'null'
-          announced_capital:
-            type:
-            - number
-            - 'null'
-          paid_capital:
-            type:
-            - number
-            - 'null'
-          cash_capital:
-            type:
-            - number
-            - 'null'
-          in_kind_capital:
-            type:
-            - number
-            - 'null'
-          stocks:
-            type:
-            - array
-            - 'null'
-            items:
-              $ref: '#/components/schemas/Stock'
-    ContributionCapital:
-      type:
-      - object
-      - 'null'
-      allOf:
-      - $ref: '#/components/schemas/TypeIdNamePair'
-      - type: object
-        properties:
-          cash_capital:
-            type:
-            - number
-            - 'null'
-          in_kind_capital:
-            type:
-            - number
-            - 'null'
-          contribution_value:
-            type:
-            - number
-            - 'null'
-          total_cash_contribution:
-            type:
-            - number
-            - 'null'
-          total_in_kind_contribution:
-            type:
-            - number
-            - 'null'
-    Position:
-      description: Manager position
-      allOf:
-      - $ref: '#/components/schemas/LocalizedText'
-      - type: object
-        properties:
-          id:
-            description: Position ID
-            type:
-            - integer
-            - 'null'
-    CorporateManagerIdentificationType:
-      description: Types of identification accepted for corporate manager verification
-      type: string
-      enum:
-      - UNIFIED_NUMBER
-      - NATIONAL_ID
-      - RESIDENT_ID
-      - PASSPORT
-      - GCC_ID
-      - ENDOWMENT_DEED_NO
-      - LICENSE_NO
-      - CR_NATIONAL_ID
-      - FOREIGN_CR_NO
-      - NATIONAL_NUMBER
-      - BOARDER_NUMBER
-      - CR_NUMBER
-      - UNDEFINED
-    CorporateVerificationLanguage:
-      description: Language preference for response content
-      type:
-      - string
-      - 'null'
-      default: ar
-      enum:
-      - ar
-      - AR
-      - en
-      - EN
-    TypeIdNamePair:
-      description: Type field
-      allOf:
-      - $ref: '#/components/schemas/LocalizedText'
-      - type: object
-        properties:
-          type_id:
-            description: Type ID
-            type:
-            - integer
-            - 'null'
     Party:
       type: object
       properties:
@@ -2762,6 +2284,149 @@ components:
       - commercial_registration_number
       - partner_profit_loss_distribution
       - guardian
+    ManagerWithPermissions:
+      allOf:
+      - $ref: '#/components/schemas/Manager'
+      - type: object
+        required:
+        - permissions
+        properties:
+          permissions:
+            description: List of manager permissions
+            type:
+            - array
+            - 'null'
+            items:
+              $ref: '#/components/schemas/ManagerPermission'
+    CorporateIdentificationType:
+      description: Types of identification accepted for corporate verification
+      type: string
+      const: UNIFIED_NUMBER
+    PartnerShare:
+      type:
+      - object
+      - 'null'
+      properties:
+        cash_contribution_count:
+          description: Cash contribution count
+          type:
+          - number
+          - 'null'
+        in_kind_contribution_count:
+          description: In-kind contribution count
+          type:
+          - number
+          - 'null'
+        total_contribution_count:
+          description: Total contribution count
+          type:
+          - number
+          - 'null'
+    Liquidator:
+      description: Liquidator information
+      type: object
+      properties:
+        name:
+          description: Liquidator name
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        type_id:
+          description: Liquidator type ID
+          type:
+          - integer
+          - 'null'
+        type:
+          description: Liquidator type
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        identity:
+          description: Liquidator identity
+          allOf:
+          - $ref: '#/components/schemas/Identity'
+        nationality:
+          description: Liquidator nationality
+          allOf:
+          - $ref: '#/components/schemas/Nationality'
+        positions:
+          description: Liquidator positions
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/Position'
+    CapitalInfo:
+      type:
+      - object
+      - 'null'
+      properties:
+        currency_id:
+          description: Currency ID
+          type:
+          - integer
+          - 'null'
+        currency:
+          description: Currency
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        contribution_capital:
+          $ref: '#/components/schemas/ContributionCapital'
+        stock_capital:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/StockCapital'
+    CorporateVerificationRequest:
+      type: object
+      properties:
+        type:
+          description: Type of requested information
+          type: string
+          enum:
+          - FULL
+          - BASIC
+          - CONTRACT
+          - ADDRESS
+        identifications:
+          description: Identifications for corporate verification
+          type: array
+          items:
+            $ref: '#/components/schemas/CorporateIdentification'
+          minItems: 1
+        language:
+          $ref: '#/components/schemas/CorporateVerificationLanguage'
+      required:
+      - type
+      - identifications
+      - language
+    ContributionCapital:
+      type:
+      - object
+      - 'null'
+      allOf:
+      - $ref: '#/components/schemas/TypeIdNamePair'
+      - type: object
+        properties:
+          cash_capital:
+            type:
+            - number
+            - 'null'
+          in_kind_capital:
+            type:
+            - number
+            - 'null'
+          contribution_value:
+            type:
+            - number
+            - 'null'
+          total_cash_contribution:
+            type:
+            - number
+            - 'null'
+          total_in_kind_contribution:
+            type:
+            - number
+            - 'null'
     StatusDetail:
       type:
       - object
@@ -2777,211 +2442,6 @@ components:
           type:
           - string
           - 'null'
-    NationalAddress:
-      description: National address information for the establishment
-      type: object
-      properties:
-        title:
-          description: Establishment name/title
-          type:
-          - string
-          - 'null'
-        address:
-          description: Primary address line
-          type:
-          - string
-          - 'null'
-        address2:
-          description: Secondary address line (city and postal code)
-          type:
-          - string
-          - 'null'
-        latitude:
-          description: Geographic latitude coordinate
-          type:
-          - string
-          - 'null'
-        longitude:
-          description: Geographic longitude coordinate
-          type:
-          - string
-          - 'null'
-        building_number:
-          description: Building number
-          type:
-          - string
-          - 'null'
-        street:
-          description: Street name
-          type:
-          - string
-          - 'null'
-        district:
-          description: District name
-          type:
-          - string
-          - 'null'
-        district_id:
-          description: District identifier
-          type:
-          - string
-          - 'null'
-        city:
-          description: City name
-          type:
-          - string
-          - 'null'
-        city_id:
-          description: City identifier
-          type:
-          - string
-          - 'null'
-        post_code:
-          description: Postal code
-          type:
-          - string
-          - 'null'
-        additional_number:
-          description: Additional number
-          type:
-          - string
-          - 'null'
-        region_name:
-          description: Region name
-          type:
-          - string
-          - 'null'
-        region_id:
-          description: Region identifier
-          type:
-          - string
-          - 'null'
-        is_primary_address:
-          description: Whether this is the primary address
-          type:
-          - string
-          - 'null'
-        unit_number:
-          description: Unit number
-          type:
-          - string
-          - 'null'
-        restriction:
-          description: Address restriction information
-          type:
-          - string
-          - 'null'
-        pk_address_id:
-          description: Primary key address identifier
-          type:
-          - string
-          - 'null'
-        status:
-          description: Address status
-          type:
-          - string
-          - 'null'
-      required:
-      - title
-      - address
-      - address2
-      - latitude
-      - longitude
-      - building_number
-      - street
-      - district
-      - district_id
-      - city
-      - city_id
-      - post_code
-      - additional_number
-      - region_name
-      - region_id
-      - is_primary_address
-      - unit_number
-      - restriction
-      - pk_address_id
-      - status
-    CorporateManagerVerificationResponse:
-      allOf:
-      - $ref: '#/components/schemas/Result'
-      - type: object
-        properties:
-          verifications:
-            description: List of managers with their permissions
-            type:
-            - array
-            - 'null'
-            items:
-              $ref: '#/components/schemas/ManagerWithPermissions'
-    Article:
-      type: object
-      properties:
-        id:
-          description: Article ID
-          type:
-          - integer
-          - 'null'
-        text:
-          description: Article text
-          allOf:
-          - $ref: '#/components/schemas/LocalizedText'
-        part_id:
-          description: Part ID
-          type:
-          - integer
-          - 'null'
-        part_name:
-          description: Part name
-          allOf:
-          - $ref: '#/components/schemas/LocalizedText'
-      required:
-      - id
-      - text
-      - part_id
-      - part_name
-    DatePair:
-      type:
-      - object
-      - 'null'
-      properties:
-        gregorian:
-          description: Gregorian date in ISO 8601 format (YYYY-MM-DD)
-          type:
-          - string
-          - 'null'
-          format: date
-        hijri:
-          description: Hijri date in ISO 8601 format (YYYY-MM-DD)
-          type:
-          - string
-          - 'null'
-          format: date
-    AdditionalArticle:
-      type: object
-      properties:
-        title:
-          description: Additional article title
-          allOf:
-          - $ref: '#/components/schemas/LocalizedText'
-        text:
-          description: Additional article text
-          allOf:
-          - $ref: '#/components/schemas/LocalizedText'
-        part_id:
-          description: Part ID
-          type:
-          - integer
-          - 'null'
-        part_name:
-          description: Additional article part name
-          allOf:
-          - $ref: '#/components/schemas/LocalizedText'
-      required:
-      - title
-      - text
-      - part_id
-      - part_name
     CorporateVerificationResult:
       type: object
       properties:
@@ -3246,6 +2706,547 @@ components:
       - additional_articles
       - addresses
       x-class-extra-annotation: '@com.fasterxml.jackson.annotation.JsonAutoDetect(isGetterVisibility = com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE, getterVisibility = com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE, fieldVisibility = com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY)'
+    PartnerDecision:
+      type: object
+      properties:
+        id:
+          description: Partner decision ID
+          type:
+          - integer
+          - 'null'
+        name:
+          description: Partner decision
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        approve_percentage:
+          description: Approve percentage required for decision
+          type:
+          - string
+          - 'null'
+        approve_additional_text:
+          description: Additional text for approval
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+      required:
+      - id
+      - name
+      - approve_percentage
+      - approve_additional_text
+    CorporateManagerIdentification:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/CorporateManagerIdentificationType'
+        value:
+          description: Identification value
+          type: string
+          minLength: 1
+      required:
+      - type
+      - value
+    Partnership:
+      description: Partnership information
+      allOf:
+      - $ref: '#/components/schemas/LocalizedText'
+      - type: object
+        properties:
+          id:
+            description: Partnership ID
+            type:
+            - integer
+            - 'null'
+    NotificationChannel:
+      type: object
+      properties:
+        id:
+          description: Notification method ID
+          type:
+          - integer
+          - 'null'
+        name:
+          description: Notification method
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+      required:
+      - id
+      - name
+    SetAsideDetails:
+      description: Set aside percentage details for profit allocation
+      type:
+      - object
+      - 'null'
+      properties:
+        is_set_aside_enabled:
+          description: Whether set aside percentage is enabled
+          type:
+          - boolean
+          - 'null'
+        profit_allocation:
+          $ref: '#/components/schemas/ProfitAllocation'
+      required:
+      - is_set_aside_enabled
+      - profit_allocation
+    StoreActivity:
+      description: Activity name
+      allOf:
+      - $ref: '#/components/schemas/LocalizedText'
+      - type: object
+        properties:
+          id:
+            description: Store activity ID (ISIC code)
+            type:
+            - string
+            - 'null'
+    DirectorsBoard:
+      description: Directors board information
+      type:
+      - object
+      - 'null'
+      properties:
+        member_count:
+          description: Board member count
+          type:
+          - integer
+          - 'null'
+        term_years:
+          description: Board term in years
+          type:
+          - integer
+          - 'null'
+        value:
+          description: Board reward value
+          type:
+          - integer
+          - 'null'
+        value_max:
+          description: Maximum board reward value
+          type:
+          - integer
+          - 'null'
+        way_of_work:
+          description: Board way of work
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        meeting_place:
+          description: Board meeting place
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        meeting_quorum:
+          description: Meeting quorum
+          type:
+          - integer
+          - 'null'
+        meeting_legal_quorum:
+          description: Meeting legal quorum
+          type:
+          - integer
+          - 'null'
+        can_delegate_attendance:
+          description: Whether attendance can be delegated
+          type:
+          - boolean
+          - 'null'
+        board_call_mechanism:
+          description: Board call mechanism
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        membership_expiry_terms:
+          description: Membership expiry terms
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        additional_text:
+          description: Additional text
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        rewards:
+          description: List of board rewards
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/BoardReward'
+        positions:
+          description: List of board positions
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/BoardPosition'
+      required:
+      - member_count
+      - term_years
+      - value
+      - value_max
+      - way_of_work
+      - meeting_place
+      - meeting_quorum
+      - meeting_legal_quorum
+      - can_delegate_attendance
+      - board_call_mechanism
+      - membership_expiry_terms
+      - additional_text
+      - rewards
+      - positions
+    FiscalYear:
+      type:
+      - object
+      - 'null'
+      properties:
+        is_first:
+          description: Whether this is the first fiscal year
+          type:
+          - boolean
+          - 'null'
+        calendar_type_id:
+          description: Calendar type ID
+          type:
+          - integer
+          - 'null'
+        calendar_type:
+          description: Calendar type
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        end_month:
+          description: End month of fiscal year (1-12)
+          type:
+          - integer
+          - 'null'
+          maximum: 12
+          minimum: 1
+        end_day:
+          description: End day of fiscal year (1-31)
+          type:
+          - integer
+          - 'null'
+          maximum: 31
+          minimum: 1
+        end_year:
+          description: End year of fiscal year
+          type:
+          - integer
+          - 'null'
+    Nationality:
+      type:
+      - object
+      - 'null'
+      properties:
+        id:
+          description: Nationality ID
+          type:
+          - integer
+          - 'null'
+        type:
+          description: Nationality type
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+    NationalAddress:
+      description: National address information for the establishment
+      type: object
+      properties:
+        title:
+          description: Establishment name/title
+          type:
+          - string
+          - 'null'
+        address:
+          description: Primary address line
+          type:
+          - string
+          - 'null'
+        address2:
+          description: Secondary address line (city and postal code)
+          type:
+          - string
+          - 'null'
+        latitude:
+          description: Geographic latitude coordinate
+          type:
+          - string
+          - 'null'
+        longitude:
+          description: Geographic longitude coordinate
+          type:
+          - string
+          - 'null'
+        building_number:
+          description: Building number
+          type:
+          - string
+          - 'null'
+        street:
+          description: Street name
+          type:
+          - string
+          - 'null'
+        district:
+          description: District name
+          type:
+          - string
+          - 'null'
+        district_id:
+          description: District identifier
+          type:
+          - string
+          - 'null'
+        city:
+          description: City name
+          type:
+          - string
+          - 'null'
+        city_id:
+          description: City identifier
+          type:
+          - string
+          - 'null'
+        post_code:
+          description: Postal code
+          type:
+          - string
+          - 'null'
+        additional_number:
+          description: Additional number
+          type:
+          - string
+          - 'null'
+        region_name:
+          description: Region name
+          type:
+          - string
+          - 'null'
+        region_id:
+          description: Region identifier
+          type:
+          - string
+          - 'null'
+        is_primary_address:
+          description: Whether this is the primary address
+          type:
+          - string
+          - 'null'
+        unit_number:
+          description: Unit number
+          type:
+          - string
+          - 'null'
+        restriction:
+          description: Address restriction information
+          type:
+          - string
+          - 'null'
+        pk_address_id:
+          description: Primary key address identifier
+          type:
+          - string
+          - 'null'
+        status:
+          description: Address status
+          type:
+          - string
+          - 'null'
+      required:
+      - title
+      - address
+      - address2
+      - latitude
+      - longitude
+      - building_number
+      - street
+      - district
+      - district_id
+      - city
+      - city_id
+      - post_code
+      - additional_number
+      - region_name
+      - region_id
+      - is_primary_address
+      - unit_number
+      - restriction
+      - pk_address_id
+      - status
+    Activity:
+      description: Activity Name
+      allOf:
+      - $ref: '#/components/schemas/LocalizedText'
+      - type: object
+        properties:
+          id:
+            description: Activity ID (ISIC code)
+            type:
+            - string
+            - 'null'
+    CorporateManagerVerificationResponse:
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          verifications:
+            description: List of managers with their permissions
+            type:
+            - array
+            - 'null'
+            items:
+              $ref: '#/components/schemas/ManagerWithPermissions'
+    LocalizedText:
+      type:
+      - object
+      - 'null'
+      properties:
+        en:
+          description: English text
+          type:
+          - string
+          - 'null'
+        ar:
+          description: Arabic text
+          type:
+          - string
+          - 'null'
+    PartnerProfitLossDistribution:
+      description: Partner profit and loss distribution
+      type:
+      - object
+      - 'null'
+      properties:
+        profit_distribution:
+          description: Profit percentage
+          type:
+          - number
+          - 'null'
+        loss_distribution:
+          description: Loss percentage
+          type:
+          - number
+          - 'null'
+      required:
+      - profit_distribution
+      - loss_distribution
+    CorporateVerificationResponse:
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          verifications:
+            $ref: '#/components/schemas/CorporateVerificationResult'
+    IdNamePair:
+      description: Name field
+      allOf:
+      - $ref: '#/components/schemas/LocalizedText'
+      - type: object
+        properties:
+          id:
+            description: ID
+            type:
+            - integer
+            - 'null'
+    ProfitAllocation:
+      type:
+      - object
+      - 'null'
+      properties:
+        percentage:
+          description: Set aside profit percentage
+          type:
+          - integer
+          - 'null'
+        purpose:
+          description: Set aside purpose
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+      required:
+      - percentage
+      - purpose
+    Result:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ResultStatus'
+        results_id:
+          description: The unique identifier for the request
+          type: string
+          format: uuid
+        message:
+          description: A message describing the status of the request
+          type: string
+        meta:
+          description: Meta information about the request
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: string
+        timestamp:
+          description: The datetime of when the request was made
+          type: string
+          format: date-time
+        status_detail:
+          description: Additional information about the status
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/StatusDetail'
+      required:
+      - status
+      - results_id
+      - message
+      - timestamp
+    EntityType:
+      type:
+      - object
+      - 'null'
+      properties:
+        id:
+          description: Entity type ID
+          type:
+          - integer
+          - 'null'
+        name:
+          description: Entity type
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        form_id:
+          description: Entity form ID
+          type:
+          - integer
+          - 'null'
+        form_name:
+          description: Entity form
+          allOf:
+          - $ref: '#/components/schemas/LocalizedText'
+        characters:
+          description: Characteristics associated with the entity
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/IdNamePair'
+    ContactInfo:
+      type:
+      - object
+      - 'null'
+      properties:
+        phone_number:
+          description: Phone number
+          type:
+          - string
+          - 'null'
+        mobile_number:
+          description: Mobile number
+          type:
+          - string
+          - 'null'
+        email:
+          description: Email address
+          type:
+          - string
+          - 'null'
+          format: email
+        website_url:
+          description: Website URL
+          type:
+          - string
+          - 'null'
   securitySchemes:
     bearerAuth:
       type: http
