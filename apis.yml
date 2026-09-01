@@ -67,7 +67,7 @@ apis:
   humanURL: https://docs.leantech.me
   baseURL: https://api2.leantech.me
   tags:
-  - Account On File
+  - Account on File
   tags_raw:
   - Account On File
   properties:
@@ -194,7 +194,7 @@ apis:
   humanURL: https://docs.leantech.me
   baseURL: https://api2.leantech.me
   tags:
-  - Cashflows
+  - Cash Flows
   tags_raw:
   - Cashflows
   properties:
@@ -282,7 +282,7 @@ apis:
   humanURL: https://docs.leantech.me
   baseURL: https://api2.leantech.me
   tags:
-  - Data refresh
+  - Data Refresh
   tags_raw:
   - Data refresh
   properties:
@@ -685,7 +685,7 @@ apis:
   humanURL: https://docs.leantech.me
   baseURL: https://api2.leantech.me
   tags:
-  - reconciliation
+  - Reconciliation
   tags_raw:
   - reconciliation
   properties:
