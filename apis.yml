@@ -113,16 +113,6 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/lean-technologies-balances-api-openapi.yml
-- aid: lean-technologies:lean-technologies-bank-api
-  name: Lean Technologies Bank API
-  description: Bank discovery and configuration operations
-  humanURL: https://docs.leantech.me
-  baseURL: https://api2.leantech.me
-  tags:
-  - Bank
-  properties:
-  - type: OpenAPI
-    url: openapi/lean-technologies-bank-api-openapi.yml
 - aid: lean-technologies:lean-technologies-bank-statements-report-api
   name: Lean Technologies Bank Statements Report API
   description: >-
@@ -309,16 +299,6 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/lean-technologies-direct-debits-raw-data-api-openapi.yml
-- aid: lean-technologies:lean-technologies-enrichment-api
-  name: Lean Technologies Enrichment API
-  description: The Enrichment API from Lean Technologies — 2 operation(s) for enrichment.
-  humanURL: https://docs.leantech.me
-  baseURL: https://api2.leantech.me
-  tags:
-  - Enrichment
-  properties:
-  - type: OpenAPI
-    url: openapi/lean-technologies-enrichment-api-openapi.yml
 - aid: lean-technologies:lean-technologies-entities-api
   name: Lean Technologies Entities API
   description: The Entities API from Lean Technologies — 4 operation(s) for entities.
