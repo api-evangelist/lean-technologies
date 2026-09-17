@@ -178,18 +178,6 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/lean-technologies-cashflow-patterns-new-api-openapi.yml
-- aid: lean-technologies:lean-technologies-cashflows-api
-  name: Lean Technologies Cashflows API
-  description: The Cashflows API from Lean Technologies — 1 operation(s) for cashflows.
-  humanURL: https://docs.leantech.me
-  baseURL: https://api2.leantech.me
-  tags:
-  - Cash Flows
-  tags_raw:
-  - Cashflows
-  properties:
-  - type: OpenAPI
-    url: openapi/lean-technologies-cashflows-api-openapi.yml
 - aid: lean-technologies:lean-technologies-consents-account-on-file-api
   name: Lean Technologies Consents Account On File API
   description: >-
@@ -749,6 +737,16 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/lean-technologies-transactions-raw-data-api-openapi.yml
+- aid: lean-technologies:lean-technologies-cash-flows-api
+  name: Lean Technologies Cash Flows API
+  description: The Cash Flows API from Lean Technologies — 1 operation(s) for cash flows.
+  humanURL: https://docs.leantech.me
+  baseURL: https://api2.leantech.me
+  tags:
+  - Cash Flows
+  properties:
+  - type: OpenAPI
+    url: openapi/lean-technologies-cash-flows-api-openapi.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
