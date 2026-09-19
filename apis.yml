@@ -43,6 +43,19 @@ tags:
 - Financial Data
 - Fintech
 - MENA
+- United Arab Emirates
+- Saudi Arabia
+- Pay by Bank
+- Bank Data
+- Account Verification
+- Payouts
+tags_raw:
+- Open Banking
+- Open Finance
+- Payments
+- Financial Data
+- Fintech
+- MENA
 - UAE
 - Saudi Arabia
 - Pay by Bank
@@ -700,6 +713,8 @@ apis:
   humanURL: https://docs.leantech.me
   baseURL: https://api2.leantech.me
   tags:
+  - Schedule
+  tags_raw:
   - Schedules
   properties:
   - type: OpenAPI
