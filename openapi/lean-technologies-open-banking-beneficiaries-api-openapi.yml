@@ -22,9 +22,7 @@ paths:
 
         Each beneficiary object contains the beneficiary type, account holder name, creditor agent, and creditor account details.
 
-        Requires ReadBeneficiariesBasic or ReadBeneficiariesDetail consent permission.
-
-        '
+        Requires ReadBeneficiariesBasic or ReadBeneficiariesDetail consent permission.'
       parameters:
       - $ref: '#/components/parameters/AccountId'
       - $ref: '#/components/parameters/FapiInteractionId'
@@ -149,122 +147,125 @@ paths:
       tags:
       - Open Banking Beneficiaries
 components:
+  parameters:
+    OBPageParm:
+      name: Page
+      in: query
+      description: The page you're requesting - returns page 0 of a response if not specified.
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+    AccountId:
+      name: AccountId
+      in: path
+      description: The Lean account identifier uniquely identifying the account within Lean.
+      required: true
+      schema:
+        type: string
+        format: uuid
+    FapiInteractionId:
+      name: x-fapi-interaction-id
+      in: header
+      description: An RFC4122 UID used as a correlation id.
+      required: false
+      schema:
+        type: string
+    OBSizeParam:
+      name: Size
+      description: The number of objects you want to return as a page size.
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 50
+        maximum: 100
+        minimum: 1
+    CustomerId:
+      name: CustomerId
+      in: query
+      description: The customer_id of the connected customer.
+      required: false
+      schema:
+        type: string
+        format: uuid
+    EntityId:
+      name: EntityId
+      in: query
+      description: The entity_id of the connected customer.
+      required: false
+      schema:
+        type: string
+        format: uuid
   schemas:
-    OBBeneficiaryTypeCode:
-      description: Specifies the type of beneficiary.
-      type: string
-      enum:
-      - KSAOB.Activated
-      - KSAOB.NotActivated
-    OBCreditorAgent:
-      description: Financial institution servicing an account for the creditor or debtor.
+    OBBeneficiary:
+      description: Unambiguous identification of the beneficiary of the account.
       type: object
       properties:
-        IdentificationType:
-          $ref: '#/components/schemas/OBCreditorAgentIdentificationType'
-        Identification:
-          description: Unique and unambiguous identification of the financial institution.
+        BeneficiaryId:
+          description: Unique and unambiguous identification of the beneficiary.
           type: string
-          maxLength: 35
+          maxLength: 40
           minLength: 1
-        Name:
-          description: Name by which an agent is known and which is usually used to identify that agent.
+        BeneficiaryType:
+          $ref: '#/components/schemas/OBBeneficiaryTypeCode'
+        AccountHolderName:
+          description: Name of the beneficiary account holder.
           type:
           - string
           - 'null'
-          maxLength: 350
+        AccountHolderShortName:
+          description: Short name or nickname of the beneficiary account holder.
+          type:
+          - string
+          - 'null'
+        Reference:
+          description: Unique reference for the beneficiary, as assigned by the account servicer.
+          type:
+          - string
+          - 'null'
+          maxLength: 35
           minLength: 1
-        PostalAddress:
-          description: Information that locates and identifies a specific address, as defined by postal services.
+        CreditorAgent:
+          description: Financial institution servicing an account for the creditor.
           type:
           - object
           - 'null'
           allOf:
-          - $ref: '#/components/schemas/OpenBankingPostalAddress'
-      required:
-      - IdentificationType
-      - Identification
-    OBCreditorAgentIdentificationType:
-      description: Name of the identification scheme for the creditor or debtor agent.
-      type: string
-      enum:
-      - KSAOB.BICFI
-      - KSAOB.OTHER
-    OBSupplementaryData:
-      description: Additional information that cannot be captured in the structured fields and/or any other specific block.
-      type: object
-      additionalProperties: true
-    OpenBankingPostalAddress:
-      description: Information that locates and identifies a specific address, as defined by postal services.
-      type: object
-      properties:
-        AddressType:
-          description: Identifies the nature of the postal address.
+          - $ref: '#/components/schemas/OBCreditorAgent'
+        CreditorAccount:
+          description: List of cash accounts for the creditor.
           type:
-          - string
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/OBCashAccount'
+        SupplementaryData:
+          description: Additional information that cannot be captured in the structured fields.
+          type:
+          - object
           - 'null'
           allOf:
-          - $ref: '#/components/schemas/OBAddressTypeCode'
-        ShortAddress:
-          description: Short address (National Addressing System) of the location.
+          - $ref: '#/components/schemas/OBSupplementaryData'
+      required:
+      - BeneficiaryId
+      - BeneficiaryType
+    OBStatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        GranularStatusCode:
+          description: Granular status code providing additional information on the request status.
           type:
           - string
           - 'null'
-          maxLength: 8
-          minLength: 1
-        BuildingNumber:
-          description: Number that identifies the position of a building on a street.
+        StatusAdditionalInfo:
+          description: Additional human-readable information about the status.
           type:
           - string
           - 'null'
-          maxLength: 4
-          minLength: 4
-        UnitNumber:
-          description: Unit number within a building.
-          type:
-          - number
-          - 'null'
-        StreetName:
-          description: Name of a street or thoroughfare.
-          type:
-          - string
-          - 'null'
-          maxLength: 70
-          minLength: 1
-        SecondaryNumber:
-          description: Secondary number for the address (National Addressing System).
-          type:
-          - string
-          - 'null'
-          maxLength: 4
-          minLength: 4
-        District:
-          description: Identifies a subdivision of a city, town or country.
-          type:
-          - string
-          - 'null'
-          maxLength: 35
-          minLength: 1
-        PostalCode:
-          description: Identifier of a group of letters or numbers added to a postal address to assist the sorting of mail.
-          type:
-          - string
-          - 'null'
-          maxLength: 16
-          minLength: 1
-        City:
-          description: Name of a built-up area, with defined boundaries, and a local government.
-          type:
-          - string
-          - 'null'
-          maxLength: 35
-          minLength: 1
-        Country:
-          description: Nation with its own government (ISO 3166-1 alpha-2 country code).
-          type:
-          - string
-          - 'null'
-          pattern: ^[A-Z]{2,2}$
     OBMeta:
       description: Metadata relevant to the resource.
       type: object
@@ -276,19 +277,6 @@ components:
           - 'null'
           format: int32
           minimum: 0
-    OBCashAccountIdentificationType:
-      description: Name of the identification scheme for the cash account.
-      type: string
-      enum:
-      - KSAOB.IBAN
-      - KSAOB.MaskedPAN
-      - KSAOB.AccountNumber
-      - KSAOB.CommercialRegistrationNumber
-      - KSAOB.Email
-      - KSAOB.MobileNumber
-      - KSAOB.NationalID
-      - KSAOB.IqamaNumber
-      - KSAOB.PassportNumber
     OBBeneficiariesData:
       description: Container for the list of Open Banking account beneficiaries.
       type: object
@@ -364,27 +352,102 @@ components:
       - Status
       - Message
       - Timestamp
-    OBCashAccount:
-      description: Details to identify a cash account for a creditor or debtor.
+    OpenBankingPostalAddress:
+      description: Information that locates and identifies a specific address, as defined by postal services.
       type: object
       properties:
-        IdentificationType:
-          $ref: '#/components/schemas/OBCashAccountIdentificationType'
-        Identification:
-          description: Identification assigned by an institution to identify an account. This identification is known by the account owner.
-          type: string
-          maxLength: 400
-          minLength: 1
-        Name:
-          description: Name of the account, as assigned by the account servicing institution.
+        AddressType:
+          description: Identifies the nature of the postal address.
           type:
           - string
           - 'null'
-          maxLength: 350
+          allOf:
+          - $ref: '#/components/schemas/OBAddressTypeCode'
+        ShortAddress:
+          description: Short address (National Addressing System) of the location.
+          type:
+          - string
+          - 'null'
+          maxLength: 8
           minLength: 1
-      required:
-      - IdentificationType
-      - Identification
+        BuildingNumber:
+          description: Number that identifies the position of a building on a street.
+          type:
+          - string
+          - 'null'
+          maxLength: 4
+          minLength: 4
+        UnitNumber:
+          description: Unit number within a building.
+          type:
+          - number
+          - 'null'
+        StreetName:
+          description: Name of a street or thoroughfare.
+          type:
+          - string
+          - 'null'
+          maxLength: 70
+          minLength: 1
+        SecondaryNumber:
+          description: Secondary number for the address (National Addressing System).
+          type:
+          - string
+          - 'null'
+          maxLength: 4
+          minLength: 4
+        District:
+          description: Identifies a subdivision of a city, town or country.
+          type:
+          - string
+          - 'null'
+          maxLength: 35
+          minLength: 1
+        PostalCode:
+          description: Identifier of a group of letters or numbers added to a postal address to assist the sorting of mail.
+          type:
+          - string
+          - 'null'
+          maxLength: 16
+          minLength: 1
+        City:
+          description: Name of a built-up area, with defined boundaries, and a local government.
+          type:
+          - string
+          - 'null'
+          maxLength: 35
+          minLength: 1
+        Country:
+          description: Nation with its own government (ISO 3166-1 alpha-2 country code).
+          type:
+          - string
+          - 'null'
+          pattern: ^[A-Z]{2,2}$
+    OBCashAccountIdentificationType:
+      description: Name of the identification scheme for the cash account.
+      type: string
+      enum:
+      - KSAOB.IBAN
+      - KSAOB.MaskedPAN
+      - KSAOB.AccountNumber
+      - KSAOB.CommercialRegistrationNumber
+      - KSAOB.Email
+      - KSAOB.MobileNumber
+      - KSAOB.NationalID
+      - KSAOB.IqamaNumber
+      - KSAOB.PassportNumber
+    OBBeneficiaryTypeCode:
+      description: Specifies the type of beneficiary.
+      type: string
+      enum:
+      - KSAOB.Activated
+      - KSAOB.NotActivated
+    OBCreditorAgentIdentificationType:
+      description: Name of the identification scheme for the creditor or debtor agent.
+      type: string
+      enum:
+      - KSAOB.BICFI
+      - KSAOB.OTHER
     OBAddressTypeCode:
       description: Postal address type specifying the nature of the postal address.
       type: string
@@ -397,58 +460,6 @@ components:
       - KSAOB.Postal
       - KSAOB.Residential
       - KSAOB.Statement
-    OBBeneficiary:
-      description: Unambiguous identification of the beneficiary of the account.
-      type: object
-      properties:
-        BeneficiaryId:
-          description: Unique and unambiguous identification of the beneficiary.
-          type: string
-          maxLength: 40
-          minLength: 1
-        BeneficiaryType:
-          $ref: '#/components/schemas/OBBeneficiaryTypeCode'
-        AccountHolderName:
-          description: Name of the beneficiary account holder.
-          type:
-          - string
-          - 'null'
-        AccountHolderShortName:
-          description: Short name or nickname of the beneficiary account holder.
-          type:
-          - string
-          - 'null'
-        Reference:
-          description: Unique reference for the beneficiary, as assigned by the account servicer.
-          type:
-          - string
-          - 'null'
-          maxLength: 35
-          minLength: 1
-        CreditorAgent:
-          description: Financial institution servicing an account for the creditor.
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/OBCreditorAgent'
-        CreditorAccount:
-          description: List of cash accounts for the creditor.
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/OBCashAccount'
-        SupplementaryData:
-          description: Additional information that cannot be captured in the structured fields.
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/OBSupplementaryData'
-      required:
-      - BeneficiaryId
-      - BeneficiaryType
     OBLinks:
       description: Links relevant to the resource for pagination navigation.
       type: object
@@ -483,72 +494,59 @@ components:
           format: uri
       required:
       - Self
-    OBStatusDetail:
-      type:
-      - object
-      - 'null'
+    OBSupplementaryData:
+      description: Additional information that cannot be captured in the structured fields and/or any other specific block.
+      type: object
+      additionalProperties: true
+    OBCreditorAgent:
+      description: Financial institution servicing an account for the creditor or debtor.
+      type: object
       properties:
-        GranularStatusCode:
-          description: Granular status code providing additional information on the request status.
+        IdentificationType:
+          $ref: '#/components/schemas/OBCreditorAgentIdentificationType'
+        Identification:
+          description: Unique and unambiguous identification of the financial institution.
+          type: string
+          maxLength: 35
+          minLength: 1
+        Name:
+          description: Name by which an agent is known and which is usually used to identify that agent.
           type:
           - string
           - 'null'
-        StatusAdditionalInfo:
-          description: Additional human-readable information about the status.
+          maxLength: 350
+          minLength: 1
+        PostalAddress:
+          description: Information that locates and identifies a specific address, as defined by postal services.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OpenBankingPostalAddress'
+      required:
+      - IdentificationType
+      - Identification
+    OBCashAccount:
+      description: Details to identify a cash account for a creditor or debtor.
+      type: object
+      properties:
+        IdentificationType:
+          $ref: '#/components/schemas/OBCashAccountIdentificationType'
+        Identification:
+          description: Identification assigned by an institution to identify an account. This identification is known by the account owner.
+          type: string
+          maxLength: 400
+          minLength: 1
+        Name:
+          description: Name of the account, as assigned by the account servicing institution.
           type:
           - string
           - 'null'
-  parameters:
-    CustomerId:
-      name: CustomerId
-      in: query
-      description: The customer_id of the connected customer.
-      required: false
-      schema:
-        type: string
-        format: uuid
-    FapiInteractionId:
-      name: x-fapi-interaction-id
-      in: header
-      description: An RFC4122 UID used as a correlation id.
-      required: false
-      schema:
-        type: string
-    AccountId:
-      name: AccountId
-      in: path
-      description: The Lean account identifier uniquely identifying the account within Lean.
-      required: true
-      schema:
-        type: string
-        format: uuid
-    OBSizeParam:
-      name: Size
-      description: The number of objects you want to return as a page size.
-      in: query
-      required: false
-      schema:
-        type: integer
-        default: 50
-        maximum: 100
-        minimum: 1
-    OBPageParm:
-      name: Page
-      in: query
-      description: The page you're requesting - returns page 0 of a response if not specified.
-      required: false
-      schema:
-        type: integer
-        default: 0
-        minimum: 0
-    EntityId:
-      name: EntityId
-      in: query
-      description: The entity_id of the connected customer.
-      required: false
-      schema:
-        type: string
-        format: uuid
+          maxLength: 350
+          minLength: 1
+      required:
+      - IdentificationType
+      - Identification
   securitySchemes:
     bearerAuth:
       type: http

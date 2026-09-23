@@ -18,7 +18,11 @@ paths:
     get:
       operationId: getStandingOrders
       summary: Get Standing Orders
-      description: "Get the standing orders for a specific account given an accountId. \nThe accountId can be found by making a call to the /accounts endpoint. \nRequires the following permissions: `standing_orders`\n"
+      description: 'Get the standing orders for a specific account given an accountId.
+
+        The accountId can be found by making a call to the /accounts endpoint.
+
+        Requires the following permissions: `standing_orders`'
       parameters:
       - $ref: '#/components/parameters/AccountIdParameter'
       - $ref: '#/components/parameters/AsyncParameter'
@@ -168,13 +172,14 @@ paths:
       - Standing Orders Raw Data
 components:
   parameters:
-    MetaParameter:
-      name: meta
-      description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
+    EntityIdParameter:
+      name: entity_id
+      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
       in: query
       required: false
       schema:
         type: string
+        format: uuid
     PageParameter:
       name: page
       in: query
@@ -193,19 +198,18 @@ components:
         type: boolean
         default: false
       deprecated: true
+    MetaParameter:
+      name: meta
+      description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
+      in: query
+      required: false
+      schema:
+        type: string
     AccountIdParameter:
       name: account_id
       description: The account_id used to fetch requested data
       in: path
       required: true
-      schema:
-        type: string
-        format: uuid
-    EntityIdParameter:
-      name: entity_id
-      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
-      in: query
-      required: false
       schema:
         type: string
         format: uuid
@@ -220,124 +224,12 @@ components:
         maximum: 100
         minimum: 1
   schemas:
-    ResultStatus:
-      description: The status of the request
-      type: string
-      enum:
-      - OK
-      - PENDING
-      - FAILED
-      - CONSENT_EXPIRED
-      - RECONNECT_REQUIRED
-      - PROCESSING_STARTED
-    CreditorAgent:
-      type: object
-      properties:
-        identification_type:
-          description: identification_type
-          type: string
-        identification:
-          description: Unique identification of the servicing institution.
-          type: string
-        name:
-          description: Name of the agent or institution
-          type: string
-        postal_address:
-          $ref: '#/components/schemas/PostalAddressSau'
-      x-toBuilder: true
-    AccountIdentification:
-      type: object
-      properties:
-        scheme_name:
-          $ref: '#/components/schemas/SchemeName'
-        identification:
-          description: The identification value for the account assigned by the Bank based on the Account Scheme Name.
-          type: string
-        name:
-          description: Account name
-          type: string
-    PageMetadata:
-      description: Metadata about the current page of results
-      type: object
-      properties:
-        number:
-          description: The current page being returned by the API
-          type: integer
-          format: int32
-        size:
-          description: The page size requested
-          type: integer
-          format: int32
-        total_elements:
-          description: The total number of elements in all pages
-          type: integer
-          format: int64
-        total_pages:
-          description: The total number of pages retrievable
-          type: integer
-          format: int32
-        sort:
-          description: Sort parameters applied to the results
-          type: array
-          items:
-            type: string
-      required:
-      - number
-      - size
-      - total_elements
-      - total_pages
-    StandingOrderFrequency:
-      type: object
-      properties:
-        frequency_type:
-          description: Type of frequency
-          type: string
-          enum:
-          - DAILY
-          - WEEKLY
-          - FORTNIGHTLY
-          - MONTHLY
-          - QUARTERLY
-          - HALF_YEARLY
-          - YEARLY
-          - OTHER
-        interval:
-          description: Interval value when frequency_type is OTHER
-          type:
-          - string
-          - 'null'
     Currency:
       description: The ISO 3 letter currency code
       type: string
       examples:
       - AED
       pattern: ^[A-Z]{3}$
-    CurrencyAmount:
-      type: object
-      properties:
-        currency:
-          $ref: '#/components/schemas/Currency'
-        amount:
-          description: The amount of money in the currency specified.
-          type: number
-      required:
-      - currency
-      - amount
-    StatusDetail:
-      type:
-      - object
-      - 'null'
-      properties:
-        granular_status_code:
-          description: Granular status code
-          type:
-          - string
-          - 'null'
-        status_additional_info:
-          description: Additional information about the status
-          type:
-          - string
-          - 'null'
     StandingOrdersData:
       type: object
       properties:
@@ -353,39 +245,48 @@ components:
       required:
       - standing_orders
       - page
-    PostalAddressSau:
+    ResultStatus:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - RECONNECT_REQUIRED
+      - PROCESSING_STARTED
+    SchemeName:
+      description: The scheme name of the account identification value
+      type: string
+      enum:
+      - PAN
+      - IBAN
+      - BBAN
+      - COMMERCIAL_REGISTRATION_NUMBER
+      - EMAIL
+      - MOBILE_NUMBER
+      - NATIONAL_ID
+      - IQAMA_NUMBER
+      - PASSPORT_NUMBER
+      - OTHER
+      - UNSUPPORTED
+    DataResult:
       type: object
-      properties:
-        address_type:
-          description: Identifies the nature of the postal address.
-          type: string
-        short_address:
-          description: Abbreviated form of the address.
-          type: string
-        building_number:
-          description: Number that identifies the position of a building on a street.
-          type: string
-        unit_number:
-          description: Number identifying a specific unit within a building.
-          type: string
-        street_name:
-          description: Name of a street or thoroughfare.
-          type: string
-        secondary_number:
-          description: Additional number used to identify a location.
-          type: string
-        district:
-          description: District or neighborhood name within a city.
-          type: string
-        postal_code:
-          description: Identifier consisting of a group of letters and/or numbers that is added to a postal address.
-          type: string
-        city:
-          description: Name of the city.
-          type: string
-        country:
-          description: Nation with its own government.
-          type: string
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          refreshed_at:
+            description: The datetime of when the data was refreshed
+            type:
+            - string
+            - 'null'
+            format: date-time
+          type:
+            description: The endpoint the original request was made to.
+            type:
+            - string
+            - 'null'
     StandingOrder:
       type: object
       properties:
@@ -485,6 +386,151 @@ components:
       required:
       - account_id
       - standing_order_id
+    CurrencyAmount:
+      type: object
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          description: The amount of money in the currency specified.
+          type: number
+      required:
+      - currency
+      - amount
+    StandingOrderFrequency:
+      type: object
+      properties:
+        frequency_type:
+          description: Type of frequency
+          type: string
+          enum:
+          - DAILY
+          - WEEKLY
+          - FORTNIGHTLY
+          - MONTHLY
+          - QUARTERLY
+          - HALF_YEARLY
+          - YEARLY
+          - OTHER
+        interval:
+          description: Interval value when frequency_type is OTHER
+          type:
+          - string
+          - 'null'
+    CreditorAgent:
+      type: object
+      properties:
+        identification_type:
+          description: identification_type
+          type: string
+        identification:
+          description: Unique identification of the servicing institution.
+          type: string
+        name:
+          description: Name of the agent or institution
+          type: string
+        postal_address:
+          $ref: '#/components/schemas/PostalAddressSau'
+      x-toBuilder: true
+    StatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        granular_status_code:
+          description: Granular status code
+          type:
+          - string
+          - 'null'
+        status_additional_info:
+          description: Additional information about the status
+          type:
+          - string
+          - 'null'
+    AccountIdentification:
+      type: object
+      properties:
+        scheme_name:
+          $ref: '#/components/schemas/SchemeName'
+        identification:
+          description: The identification value for the account assigned by the Bank based on the Account Scheme Name.
+          type: string
+        name:
+          description: Account name
+          type: string
+    PostalAddressSau:
+      type: object
+      properties:
+        address_type:
+          description: Identifies the nature of the postal address.
+          type: string
+        short_address:
+          description: Abbreviated form of the address.
+          type: string
+        building_number:
+          description: Number that identifies the position of a building on a street.
+          type: string
+        unit_number:
+          description: Number identifying a specific unit within a building.
+          type: string
+        street_name:
+          description: Name of a street or thoroughfare.
+          type: string
+        secondary_number:
+          description: Additional number used to identify a location.
+          type: string
+        district:
+          description: District or neighborhood name within a city.
+          type: string
+        postal_code:
+          description: Identifier consisting of a group of letters and/or numbers that is added to a postal address.
+          type: string
+        city:
+          description: Name of the city.
+          type: string
+        country:
+          description: Nation with its own government.
+          type: string
+    StandingOrdersResponse:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/DataResult'
+      - type: object
+        properties:
+          data:
+            description: The standing orders data
+            allOf:
+            - $ref: '#/components/schemas/StandingOrdersData'
+    PageMetadata:
+      description: Metadata about the current page of results
+      type: object
+      properties:
+        number:
+          description: The current page being returned by the API
+          type: integer
+          format: int32
+        size:
+          description: The page size requested
+          type: integer
+          format: int32
+        total_elements:
+          description: The total number of elements in all pages
+          type: integer
+          format: int64
+        total_pages:
+          description: The total number of pages retrievable
+          type: integer
+          format: int32
+        sort:
+          description: Sort parameters applied to the results
+          type: array
+          items:
+            type: string
+      required:
+      - number
+      - size
+      - total_elements
+      - total_pages
     Result:
       type: object
       properties:
@@ -520,58 +566,7 @@ components:
       - results_id
       - message
       - timestamp
-    SchemeName:
-      description: The scheme name of the account identification value
-      type: string
-      enum:
-      - PAN
-      - IBAN
-      - BBAN
-      - COMMERCIAL_REGISTRATION_NUMBER
-      - EMAIL
-      - MOBILE_NUMBER
-      - NATIONAL_ID
-      - IQAMA_NUMBER
-      - PASSPORT_NUMBER
-      - OTHER
-      - UNSUPPORTED
-    StandingOrdersResponse:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/DataResult'
-      - type: object
-        properties:
-          data:
-            description: The standing orders data
-            allOf:
-            - $ref: '#/components/schemas/StandingOrdersData'
-    DataResult:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Result'
-      - type: object
-        properties:
-          refreshed_at:
-            description: The datetime of when the data was refreshed
-            type:
-            - string
-            - 'null'
-            format: date-time
-          type:
-            description: The endpoint the original request was made to.
-            type:
-            - string
-            - 'null'
   examples:
-    UnknownAccountExample:
-      summary: Account not found error response
-      description: Response when the provided account_id does not match an account for the entity_id
-      value:
-        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
-        timestamp: '2025-09-11T18:55:42.579432745Z'
-        status: UNKNOWN_ACCOUNT
-        message: The account_id provided does not match an account with the entity_id provided.
-        metadata: null
     UnknownEntityExample:
       summary: Entity not found error response
       description: Response when the provided entity_id is not found
@@ -602,6 +597,15 @@ components:
         timestamp: '2025-08-07T13:07:38.834977945Z'
         status: INTERNAL_SERVER_ERROR
         message: Something has gone wrong. If you continue to see this error, please get in touch with Lean.
+        metadata: null
+    UnknownAccountExample:
+      summary: Account not found error response
+      description: Response when the provided account_id does not match an account for the entity_id
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-11T18:55:42.579432745Z'
+        status: UNKNOWN_ACCOUNT
+        message: The account_id provided does not match an account with the entity_id provided.
         metadata: null
     InvalidParametersExample:
       summary: Invalid parameters error response

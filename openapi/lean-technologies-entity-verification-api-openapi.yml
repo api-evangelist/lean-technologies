@@ -1,16 +1,12 @@
 openapi: 3.2.0
 info:
-  title: Lean Technologies Entity Verification API
+  title: Lean API - Beneficiary Name Verification Entity…
+  description: API for retrieving beneficiary name from an IBAN
   version: v2.0.0
-  description: 'Operations tagged Entity Verification across 2 of this provider''s published API definitions: lean-technologies-ksa-verifications-openapi.yml, lean-technologies-verifications-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://sandbox.sa.leantech.me
   description: Sandbox
 - url: https://api2.sa.leantech.me
-  description: Production
-- url: https://sandbox.leantech.me
-  description: Sandbox
-- url: https://api2.leantech.me
   description: Production
 security:
 - bearerAuth: []
@@ -53,6 +49,31 @@ paths:
       - Entity Verification
 components:
   schemas:
+    EntityVerificationApiRequest:
+      type: object
+      properties:
+        identifications:
+          description: Entity identifications for verification
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityIdentificationDto'
+          x-field-extra-annotation: '@me.leantech.api.validation.ValidEntityIdentifications'
+        entity_id:
+          description: Entity ID as in the Lean's records
+          type: string
+          format: uuid
+      required:
+      - entity_id
+      x-class-extra-annotation: '@me.leantech.api.validation.ValidEntityVerificationRequest'
+    EntityVerificationResponseIban:
+      type: object
+      properties:
+        iban:
+          description: Account IBAN
+          type: string
+        iban_ownership_verified:
+          description: Whether the IBAN is owned by the entity
+          type: boolean
     VerificationResponseEntityVerificationResponsePayload:
       allOf:
       - $ref: '#/components/schemas/Result'
@@ -77,6 +98,15 @@ components:
       - FAILED
       - CONSENT_EXPIRED
       - PROCESSING_STARTED
+    EntityIdentificationDto:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/EntityIdentificationType'
+        value:
+          description: Identification value
+          type: string
+          minLength: 1
     EntityVerificationResponsePayload:
       type: object
       properties:
@@ -131,31 +161,6 @@ components:
       - results_id
       - message
       - timestamp
-    EntityVerificationApiRequest:
-      type: object
-      properties:
-        identifications:
-          description: Entity identifications for verification
-          type: array
-          items:
-            $ref: '#/components/schemas/EntityIdentificationDto'
-          x-field-extra-annotation: '@me.leantech.api.validation.ValidEntityIdentifications'
-        entity_id:
-          description: Entity ID as in the Lean's records
-          type: string
-          format: uuid
-      required:
-      - entity_id
-      x-class-extra-annotation: '@me.leantech.api.validation.ValidEntityVerificationRequest'
-    EntityVerificationResponseIban:
-      type: object
-      properties:
-        iban:
-          description: Account IBAN
-          type: string
-        iban_ownership_verified:
-          description: Whether the IBAN is owned by the entity
-          type: boolean
     StatusDetail:
       type:
       - object
@@ -171,49 +176,7 @@ components:
           type:
           - string
           - 'null'
-    EntityIdentificationDto:
-      type: object
-      properties:
-        type:
-          $ref: '#/components/schemas/EntityIdentificationType'
-        value:
-          description: Identification value
-          type: string
-          minLength: 1
-    ResultStatus_2:
-      description: The status of the request
-      type: string
-      enum:
-      - OK
-      - PENDING
-      - FAILED
-      - CONSENT_EXPIRED
-      - RECONNECT_REQUIRED
-      - PROCESSING_STARTED
-    EntityVerificationApiRequest_2:
-      type: object
-      properties:
-        identification_number:
-          description: KSA identification number for entity verification
-          type: string
-          x-field-extra-annotation: '@me.leantech.api.validation.ValidKsaIdentificationNumber'
-        identifications:
-          description: Entity identifications for verification
-          type: array
-          items:
-            $ref: '#/components/schemas/EntityIdentificationDto'
-          x-field-extra-annotation: '@me.leantech.api.validation.ValidEntityIdentifications'
-        entity_id:
-          description: Entity ID as in the Lean's records
-          type: string
-          format: uuid
-      required:
-      - entity_id
-      x-class-extra-annotation: '@me.leantech.api.validation.ValidEntityVerificationRequest'
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
-x-refined-from:
-- lean-technologies-ksa-verifications-openapi.yml
-- lean-technologies-verifications-openapi.yml

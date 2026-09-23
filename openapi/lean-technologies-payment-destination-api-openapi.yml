@@ -1,22 +1,30 @@
 openapi: 3.2.0
 info:
-  title: Lean Technologies Payment Destination API
-  version: '1.0'
-  description: 'Operations tagged Payment Destination across 3 of this provider''s published API definitions: lean-technologies-payments-core-openapi.yml, lean-technologies-payments-customers-openapi.yml, lean-technologies-payments-openapi.yml. Each path carries the servers of the definition it was published in.'
+  title: UAE - V2 Payment Destination API
+  description: ''
+  version: 1.0.0
 servers:
 - url: https://sandbox.leantech.me
   description: Sandbox
 - url: https://api2.leantech.me
-  description: Production
+  description: Production / Pre-live
+security:
+- bearer: []
 tags:
 - name: Payment Destination
-  x-displayName: Payment Destination
 paths:
   /payments/v1/destinations:
     post:
-      operationId: createPaymentDestination
       summary: Create Payment Destination
-      description: A Payment Destination defines the account for a Payment Intent to make payments into. Payment Destinations are used to create Beneficiaries in a user's Bank Account using the `.connect()` or `.createBeneficiary()` methods in the LinkSDK
+      deprecated: false
+      description: 'Payment Destination defines the target account to which funds will be transferred.
+
+        It is used when creating a Beneficiary in the user''s bank via the LinkSDK, either through the `.connect()` flow or the `.createBeneficiary()` method.
+
+        In Open Finance flows, the Payment Destination represents the consent beneficiary i.e. the account explicitly authorised to receive funds under the granted consent.'
+      operationId: createPaymentDestination
+      tags:
+      - Payment Destination
       parameters: []
       requestBody:
         content:
@@ -25,55 +33,68 @@ paths:
               type: object
               properties:
                 branch_address:
+                  type: string
                   description: The address of the branch that holds the account - required for all beneficiaries outside of ARE. This should be a single string with commas separating lines.
-                  type: string
                 name:
-                  description: The name of the legal entity that owns the account.
                   type: string
+                  description: The name of the legal entity that owns the account.
                 iban:
+                  type: string
                   description: 'The IBAN of the account.
 
                     This is required for all countries except for the US.'
-                  type: string
                 display_name:
+                  type: string
                   description: The friendly display name for the account. This is rendered in the LinkSDK when referencing the Destination.
-                  type: string
                 address:
+                  type: string
                   description: The address of the owner of the destination bank account has registered with the bank.
-                  type: string
                 city:
+                  type: string
                   description: The city that the holding financial institution is located in.
-                  type: string
                 country:
+                  type: string
                   description: The three letter ISO code for the holding financial institution's country.
-                  type: string
                 swift_code:
+                  type: string
                   description: The SWIFT Code for the bank account - required for most international destinations
-                  type: string
                 account_number:
+                  type: string
                   description: The account number for the account.
-                  type: string
                 customer_id:
+                  type: string
                   description: The Customer object associated with this account. This field is optional, and will designate the Destination as owned by the application if not provided.
-                  type: string
                 ifsc:
+                  type: string
                   description: The IFSC number for the bank account - required for international destinations in India.
-                  type: string
                 transit_number:
+                  type: string
                   description: The Transit Number for the bank account - required for international destinations in Canada
-                  type: string
                 sort_code:
+                  type: string
                   description: The Sort Code for the bank account - required for international destinations in the UK
-                  type: string
                 routing_number:
+                  type: string
                   description: The Routing Number for the bank account - required for international destinations in the US.
-                  type: string
                 postal_code:
+                  type: string
                   description: The Postal Code of the owner of the destination bank account has registered with the bank - required for international destinations in the UK or the US
-                  type: string
                 currency:
-                  description: The currency of the destination bank account - required for international destinations in the UK or the US
                   type: string
+                  description: The currency of the destination bank account - required for international destinations in the UK or the US
+                bank_type:
+                  type: string
+                  description: Defines the banking segment of the merchant’s account
+                  enum:
+                  - RETAIL
+                  - SME
+                  - CORPORATE
+                government_identifier:
+                  description: 'A government‑issued identifier for the merchant.
+
+                    This is **required by the UAE Open Finance specification** to uniquely identify the merchant.'
+                  allOf:
+                  - $ref: '#/components/schemas/GovernmentIdentifierRequest'
               required:
               - name
               - display_name
@@ -81,10 +102,25 @@ paths:
               - city
               - country
               - account_number
+              - bank_type
+              - government_identifier
+            example:
+              branch_address: 45 Lansing Street, Dubai, United Arab Emirates
+              name: Fulani Al Fulani
+              iban: AE760260001015000000601
+              display_name: Al Fulani
+              address: 1234 Sky Bldg.
+              city: Abu Dhabi
+              country: ARE
+              swift_code: EBILAEADXXX
+              account_number: '1015000000601'
+              bank_type: SME
+              government_identifier:
+                type: TRADE_LICENSE_NUMBER
+                value: CN-2947664
       responses:
         '200':
-          description: Payment destination creation
-          headers: {}
+          description: ''
           content:
             application/json:
               schema:
@@ -102,21 +138,20 @@ paths:
                 country: ARE
                 swift_code: EBILAEADXXX
                 account_number: '1015000000601'
-                customer_id: d0e8bf5b-0194-4bad-b1cc-df2c3621766a
+          headers: {}
+      security:
+      - bearer: []
+    get:
+      summary: List Payment Destinations
       deprecated: false
+      description: Retrieve a list of all Payment Destinations you have in stored with Lean.
+      operationId: getPaymentDestinations
       tags:
       - Payment Destination
-      security:
-      - bearerAuth: []
-    get:
-      operationId: getPaymentDestinations
-      summary: List Payment Destinations
-      description: Retrieve a list of all Payment Destinations you have in stored with Lean.
       parameters: []
       responses:
         '200':
           description: ''
-          headers: {}
           content:
             application/json:
               schema:
@@ -125,7 +160,7 @@ paths:
                   $ref: '#/components/schemas/PaymentDestination'
               example:
               - id: 6910fddc-417c-f7fd-6e4b-4d7de3d0bc06
-                status: ACTIVE
+                status: CONFIRMED
                 default: false
                 name: Fake Corp.
                 iban: AE27LSWP9X25E4883A13998
@@ -137,7 +172,7 @@ paths:
                 account_number: '000120203'
                 currency: AED
               - id: 432150ea-99d1-5bd8-aed3-35d4c7a2b4b4
-                status: ACTIVE
+                status: CONFIRMED
                 default: false
                 name: Fake Corp.
                 iban: AE27LSWP9X25E4883A139K7
@@ -148,39 +183,88 @@ paths:
                 swift_code: EBILEADXXX
                 account_number: '000120202'
                 currency: USD
+          headers: {}
+      security:
+      - bearer: []
+  /customers/v1/{customer_id}/destinations:
+    get:
+      summary: Get Payment Destinations for Customer
       deprecated: false
+      description: Retrieve a list of all Payment Destinations associated with a given Customer.
+      operationId: getPaymentDestinationsByCustomerId
       tags:
       - Payment Destination
-      security:
-      - bearerAuth: []
-    servers:
-    - url: https://sandbox.leantech.me
-      description: Sandbox
-    - url: https://api2.leantech.me
-      description: Production
-  /payments/v1/destinations/{payment_destination_id}:
-    get:
-      operationId: getPaymentDestinationById
-      summary: Get Payment Destination by ID
-      description: Retrieve the details of a single Payment Destination stored by Lean.
       parameters:
-      - name: payment_destination_id
+      - name: customer_id
         in: path
-        description: The unique identifier of the Payment Destination.
+        description: ''
         required: true
         schema:
           type: string
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PaymentDestination'
+              example:
+              - id: 6910fddc-417c-f7fd-6e4b-4d7de3d0bc06
+                status: CONFIRMED
+                default: false
+                name: Fake Corp.
+                iban: AE27LSWP9X25E4883A13998
+                display_name: Fake Corp. - AED
+                address: 1234 Sky Bldg.
+                city: Abu Dhabi
+                country: ARE
+                swift_code: EBILEADXXX
+                account_number: '000120203'
+                customer_id: 5f76dc1f-a013-4bc0-afad-984c66d50f6d
+                currency: AED
+              - id: 432150ea-99d1-5bd8-aed3-35d4c7a2b4b4
+                status: CONFIRMED
+                default: false
+                name: Fake Corp.
+                iban: AE27LSWP9X25E4883A139K7
+                display_name: Fake Corp. - USD
+                address: 1234 Sky Bldg.
+                city: Abu Dhabi
+                country: ARE
+                swift_code: EBILEADXXX
+                account_number: '000120202'
+                customer_id: 5f76dc1f-a013-4bc0-afad-984c66d50f6d
+                currency: USD
           headers: {}
+      security:
+      - bearer: []
+  /payments/v1/destinations/{payment_destination_id}:
+    get:
+      summary: Get Payment Destination by ID
+      deprecated: false
+      description: Retrieve the details of a single Payment Destination stored by Lean.
+      operationId: getPaymentDestinationById
+      tags:
+      - Payment Destination
+      parameters:
+      - name: payment_destination_id
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/PaymentDestination'
               example:
                 id: 6910fddc-417c-f7fd-6e4b-4d7de3d0bc06
-                status: ACTIVE
+                status: CONFIRMED
                 default: false
                 name: Fake Corp.
                 iban: AE27LSWP9X25E4883A13998
@@ -191,208 +275,12 @@ paths:
                 swift_code: EBILEADXXX
                 account_number: '000120203'
                 currency: AED
-      deprecated: false
-      tags:
-      - Payment Destination
+          headers: {}
       security:
-      - bearerAuth: []
-    servers:
-    - url: https://sandbox.leantech.me
-      description: Sandbox
-    - url: https://api2.leantech.me
-      description: Production
-  /customers/v1/{customer_id}/destinations:
-    servers: []
-    get:
-      operationId: getPaymentDestinationsByCustomerId
-      summary: Get Payment Destinations for Customer
-      description: Retrieve a list of all Payment Destinations associated with a given Customer.
-      parameters:
-      - name: customer_id
-        in: path
-        description: ''
-        required: true
-        schema:
-          type: string
-          format: uuid
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/CustomerPaymentDestination'
-                  x-lean-docs-discrepancy: PaymentDestination
-              examples:
-                '1':
-                  summary: Success
-                  value:
-                  - id: 6910fddc-417c-f7fd-6e4b-4d7de3d0bc06
-                    status: CONFIRMED
-                    default: false
-                    name: Fake Corp.
-                    iban: AE27LSWP9X25E4883A13998
-                    display_name: Fake Corp. - AED
-                    address: 1234 Sky Bldg.
-                    city: Abu Dhabi
-                    country: ARE
-                    swift_code: EBILEADXXX
-                    account_number: '000120203'
-                    customer_id: 5f76dc1f-a013-4bc0-afad-984c66d50f6d
-                  - id: 432150ea-99d1-5bd8-aed3-35d4c7a2b4b4
-                    status: CONFIRMED
-                    default: false
-                    name: Fake Corp.
-                    iban: AE27LSWP9X25E4883A139K7
-                    display_name: Fake Corp. - USD
-                    address: 1234 Sky Bldg.
-                    city: Abu Dhabi
-                    country: ARE
-                    swift_code: EBILEADXXX
-                    account_number: '000120202'
-                    customer_id: 5f76dc1f-a013-4bc0-afad-984c66d50f6d
-      tags:
-      - Payment Destination
-      security:
-      - bearerAuth: []
+      - bearer: []
 components:
   schemas:
     PaymentDestination:
-      type: object
-      properties:
-        id:
-          description: The unique identifier for the Payment Destination object.
-          type: string
-          format: uuid
-        status:
-          description: The status of the Destination
-          type: string
-          const: ACTIVE
-        default:
-          description: When `true` this Destination is automatically populated into Payment Intents where an alternative `payment_destination_id` is not provided.
-          type: boolean
-        branch_address:
-          description: The address of the branch that holds the account - required for all beneficiaries outside of ARE. This should be a single string with commas separating lines.
-          type: string
-        name:
-          description: The name of the legal entity that owns the account.
-          type: string
-        iban:
-          description: 'The IBAN of the account.
-
-            This is required for all countries except for the US.'
-          type: string
-        display_name:
-          description: The friendly display name for the account. This is rendered in the LinkSDK when referencing the Destination.
-          type: string
-        address:
-          description: The address of the owner of the destination bank account has registered with the bank.
-          type: string
-        city:
-          description: The city that the holding financial institution is located in.
-          type: string
-        country:
-          description: The three letter ISO code for the holding financial institution's country.
-          type: string
-        swift_code:
-          description: The SWIFT Code for the bank account - required for most international destinations
-          type: string
-        account_number:
-          description: The account number for the account.
-          type: string
-        customer_id:
-          description: The Customer object associated with this account. This field is optional, and will designate the Destination as owned by the application if not provided.
-          type: string
-        ifsc:
-          description: The IFSC number for the bank account - required for international destinations in India.
-          type: string
-        transit_number:
-          description: The Transit Number for the bank account - required for international destinations in Canada
-          type: string
-        sort_code:
-          description: The Sort Code for the bank account - required for international destinations in the UK
-          type: string
-        routing_number:
-          description: The Routing Number for the bank account - required for international destinations in the US.
-          type: string
-        postal_code:
-          description: The Postal Code of the owner of the destination bank account has registered with the bank - required for international destinations in the UK or the US
-          type: string
-        currency:
-          description: The currency of the destination bank account - required for international destinations in the UK or the US
-          type: string
-      required:
-      - id
-      - status
-      - default
-      - name
-      - display_name
-      - address
-      - city
-      - country
-      - account_number
-    CustomerPaymentDestination:
-      type: object
-      properties:
-        id:
-          description: The unique identifier for the Payment Destination object.
-          type: string
-          format: uuid
-        customer_id:
-          description: The Customer object associated with this account. This field is optional, and will designate the Destination as owned by the application if not provided.
-          type: string
-        bank_identifier:
-          description: The Lean identifier for the destination bank
-          type: string
-        status:
-          description: The status of the Destination
-          type: string
-          enum:
-          - CONFIRMED
-          - PENDING
-        default:
-          description: When `true` this Destination is automatically populated into Payment Intents where an alternative `payment_destination_id` is not provided.
-          type: boolean
-        name:
-          description: The name of the legal entity that owns the account.
-          type: string
-        iban:
-          description: 'The IBAN of the account.
-
-            This is required for all countries except for the US.'
-          type: string
-        display_name:
-          description: The friendly display name for the account. This is rendered in the LinkSDK when referencing the Destination.
-          type: string
-        address:
-          description: The address of the owner of the destination bank account has registered with the bank.
-          type: string
-        city:
-          description: The city that the holding financial institution is located in.
-          type: string
-        country:
-          description: The three letter ISO code for the holding financial institution's country.
-          type: string
-        swift_code:
-          description: The SWIFT Code for the bank account - required for most international destinations
-          type: string
-        account_number:
-          description: The account number for the account.
-          type: string
-      required:
-      - id
-      - customer_id
-      - status
-      - default
-      - name
-      - display_name
-      - address
-      - city
-      - country
-      - account_number
-    PaymentDestination_2:
       type: object
       properties:
         id:
@@ -486,13 +374,6 @@ components:
           - EMIRATES_ID
           - TRADE_LICENSE_NUMBER
   securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
     bearer:
       type: http
       scheme: bearer
-x-refined-from:
-- lean-technologies-payments-core-openapi.yml
-- lean-technologies-payments-customers-openapi.yml
-- lean-technologies-payments-openapi.yml

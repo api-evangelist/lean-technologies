@@ -246,6 +246,8 @@ paths:
                   $ref: '#/components/examples/InternalServerErrorExample'
       tags:
       - Data refresh
+      summary: Get data refresh status
+      x-summary-source: derived
 components:
   parameters:
     EntityIdParameter:
@@ -256,15 +258,6 @@ components:
       schema:
         type: string
         format: uuid
-    PageParameter:
-      name: page
-      in: query
-      description: The page you're requesting - returns page 0 of a response if not specified.
-      required: false
-      schema:
-        type: integer
-        default: 0
-        minimum: 0
     MetaParameter:
       name: meta
       description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
@@ -282,6 +275,15 @@ components:
         default: 50
         maximum: 100
         minimum: 1
+    PageParameter:
+      name: page
+      in: query
+      description: The page you're requesting - returns page 0 of a response if not specified.
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
     AsyncParameter:
       name: async
       in: query
@@ -291,74 +293,15 @@ components:
         type: boolean
         default: false
       deprecated: true
-  examples:
-    InvalidParametersExample:
-      summary: Invalid parameters error response
-      description: Response when required parameters are missing or invalid
-      value:
-        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
-        timestamp: '2025-09-10T21:05:59.919233187Z'
-        status: INVALID_PARAMETERS
-        message: 'The request is badly formatted or a parameter of the wrong type has been provided, field: entity_id, value: e34d8e49-9af2-4252-a53e-bd2df855134.'
-        metadata: null
-    UnknownEntityExample:
-      summary: Entity not found error response
-      description: Response when the provided entity_id is not found
-      value:
-        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
-        timestamp: '2025-09-10T21:03:05.413806605Z'
-        status: UNKNOWN_ENTITY
-        message: The entity_id provided did not match an account in our records.
-        metadata: null
-    InternalServerErrorExample:
-      summary: Internal server error response
-      description: Response when an unexpected server error occurs
-      value:
-        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
-        timestamp: '2025-08-07T13:07:38.834977945Z'
-        status: INTERNAL_SERVER_ERROR
-        message: Something has gone wrong. If you continue to see this error, please get in touch with Lean.
-        metadata: null
   schemas:
-    TriggerDataRefreshRequestBody:
-      type: object
-      properties:
-        entity_id:
-          description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
-          type: string
-          format: uuid
-      required:
-      - entity_id
-    PageMetadata:
-      description: Metadata about the current page of results
-      type: object
-      properties:
-        number:
-          description: The current page being returned by the API
-          type: integer
-          format: int32
-        size:
-          description: The page size requested
-          type: integer
-          format: int32
-        total_elements:
-          description: The total number of elements in all pages
-          type: integer
-          format: int64
-        total_pages:
-          description: The total number of pages retrievable
-          type: integer
-          format: int32
-        sort:
-          description: Sort parameters applied to the results
-          type: array
-          items:
-            type: string
-      required:
-      - number
-      - size
-      - total_elements
-      - total_pages
+    DataRefreshDataStatusStatus:
+      description: Status of the data refresh for account, identity, balance, transaction
+      type: string
+      enum:
+      - PENDING
+      - OK
+      - FAILED
+      - UNSUPPORTED
     TriggerDataRefreshResponseBody:
       type: object
       properties:
@@ -381,49 +324,50 @@ components:
       - status
       - message
       - timestamp
-    DataRefreshStatus:
-      description: Overall data refresh status
-      type: string
-      enum:
-      - PENDING
-      - FINISHED
-    GetDataRefreshesResponseBody:
+    GetDataRefreshStatusResponseBody:
       type: object
       properties:
-        content:
-          items:
-            type: object
-            properties:
-              refresh_id:
-                type: string
-                format: uuid
-              entity_id:
-                type: string
-                format: uuid
-              customer_id:
-                type: string
-                format: uuid
-              status:
-                $ref: '#/components/schemas/DataRefreshStatus'
-              created_at:
-                type: string
-                format: date-time
-              updated_at:
-                type: string
-                format: date-time
-            required:
-            - refresh_id
-            - entity_id
-            - customer_id
-            - status
-            - created_at
-            - updated_at
-          type: array
-        page:
-          $ref: '#/components/schemas/PageMetadata'
+        refresh_id:
+          description: Refresh ID for the request created by server
+          type: string
+          format: uuid
+        entity_id:
+          description: The entity_id you're querying for
+          type: string
+          format: uuid
+        customer_id:
+          description: The customer_id you're querying for
+          type: string
+          format: uuid
+        status:
+          $ref: '#/components/schemas/DataRefreshStatus'
+        data_status:
+          $ref: '#/components/schemas/DataRefreshDataStatus'
+        created_at:
+          description: Data refresh created date
+          type: string
+          format: date-time
+        updated_at:
+          description: Data refresh updated date
+          type: string
+          format: date-time
       required:
-      - content
-      - page
+      - refresh_id
+      - entity_id
+      - customer_id
+      - status
+      - data_status
+      - created_at
+      - updated_at
+    TriggerDataRefreshRequestBody:
+      type: object
+      properties:
+        entity_id:
+          description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
+          type: string
+          format: uuid
+      required:
+      - entity_id
     DataRefreshDataStatus:
       type: object
       properties:
@@ -478,49 +422,107 @@ components:
       - accounts
       - identity
       - account_data
-    GetDataRefreshStatusResponseBody:
+    PageMetadata:
+      description: Metadata about the current page of results
       type: object
       properties:
-        refresh_id:
-          description: Refresh ID for the request created by server
-          type: string
-          format: uuid
-        entity_id:
-          description: The entity_id you're querying for
-          type: string
-          format: uuid
-        customer_id:
-          description: The customer_id you're querying for
-          type: string
-          format: uuid
-        status:
-          $ref: '#/components/schemas/DataRefreshStatus'
-        data_status:
-          $ref: '#/components/schemas/DataRefreshDataStatus'
-        created_at:
-          description: Data refresh created date
-          type: string
-          format: date-time
-        updated_at:
-          description: Data refresh updated date
-          type: string
-          format: date-time
+        number:
+          description: The current page being returned by the API
+          type: integer
+          format: int32
+        size:
+          description: The page size requested
+          type: integer
+          format: int32
+        total_elements:
+          description: The total number of elements in all pages
+          type: integer
+          format: int64
+        total_pages:
+          description: The total number of pages retrievable
+          type: integer
+          format: int32
+        sort:
+          description: Sort parameters applied to the results
+          type: array
+          items:
+            type: string
       required:
-      - refresh_id
-      - entity_id
-      - customer_id
-      - status
-      - data_status
-      - created_at
-      - updated_at
-    DataRefreshDataStatusStatus:
-      description: Status of the data refresh for account, identity, balance, transaction
+      - number
+      - size
+      - total_elements
+      - total_pages
+    GetDataRefreshesResponseBody:
+      type: object
+      properties:
+        content:
+          items:
+            type: object
+            properties:
+              refresh_id:
+                type: string
+                format: uuid
+              entity_id:
+                type: string
+                format: uuid
+              customer_id:
+                type: string
+                format: uuid
+              status:
+                $ref: '#/components/schemas/DataRefreshStatus'
+              created_at:
+                type: string
+                format: date-time
+              updated_at:
+                type: string
+                format: date-time
+            required:
+            - refresh_id
+            - entity_id
+            - customer_id
+            - status
+            - created_at
+            - updated_at
+          type: array
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+      required:
+      - content
+      - page
+    DataRefreshStatus:
+      description: Overall data refresh status
       type: string
       enum:
       - PENDING
-      - OK
-      - FAILED
-      - UNSUPPORTED
+      - FINISHED
+  examples:
+    UnknownEntityExample:
+      summary: Entity not found error response
+      description: Response when the provided entity_id is not found
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-10T21:03:05.413806605Z'
+        status: UNKNOWN_ENTITY
+        message: The entity_id provided did not match an account in our records.
+        metadata: null
+    InternalServerErrorExample:
+      summary: Internal server error response
+      description: Response when an unexpected server error occurs
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-08-07T13:07:38.834977945Z'
+        status: INTERNAL_SERVER_ERROR
+        message: Something has gone wrong. If you continue to see this error, please get in touch with Lean.
+        metadata: null
+    InvalidParametersExample:
+      summary: Invalid parameters error response
+      description: Response when required parameters are missing or invalid
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-10T21:05:59.919233187Z'
+        status: INVALID_PARAMETERS
+        message: 'The request is badly formatted or a parameter of the wrong type has been provided, field: entity_id, value: e34d8e49-9af2-4252-a53e-bd2df855134.'
+        metadata: null
   securitySchemes:
     bearerAuth:
       type: http

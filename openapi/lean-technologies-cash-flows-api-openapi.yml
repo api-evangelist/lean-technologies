@@ -11,7 +11,7 @@ servers:
 security:
 - bearer: []
 tags:
-- name: Cashflows
+- name: Cash Flows
 paths:
   /insights/v2/assets/cashflows?async=true:
     get:
@@ -23,16 +23,15 @@ paths:
         You can use this API to evaluate financial stability, manage cash flow effectively, and assess the account holder’s ability to meet financial obligations.
 
 
-
-        This API is asynchronous, please read [this guide](https://docs.leantech.me/v2.0-KSA/docs/handling-asynchronous-requests) for further information on how to fetch the results.
+        This API is asynchronous, please read this guide for further information on how to fetch the results.
 
 
         > **"Supported for both retail and corporate accounts"**
 
-        > '
+        >'
       operationId: GetCashflow
       tags:
-      - Cashflows
+      - Cash Flows
       parameters:
       - name: entity_id
         in: query
@@ -682,16 +681,6 @@ paths:
       - bearer: []
 components:
   schemas:
-    AmountObject:
-      type: object
-      properties:
-        currency:
-          type: string
-          description: The currency in which the amount is represented.
-        amount:
-          type: number
-          description: The decimal amount for the transaction
-      description: The total amount for the category.
     StatusDetailObject:
       description: Status Details
       type: object
@@ -702,6 +691,16 @@ components:
         status_additional_info:
           description: Further detail on the encountered error
           type: string
+    AmountObject:
+      type: object
+      properties:
+        currency:
+          type: string
+          description: The currency in which the amount is represented.
+        amount:
+          type: number
+          description: The decimal amount for the transaction
+      description: The total amount for the category.
   securitySchemes:
     bearer:
       type: http

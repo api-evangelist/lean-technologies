@@ -109,6 +109,34 @@ paths:
       - Beneficiary Name Verification
 components:
   schemas:
+    VerificationResponseBeneficiaryNamePayload:
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          verifications:
+            $ref: '#/components/schemas/BeneficiaryNamePayload'
+    BeneficiaryNameRequest:
+      type: object
+      properties:
+        iban:
+          description: International Bank Account Number to retrieve beneficiary name for
+          type: string
+      required:
+      - iban
+    BeneficiaryNamePayload:
+      description: Beneficiary name and account status retrieved from the bank
+      type: object
+      properties:
+        beneficiary_name:
+          description: Name of the account holder
+          type: string
+        account_status:
+          description: Status of the bank account
+          type: string
+      required:
+      - beneficiary_name
+      - account_status
     ResultStatus:
       description: The status of the request
       type: string
@@ -153,27 +181,6 @@ components:
       - results_id
       - message
       - timestamp
-    BeneficiaryNamePayload:
-      description: Beneficiary name and account status retrieved from the bank
-      type: object
-      properties:
-        beneficiary_name:
-          description: Name of the account holder
-          type: string
-        account_status:
-          description: Status of the bank account
-          type: string
-      required:
-      - beneficiary_name
-      - account_status
-    BeneficiaryNameRequest:
-      type: object
-      properties:
-        iban:
-          description: International Bank Account Number to retrieve beneficiary name for
-          type: string
-      required:
-      - iban
     StatusDetail:
       type:
       - object
@@ -189,13 +196,6 @@ components:
           type:
           - string
           - 'null'
-    VerificationResponseBeneficiaryNamePayload:
-      allOf:
-      - $ref: '#/components/schemas/Result'
-      - type: object
-        properties:
-          verifications:
-            $ref: '#/components/schemas/BeneficiaryNamePayload'
   securitySchemes:
     bearerAuth:
       type: http

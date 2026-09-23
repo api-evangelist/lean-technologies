@@ -2,12 +2,8 @@ openapi: 3.2.0
 info:
   title: Lean Technologies Payouts API
   version: 1.0.0
-  description: 'Operations tagged Payouts across 3 of this provider''s published API definitions: lean-technologies-ksa-payouts-openapi.yml, lean-technologies-payouts-extended-openapi.yml, lean-technologies-payouts-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: 'Operations tagged Payouts across 2 of this provider''s published API definitions: lean-technologies-payouts-extended-openapi.yml, lean-technologies-payouts-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
-- url: https://sandbox.sa.leantech.me
-  description: Sandbox
-- url: https://api2.sa.leantech.me
-  description: Production / Pre-Live
 - url: https://sandbox.leantech.me
   description: Sandbox
 - url: https://api2.leantech.me
@@ -19,7 +15,7 @@ paths:
     post:
       summary: Create Payout Payment
       deprecated: false
-      description: ''
+      description: Create a payout payment
       operationId: createPayout
       tags:
       - Payouts
@@ -48,9 +44,7 @@ paths:
                       destination_details:
                         type: array
                         items:
-                          type:
-                          - object
-                          - 'null'
+                          type: object
                           properties:
                             payment_destination_id:
                               type: string
@@ -59,6 +53,13 @@ paths:
                             amount:
                               type: number
                               description: The amount to be transferred
+                            currency:
+                              type: string
+                              description: Defines the `currency` of the payment
+                              default: AED
+                            external_reference:
+                              type: string
+                              description: Useful for tracking and reporting the transaction on your end. e.g You can enter transaction ID of this payment maintained in your system
                             description:
                               type: string
                               description: Payment reference information
@@ -68,6 +69,7 @@ paths:
                               description: When set to `true` the payment will be automatically authorized by the authorizer credentials in Payouts (requires an authorizer account to be set up in Payouts)
                               default: false
                           required:
+                          - payment_destination_id
                           - amount
                           - description
                           - authorize_payment
@@ -75,20 +77,23 @@ paths:
                     required:
                     - account_id
                     - destination_details
+                    - currency
                   description: An array of payments to be queued and authorized
               required:
               - payment_details
             example:
               payment_details:
               - account_id: string
+                currency: AED
                 destination_details:
                 - payment_destination_id: 5fd95d40-9ea5-4678-8ffb-6b597f21965b
-                  amount: 0
+                  amount: 100
+                  currency: AED
                   description: string
                   authorize_payment: false
       responses:
         '200':
-          description: ''
+          description: Payment initiated successfully
           content:
             application/json:
               schema:
@@ -106,9 +111,8 @@ paths:
                           type: string
                           description: The related Payment Intent
                         payment_id:
-                          type:
-                          - string
-                          - 'null'
+                          type: string
+                          nullable: true
                           description: The related Payment
                         initiate_payment_task_id:
                           type: string
@@ -119,49 +123,53 @@ paths:
                         iban:
                           type: string
                           description: IBAN of the sending account
+                        destination_details:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              destination_id:
+                                type: string
+                                description: The unique identifier for the destination
+                              amount:
+                                type: integer
+                                description: Amount paid out
+                              currency:
+                                type: string
+                                description: Currency of the transaction
+                              payment_status:
+                                type: string
+                                description: Status of the payment
+                              recipient_details:
+                                type: object
+                                properties:
+                                  account_number:
+                                    type: string
+                                    description: Account number of the destination
+                                  iban:
+                                    type: string
+                                    description: Full IBAN of the destination
+                                  name:
+                                    type: string
+                                    description: Associated name of the destination
+                                required:
+                                - account_number
+                                - iban
+                                - name
+                                description: Account details of the receiving account
+                            required:
+                            - destination_id
+                            - amount
+                            - currency
+                            - payment_status
+                            - recipient_details
+                          description: Details of the receiving account
                         bank_identifier:
                           type: string
-                          description: Identifier of the bank used to make the payment
-                        destination_details:
-                          type: object
-                          properties:
-                            destination_id:
-                              type: string
-                            amount:
-                              type: integer
-                              description: Amount paid out
-                            currency:
-                              type: string
-                              description: Currency of the transaction
-                            payment_status:
-                              type: string
-                              description: Status of the payment
-                            recipient_details:
-                              type: object
-                              properties:
-                                account_number:
-                                  type: string
-                                  description: Account number of the destination
-                                iban:
-                                  type: string
-                                  description: Full IBAN of the destination
-                                name:
-                                  type: string
-                                  description: Associated name of the destination
-                              required:
-                              - account_number
-                              - iban
-                              - name
-                              description: Account details of the receiving account
-                          required:
-                          - destination_id
-                          - amount
-                          - currency
-                          - payment_status
-                          - recipient_details
-                          description: Details of the receiving account
+                          description: Bank Identifier of the sender's account
                       required:
                       - payment_intent_id
+                      - bank_identifier
                 required:
                 - end_user_id
                 - payouts_payment_details
@@ -173,143 +181,28 @@ paths:
                   account_number: '338247974759251'
                   iban: AE480484338247974759251
                   destination_details:
-                    destination_id: 2dac22a7-e168-454d-960b-7dfaddab6a54
-                    amount: 670
-                    currency: SAR
+                  - destination_id: 2dac22a7-e168-454d-960b-7dfaddab6a54
+                    amount: 100
+                    currency: AED
                     payment_status: CREATED
                     recipient_details:
                       account_number: '1015000000601'
-                      iban: SA760260001015000000601
+                      iban: AE760260001015000000601
                       name: Al Fulani
                   bank_identifier: LEAN_SME_MB1_UAE
           headers: {}
       security:
       - bearer: []
     servers:
-    - url: https://sandbox.sa.leantech.me
+    - url: https://sandbox.leantech.me
       description: Sandbox
-    - url: https://api2.sa.leantech.me
-      description: Production / Pre-Live
-  /payouts/v1/bulk-payments:
-    post:
-      summary: Create Bulk Payout Payment
-      deprecated: false
-      description: ''
-      operationId: createBulkPayout
-      tags:
-      - Payouts
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                account_id:
-                  type: string
-                  description: Account ID used to make the payment
-                authorize_payment:
-                  type: boolean
-                  description: Defines whether the payment should be authorized by Lean or only queued
-                payments:
-                  type: array
-                  items:
-                    anyOf:
-                    - $ref: '#/components/schemas/PayoutByDestinationPayload'
-                      description: Create a payment to an ad-hoc beneficiary
-                    - $ref: '#/components/schemas/PayoutByDestinationID'
-                      description: Create a payment to an existing beneficiary
-                  description: A list of payments to be executed
-              required:
-              - account_id
-              - authorize_payment
-              - payments
-            example: ''
-      responses:
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  bulk_payment_intent_id:
-                    type: string
-                    enum:
-                    - SINGLE_PAYMENT
-                    - BULK_PAYMENTS_CSV
-                    description: Identifier for this bulk payment
-                  mechanism:
-                    type: string
-                    enum:
-                    - CSV
-                    description: The method Lean is utilizing to manage the payout payment(s).
-                  sender_details:
-                    type: object
-                    properties:
-                      bank_identifier:
-                        type: string
-                        description: Initiating bank identifier
-                      account_number:
-                        type: string
-                      iban:
-                        type: string
-                    required:
-                    - bank_identifier
-                    - account_number
-                    - iban
-                    description: Details of the sending account
-                  payouts_payment_details:
-                    type: object
-                    properties:
-                      status:
-                        type: string
-                        description: Status of the payment
-                      currency:
-                        type: string
-                        description: Currency to be debited
-                      total_amount:
-                        type: integer
-                        description: Sum of all payment amounts in the bulk request
-                      total_payments:
-                        type: integer
-                        description: Total number of payments in the bulk payment request
-                    required:
-                    - status
-                    - currency
-                    - total_amount
-                    - total_payments
-                    description: Details of the receiving account
-                required:
-                - bulk_payment_intent_id
-                - mechanism
-                - sender_details
-                - payouts_payment_details
-              example:
-                bulk_payment_intent_id: 971bbe44-bbf5-4dd5-ac5b-7f1586f02a76
-                mechanism: CSV
-                sender_details:
-                  bank_identifier: ALINMA_DC_SAU
-                  account_number: '1231231231231231'
-                  iban: SA940261231231231231231
-                payouts_payment_details:
-                  status: AWAITING_AUTHORIZATION
-                  currency: SAR
-                  total_amount: 500
-                  total_payments: 5
-          headers: {}
-      security:
-      - bearer: []
-    servers:
-    - url: https://sandbox.sa.leantech.me
-      description: Sandbox
-    - url: https://api2.sa.leantech.me
-      description: Production / Pre-Live
+    - url: https://api2.leantech.me
+      description: Production
   /payouts/v1/payments:
     get:
       summary: List Payouts
       deprecated: false
-      description: ''
+      description: List payout payments
       operationId: getPayouts
       tags:
       - Payouts
@@ -326,7 +219,7 @@ paths:
         description: The number of Payout payments to return per page.
         required: false
         schema:
-          type: number
+          type: integer
           default: 50
       - name: amount_min
         in: query
@@ -478,23 +371,6 @@ paths:
                   total_pages:
                     type: integer
                     description: Total number of available pages
-                  sort:
-                    type: object
-                    properties:
-                      empty:
-                        type: boolean
-                        description: Is response empty
-                      sorted:
-                        type: boolean
-                        description: Is response sorted
-                      unsorted:
-                        type: boolean
-                        description: Is response unsorted
-                    required:
-                    - empty
-                    - sorted
-                    - unsorted
-                    description: Sorting information
                   first:
                     type: boolean
                     description: Is this the first page of the response
@@ -512,7 +388,6 @@ paths:
                 - pageable
                 - last
                 - total_pages
-                - sort
                 - first
                 - number_of_elements
                 - empty
@@ -520,12 +395,13 @@ paths:
                 content:
                 - recipient_name: SHINRA ELECTRICITY
                   recipient_bank_name: SHINRA LTD.
-                  recipient_iban: SA04033000001XXXXXXXXXX
+                  recipient_iban: AE04033000001XXXXXXXXXX
                   description: INV001
-                  currency: SAR
+                  currency: AED
                   amount: 21.18
                   created_at: '2023-08-21T14:11:35.882645Z'
                   payment_intent_id: 7d496fab-4ff5-4221-85d7-43e5af28efdb
+                  payment_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
                   auto_authorized: false
                   status: ACCEPTED_BY_BANK
                 number: 0
@@ -543,10 +419,6 @@ paths:
                   unpaged: false
                 last: true
                 total_pages: 1
-                sort:
-                  empty: true
-                  sorted: false
-                  unsorted: true
                 first: true
                 number_of_elements: 1
                 empty: false
@@ -554,394 +426,10 @@ paths:
       security:
       - bearer: []
     servers:
-    - url: https://sandbox.sa.leantech.me
+    - url: https://sandbox.leantech.me
       description: Sandbox
-    - url: https://api2.sa.leantech.me
-      description: Production / Pre-Live
-  /payouts/v1/payments/{payment_id}/history:
-    get:
-      summary: Get Payment History
-      deprecated: false
-      description: ''
-      operationId: getPaymentHistory
-      tags:
-      - Payouts
-      parameters:
-      - name: payment_id
-        in: path
-        description: ''
-        required: true
-        example: ''
-        schema:
-          type: string
-          format: uuid
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  customer_id:
-                    type: string
-                    description: The associated `customer_id` if any
-                  end_user_id:
-                    type: string
-                    description: The set of credentials used to handle this payment
-                  intent_id:
-                    type: string
-                    description: The associated Payment Intent
-                  payments:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        payment_id:
-                          type: string
-                          description: The Payment ID
-                        description:
-                          type: string
-                          description: The provided description for the payment
-                        amount:
-                          type: number
-                          description: The amount instructed
-                        bank_identifier:
-                          type: string
-                          description: The bank identifier that a payment is being made from
-                        status:
-                          type: string
-                          description: The current status of the payment
-                          enum:
-                          - PENDING_WITH_BANK
-                          - AWAITING_AUTHORIZATION
-                          - FAILED
-                          - ACCEPTED_BY_BANK
-                        initiation_timestamp:
-                          type: string
-                          description: Time the payment was initiated
-                        events:
-                          type: array
-                          items:
-                            type: object
-                            properties:
-                              payment_id:
-                                type: string
-                                description: The Payment ID
-                              event:
-                                type: string
-                                description: Either `payment.created` or `payment.updated`
-                              status:
-                                type: string
-                                description: The status at the time of the event
-                                enum:
-                                - PENDING_WITH_BANK
-                                - AWAITING_AUTHORIZATION
-                                - FAILED
-                                - ACCEPTED_BY_BANK
-                              published_at:
-                                type: string
-                                description: Timestamp the event was published
-                            required:
-                            - payment_id
-                            - event
-                            - status
-                            - published_at
-                          description: Event stream of changes to the payment, reflects the change history of `status`
-                required:
-                - customer_id
-                - end_user_id
-                - intent_id
-                - payments
-              example:
-                customer_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-                end_user_id: 1c948406-47c2-41b4-8423-003697993ca4
-                intent_id: 67d5c457-14b8-44ad-b13d-23a1d5284cd0
-                payments:
-                - payment_id: d651555e-18e6-4426-914a-7e50068000f2
-                  description: LEAN 10 45 AM 982
-                  amount: 530.5
-                  bank_identifier: ALINMA_DC_SAU
-                  status: ACCEPTED_BY_BANK
-                  initiation_timestamp: '2024-04-08T05:15:59.777849Z'
-                  events:
-                  - payment_id: 299693c9-85df-468b-bfd1-38f2574fef6a
-                    event: payment.created
-                    status: AWAITING_AUTHORIZATION
-                    published_at: '2024-04-08T05:15:59.784188Z'
-                  - payment_id: 299693c9-85df-468b-bfd1-38f2574fef6a
-                    event: payment.updated
-                    status: ACCEPTED_BY_BANK
-                    published_at: '2024-04-08T05:20:39.447073Z'
-          headers: {}
-      security:
-      - bearer: []
-    servers:
-    - url: https://sandbox.sa.leantech.me
-      description: Sandbox
-    - url: https://api2.sa.leantech.me
-      description: Production / Pre-Live
-  /payouts/v1/payment/destinations:
-    post:
-      summary: Create Payouts Destination(s)
-      deprecated: false
-      description: Create payment destinations for use with Payouts. Destinations created with Payouts create a corresponding beneficiary with your bank.
-      operationId: createPayoutDestination
-      tags:
-      - Payouts
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                type: object
-                properties:
-                  bank_identifier:
-                    type: string
-                    description: Uniquely identifies the bank of the benefeciary account
-                  name:
-                    type: string
-                    description: The name of the legal entity associated with the account.
-                  iban:
-                    type: string
-                    description: The IBAN of the account
-                  display_name:
-                    type: string
-                    description: 'The friendly display name for the account. '
-                  account_number:
-                    type: string
-                    description: The account number for the account.
-                  swift_code:
-                    type: string
-                    description: The SWIFT Code for the bank account - required for most international destinations
-                  ifsc:
-                    type: string
-                    description: The IFSC number for the bank account - required for international destinations in India.
-                  sort_code:
-                    type: string
-                    description: The Sort Code for the bank account - required for international destinations in the UK
-                  routing_number:
-                    type: string
-                    description: The Routing Number for the bank account - required for international destinations in the US.
-                  transit_code:
-                    type: string
-                    description: The Transit Number for the bank account - required for international destinations in Canada
-                  address:
-                    type: string
-                    description: The address of the owner of the destination bank account has registered with the bank.
-                  branch_address:
-                    type: string
-                    description: The address of the branch that holds the account - required for all beneficiaries outside of ARE. This should be a single string with commas separating lines.
-                  country:
-                    type: string
-                    description: The country that the holding financial institution is located in as a 3 letter ISO code.
-                  city:
-                    type: string
-                    description: The city that the holding financial institution is located in.
-                  customer_id:
-                    type: string
-                    description: The associated Lean Customer
-                  currency_iso_code:
-                    type: string
-                    description: The currency of the payee account
-                  postal_code:
-                    type: string
-                    description: The postal code of the bank branch that holds the account
-                required:
-                - name
-                - iban
-                - address
-                - country
-                - city
-                - currency_iso_code
-            example:
-            - bank_identifier: LEAN_SME_MB1_KSA
-              name: Santiago Keebler
-              iban: AE123030303000
-              display_name: ABC CORP
-              account_number: '0303030'
-              swift_code: UCHZPL2OXXX
-              ifsc: HADBC0001234
-              sort_code: '89'
-              routing_number: '106519958'
-              transit_code: '9'
-              address: Texas Wisokystead Wayne County 802 Washington Street Apt. 205
-              branch_address: Idaho East Elmore Marion County 59966 E 4th Avenue Suite 288
-              country: SAU
-              city: Riyadh
-              customer_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-              currency_iso_code: SAR
-              postal_code: '90710'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  add_benefeciary_task_id:
-                    type: string
-                    format: uuid
-                    description: The unique ID to track the destination creation request. This is useful for debugging
-                  destination_id:
-                    type: string
-                    description: The unique identifier for the Payment Destination object.
-                  bank_identifier:
-                    type: string
-                  iban:
-                    type: string
-                    description: IBAN of the destination account
-                  account_number:
-                    type: string
-                    description: The account number for the account.
-                  display_name:
-                    type: string
-                    description: 'The friendly display name for the account. '
-                  status:
-                    type: string
-                    description: Specifies the status of the destination
-                    enum:
-                    - CONFIRMED
-                    - FAILED
-                  error_message:
-                    type: string
-                    description: 'Error meesage received from the bank '
-              example:
-                add_beneficiary_task_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-                destination_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-                bank_identifier: LEAN_SME_MB1_UAE
-                iban: AE123030303000
-                account_number: '0303030'
-                display_name: ABC CORP
-                status: CONFIRMED
-                error_message: string
-          headers: {}
-      security:
-      - bearer: []
-    servers:
-    - url: https://sandbox.sa.leantech.me
-      description: Sandbox
-    - url: https://api2.sa.leantech.me
-      description: Production / Pre-Live
-  /payouts/v1/payment/destinations/{destination_id}:
-    get:
-      summary: Get Payouts Destination
-      deprecated: false
-      description: Create payment destinations for use with Payouts. Destinations created with Payouts create a corresponding beneficiary with your bank.
-      operationId: getPayoutDestinationById
-      tags:
-      - Payouts
-      parameters:
-      - name: destination_id
-        in: path
-        description: ''
-        required: true
-        example: ''
-        schema:
-          type: string
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                    format: uuid
-                    description: The unique identifier for the Payment Destination object.
-                  status:
-                    type: string
-                    description: The status of the beneficiary tied to the Destination
-                    enum:
-                    - ACTIVE
-                    - PENDING
-                    - FAILED
-                    - AWAITING_BENEFICIARY_COOL_OFF
-                  branch_address:
-                    type: string
-                    description: The address of the branch that holds the account - required for all beneficiaries outside of ARE. This should be a single string with commas separating lines.
-                  name:
-                    type: string
-                    description: The name of the legal entity that owns the account.
-                  iban:
-                    type: string
-                    description: 'The IBAN of the account.
-
-                      This is required for all countries except for the US.'
-                  display_name:
-                    type: string
-                    description: The friendly display name for the account. This is rendered in the LinkSDK when referencing the Destination.
-                  address:
-                    type: string
-                    description: The address of the owner of the destination bank account has registered with the bank.
-                  city:
-                    type: string
-                    description: The city that the holding financial institution is located in.
-                  country:
-                    type: string
-                    description: The three letter ISO code for the holding financial institution's country.
-                  swift_code:
-                    type: string
-                    description: The SWIFT Code for the bank account - required for most international destinations
-                  account_number:
-                    type: string
-                    description: The account number for the account.
-                  customer_id:
-                    type: string
-                    description: The Customer object associated with this account. This field is optional, and will designate the Destination as owned by the application if not provided.
-                  ifsc:
-                    type: string
-                    description: The IFSC number for the bank account - required for international destinations in India.
-                  transit_number:
-                    type: string
-                    description: The Transit Number for the bank account - required for international destinations in Canada
-                  sort_code:
-                    type: string
-                    description: The Sort Code for the bank account - required for international destinations in the UK
-                  routing_number:
-                    type: string
-                    description: The Routing Number for the bank account - required for international destinations in the US.
-                  postal_code:
-                    type: string
-                    description: The Postal Code of the owner of the destination bank account has registered with the bank - required for international destinations in the UK or the US
-                  currency_iso_code:
-                    type: string
-                    description: The currency of the destination bank account - required for international destinations in the UK or the US
-                required:
-                - id
-                - name
-                - display_name
-                - address
-                - city
-                - country
-                - account_number
-                - status
-                - currency_iso_code
-              example:
-                id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-                name: Fulani Al Fulani
-                short_name: Fulani
-                iban: SA123030303000
-                account_number: '0303030'
-                swift_code: INMASARIXXX
-                status: ACTIVE
-                address: 123. Fake Street
-                country: SAU
-                city: Riyadh
-                currency_iso_code: SAR
-          headers: {}
-      security:
-      - bearer: []
-    servers:
-    - url: https://sandbox.sa.leantech.me
-      description: Sandbox
-    - url: https://api2.sa.leantech.me
-      description: Production / Pre-Live
+    - url: https://api2.leantech.me
+      description: Production
   /payouts/v1/payments/{intent_id}/history:
     get:
       summary: Get Payment History
@@ -1441,6 +929,268 @@ paths:
       description: Sandbox
     - url: https://api2.leantech.me
       description: Production
+  /payouts/v1/payment/destinations:
+    post:
+      summary: Create Payouts Destination(s)
+      deprecated: false
+      description: Create payment destinations for use with Payouts. Destinations created with Payouts create a corresponding beneficiary with your bank.
+      operationId: createPayoutDestination
+      tags:
+      - Payouts
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  bank_identifier:
+                    type: string
+                    description: Uniquely identifies the bank of the beneficiary account
+                  name:
+                    type: string
+                    description: The name of the legal entity associated with the account.
+                  iban:
+                    type: string
+                    description: The IBAN of the account
+                  display_name:
+                    type: string
+                    description: 'The friendly display name for the account. '
+                  account_number:
+                    type: string
+                    description: The account number for the account.
+                  swift_code:
+                    type: string
+                    description: The SWIFT Code for the bank account - required for most international destinations
+                  ifsc:
+                    type: string
+                    description: The IFSC number for the bank account - required for international destinations in India.
+                  sort_code:
+                    type: string
+                    description: The Sort Code for the bank account - required for international destinations in the UK
+                  routing_number:
+                    type: string
+                    description: The Routing Number for the bank account - required for international destinations in the US.
+                  transit_code:
+                    type: string
+                    description: The Transit Number for the bank account - required for international destinations in Canada
+                  address:
+                    type: string
+                    description: The address of the owner of the destination bank account has registered with the bank.
+                  branch_address:
+                    type: string
+                    description: The address of the branch that holds the account - required for all beneficiaries outside of ARE. This should be a single string with commas separating lines.
+                  country:
+                    type: string
+                    description: The country that the holding financial institution is located in as a 3 letter ISO code.
+                  city:
+                    type: string
+                    description: The city that the holding financial institution is located in.
+                  customer_id:
+                    type: string
+                    description: The associated Lean Customer
+                  currency_iso_code:
+                    type: string
+                    description: The currency of the payee account
+                  postal_code:
+                    type: string
+                    description: The postal code of the bank branch that holds the account
+                required:
+                - name
+                - iban
+                - address
+                - country
+                - city
+                - currency_iso_code
+            example:
+            - bank_identifier: LEAN_SME_MB1_UAE
+              name: Santiago Keebler
+              iban: AE123030303000
+              display_name: ABC CORP
+              account_number: '0303030'
+              swift_code: UCHZPL2OXXX
+              ifsc: HADBC0001234
+              sort_code: '89'
+              routing_number: '106519958'
+              transit_code: '9'
+              address: Texas Wisokystead Wayne County 802 Washington Street Apt. 205
+              branch_address: Idaho East Elmore Marion County 59966 E 4th Avenue Suite 288
+              country: ARE
+              city: Abu Dhabi
+              customer_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              currency_iso_code: AED
+              postal_code: '90710'
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                '200':
+                  value:
+                    add_beneficiary_task_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    destination_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    bank_identifier: LEAN_SME_MB1_UAE
+                    iban: AE123030303000
+                    account_number: '0303030'
+                    display_name: ABC CORP
+                    status: CONFIRMED
+                    error_message: string
+                  summary: ''
+              schema:
+                type: object
+                properties:
+                  add_beneficiary_task_id:
+                    type: string
+                    description: The unique ID to track the destination creation request. This is useful for debugging
+                  destination_id:
+                    type: string
+                    description: The unique identifier for the Payment Destination object.
+                  bank_identifier:
+                    type: string
+                  iban:
+                    type: string
+                    description: IBAN of the destination account
+                  account_number:
+                    type: string
+                    description: 'The account number for the account. '
+                  display_name:
+                    type: string
+                    description: The friendly display name for the account.
+                  status:
+                    type: string
+                    description: Specifies the status of the destination
+                    enum:
+                    - CONFIRMED
+                    - FAILED
+                  error_message:
+                    type: string
+                    description: Error message received from the bank
+          description: OK
+      security:
+      - bearer: []
+    servers:
+    - url: https://sandbox.leantech.me
+      description: Sandbox
+    - url: https://api2.leantech.me
+      description: Production
+  /payouts/v1/payment/destinations/{destination_id}:
+    get:
+      summary: Get Payouts Destination
+      deprecated: false
+      description: Create payment destinations for use with Payouts. Destinations created with Payouts create a corresponding beneficiary with your bank.
+      operationId: getPayoutDestinationById
+      tags:
+      - Payouts
+      parameters:
+      - name: destination_id
+        in: path
+        description: ''
+        required: true
+        example: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    description: The unique identifier for the Payment Destination object.
+                  status:
+                    type: string
+                    description: The status of the Destination
+                    enum:
+                    - AWAITING_BENEFICIARY_COOL_OFF
+                    - ACTIVE
+                    - NOT_PRESENT
+                    - REMOVED
+                  branch_address:
+                    type: string
+                    description: The address of the branch that holds the account - required for all beneficiaries outside of ARE. This should be a single string with commas separating lines.
+                  name:
+                    type: string
+                    description: The name of the legal entity that owns the account.
+                  iban:
+                    type: string
+                    description: 'The IBAN of the account.
+
+                      This is required for all countries except for the US.'
+                  display_name:
+                    type: string
+                    description: The friendly display name for the account. This is rendered in the LinkSDK when referencing the Destination.
+                  address:
+                    type: string
+                    description: The address of the owner of the destination bank account has registered with the bank.
+                  city:
+                    type: string
+                    description: The city that the holding financial institution is located in.
+                  country:
+                    type: string
+                    description: The three letter ISO code for the holding financial institution's country.
+                  swift_code:
+                    type: string
+                    description: The SWIFT Code for the bank account - required for most international destinations
+                  account_number:
+                    type: string
+                    description: The account number for the account.
+                  customer_id:
+                    type: string
+                    description: The Customer object associated with this account. This field is optional, and will designate the Destination as owned by the application if not provided.
+                  ifsc:
+                    type: string
+                    description: The IFSC number for the bank account - required for international destinations in India.
+                  transit_number:
+                    type: string
+                    description: The Transit Number for the bank account - required for international destinations in Canada
+                  sort_code:
+                    type: string
+                    description: The Sort Code for the bank account - required for international destinations in the UK
+                  routing_number:
+                    type: string
+                    description: The Routing Number for the bank account - required for international destinations in the US.
+                  postal_code:
+                    type: string
+                    description: The Postal Code of the owner of the destination bank account has registered with the bank - required for international destinations in the UK or the US
+                  currency_iso_code:
+                    type: string
+                    description: The currency of the destination bank account - required for international destinations in the UK or the US
+                required:
+                - id
+                - name
+                - display_name
+                - address
+                - city
+                - country
+                - account_number
+                - status
+                - currency_iso_code
+              example:
+                id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                name: Fulani Al Fulani
+                display_name: Fulani
+                iban: AE123030303000
+                account_number: '0303030'
+                swift_code: EBILEADXX
+                status: ACTIVE
+                address: 123. Fake Street
+                country: ARE
+                city: Abu Dhabi
+                currency_iso_code: AED
+          headers: {}
+      security:
+      - bearer: []
+    servers:
+    - url: https://sandbox.leantech.me
+      description: Sandbox
+    - url: https://api2.leantech.me
+      description: Production
   /payouts/v1/split-payments:
     post:
       summary: Split Payouts
@@ -1621,7 +1371,7 @@ paths:
       description: Production
   /payouts/refunds:
     post:
-      summary: 'Create Refund '
+      summary: Create Refund
       deprecated: false
       description: Create a refund
       operationId: createRefund
@@ -2043,11 +1793,249 @@ paths:
       security:
       - bearer: []
       - bearerAuth: []
+      summary: Get payouts refunds by refund id
+      x-summary-source: derived
     servers:
     - url: https://sandbox.leantech.me
       description: Sandbox
     - url: https://api2.leantech.me
       description: Production
+  /payouts/v1/bulk-payments:
+    post:
+      summary: Create Bulk Payout Payment
+      deprecated: false
+      description: ''
+      operationId: createBulkPayout
+      tags:
+      - Payouts
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                account_id:
+                  type: string
+                  description: Account ID used to make the payment
+                authorize_payment:
+                  type: boolean
+                  description: Defines whether the payment should be authorized by Lean or only queued
+                payments:
+                  type: array
+                  items:
+                    anyOf:
+                    - $ref: '#/components/schemas/PayoutByDestinationPayload'
+                      description: Create a payment to an ad-hoc beneficiary
+                    - $ref: '#/components/schemas/PayoutByDestinationID'
+                      description: Create a payment to an existing beneficiary
+                  description: A list of payments to be executed
+              required:
+              - account_id
+              - authorize_payment
+              - payments
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  bulk_payment_intent_id:
+                    type: string
+                    enum:
+                    - SINGLE_PAYMENT
+                    - BULK_PAYMENTS_CSV
+                    description: Identifier for this bulk payment
+                  mechanism:
+                    type: string
+                    enum:
+                    - CSV
+                    description: The method Lean is utilizing to manage the payout payment(s).
+                  sender_details:
+                    type: object
+                    properties:
+                      bank_identifier:
+                        type: string
+                        description: Initiating bank identifier
+                      account_number:
+                        type: string
+                      iban:
+                        type: string
+                    required:
+                    - bank_identifier
+                    - account_number
+                    - iban
+                    description: Details of the sending account
+                  payouts_payment_details:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        description: Status of the payment
+                      currency:
+                        type: string
+                        description: Currency to be debited
+                      total_amount:
+                        type: integer
+                        description: Sum of all payment amounts in the bulk request
+                      total_payments:
+                        type: integer
+                        description: Total number of payments in the bulk payment request
+                    required:
+                    - status
+                    - currency
+                    - total_amount
+                    - total_payments
+                    description: Details of the receiving account
+                required:
+                - bulk_payment_intent_id
+                - mechanism
+                - sender_details
+                - payouts_payment_details
+              example:
+                bulk_payment_intent_id: 971bbe44-bbf5-4dd5-ac5b-7f1586f02a76
+                mechanism: CSV
+                sender_details:
+                  bank_identifier: ENBD_SME_UAE
+                  account_number: '1231231231231231'
+                  iban: AE940261231231231231231
+                payouts_payment_details:
+                  status: AWAITING_AUTHORIZATION
+                  currency: AED
+                  total_amount: 500
+                  total_payments: 5
+          headers: {}
+      security:
+      - bearer: []
+    servers:
+    - url: https://sandbox.leantech.me
+      description: Sandbox
+    - url: https://api2.leantech.me
+      description: Production / Pre-live
+  /payouts/v1/payments/{payment_id}/history:
+    get:
+      summary: Get Payment History
+      deprecated: false
+      description: ''
+      operationId: getPaymentHistory
+      tags:
+      - Payouts
+      parameters:
+      - name: payment_id
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  customer_id:
+                    type: string
+                    description: The associated `customer_id` if any
+                  end_user_id:
+                    type: string
+                    description: The set of credentials used to handle this payment
+                  intent_id:
+                    type: string
+                    description: The associated Payment Intent
+                  payments:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        payment_id:
+                          type: string
+                          description: The Payment ID
+                        description:
+                          type: string
+                          description: The provided description for the payment
+                        amount:
+                          type: number
+                          description: The amount instructed
+                        bank_identifier:
+                          type: string
+                          description: The bank identifier that a payment is being made from
+                        status:
+                          type: string
+                          description: The current status of the payment
+                          enum:
+                          - PENDING_WITH_BANK
+                          - AWAITING_AUTHORIZATION
+                          - FAILED
+                          - ACCEPTED_BY_BANK
+                        initiation_timestamp:
+                          type: string
+                          description: Time the payment was initiated
+                        events:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              payment_id:
+                                type: string
+                                description: The Payment ID
+                              event:
+                                type: string
+                                description: Either `payment.created` or `payment.updated`
+                              status:
+                                type: string
+                                description: The status at the time of the event
+                                enum:
+                                - PENDING_WITH_BANK
+                                - AWAITING_AUTHORIZATION
+                                - FAILED
+                                - ACCEPTED_BY_BANK
+                              published_at:
+                                type: string
+                                description: Timestamp the event was published
+                            required:
+                            - payment_id
+                            - event
+                            - status
+                            - published_at
+                          description: Event stream of changes to the payment, reflects the change history of `status`
+                required:
+                - customer_id
+                - end_user_id
+                - intent_id
+                - payments
+              example:
+                customer_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                end_user_id: 1c948406-47c2-41b4-8423-003697993ca4
+                intent_id: 67d5c457-14b8-44ad-b13d-23a1d5284cd0
+                payments:
+                - payment_id: d651555e-18e6-4426-914a-7e50068000f2
+                  description: LEAN 10 45 AM 982
+                  amount: 530.5
+                  bank_identifier: ENBD_SME_UAE
+                  status: ACCEPTED_BY_BANK
+                  initiation_timestamp: '2024-04-08T05:15:59.777849Z'
+                  events:
+                  - payment_id: 299693c9-85df-468b-bfd1-38f2574fef6a
+                    event: payment.created
+                    status: AWAITING_AUTHORIZATION
+                    published_at: '2024-04-08T05:15:59.784188Z'
+                  - payment_id: 299693c9-85df-468b-bfd1-38f2574fef6a
+                    event: payment.updated
+                    status: ACCEPTED_BY_BANK
+                    published_at: '2024-04-08T05:20:39.447073Z'
+          headers: {}
+      security:
+      - bearer: []
+    servers:
+    - url: https://sandbox.leantech.me
+      description: Sandbox
+    - url: https://api2.leantech.me
+      description: Production / Pre-live
 components:
   schemas:
     PayoutByDestinationID:
@@ -2172,6 +2160,5 @@ components:
       type: http
       scheme: bearer
 x-refined-from:
-- lean-technologies-ksa-payouts-openapi.yml
 - lean-technologies-payouts-extended-openapi.yml
 - lean-technologies-payouts-openapi.yml

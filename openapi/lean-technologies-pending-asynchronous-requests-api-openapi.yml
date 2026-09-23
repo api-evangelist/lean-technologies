@@ -21,7 +21,15 @@ paths:
     get:
       operationId: getResultsV2
       summary: Get Results
-      description: "Get the results for an asynchronous response. Note that the request will\nnot work for results_id that have been returned with a synchronous\nrequest, i.e.: it will work only when you receive a response for any API\nwhere status=PENDING and then receive a webhook. \n**Note: it's recommended to use the sync flow (async=false) for all request by adapting the new data workflow.**\n"
+      description: 'Get the results for an asynchronous response. Note that the request will
+
+        not work for results_id that have been returned with a synchronous
+
+        request, i.e.: it will work only when you receive a response for any API
+
+        where status=PENDING and then receive a webhook.
+
+        **Note: it''s recommended to use the sync flow (async=false) for all request by adapting the new data workflow.**'
       parameters:
       - $ref: '#/components/parameters/ResultsIdParameter'
       - $ref: '#/components/parameters/AsyncParameter'
@@ -128,59 +136,6 @@ paths:
       security:
       - bearerAuth: []
 components:
-  parameters:
-    EntityIdParameter:
-      name: entity_id
-      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
-      in: query
-      required: false
-      schema:
-        type: string
-        format: uuid
-    MetaParameter:
-      name: meta
-      description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
-      in: query
-      required: false
-      schema:
-        type: string
-    PageParameter:
-      name: page
-      in: query
-      description: The page you're requesting - returns page 0 of a response if not specified.
-      required: false
-      schema:
-        type: integer
-        default: 0
-        minimum: 0
-    SizeParameter:
-      name: size
-      description: The number of objects you want to return as a page size.
-      in: query
-      required: false
-      schema:
-        type: integer
-        default: 50
-        maximum: 100
-        minimum: 1
-    AsyncParameter:
-      name: async
-      in: query
-      description: 'When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. **Note: it''s recommended to use the sync flow (async=false) for all requests by adapting the [data workflow](https://docs.leantech.me/docs/data-workflow) for connected entities.**'
-      required: false
-      schema:
-        type: boolean
-        default: false
-      deprecated: true
-    ResultsIdParameter:
-      name: results_id
-      in: path
-      description: results_id was returned from a request with `async=true`
-      required: true
-      example: 549fd28b-1268-4ab3-a34d-bed7d4710c00
-      schema:
-        type: string
-        format: uuid
   examples:
     UnknownResultExample:
       summary: Result not found error response
@@ -200,36 +155,82 @@ components:
         status: INTERNAL_SERVER_ERROR
         message: Something has gone wrong. If you continue to see this error, please get in touch with Lean.
         metadata: null
+  parameters:
+    EntityIdParameter:
+      name: entity_id
+      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
+      in: query
+      required: false
+      schema:
+        type: string
+        format: uuid
+    ResultsIdParameter:
+      name: results_id
+      in: path
+      description: results_id was returned from a request with `async=true`
+      required: true
+      example: 549fd28b-1268-4ab3-a34d-bed7d4710c00
+      schema:
+        type: string
+        format: uuid
+    MetaParameter:
+      name: meta
+      description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
+      in: query
+      required: false
+      schema:
+        type: string
+    SizeParameter:
+      name: size
+      description: The number of objects you want to return as a page size.
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 50
+        maximum: 100
+        minimum: 1
+    PageParameter:
+      name: page
+      in: query
+      description: The page you're requesting - returns page 0 of a response if not specified.
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+    AsyncParameter:
+      name: async
+      in: query
+      description: 'When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. **Note: it''s recommended to use the sync flow (async=false) for all requests by adapting the [data workflow](https://docs.leantech.me/docs/data-workflow) for connected entities.**'
+      required: false
+      schema:
+        type: boolean
+        default: false
+      deprecated: true
   schemas:
-    DirectDebitsResponse:
+    AgentIdentifier:
+      type: object
+      properties:
+        scheme_name:
+          type: string
+          description: The name of the identification scheme for the Bank
+          enum:
+          - BICFI
+          - OTHER
+          - UNSUPPORTED
+          examples:
+          - BICFI
+        identification:
+          type: string
+          description: Unique and unambiguous identification of the Bank
+    AccountsResponse:
       allOf:
       - type: object
         properties:
           data:
-            type: object
-            properties: {}
+            $ref: '#/components/schemas/AccountsData'
       - $ref: '#/components/schemas/DataResponse'
-    AccountsData:
-      allOf:
-      - type: object
-        properties: {}
-      - type: object
-        properties:
-          accounts:
-            description: An array of accounts associated with the Entity
-            type: array
-            items:
-              $ref: '#/components/schemas/Account'
-    StatusDetailObject:
-      description: Status Details
-      type: object
-      properties:
-        granular_status_code:
-          description: Detailed error code
-          type: string
-        status_additional_info:
-          description: Further detail on the encountered error
-          type: string
     Account:
       type: object
       properties:
@@ -312,22 +313,6 @@ components:
         regional_data:
           description: Region specific data response. Only provided when `verbose=true` in the originating request.
           $ref: '#/components/schemas/AccountRegionalData'
-    StandardSau:
-      type: object
-      properties:
-        standard:
-          description: A description of the standard the regional data is returned in formatted as `"{ISO 3 Letter Country Code}.{Standard}.{Version}"`. In the KSA V2 API this will always return as `"SAU.SAMA.V1"`
-          type: string
-          examples:
-          - SAU.SAMA.V1
-    AccountRegionalData:
-      allOf:
-      - type: object
-        properties:
-          data:
-            type: object
-            properties: {}
-      - $ref: '#/components/schemas/StandardSau'
     DataResponse:
       type: object
       properties:
@@ -365,6 +350,24 @@ components:
       - meta
       - timestamp
       - status_detail
+    DirectDebitsResponse:
+      allOf:
+      - type: object
+        properties:
+          data:
+            type: object
+            properties: {}
+      - $ref: '#/components/schemas/DataResponse'
+    StatusDetailObject:
+      description: Status Details
+      type: object
+      properties:
+        granular_status_code:
+          description: Detailed error code
+          type: string
+        status_additional_info:
+          description: Further detail on the encountered error
+          type: string
     ResultsResponse:
       anyOf:
       - $ref: '#/components/schemas/AccountsResponse'
@@ -385,28 +388,33 @@ components:
       - $ref: '#/components/schemas/DirectDebitsResponse'
       title: Results Response
       description: ''
-    AgentIdentifier:
-      type: object
-      properties:
-        scheme_name:
-          type: string
-          description: The name of the identification scheme for the Bank
-          enum:
-          - BICFI
-          - OTHER
-          - UNSUPPORTED
-          examples:
-          - BICFI
-        identification:
-          type: string
-          description: Unique and unambiguous identification of the Bank
-    AccountsResponse:
+    AccountRegionalData:
       allOf:
       - type: object
         properties:
           data:
-            $ref: '#/components/schemas/AccountsData'
-      - $ref: '#/components/schemas/DataResponse'
+            type: object
+            properties: {}
+      - $ref: '#/components/schemas/StandardSau'
+    AccountsData:
+      allOf:
+      - type: object
+        properties: {}
+      - type: object
+        properties:
+          accounts:
+            description: An array of accounts associated with the Entity
+            type: array
+            items:
+              $ref: '#/components/schemas/Account'
+    StandardSau:
+      type: object
+      properties:
+        standard:
+          description: A description of the standard the regional data is returned in formatted as `"{ISO 3 Letter Country Code}.{Standard}.{Version}"`. In the KSA V2 API this will always return as `"SAU.SAMA.V1"`
+          type: string
+          examples:
+          - SAU.SAMA.V1
   securitySchemes:
     bearerAuth:
       type: http

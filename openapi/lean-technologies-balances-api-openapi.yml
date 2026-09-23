@@ -17,7 +17,18 @@ paths:
     get:
       summary: Get Cash Balances
       deprecated: false
-      description: "The Cash Balances API provides a comprehensive view of both **Personal** or **Business** cash balances, offering insights into current, historical, and average balances. \n\nThe data in this API allows financial companies to monitor liquidity trends and assess the financial health of bank accounts over time. Additionally, it provides information on  the frequency and amount of contributions. You can use these insights to evaluate repayment capacity.\n\n\nThis API is asynchronous, please read [this guide](https://docs.leantech.me/v2.0-KSA/docs/handling-asynchronous-requests) for further information on how to fetch the results.\n\n> **\"Supported for both retail and corporate accounts\"**\n> "
+      description: 'The Cash Balances API provides a comprehensive view of both **Personal** or **Business** cash balances, offering insights into current, historical, and average balances.
+
+
+        The data in this API allows financial companies to monitor liquidity trends and assess the financial health of bank accounts over time. Additionally, it provides information on the frequency and amount of contributions. You can use these insights to evaluate repayment capacity.
+
+
+        This API is asynchronous, please read this guide for further information on how to fetch the results.
+
+
+        > **"Supported for both retail and corporate accounts"**
+
+        >'
       operationId: getBalances
       tags:
       - Balances
@@ -235,6 +246,26 @@ paths:
       - bearer: []
 components:
   schemas:
+    AmountObject:
+      type: object
+      properties:
+        currency:
+          type: string
+          description: The currency in which the amount is represented.
+        amount:
+          type: number
+          description: The decimal amount for the transaction
+      description: The total amount for the category.
+    StatusDetailObject:
+      description: Status Details
+      type: object
+      properties:
+        granular_status_code:
+          description: Detailed error code
+          type: string
+        status_additional_info:
+          description: Further detail on the encountered error
+          type: string
     balance_factors:
       type: object
       title: BalanceFactors
@@ -475,26 +506,6 @@ components:
       - inflow_factors
       - outflow_factors
       - daily_net_cashflow_estimate
-    AmountObject:
-      type: object
-      properties:
-        currency:
-          type: string
-          description: The currency in which the amount is represented.
-        amount:
-          type: number
-          description: The decimal amount for the transaction
-      description: The total amount for the category.
-    StatusDetailObject:
-      description: Status Details
-      type: object
-      properties:
-        granular_status_code:
-          description: Detailed error code
-          type: string
-        status_additional_info:
-          description: Further detail on the encountered error
-          type: string
     MonthlyTotalsBalances:
       type: object
       properties:

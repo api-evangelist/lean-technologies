@@ -1,7 +1,11 @@
 openapi: 3.2.0
 info:
   title: Lean Sessions API
-  description: "API for creating and managing payment sessions. \nA session represents a short-lived, secure context that guides a customer through a payment flow. \nSessions are created server-side and presented to your customer via a redirect URL."
+  description: 'API for creating and managing payment sessions.
+
+    A session represents a short-lived, secure context that guides a customer through a payment flow.
+
+    Sessions are created server-side and presented to your customer via a redirect URL.'
   version: v1.0.0
 servers:
 - url: https://sandbox.leantech.me
@@ -12,13 +16,21 @@ security:
 - bearerAuth: []
 tags:
 - name: Sessions
-  description: "Create and inspect payment sessions. \nEach session has a limited lifetime and progresses through a defined lifecycle from `CREATED` to `COMPLETED` or `EXPIRED`."
+  description: 'Create and inspect payment sessions.
+
+    Each session has a limited lifetime and progresses through a defined lifecycle from `CREATED` to `COMPLETED` or `EXPIRED`.'
 paths:
   /sessions/v1:
     post:
       operationId: createSession
       summary: Create Session
-      description: "Creates a new session that guides a customer through a payment flow.\nThe session begins in `CREATED` state and transitions to `ACTIVE` once the customer opens the redirect URL. \nRedirect your customer to the returned `session_url` to begin the flow.\nSessions expire after a fixed period if not completed."
+      description: 'Creates a new session that guides a customer through a payment flow.
+
+        The session begins in `CREATED` state and transitions to `ACTIVE` once the customer opens the redirect URL.
+
+        Redirect your customer to the returned `session_url` to begin the flow.
+
+        Sessions expire after a fixed period if not completed.'
       requestBody:
         required: true
         content:
@@ -91,6 +103,17 @@ components:
       description: "The type of flow this session guides the customer through.\n\n- PAY: Starts a Lean-hosted Single Instant Payment session. The customer reviews\n  the payment details and authorizes the transaction directly through their bank.\n  `payment_intent_id` in the flow payload is required and determines the amount,\n  destination, and customer for the payment."
       type: string
       const: PAY
+    Flow:
+      description: Defines the session flow type and its associated configuration payload.
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/SessionType'
+        payload:
+          $ref: '#/components/schemas/FlowPayload'
+      required:
+      - type
+      - payload
     FlowPayload:
       description: Additional parameters for the selected flow type.
       type: object
@@ -103,45 +126,6 @@ components:
           format: uuid
           examples:
           - 7d4e2c19-8f2a-4b3c-9d1e-6f8a2b4c6d8e
-    FlowInfo:
-      description: A summary of the flow associated with this session.
-      type: object
-      properties:
-        type:
-          $ref: '#/components/schemas/SessionType'
-      required:
-      - type
-    Flow:
-      description: Defines the session flow type and its associated configuration payload.
-      type: object
-      properties:
-        type:
-          $ref: '#/components/schemas/SessionType'
-        payload:
-          $ref: '#/components/schemas/FlowPayload'
-      required:
-      - type
-      - payload
-    SessionState:
-      description: 'The lifecycle state of the session.
-
-
-        - CREATED: The session has been created but the customer has not yet opened the redirect URL.
-
-        - ACTIVE: The customer has opened the session and is in the middle of the flow.
-
-        - AUTHORIZED: The customer has authorized the payment. Processing may still be in progress.
-
-        - COMPLETED: The flow finished successfully. The customer has been redirected back to your `redirect_url`.
-
-        - EXPIRED: The session was not completed within its validity window and can no longer be used.'
-      type: string
-      enum:
-      - CREATED
-      - ACTIVE
-      - AUTHORIZED
-      - EXPIRED
-      - COMPLETED
     CreateSessionResponse:
       description: The created session, including the session URL to redirect your customer to and the session's expiry time.
       type: object
@@ -181,6 +165,34 @@ components:
       - redirect_url
       - expires_at
       - flow
+    FlowInfo:
+      description: A summary of the flow associated with this session.
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/SessionType'
+      required:
+      - type
+    SessionState:
+      description: 'The lifecycle state of the session.
+
+
+        - CREATED: The session has been created but the customer has not yet opened the redirect URL.
+
+        - ACTIVE: The customer has opened the session and is in the middle of the flow.
+
+        - AUTHORIZED: The customer has authorized the payment. Processing may still be in progress.
+
+        - COMPLETED: The flow finished successfully. The customer has been redirected back to your `redirect_url`.
+
+        - EXPIRED: The session was not completed within its validity window and can no longer be used.'
+      type: string
+      enum:
+      - CREATED
+      - ACTIVE
+      - AUTHORIZED
+      - EXPIRED
+      - COMPLETED
     CreateSessionRequest:
       description: Configuration for a new session. Provide a customer, a flow type, and a redirect URL to receive the customer after the flow completes.
       type: object

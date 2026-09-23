@@ -18,7 +18,11 @@ paths:
     get:
       operationId: fetchScheduledPayments
       summary: Get Scheduled Payments
-      description: "Get the scheduled payments for a specific account given an accountId. \nThe accountId can be found by making a call to the /accounts endpoint. \nRequires the following permissions: `scheduled_payments`\n"
+      description: 'Get the scheduled payments for a specific account given an accountId.
+
+        The accountId can be found by making a call to the /accounts endpoint.
+
+        Requires the following permissions: `scheduled_payments`'
       parameters:
       - $ref: '#/components/parameters/AccountIdParameter'
       - $ref: '#/components/parameters/AsyncParameter'
@@ -136,13 +140,14 @@ paths:
       - Scheduled Payments Raw Data
 components:
   parameters:
-    MetaParameter:
-      name: meta
-      description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
+    EntityIdParameter:
+      name: entity_id
+      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
       in: query
       required: false
       schema:
         type: string
+        format: uuid
     PageParameter:
       name: page
       in: query
@@ -161,19 +166,18 @@ components:
         type: boolean
         default: false
       deprecated: true
+    MetaParameter:
+      name: meta
+      description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
+      in: query
+      required: false
+      schema:
+        type: string
     AccountIdParameter:
       name: account_id
       description: The account_id used to fetch requested data
       in: path
       required: true
-      schema:
-        type: string
-        format: uuid
-    EntityIdParameter:
-      name: entity_id
-      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
-      in: query
-      required: false
       schema:
         type: string
         format: uuid
@@ -188,6 +192,29 @@ components:
         maximum: 100
         minimum: 1
   schemas:
+    Currency:
+      description: The ISO 3 letter currency code
+      type: string
+      examples:
+      - AED
+      pattern: ^[A-Z]{3}$
+    ScheduledPaymentsData:
+      type: object
+      properties:
+        type:
+          description: The endpoint the original request was made to.
+          type: string
+          const: scheduled-payments
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+        scheduled_payments:
+          description: An array of  scheduled payments associated with the account.
+          type: array
+          items:
+            $ref: '#/components/schemas/ScheduledPayment'
+      required:
+      - type
+      x-toBuilder: true
     ResultStatus:
       description: The status of the request
       type: string
@@ -198,68 +225,46 @@ components:
       - CONSENT_EXPIRED
       - RECONNECT_REQUIRED
       - PROCESSING_STARTED
-    CreditorAgent:
+    ScheduledPaymentsResult:
       type: object
-      properties:
-        identification_type:
-          description: identification_type
-          type: string
-        identification:
-          description: Unique identification of the servicing institution.
-          type: string
-        name:
-          description: Name of the agent or institution
-          type: string
-        postal_address:
-          $ref: '#/components/schemas/PostalAddressSau'
-      x-toBuilder: true
-    AccountIdentification:
-      type: object
-      properties:
-        scheme_name:
-          $ref: '#/components/schemas/SchemeName'
-        identification:
-          description: The identification value for the account assigned by the Bank based on the Account Scheme Name.
-          type: string
-        name:
-          description: Account name
-          type: string
-    PageMetadata:
-      description: Metadata about the current page of results
-      type: object
-      properties:
-        number:
-          description: The current page being returned by the API
-          type: integer
-          format: int32
-        size:
-          description: The page size requested
-          type: integer
-          format: int32
-        total_elements:
-          description: The total number of elements in all pages
-          type: integer
-          format: int64
-        total_pages:
-          description: The total number of pages retrievable
-          type: integer
-          format: int32
-        sort:
-          description: Sort parameters applied to the results
-          type: array
-          items:
-            type: string
-      required:
-      - number
-      - size
-      - total_elements
-      - total_pages
-    Currency:
-      description: The ISO 3 letter currency code
+      allOf:
+      - $ref: '#/components/schemas/DataResult'
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/ScheduledPaymentsData'
+    SchemeName:
+      description: The scheme name of the account identification value
       type: string
-      examples:
-      - AED
-      pattern: ^[A-Z]{3}$
+      enum:
+      - PAN
+      - IBAN
+      - BBAN
+      - COMMERCIAL_REGISTRATION_NUMBER
+      - EMAIL
+      - MOBILE_NUMBER
+      - NATIONAL_ID
+      - IQAMA_NUMBER
+      - PASSPORT_NUMBER
+      - OTHER
+      - UNSUPPORTED
+    DataResult:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          refreshed_at:
+            description: The datetime of when the data was refreshed
+            type:
+            - string
+            - 'null'
+            format: date-time
+          type:
+            description: The endpoint the original request was made to.
+            type:
+            - string
+            - 'null'
     CurrencyAmount:
       type: object
       properties:
@@ -271,21 +276,6 @@ components:
       required:
       - currency
       - amount
-    StatusDetail:
-      type:
-      - object
-      - 'null'
-      properties:
-        granular_status_code:
-          description: Granular status code
-          type:
-          - string
-          - 'null'
-        status_additional_info:
-          description: Additional information about the status
-          type:
-          - string
-          - 'null'
     ScheduledPayment:
       type: object
       properties:
@@ -328,6 +318,47 @@ components:
         creditor_account:
           $ref: '#/components/schemas/AccountIdentification'
       x-builder: true
+    CreditorAgent:
+      type: object
+      properties:
+        identification_type:
+          description: identification_type
+          type: string
+        identification:
+          description: Unique identification of the servicing institution.
+          type: string
+        name:
+          description: Name of the agent or institution
+          type: string
+        postal_address:
+          $ref: '#/components/schemas/PostalAddressSau'
+      x-toBuilder: true
+    StatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        granular_status_code:
+          description: Granular status code
+          type:
+          - string
+          - 'null'
+        status_additional_info:
+          description: Additional information about the status
+          type:
+          - string
+          - 'null'
+    AccountIdentification:
+      type: object
+      properties:
+        scheme_name:
+          $ref: '#/components/schemas/SchemeName'
+        identification:
+          description: The identification value for the account assigned by the Bank based on the Account Scheme Name.
+          type: string
+        name:
+          description: Account name
+          type: string
     PostalAddressSau:
       type: object
       properties:
@@ -361,31 +392,36 @@ components:
         country:
           description: Nation with its own government.
           type: string
-    ScheduledPaymentsResult:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/DataResult'
-      - type: object
-        properties:
-          data:
-            $ref: '#/components/schemas/ScheduledPaymentsData'
-    ScheduledPaymentsData:
+    PageMetadata:
+      description: Metadata about the current page of results
       type: object
       properties:
-        type:
-          description: The endpoint the original request was made to.
-          type: string
-          const: scheduled-payments
-        page:
-          $ref: '#/components/schemas/PageMetadata'
-        scheduled_payments:
-          description: An array of  scheduled payments associated with the account.
+        number:
+          description: The current page being returned by the API
+          type: integer
+          format: int32
+        size:
+          description: The page size requested
+          type: integer
+          format: int32
+        total_elements:
+          description: The total number of elements in all pages
+          type: integer
+          format: int64
+        total_pages:
+          description: The total number of pages retrievable
+          type: integer
+          format: int32
+        sort:
+          description: Sort parameters applied to the results
           type: array
           items:
-            $ref: '#/components/schemas/ScheduledPayment'
+            type: string
       required:
-      - type
-      x-toBuilder: true
+      - number
+      - size
+      - total_elements
+      - total_pages
     Result:
       type: object
       properties:
@@ -421,48 +457,7 @@ components:
       - results_id
       - message
       - timestamp
-    SchemeName:
-      description: The scheme name of the account identification value
-      type: string
-      enum:
-      - PAN
-      - IBAN
-      - BBAN
-      - COMMERCIAL_REGISTRATION_NUMBER
-      - EMAIL
-      - MOBILE_NUMBER
-      - NATIONAL_ID
-      - IQAMA_NUMBER
-      - PASSPORT_NUMBER
-      - OTHER
-      - UNSUPPORTED
-    DataResult:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Result'
-      - type: object
-        properties:
-          refreshed_at:
-            description: The datetime of when the data was refreshed
-            type:
-            - string
-            - 'null'
-            format: date-time
-          type:
-            description: The endpoint the original request was made to.
-            type:
-            - string
-            - 'null'
   examples:
-    UnknownAccountExample:
-      summary: Account not found error response
-      description: Response when the provided account_id does not match an account for the entity_id
-      value:
-        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
-        timestamp: '2025-09-11T18:55:42.579432745Z'
-        status: UNKNOWN_ACCOUNT
-        message: The account_id provided does not match an account with the entity_id provided.
-        metadata: null
     UnknownEntityExample:
       summary: Entity not found error response
       description: Response when the provided entity_id is not found
@@ -493,6 +488,15 @@ components:
         timestamp: '2025-08-07T13:07:38.834977945Z'
         status: INTERNAL_SERVER_ERROR
         message: Something has gone wrong. If you continue to see this error, please get in touch with Lean.
+        metadata: null
+    UnknownAccountExample:
+      summary: Account not found error response
+      description: Response when the provided account_id does not match an account for the entity_id
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-11T18:55:42.579432745Z'
+        status: UNKNOWN_ACCOUNT
+        message: The account_id provided does not match an account with the entity_id provided.
         metadata: null
     InvalidParametersExample:
       summary: Invalid parameters error response

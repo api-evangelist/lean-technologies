@@ -1,26 +1,226 @@
 openapi: 3.2.0
 info:
-  title: Lean Technologies Entities API
-  version: '1.0'
-  description: 'Operations tagged Entities across 5 of this provider''s published API definitions: lean-technologies-bank-data-openapi.yml, lean-technologies-customers-openapi.yml, lean-technologies-entities-openapi.yml, lean-technologies-ksa-bank-data-openapi.yml, lean-technologies-ksa-customers-openapi.yml. Each path carries the servers of the definition it was published in.'
+  title: KSA Entities API
+  description: ''
+  version: 1.0.0
 servers:
-- url: https://sandbox.leantech.me
-  description: Sandbox
-- url: https://api2.leantech.me
-  description: Production / Pre-live
 - url: https://sandbox.sa.leantech.me
   description: Sandbox
 - url: https://api2.sa.leantech.me
   description: Production / Pre-Live
+security:
+- bearer: []
 tags:
 - name: Entities
 paths:
+  /customers/v1/entities:
+    get:
+      summary: List Entities
+      deprecated: false
+      description: ''
+      operationId: listEntities
+      tags:
+      - Entities
+      parameters:
+      - name: start_date
+        in: query
+        description: This is the starting date for which you want to retrieve entities created
+        required: true
+        example: '2025-03-01'
+        schema:
+          type: integer
+      - name: end_date
+        in: query
+        description: This is the end date for which you want to retrieve entities created
+        required: true
+        example: '2025-04-01'
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ListEntityResponse'
+                  page:
+                    $ref: '#/components/schemas/Page'
+                required:
+                - data
+                - page
+              example:
+                data:
+                - id: 1e700df1-991d-4b24-9b99-b3bc3a4f8742
+                  customer_id: a17358a5-c034-4efe-ac66-918e0da6bf21
+                  bank_identifier: LEA2_SAMAOB_SAU
+                  permissions:
+                    identity: true
+                    accounts: true
+                    balance: true
+                    transactions: true
+                    identities: true
+                    scheduled_payments: false
+                    standing_orders: false
+                    direct_debits: false
+                    beneficiaries: false
+                  bank_type: RETAIL
+                  created_at: '2025-03-20T10:58:38.399276Z'
+                  consents:
+                  - id: 2477aa02-88f9-4eb3-9fbc-7879e55d9919
+                    bank_consent_id: '83699'
+                    bank_identifier: null
+                    consent_type: null
+                    consent_status: ACTIVE
+                    standard_consent_status: null
+                    permissions:
+                      identity: true
+                      accounts: true
+                      balance: true
+                      transactions: true
+                      identities: true
+                      scheduled_payments: false
+                      standing_orders: false
+                      direct_debits: false
+                      beneficiaries: false
+                    creation_date_time: '2025-03-20T10:58:07.385726Z'
+                    status_update_date_time: '2025-03-20T10:58:07.385726Z'
+                    expiration_date_time: '2025-03-21T09:57:59.084Z'
+                    transaction_from_date_time: '2024-03-17T18:30:00.084Z'
+                    transaction_to_date_time: '2025-03-21T09:57:59.084Z'
+                    accounts:
+                    - scheme_name: IBAN
+                      identification: SA5345LVG2X0SI98L2TYOATQ
+                      name: Buford Torp CURRENT Account
+                      secondary_identification: null
+                    - scheme_name: NATIONAL_ID
+                      identification: '1372602407'
+                      name: null
+                      secondary_identification: null
+                    - scheme_name: IBAN
+                      identification: SA4330PH5L6EXIY9LNH1HD7Y
+                      name: Buford Torp SAVINGS Account
+                      secondary_identification: null
+                    - scheme_name: NATIONAL_ID
+                      identification: '1372602407'
+                      name: null
+                      secondary_identification: null
+                  status: ACTIVE
+                  updated_at: '2025-03-20T10:58:38.399276Z'
+                - id: bfe68209-e8e6-43e1-9831-8d60c477595d
+                  customer_id: f96d8945-4ef0-4b7f-8569-107ec943d891
+                  bank_identifier: LEA2_SAMAOB_SAU
+                  permissions:
+                    identity: true
+                    accounts: true
+                    balance: true
+                    transactions: true
+                    identities: true
+                    scheduled_payments: true
+                    standing_orders: true
+                    direct_debits: true
+                    beneficiaries: true
+                  bank_type: RETAIL
+                  created_at: '2025-03-07T11:43:16.269566Z'
+                  consents:
+                  - id: 4631f555-4f18-45d7-aa65-5908a509e1c1
+                    bank_consent_id: '81469'
+                    bank_identifier: null
+                    consent_type: null
+                    consent_status: ACTIVE
+                    standard_consent_status: null
+                    permissions:
+                      identity: true
+                      accounts: true
+                      balance: true
+                      transactions: true
+                      identities: true
+                      scheduled_payments: true
+                      standing_orders: true
+                      direct_debits: true
+                      beneficiaries: true
+                    creation_date_time: '2025-03-07T11:42:58.913517Z'
+                    status_update_date_time: '2025-03-07T11:42:58.913517Z'
+                    expiration_date_time: '2026-03-07T11:42:58.631Z'
+                    transaction_from_date_time: null
+                    transaction_to_date_time: null
+                    accounts:
+                    - scheme_name: IBAN
+                      identification: SA5345LVG2X0SI98L2TYOATQ
+                      name: Buford Torp CURRENT Account
+                      secondary_identification: null
+                    - scheme_name: NATIONAL_ID
+                      identification: '1372602407'
+                      name: null
+                      secondary_identification: null
+                  status: ACTIVE
+                  updated_at: '2025-03-07T11:43:16.269566Z'
+                - id: 1306c67a-2422-4185-a895-cce5a0a8d2fc
+                  customer_id: 57aa2a53-a827-4a2f-b3be-86ddcf3aa4bc
+                  bank_identifier: LEA1_SAMAOB_SAU
+                  permissions:
+                    identity: true
+                    accounts: true
+                    balance: true
+                    transactions: true
+                    identities: true
+                    scheduled_payments: true
+                    standing_orders: true
+                    direct_debits: true
+                    beneficiaries: true
+                  bank_type: RETAIL
+                  created_at: '2025-02-27T05:24:43.237577Z'
+                  consents:
+                  - id: 21d8cbfb-c886-4b1e-b04a-4f3b35ee492f
+                    bank_consent_id: '79891'
+                    bank_identifier: null
+                    consent_type: null
+                    consent_status: ACTIVE
+                    standard_consent_status: null
+                    permissions:
+                      identity: true
+                      accounts: true
+                      balance: true
+                      transactions: true
+                      identities: true
+                      scheduled_payments: true
+                      standing_orders: true
+                      direct_debits: true
+                      beneficiaries: true
+                    creation_date_time: '2025-02-27T05:24:18.485641Z'
+                    status_update_date_time: '2025-02-27T05:24:18.485641Z'
+                    expiration_date_time: '2026-02-27T05:24:18.183Z'
+                    transaction_from_date_time: null
+                    transaction_to_date_time: null
+                    accounts:
+                    - scheme_name: IBAN
+                      identification: SA5345LVG2X0SI98L2TYOATQ
+                      name: Buford Torp CURRENT Account
+                      secondary_identification: null
+                    - scheme_name: NATIONAL_ID
+                      identification: '1372602407'
+                      name: null
+                      secondary_identification: null
+                  status: ACTIVE
+                  updated_at: '2025-02-27T05:24:43.237577Z'
+                page:
+                  number: 0
+                  size: 100
+                  total_elements: 3
+                  total_pages: 1
+          headers: {}
+      security:
+      - bearer: []
   /customers/v1/{customer_id}/entities:
     get:
-      summary: Get Entities for Customer
+      summary: Get Entities
       deprecated: false
-      description: 'An Entity is generated whenever a Customer connects a new bank using the `.connect()` method in the LinkSDK with _any_ data related permissions. '
-      operationId: getCustomerEntities
+      description: ''
+      operationId: getEntities
       tags:
       - Entities
       parameters:
@@ -28,52 +228,26 @@ paths:
         in: path
         description: ''
         required: true
+        example: beb7697d-d0f2-4ec7-b169-af3700822235
         schema:
           type: string
       responses:
         '200':
-          description: ''
+          description: OK
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Entity'
-              example:
-              - id: efbad0dd-641a-ef83-ef7e-c90ca172759b
-                customer_id: 6bf8f7ae-e0f5-dae4-9519-de82fbc9ee42
-                bank_identifier: MOCK_UAE
-                permissions:
-                  identity: true
-                  accounts: true
-                  balance: true
-                  transactions: false
-                bank_type: RETAIL
-              - id: 51161c8b-a6c3-6d35-5c89-fa4e03f87390
-                customer_id: 8c7af590-ac88-f41b-8b59-067ab3a12349
-                bank_identifier: MOCK_UAE
-                permissions:
-                  identity: false
-                  accounts: false
-                  balance: true
-                  transactions: true
-                bank_type: CORPORATE
+                  $ref: '#/components/schemas/EntityResponse'
           headers: {}
       security:
       - bearer: []
-    servers:
-    - url: https://sandbox.leantech.me
-      description: Sandbox
-    - url: https://api2.leantech.me
-      description: Production / Pre-live
   /customers/v1/{customer_id}/entities/{entity_id}:
     get:
       summary: Get Entity by ID
       deprecated: false
-      description: 'Returns a single Entity.
-
-
-        An Entity is generated whenever a Customer connects a new bank using the `.connect()` method in the LinkSDK with _any_ data related permissions. '
+      description: ''
       operationId: getEntityById
       tags:
       - Entities
@@ -82,38 +256,30 @@ paths:
         in: path
         description: ''
         required: true
+        example: beb7697d-d0f2-4ec7-b169-af3700822235
         schema:
           type: string
       - name: entity_id
         in: path
         description: ''
         required: true
+        example: 9aeb067a-9c1a-3631-a6f3-e912c6f4354b
         schema:
           type: string
       responses:
         '200':
-          description: ''
+          description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Entity'
-              example:
-                id: 8d56a41f-7045-7312-a620-abe78414a143
-                customer_id: 3c70d3ed-d761-f231-5fd1-2bdeef42e46e
-                bank_identifier: MOCK_UAE
-                permissions:
-                  identity: true
-                  accounts: true
-                  balance: false
-                  transactions: true
-                bank_type: RETAIL
+                $ref: '#/components/schemas/EntityResponse'
           headers: {}
       security:
       - bearer: []
     delete:
       summary: Delete Entity
       deprecated: false
-      description: Marks the entity as deleted. It can be recreated later by intiating a new .connect() flow from the LinkSDK.
+      description: Marks the entity as deleted and revokes all permissions. It can be recreated later by intiating a new `.connect()` flow from the `LinkSDK`
       operationId: deleteEntity
       tags:
       - Entities
@@ -122,30 +288,34 @@ paths:
         in: path
         description: ''
         required: true
+        example: ''
         schema:
           type: string
       - name: entity_id
         in: path
         description: ''
         required: true
+        example: ''
         schema:
+          type: string
+      - name: reason
+        in: query
+        description: ''
+        required: true
+        schema:
+          enum:
+          - USER_REQUESTED
           type: string
       requestBody:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                reason:
-                  type: string
-                  enum:
-                  - USER_REQUESTED
-                  description: Please always pass in the value USER_REQUESTED.
-              required:
-              - reason
+              $ref: '#/components/schemas/EntityDeleteRequest'
+            example:
+              reason: USER_REQUESTED
       responses:
         '200':
-          description: ''
+          description: OK
           content:
             application/json:
               schema:
@@ -154,101 +324,6 @@ paths:
           headers: {}
       security:
       - bearer: []
-    servers:
-    - url: https://sandbox.leantech.me
-      description: Sandbox
-    - url: https://api2.leantech.me
-      description: Production / Pre-live
-  /customers/v1/entities:
-    get:
-      operationId: listEntities
-      summary: Retrieve all entities for a given time range
-      description: 'Retrieves a list of entities created for a specific application within the provided time range.
-
-        The entities are paginated, and the query parameters allow filtering by start and end dates.
-
-        '
-      tags:
-      - Entities
-      parameters:
-      - $ref: '#/components/parameters/PageNumberParameter'
-      - $ref: '#/components/parameters/PageSizeParameter'
-      - name: start_date
-        description: The start date must be in the past or present.
-        in: query
-        required: true
-        x-field-extra-annotation: '@jakarta.validation.constraints.PastOrPresent'
-        schema:
-          type: string
-          format: date
-          example: '2025-03-01'
-      - name: end_date
-        description: The end date must be after the start date and in the past or present.
-        in: query
-        required: true
-        x-field-extra-annotation: '@jakarta.validation.constraints.PastOrPresent'
-        schema:
-          type: string
-          format: date
-          example: '2025-03-31'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EntityListResponse'
-              examples:
-                '1':
-                  summary: Success
-                  value:
-                    data:
-                    - id: efbad0dd-641a-ef83-ef7e-c90ca172759b
-                      customer_id: 6bf8f7ae-e0f5-dae4-9519-de82fbc9ee42
-                      bank_identifier: MOCK_UAE
-                      permissions:
-                        identity: true
-                        accounts: true
-                        balance: true
-                        transactions: false
-                        identities: false
-                        scheduled_payments: false
-                        standing_orders: false
-                        direct_debits: false
-                        beneficiaries: false
-                      bank_type: RETAIL
-                      status: ACTIVE
-                      created_at: '2025-02-25 11:40:31.981'
-                      updated_at: '2025-02-27 11:40:31.981'
-                      consents: []
-                    - id: 51161c8b-a6c3-6d35-5c89-fa4e03f87390
-                      customer_id: 8c7af590-ac88-f41b-8b59-067ab3a12349
-                      bank_identifier: MOCK_UAE
-                      permissions:
-                        identity: false
-                        accounts: false
-                        balance: true
-                        transactions: true
-                        identities: false
-                        scheduled_payments: false
-                        standing_orders: false
-                        direct_debits: false
-                        beneficiaries: false
-                      bank_type: SME
-                      status: ACTIVE
-                      created_at: '2025-02-25 11:40:31.981'
-                      updated_at: '2025-02-28 11:40:31.981'
-                      consents: []
-                    page:
-                      number: 0
-                      size: 2
-                      total_elements: 2
-                      total_pages: 1
-    servers:
-    - url: https://sandbox.leantech.me
-      description: Sandbox
-    - url: https://api2.leantech.me
-      description: Production
   /customers/v1/{customer_id}/entities/{entity_id}/consent/{consent_id}:
     delete:
       summary: Delete Consent
@@ -298,373 +373,43 @@ paths:
           headers: {}
       security:
       - bearer: []
-    servers:
-    - url: https://sandbox.sa.leantech.me
-      description: Sandbox
-    - url: https://api2.sa.leantech.me
-      description: Production / Pre-Live
 components:
   schemas:
-    Entity:
+    EntityDeleteRequest:
+      title: EntityDeleteRequest
+      description: ''
+      required:
+      - reason
       type: object
       properties:
-        id:
+        reason:
+          description: Please always pass in the value `USER_REQUESTED`.
           type: string
-          description: The `entity_id`
-          format: uuid
-        customer_id:
-          type: string
-          description: Identifies which Customer owns the connection
-          format: uuid
-        bank_identifier:
-          type: string
-          description: Identifies the bank which has been connected
-        permissions:
-          type: object
-          properties:
-            identity:
-              type: boolean
-              description: Indicates access to read identity data
-            accounts:
-              type: boolean
-              description: Indicates access to read accounts data
-            balance:
-              type: boolean
-              description: Indicates access to read balance data
-            transactions:
-              type: boolean
-              description: Indicates access to read transactions data
-          required:
-          - identity
-          - accounts
-          - balance
-          - transactions
-          description: Indicates which permissions have been granted by the user, this corresponds with the Data API calls you can make using the entity.
-        bank_type:
-          type: string
-          enum:
-          - RETAIL
-          - CORPORATE
-          description: 'Specifies whether the Entity is a Retail or Corporate owned account. '
-      required:
-      - id
-      - customer_id
-      - bank_identifier
-      - permissions
-      - bank_type
-    EntityListResponse:
+          examples:
+          - USER_REQUESTED
+      examples:
+      - reason: USER_REQUESTED
+    Page:
       type: object
-      required:
-      - data
-      - page
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/EntityResponse'
-        page:
-          $ref: '#/components/schemas/PageMetadata'
-    PageMetadata:
-      required:
-      - number
-      - size
-      - total_elements
-      - total_pages
-      type: object
-      description: Metadata about the current page of results
       properties:
         number:
-          type: integer
           format: int32
-          description: The current page being returned by the API
+          description: The page number of the current response.
+          type: integer
         size:
-          type: integer
           format: int32
-          description: The page size requested
+          description: The number of objects in the response.
+          type: integer
         total_elements:
-          type: integer
-          format: int64
-          description: The total number of elements in all pages
-        total_pages:
-          type: integer
           format: int32
-          description: The total number of pages retrievable
-        sort:
-          type: array
-          items:
-            type: string
-          description: Sort parameters applied to the results
-    EntityResponse:
-      allOf:
-      - $ref: '#/components/schemas/Entity_2'
-      - type: object
-        required:
-        - status
-        - updated_at
-        properties:
-          status:
-            type: string
-            enum:
-            - ACTIVE
-            - DELETED
-            - DISABLED
-            - REMOVED
-          updated_at:
-            type: string
-            format: date-time
-    Entity_2:
-      type: object
-      required:
-      - id
-      - customer_id
-      - bank_identifier
-      - permissions
-      - bank_type
-      - created_at
-      - consents
-      properties:
-        id:
-          type: string
-          description: The `entity_id`
-          format: uuid
-        customer_id:
-          type: string
-          description: Identifies which Customer owns the connection
-          format: uuid
-        bank_identifier:
-          type: string
-          description: Identifies the bank which has been connected
-        permissions:
-          $ref: '#/components/schemas/Permissions'
-        bank_type:
-          type: string
-          enum:
-          - RETAIL
-          - SME
-          description: 'Specifies whether the Entity is a Retail or Corporate owned account. '
-        created_at:
-          type: string
-          format: date-time
-          description: When the entity was created
-        consents:
-          x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY)'
-          type: array
-          items:
-            $ref: '#/components/schemas/EntityConsent'
-    ConsentTypeEnum:
-      description: Type of the consent.
-      type: string
-      enum:
-      - ACCOUNT_ACCESS
-      - MULTI_PAYMENTS
-    Permissions:
-      type: object
-      required:
-      - identity
-      - accounts
-      - balance
-      - transactions
-      - identities
-      - scheduled_payments
-      - standing_orders
-      - direct_debits
-      - beneficiaries
-      properties:
-        identity:
-          type: boolean
-          description: Indicates access to read identity data
-        accounts:
-          type: boolean
-          description: Indicates access to read accounts data
-        balance:
-          type: boolean
-          description: Indicates access to read balance data
-        transactions:
-          type: boolean
-          description: Indicates access to read transactions data
-        identities:
-          type: boolean
-          description: Indicates access to read identities data
-        scheduled_payments:
-          type: boolean
-          description: Indicates access to read scheduled payments data
-        standing_orders:
-          type: boolean
-          description: Indicates access to read standing orders data
-        direct_debits:
-          type: boolean
-          description: Indicates access to read direct debits data
-        beneficiaries:
-          type: boolean
-          description: Indicates access to read beneficiaries data
-      description: Indicates which permissions have been granted by the user, this corresponds with the Data API calls you can make using the entity.
-    DataAccountIdentifier:
-      type: object
-      required:
-      - scheme_name
-      - identification
-      properties:
-        scheme_name:
-          x-lean-docs-discrepancy: identification_type enum
-          description: 'Indicates the type of identification being provided.
-
-
-            | Value | Description |
-
-            |-|-|
-
-            | IBAN | The `identification` field is returning the IBAN for the account. |
-
-            | MASKED_PAN | The `identification` field is returning a masked Primary Account Number (PAN) for a card attached to the account. |'
-          type: string
-        identification:
-          x-field-extra-annotation: '@lombok.ToString.Exclude'
-          type: string
-          description: The account identification value
-        name:
-          x-field-extra-annotation: '@lombok.ToString.Exclude'
-          type:
-          - string
-          - 'null'
-          description: The name associated with the account
-        secondary_identification:
-          x-field-extra-annotation: '@lombok.ToString.Exclude'
-          type:
-          - string
-          - 'null'
-          description: Secondary identification for the account
-    EntityConsent:
-      type: object
-      required:
-      - id
-      properties:
-        id:
-          description: Lean internal id for the consent.
-          type: string
-          format: uuid
-        bank_consent_id:
-          description: Id provided by the bank for the consent.
-          type: string
-        bank_identifier:
-          type: string
-          description: Identifies the bank which has been connected
-        consent_type:
-          $ref: '#/components/schemas/ConsentTypeEnum'
-        consent_status:
-          $ref: '#/components/schemas/ConsentStatusEnum'
-        standard_consent_status:
-          $ref: '#/components/schemas/StandardConsentStatusEnum'
-        permissions:
-          $ref: '#/components/schemas/Permissions'
-        creation_date_time:
-          description: When the consent was created.
-          type: string
-          format: date-time
-        status_update_date_time:
-          description: Last update for the consent.
-          type:
-          - string
-          - 'null'
-          format: date-time
-        expiration_date_time:
-          description: When the consent is or will no longer be valid.
-          type:
-          - string
-          - 'null'
-          format: date-time
-        transaction_from_date_time:
-          description: For consents that include a `permission` for `transactions`, the first date of the transactions you can request for.
-          type:
-          - string
-          - 'null'
-          format: date-time
-        transaction_to_date_time:
-          description: For consents that include a `permission` for `transactions`, the last date of the transactions you can request for.
-          type:
-          - string
-          - 'null'
-          format: date-time
-        accounts:
-          description: Accounts the end user has consented to share.
-          type: array
-          items:
-            $ref: '#/components/schemas/DataAccountIdentifier'
-    StandardConsentStatusEnum:
-      description: Standard Status of the consent.
-      type: string
-      enum:
-      - AUTHORISED
-      - REVOKED
-      - REJECTED
-      - EXPIRED
-      - CONSUMED
-      - SUSPENDED
-    ConsentStatusEnum:
-      description: Status of the consent.
-      type: string
-      enum:
-      - ACTIVE
-      - REVOKED
-      - REJECTED
-    EntityResponse_2:
-      allOf:
-      - $ref: '#/components/schemas/Entity_3'
-      - type: object
-        required:
-        - status
-        - updated_at
-        properties:
-          status:
-            type: string
-            enum:
-            - ACTIVE
-            - DELETED
-            - DISABLED
-            - REMOVED
-          updated_at:
-            type: string
-            format: date-time
-    Entity_3:
-      type: object
-      properties:
-        id:
-          description: The `entity_id`
-          type: string
-          format: uuid
-        customer_id:
-          description: Identifies which Customer owns the connection
-          type: string
-          format: uuid
-        bank_identifier:
-          description: Identifies the bank which has been connected
-          type: string
-        permissions:
-          $ref: '#/components/schemas/Permissions'
-        bank_type:
-          description: 'Specifies whether the Entity is a Retail or Corporate owned account. '
-          type: string
-          enum:
-          - RETAIL
-          - SME
-        created_at:
-          description: When the entity was created
-          type: string
-          format: date-time
-        consents:
-          type: array
-          items:
-            $ref: '#/components/schemas/EntityConsent'
-          x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY)'
-      required:
-      - id
-      - customer_id
-      - bank_identifier
-      - permissions
-      - bank_type
-      - created_at
-      - consents
-    EntityResponse_3:
-      title: EntityResponse
+          description: The total number of objects available.
+          type: integer
+        total_pages:
+          format: int32
+          description: The total number of pages to consume all of the elements.
+          type: integer
+    ListEntityResponse:
+      title: ''
       description: ''
       type: object
       properties:
@@ -678,7 +423,7 @@ components:
           description: The identifier signifies which bank the user's entity is linked with.
           type: string
         permissions:
-          $ref: '#/components/schemas/Permissions_2'
+          $ref: '#/components/schemas/Permissions'
           description: Indicates which permissions have been granted by the user, this corresponds with the Data API calls you can make using the entity.
         bank_type:
           description: The bank type of the connected entity
@@ -693,8 +438,45 @@ components:
           description: Record of all historical consents. Note that only 1 consent can be ACTIVE at the same time
           type: array
           items:
-            $ref: '#/components/schemas/EntityConsent_2'
-    Permissions_2:
+            $ref: '#/components/schemas/EntityConsent'
+        status:
+          type: string
+          description: Entity status
+        updated_at:
+          type: string
+          description: When the entity was last updated
+    EntityResponse:
+      title: EntityResponse
+      description: ''
+      type: object
+      properties:
+        id:
+          description: The unique entity identifier
+          type: string
+        customer_id:
+          description: The Customer object that owns the entity
+          type: string
+        bank_identifier:
+          description: The identifier signifies which bank the user's entity is linked with.
+          type: string
+        permissions:
+          $ref: '#/components/schemas/Permissions'
+          description: Indicates which permissions have been granted by the user, this corresponds with the Data API calls you can make using the entity.
+        bank_type:
+          description: The bank type of the connected entity
+          enum:
+          - RETAIL
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          description: When the entity was created
+        consents:
+          description: Record of all historical consents. Note that only 1 consent can be ACTIVE at the same time
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityConsent'
+    Permissions:
       title: PermissionsObject
       description: ''
       type: object
@@ -736,77 +518,36 @@ components:
         standing_orders: true
         direct_debits: true
         beneficiaries: true
-    ListEntityResponse:
-      title: ''
-      description: ''
+    AccountIdentifierWithSecondarySau:
       type: object
       properties:
-        id:
-          description: The unique entity identifier
-          type: string
-        customer_id:
-          description: The Customer object that owns the entity
-          type: string
-        bank_identifier:
-          description: The identifier signifies which bank the user's entity is linked with.
-          type: string
-        permissions:
-          $ref: '#/components/schemas/Permissions_2'
-          description: Indicates which permissions have been granted by the user, this corresponds with the Data API calls you can make using the entity.
-        bank_type:
-          description: The bank type of the connected entity
+        identification_type:
+          description: 'Indicates the type of identification being provided.
+
+
+            | Value | Description |
+
+            |-|-|
+
+            | IBAN | The `identification` field is returning the IBAN for the account. |
+
+            | MASKED_PAN | The `identification` field is returning a masked Primary Account Number (PAN) for a card attached to the account. |'
           enum:
-          - RETAIL
+          - IBAN
+          - MASKED_PAN
           type: string
-        created_at:
+        scheme_name:
           type: string
-          format: date-time
-          description: When the entity was created
-        consents:
-          description: Record of all historical consents. Note that only 1 consent can be ACTIVE at the same time
-          type: array
-          items:
-            $ref: '#/components/schemas/EntityConsent_2'
-        status:
+        identification:
+          description: Returns a value based on the `identification_type`.
           type: string
-          description: Entity status
-        updated_at:
+        name:
+          description: 'The account name is the name or names of the account owner(s) represented at an account level. Note: The account name is not the product name or the nickname of the account.'
           type: string
-          description: When the entity was last updated
-    Page:
-      type: object
-      properties:
-        number:
-          format: int32
-          description: The page number of the current response.
-          type: integer
-        size:
-          format: int32
-          description: The number of objects in the response.
-          type: integer
-        total_elements:
-          format: int32
-          description: The total number of objects available.
-          type: integer
-        total_pages:
-          format: int32
-          description: The total number of pages to consume all of the elements.
-          type: integer
-    EntityDeleteRequest:
-      title: EntityDeleteRequest
-      description: ''
-      required:
-      - reason
-      type: object
-      properties:
-        reason:
-          description: Please always pass in the value `USER_REQUESTED`.
+        secondary_identification:
+          description: Additional form of identification for the account
           type: string
-          examples:
-          - USER_REQUESTED
-      examples:
-      - reason: USER_REQUESTED
-    EntityConsent_2:
+    EntityConsent:
       type: object
       properties:
         id:
@@ -852,129 +593,14 @@ components:
           description: For consents that include a `permission` for `transactions`, the last date of the transactions you can request for.
           type: string
         permissions:
-          $ref: '#/components/schemas/Permissions_2'
+          $ref: '#/components/schemas/Permissions'
           description: List of permissions for this consent.
         accounts:
           description: Accounts the end user has consented to share.
           type: array
           items:
             $ref: '#/components/schemas/AccountIdentifierWithSecondarySau'
-    AccountIdentifierWithSecondarySau:
-      type: object
-      properties:
-        identification_type:
-          description: 'Indicates the type of identification being provided.
-
-
-            | Value | Description |
-
-            |-|-|
-
-            | IBAN | The `identification` field is returning the IBAN for the account. |
-
-            | MASKED_PAN | The `identification` field is returning a masked Primary Account Number (PAN) for a card attached to the account. |'
-          enum:
-          - IBAN
-          - MASKED_PAN
-          type: string
-        scheme_name:
-          type: string
-        identification:
-          description: Returns a value based on the `identification_type`.
-          type: string
-        name:
-          description: 'The account name is the name or names of the account owner(s) represented at an account level. Note: The account name is not the product name or the nickname of the account.'
-          type: string
-        secondary_identification:
-          description: Additional form of identification for the account
-          type: string
-    EntityResponse_4:
-      allOf:
-      - $ref: '#/components/schemas/Entity_4'
-      - type: object
-        required:
-        - status
-        - updated_at
-        properties:
-          status:
-            type: string
-            enum:
-            - ACTIVE
-            - DELETED
-            - DISABLED
-            - REMOVED
-          updated_at:
-            type: string
-            format: date-time
-    Entity_4:
-      type: object
-      required:
-      - id
-      - customer_id
-      - bank_identifier
-      - permissions
-      - bank_type
-      - created_at
-      - consents
-      properties:
-        id:
-          type: string
-          description: The `entity_id`
-          format: uuid
-        customer_id:
-          type: string
-          description: Identifies which Customer owns the connection
-          format: uuid
-        bank_identifier:
-          type: string
-          description: Identifies the bank which has been connected
-        permissions:
-          $ref: '#/components/schemas/Permissions'
-        bank_type:
-          type: string
-          enum:
-          - RETAIL
-          - SME
-          description: 'Specifies whether the Entity is a Retail or Corporate owned account. '
-        created_at:
-          type: string
-          format: date-time
-          description: When the entity was created
-        consents:
-          x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY)'
-          type: array
-          items:
-            $ref: '#/components/schemas/EntityConsent'
-  parameters:
-    PageSizeParameter:
-      name: page_size
-      description: Size of a single page of results to return
-      in: query
-      required: false
-      schema:
-        maximum: 100
-        minimum: 1
-        type: integer
-        default: 100
-    PageNumberParameter:
-      name: page_number
-      in: query
-      description: Indicator of which page of results to return, starts at 0
-      required: false
-      schema:
-        minimum: 0
-        type: integer
-        default: 0
   securitySchemes:
     bearer:
       type: http
       scheme: bearer
-    bearerAuth:
-      type: http
-      scheme: bearer
-x-refined-from:
-- lean-technologies-bank-data-openapi.yml
-- lean-technologies-customers-openapi.yml
-- lean-technologies-entities-openapi.yml
-- lean-technologies-ksa-bank-data-openapi.yml
-- lean-technologies-ksa-customers-openapi.yml

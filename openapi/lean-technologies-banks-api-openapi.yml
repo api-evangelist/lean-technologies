@@ -115,22 +115,6 @@ paths:
       description: Production / Pre-Live
 components:
   schemas:
-    TransferLimit:
-      type: object
-      properties:
-        currency:
-          type: string
-          description: The ISO 4217 currency code for the currency.
-        min:
-          type: integer
-          description: The minimum supported transfer amount.
-        max:
-          type: integer
-          description: The maximum supported transfer amount.
-      required:
-      - currency
-      - min
-      - max
     Bank:
       type: object
       properties:
@@ -252,6 +236,22 @@ components:
       - international_destinations
       - availability
       - arabic_name
+    TransferLimit:
+      type: object
+      properties:
+        currency:
+          type: string
+          description: The ISO 4217 currency code for the currency.
+        min:
+          type: integer
+          description: The minimum supported transfer amount.
+        max:
+          type: integer
+          description: The maximum supported transfer amount.
+      required:
+      - currency
+      - min
+      - max
     BankResponse:
       title: BankResponse
       description: ''

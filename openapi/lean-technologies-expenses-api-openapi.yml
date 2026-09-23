@@ -762,99 +762,6 @@ paths:
       - bearerAuth: []
 components:
   schemas:
-    ExpensesTransaction:
-      type: object
-      properties:
-        account_id:
-          description: The account ID for the transaction
-          type: string
-          format: uuid
-        transaction_id:
-          description: The unique transaction identifier
-          type: string
-        transaction_information:
-          description: Additional information about the transaction
-          type:
-          - string
-          - 'null'
-        booking_date_time:
-          description: The date and time when the transaction was booked
-          type: string
-          format: date-time
-        amount:
-          description: The transaction amount
-          type: number
-        category:
-          description: The expense category
-          type: string
-      required:
-      - account_id
-      - transaction_id
-      - booking_date_time
-      - amount
-      - category
-    ExpensesTotal:
-      type: object
-      properties:
-        count:
-          description: Number of expenses transactions within the time period.
-          type: integer
-          format: int32
-        amount:
-          description: Total expenses since start_date.
-          type: number
-          x-java-type: java.math.BigDecimal
-        first_date_time:
-          description: UTC datetime of first expense transaction since start_date.
-          type: string
-          format: date-time
-        last_date_time:
-          description: UTC datetime of last expense transaction.
-          type: string
-          format: date-time
-        average_monthly_count:
-          description: Average number of expenses transactions per month since start_date.
-          type: number
-        average_monthly_amount:
-          description: Average expenses amount per month since start_date.
-          type: number
-        minimum_monthly_amount:
-          description: Minimum expenses amount in a month since start_date and month when this happened.
-          allOf:
-          - $ref: '#/components/schemas/ExpensesMonthlyAmount'
-        maximum_monthly_amount:
-          description: Maximum expenses amount in a month since start_date and month when this happened.
-          allOf:
-          - $ref: '#/components/schemas/ExpensesMonthlyAmount'
-        breakdown:
-          description: Breakdown of expenses by category.
-          type: array
-          items:
-            $ref: '#/components/schemas/Breakdown'
-      required:
-      - amount
-      - breakdown
-    CategoryMonthlyBreakdownElement:
-      type: object
-      properties:
-        category:
-          description: The category of the transaction.
-          type: string
-        amount:
-          description: Total expenses for the category.
-          type: number
-          x-java-type: java.math.BigDecimal
-        count:
-          description: Number of expenses transactions for the category.
-          type: integer
-          format: int32
-        fraction_of_total_expenses:
-          description: Fraction of the total expenses that this category represents.
-          type: number
-          x-java-type: java.math.BigDecimal
-      required:
-      - category
-      - amount
     InsightsResultType:
       description: type of insight
       type: string
@@ -872,6 +779,67 @@ components:
       - credit-assessments
       - account-controls
       - credit-obligations
+    MonthlyTotalExpenses:
+      type: object
+      properties:
+        month:
+          description: 'Number of month within the year (e.g.: January is represented as 1 and December is represented as 12)'
+          type: integer
+          format: int32
+        year:
+          description: Year.
+          type: integer
+          format: int32
+        amount:
+          description: Total expenses for the month.
+          type: number
+          x-java-type: java.math.BigDecimal
+        count:
+          description: Number of expense transactions in the month.
+          type: integer
+          format: int32
+        is_month_complete:
+          description: Determines if Lean retrieved the data for all days for the month. This will always be `true`, except for the first and last month retrieved.
+          type: boolean
+        breakdown:
+          description: Breakdown of expenses by category.
+          type: array
+          items:
+            $ref: '#/components/schemas/Breakdown'
+      required:
+      - amount
+      - breakdown
+    Expenses:
+      type: object
+      properties:
+        currency:
+          description: The 3 Letter ISO code denominating the currency that the salary is provided in. This will be local currency (AED in UAE).
+          type: string
+        total:
+          description: Insights on the expenses since start_date.
+          allOf:
+          - $ref: '#/components/schemas/ExpensesTotal'
+        monthly_totals:
+          description: Total expenses for all months from start_date until today.
+          type: array
+          items:
+            $ref: '#/components/schemas/MonthlyTotalExpenses'
+        transactions:
+          description: List of expense transactions (internal use only, not serialized in API response)
+          type: array
+          items:
+            $ref: '#/components/schemas/ExpensesTransaction'
+          x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonIgnore'
+      additionalProperties: false
+      required:
+      - currency
+      - total
+      - monthly_totals
+      - transactions
+    BreakdownElement:
+      oneOf:
+      - $ref: '#/components/schemas/CategoryMonthlyBreakdownElement'
+      - $ref: '#/components/schemas/CategoryTotalBreakdownElement'
     CategoryTotalBreakdownElement:
       type: object
       properties:
@@ -922,38 +890,118 @@ components:
       - category
       - amount
       - average_monthly_count
-    Expenses:
+    CategoryMonthlyBreakdownElement:
       type: object
       properties:
-        currency:
-          description: The 3 Letter ISO code denominating the currency that the salary is provided in. This will be local currency (AED in UAE).
+        category:
+          description: The category of the transaction.
           type: string
-        total:
-          description: Insights on the expenses since start_date.
-          allOf:
-          - $ref: '#/components/schemas/ExpensesTotal'
-        monthly_totals:
-          description: Total expenses for all months from start_date until today.
-          type: array
-          items:
-            $ref: '#/components/schemas/MonthlyTotalExpenses'
-        transactions:
-          description: List of expense transactions (internal use only, not serialized in API response)
-          type: array
-          items:
-            $ref: '#/components/schemas/ExpensesTransaction'
-          x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonIgnore'
-      additionalProperties: false
+        amount:
+          description: Total expenses for the category.
+          type: number
+          x-java-type: java.math.BigDecimal
+        count:
+          description: Number of expenses transactions for the category.
+          type: integer
+          format: int32
+        fraction_of_total_expenses:
+          description: Fraction of the total expenses that this category represents.
+          type: number
+          x-java-type: java.math.BigDecimal
       required:
-      - currency
-      - total
-      - monthly_totals
-      - transactions
+      - category
+      - amount
     ExpenseType:
       type: string
       enum:
       - CARD
       - ALL
+    Breakdown:
+      type: object
+      properties:
+        by:
+          description: Criteria by which we are breaking down the expenses.
+          type: string
+        breakdowns:
+          description: List of breakdown elements.
+          type: array
+          items:
+            $ref: '#/components/schemas/BreakdownElement'
+      required:
+      - by
+      - breakdowns
+    ExpensesTotal:
+      type: object
+      properties:
+        count:
+          description: Number of expenses transactions within the time period.
+          type: integer
+          format: int32
+        amount:
+          description: Total expenses since start_date.
+          type: number
+          x-java-type: java.math.BigDecimal
+        first_date_time:
+          description: UTC datetime of first expense transaction since start_date.
+          type: string
+          format: date-time
+        last_date_time:
+          description: UTC datetime of last expense transaction.
+          type: string
+          format: date-time
+        average_monthly_count:
+          description: Average number of expenses transactions per month since start_date.
+          type: number
+        average_monthly_amount:
+          description: Average expenses amount per month since start_date.
+          type: number
+        minimum_monthly_amount:
+          description: Minimum expenses amount in a month since start_date and month when this happened.
+          allOf:
+          - $ref: '#/components/schemas/ExpensesMonthlyAmount'
+        maximum_monthly_amount:
+          description: Maximum expenses amount in a month since start_date and month when this happened.
+          allOf:
+          - $ref: '#/components/schemas/ExpensesMonthlyAmount'
+        breakdown:
+          description: Breakdown of expenses by category.
+          type: array
+          items:
+            $ref: '#/components/schemas/Breakdown'
+      required:
+      - amount
+      - breakdown
+    ExpensesTransaction:
+      type: object
+      properties:
+        account_id:
+          description: The account ID for the transaction
+          type: string
+          format: uuid
+        transaction_id:
+          description: The unique transaction identifier
+          type: string
+        transaction_information:
+          description: Additional information about the transaction
+          type:
+          - string
+          - 'null'
+        booking_date_time:
+          description: The date and time when the transaction was booked
+          type: string
+          format: date-time
+        amount:
+          description: The transaction amount
+          type: number
+        category:
+          description: The expense category
+          type: string
+      required:
+      - account_id
+      - transaction_id
+      - booking_date_time
+      - amount
+      - category
     ExpensesMonthlyAmount:
       type: object
       properties:
@@ -971,95 +1019,89 @@ components:
           x-java-type: java.math.BigDecimal
       required:
       - amount
-    BreakdownElement:
-      oneOf:
-      - $ref: '#/components/schemas/CategoryMonthlyBreakdownElement'
-      - $ref: '#/components/schemas/CategoryTotalBreakdownElement'
-    MonthlyTotalExpenses:
+    ExpensesData:
+      type: object
+      properties:
+        currency:
+          description: The 3 Letter ISO code denominating the currency that the salary is provided in. This will be local currency (SAR in KSA).
+          type: string
+        total:
+          $ref: '#/components/schemas/ExpensesTotal_2'
+          description: Insights on the expenses since start_date.
+        monthly_totals:
+          description: Total expenses for all months from start_date until today.
+          type: array
+          items:
+            $ref: '#/components/schemas/ExpensesMonthlyTotals'
+    ExpensesMonthlyBreakdownCategory:
+      type: object
+      properties:
+        by:
+          description: Criteria by which we are breakdowning down the expenses.
+          enum:
+          - category
+          type: string
+        breakdowns:
+          description: Breakdown of the expenses by category.
+          type: array
+          items:
+            $ref: '#/components/schemas/ExpensesMonthlyBreakdownsCategory'
+    ExpensesTotalBreakdownCategory:
+      type: object
+      properties:
+        by:
+          description: Criteria by which we are breakdowning down the expenses.
+          enum:
+          - category
+          type: string
+        breakdowns:
+          description: Breakdown of the expenses by category.
+          type: array
+          items:
+            $ref: '#/components/schemas/ExpensesMonthlyBreakdownsCategory'
+    ExpensesMonthlyBreakdownsCategory:
+      type: object
+      properties:
+        category:
+          description: The category of the transaction.
+          enum:
+          - BANK_FEES_AND_CHARGES
+          - CHARITY
+          - EDUCATION
+          - ENTERTAINMENT
+          - GOVERNMENT
+          - GROCERIES
+          - HEALTH_AND_WELLBEING
+          - LOANS
+          - RENT_AND_SERVICES
+          - RESTAURANTS_DINING
+          - RETAIL
+          - TRANSFER
+          - TRANSPORT
+          - TRAVEL
+          - OTHER
+          type: string
+        count:
+          description: Number of expenses transactions  for the month.
+          type: integer
+        amount:
+          description: Total expenses  for the month.
+          type: number
+        fraction_of_total_expenses:
+          description: Fraction of the total expenses that this category represents for the month.
+          type: number
+    ExpensesMonthlyAggregate:
       type: object
       properties:
         month:
           description: 'Number of month within the year (e.g.: January is represented as 1 and December is represented as 12)'
           type: integer
-          format: int32
         year:
-          description: Year.
-          type: integer
-          format: int32
-        amount:
-          description: Total expenses for the month.
-          type: number
-          x-java-type: java.math.BigDecimal
-        count:
-          description: Number of expense transactions in the month.
-          type: integer
-          format: int32
-        is_month_complete:
-          description: Determines if Lean retrieved the data for all days for the month. This will always be `true`, except for the first and last month retrieved.
-          type: boolean
-        breakdown:
-          description: Breakdown of expenses by category.
-          type: array
-          items:
-            $ref: '#/components/schemas/Breakdown'
-      required:
-      - amount
-      - breakdown
-    Breakdown:
-      type: object
-      properties:
-        by:
-          description: Criteria by which we are breaking down the expenses.
-          type: string
-        breakdowns:
-          description: List of breakdown elements.
-          type: array
-          items:
-            $ref: '#/components/schemas/BreakdownElement'
-      required:
-      - by
-      - breakdowns
-    ExpensesResponse:
-      allOf:
-      - type: object
-        properties:
-          insights:
-            $ref: '#/components/schemas/ExpensesData'
-      - $ref: '#/components/schemas/DataResponse'
-    ExpensesTotal_2:
-      type: object
-      properties:
-        count:
-          description: Number of expenses transactions since start_date.
+          description: Year
           type: integer
         amount:
-          description: Total expenses since start_date.
+          description: Total expenses for the month
           type: number
-        first_date_time:
-          format: date-time
-          description: UTC datetime of first expense transaction since start_date.
-          type: string
-        last_date_time:
-          format: date-time
-          description: UTC datetime of last expense transaction.
-          type: string
-        average_monthly_count:
-          description: Average number of expenses transactions per month since start_date.
-          type: number
-        average_monthly_amount:
-          description: Average expenses amount per month since start_date.
-          type: number
-        minimum_monthly_amount:
-          $ref: '#/components/schemas/ExpensesMonthlyAggregate'
-          description: Minimum expenses amount in a month since start_date and month when this happened.
-        maximum_monthly_amount:
-          $ref: '#/components/schemas/ExpensesMonthlyAggregate'
-          description: Maximum expenses amount in a month since start_date and month when this happened.
-        breakdown:
-          description: Breakdown of expenses by category.
-          type: array
-          items:
-            $ref: '#/components/schemas/ExpensesTotalBreakdownCategory'
     ExpensesMonthlyTotals:
       type: object
       properties:
@@ -1083,55 +1125,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ExpensesMonthlyBreakdownCategory'
-    StatusDetailObject:
-      description: Status Details
-      type: object
-      properties:
-        granular_status_code:
-          description: Detailed error code
-          type: string
-        status_additional_info:
-          description: Further detail on the encountered error
-          type: string
-    ExpensesMonthlyAggregate:
-      type: object
-      properties:
-        month:
-          description: 'Number of month within the year (e.g.: January is represented as 1 and December is represented as 12)'
-          type: integer
-        year:
-          description: Year
-          type: integer
-        amount:
-          description: Total expenses for the month
-          type: number
-    ExpensesTotalBreakdownCategory:
-      type: object
-      properties:
-        by:
-          description: Criteria by which we are breakdowning down the expenses.
-          enum:
-          - category
-          type: string
-        breakdowns:
-          description: Breakdown of the expenses by category.
-          type: array
-          items:
-            $ref: '#/components/schemas/ExpensesMonthlyBreakdownsCategory'
-    ExpensesData:
-      type: object
-      properties:
-        currency:
-          description: The 3 Letter ISO code denominating the currency that the salary is provided in. This will be local currency (SAR in KSA).
-          type: string
-        total:
-          $ref: '#/components/schemas/ExpensesTotal_2'
-          description: Insights on the expenses since start_date.
-        monthly_totals:
-          description: Total expenses for all months from start_date until today.
-          type: array
-          items:
-            $ref: '#/components/schemas/ExpensesMonthlyTotals'
     DataResponse:
       type: object
       properties:
@@ -1169,59 +1162,57 @@ components:
       - meta
       - timestamp
       - status_detail
-    ExpensesMonthlyBreakdownsCategory:
+    ExpensesResponse:
+      allOf:
+      - type: object
+        properties:
+          insights:
+            $ref: '#/components/schemas/ExpensesData'
+      - $ref: '#/components/schemas/DataResponse'
+    StatusDetailObject:
+      description: Status Details
       type: object
       properties:
-        category:
-          description: The category of the transaction.
-          enum:
-          - BANK_FEES_AND_CHARGES
-          - CHARITY
-          - EDUCATION
-          - ENTERTAINMENT
-          - GOVERNMENT
-          - GROCERIES
-          - HEALTH_AND_WELLBEING
-          - LOANS
-          - RENT_AND_SERVICES
-          - RESTAURANTS_DINING
-          - RETAIL
-          - TRANSFER
-          - TRANSPORT
-          - TRAVEL
-          - OTHER
+        granular_status_code:
+          description: Detailed error code
           type: string
+        status_additional_info:
+          description: Further detail on the encountered error
+          type: string
+    ExpensesTotal_2:
+      type: object
+      properties:
         count:
-          description: Number of expenses transactions  for the month.
+          description: Number of expenses transactions since start_date.
           type: integer
         amount:
-          description: Total expenses  for the month.
+          description: Total expenses since start_date.
           type: number
-        fraction_of_total_expenses:
-          description: Fraction of the total expenses that this category represents for the month.
-          type: number
-    ExpensesMonthlyBreakdownCategory:
-      type: object
-      properties:
-        by:
-          description: Criteria by which we are breakdowning down the expenses.
-          enum:
-          - category
+        first_date_time:
+          format: date-time
+          description: UTC datetime of first expense transaction since start_date.
           type: string
-        breakdowns:
-          description: Breakdown of the expenses by category.
+        last_date_time:
+          format: date-time
+          description: UTC datetime of last expense transaction.
+          type: string
+        average_monthly_count:
+          description: Average number of expenses transactions per month since start_date.
+          type: number
+        average_monthly_amount:
+          description: Average expenses amount per month since start_date.
+          type: number
+        minimum_monthly_amount:
+          $ref: '#/components/schemas/ExpensesMonthlyAggregate'
+          description: Minimum expenses amount in a month since start_date and month when this happened.
+        maximum_monthly_amount:
+          $ref: '#/components/schemas/ExpensesMonthlyAggregate'
+          description: Maximum expenses amount in a month since start_date and month when this happened.
+        breakdown:
+          description: Breakdown of expenses by category.
           type: array
           items:
-            $ref: '#/components/schemas/ExpensesMonthlyBreakdownsCategory'
-    ResultStatus:
-      description: The status of the request
-      type: string
-      enum:
-      - OK
-      - PENDING
-      - FAILED
-      - CONSENT_EXPIRED
-      - PROCESSING_STARTED
+            $ref: '#/components/schemas/ExpensesTotalBreakdownCategory'
     Expenses_2:
       type: object
       properties:
@@ -1249,6 +1240,15 @@ components:
       - total
       - monthly_totals
       - transactions
+    ResultStatus:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - PROCESSING_STARTED
     Result:
       type: object
       properties:
@@ -1300,15 +1300,6 @@ components:
           - string
           - 'null'
   examples:
-    InvalidParametersExample:
-      summary: Invalid parameters error response
-      description: Response when required parameters are missing or invalid
-      value:
-        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
-        timestamp: '2025-09-10T21:05:59.919233187Z'
-        status: INVALID_PARAMETERS
-        message: 'The request is badly formatted or a parameter of the wrong type has been provided, field: entity_id, value: e34d8e49-9af2-4252-a53e-bd2df855134.'
-        metadata: null
     UnknownEntityExample:
       summary: Entity not found error response
       description: Response when the provided entity_id is not found
@@ -1339,6 +1330,15 @@ components:
         timestamp: '2025-08-07T13:07:38.834977945Z'
         status: INTERNAL_SERVER_ERROR
         message: Something has gone wrong. If you continue to see this error, please get in touch with Lean.
+        metadata: null
+    InvalidParametersExample:
+      summary: Invalid parameters error response
+      description: Response when required parameters are missing or invalid
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-10T21:05:59.919233187Z'
+        status: INVALID_PARAMETERS
+        message: 'The request is badly formatted or a parameter of the wrong type has been provided, field: entity_id, value: e34d8e49-9af2-4252-a53e-bd2df855134.'
         metadata: null
   securitySchemes:
     bearerAuth:

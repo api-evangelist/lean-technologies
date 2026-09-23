@@ -131,22 +131,40 @@ paths:
       - bearer: []
 components:
   schemas:
-    ReportsCustomerIdentifier:
-      description: ''
-      required:
-      - type
-      - value
+    ReportsCustomersResponse:
       type: object
       properties:
-        type:
-          description: the type of the identifier for the end user
-          enum:
-          - NATIONAL_ID
-          - COMMERCIAL_REGISTRATION
-          - UNIFIED_NUMBER
+        customer_id:
+          description: The id that Lean assigns to the customer that you can use to identify the customer across the Lean platform.
           type: string
-        value:
-          description: the identifier for the end user
+        hyperlink:
+          description: URL that you can share with your customer so they can connect their bank account.
+          type: string
+    Report:
+      type: object
+      properties:
+        id:
+          description: ID of the report.
+          type: integer
+        timestamp:
+          format: date-time
+          description: Created date time.
+          type: string
+    ReportsCustomersRequest:
+      required:
+      - account_type
+      type: object
+      properties:
+        identifiers:
+          description: Identifiers for a customer. Note that if account_type=PERSONAL, you will need to provide NATIONAL_ID as the identifier; if account_type=BUSINESS, then you will need to provide both COMMERCIAL_REGISTRATION and UNIFIED_NUMBER as identifiers
+          type: array
+          items:
+            $ref: '#/components/schemas/ReportsCustomerIdentifier'
+        account_type:
+          description: 'Indicates whether the account to be connected is a personal consumer account or a business account. '
+          enum:
+          - PERSONAL
+          - BUSINESS
           type: string
     Reports:
       type: object
@@ -168,40 +186,22 @@ components:
         reports:
           $ref: '#/components/schemas/Reports'
           description: Reports for customer
-    Report:
-      type: object
-      properties:
-        id:
-          description: ID of the report.
-          type: integer
-        timestamp:
-          format: date-time
-          description: Created date time.
-          type: string
-    ReportsCustomersResponse:
-      type: object
-      properties:
-        customer_id:
-          description: The id that Lean assigns to the customer that you can use to identify the customer across the Lean platform.
-          type: string
-        hyperlink:
-          description: URL that you can share with your customer so they can connect their bank account.
-          type: string
-    ReportsCustomersRequest:
+    ReportsCustomerIdentifier:
+      description: ''
       required:
-      - account_type
+      - type
+      - value
       type: object
       properties:
-        identifiers:
-          description: Identifiers for a customer. Note that if account_type=PERSONAL, you will need to provide NATIONAL_ID as the identifier; if account_type=BUSINESS, then you will need to provide both COMMERCIAL_REGISTRATION and UNIFIED_NUMBER as identifiers
-          type: array
-          items:
-            $ref: '#/components/schemas/ReportsCustomerIdentifier'
-        account_type:
-          description: 'Indicates whether the account to be connected is a personal consumer account or a business account. '
+        type:
+          description: the type of the identifier for the end user
           enum:
-          - PERSONAL
-          - BUSINESS
+          - NATIONAL_ID
+          - COMMERCIAL_REGISTRATION
+          - UNIFIED_NUMBER
+          type: string
+        value:
+          description: the identifier for the end user
           type: string
   securitySchemes:
     bearer:

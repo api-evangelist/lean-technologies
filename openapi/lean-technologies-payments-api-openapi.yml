@@ -1,22 +1,26 @@
 openapi: 3.2.0
 info:
-  title: Lean Technologies Payments API
+  title: UAE - V2 Payments API
+  description: ''
   version: 1.0.0
-  description: 'Operations tagged Payments across 2 of this provider''s published API definitions: lean-technologies-payments-core-openapi.yml, lean-technologies-payments-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://sandbox.leantech.me
   description: Sandbox
 - url: https://api2.leantech.me
-  description: Production
+  description: Production / Pre-live
+security:
+- bearer: []
 tags:
 - name: Payments
-  x-displayName: Payments
 paths:
   /payments/v1/{payment_id}:
     get:
-      operationId: getPaymentById
       summary: Get Payment
+      deprecated: false
       description: Fetch a single payment
+      operationId: getPaymentById
+      tags:
+      - Payments
       parameters:
       - name: payment_id
         in: path
@@ -27,7 +31,6 @@ paths:
       responses:
         '200':
           description: ''
-          headers: {}
           content:
             application/json:
               schema:
@@ -51,105 +54,12 @@ paths:
                 initiation_timestamp: '2024-09-19T11:43:17.683Z'
                 status: ACCEPTED_BY_BANK
                 bank_transaction_reference: WD100430526831
-      deprecated: false
-      tags:
-      - Payments
+          headers: {}
       security:
-      - bearerAuth: []
-    servers:
-    - url: https://sandbox.leantech.me
-      description: Sandbox
-    - url: https://api2.leantech.me
-      description: Production
+      - bearer: []
 components:
   schemas:
     Payment:
-      type: object
-      properties:
-        id:
-          description: The unique identifier for this payment.
-          type: string
-          format: uuid
-        payment_intent_id:
-          description: The Payment Intent identifier responsible for generating the Payment.
-          type: string
-          format: uuid
-        payment_source_id:
-          description: The identifier for the payment source object from which the payment was initiatied.
-          type: string
-          format: uuid
-        sender_details:
-          description: The account details for the customer sending the payment. Includes account number, name of the account holder and IBAN.
-          type: object
-          properties:
-            account_number:
-              type: string
-            iban:
-              type: string
-            name:
-              type: string
-          required:
-          - account_number
-          - iban
-          - name
-        recipient_details:
-          description: Details for the recipient of the Payment, generated from the details available in the payment_destination.
-          type: object
-          properties:
-            account_number:
-              type: string
-            iban:
-              type: string
-            name:
-              type: string
-          required:
-          - account_number
-          - iban
-          - name
-        amount:
-          description: The amount the charge was initiated for.
-          type: number
-        currency:
-          description: The currency the payment was initiated with.
-          type: string
-        description:
-          description: The description submitted to the bank as a reference when initiating a payment. Can be used for reconciliation. By default this value is a the Payment Intent UUID without hyphens but you can also specify the description upon creation of a payment intent.
-          type: string
-        submission_timestamp:
-          description: The time the Payment Initiation was submitted.
-          type: string
-          format: date-time
-        initiation_timestamp:
-          description: The time the Payment Initiation was started.
-          type: string
-          format: date-time
-        status:
-          description: 'The current status of the payment - see Payments Errors for a list of available MFAs. '
-          type: string
-          enum:
-          - AWAITING_LOGIN_MFA
-          - AWAITING_PAYMENT_MFA
-          - AWAITING_APP_AUTH
-          - FAILED
-          - PENDING_WITH_BANK
-          - ACCEPTED_BY_BANK
-        bank_transaction_reference:
-          description: The transaction reference number supplied by the initiating bank on successful initiation of a transfer. Can be used for reconciliation.
-          type: string
-      required:
-      - id
-      - payment_intent_id
-      - payment_source_id
-      - sender_details
-      - recipient_details
-      - amount
-      - currency
-      - description
-      - submission_timestamp
-      - initiation_timestamp
-      - status
-      - bank_transaction_reference
-    Payment_2:
       type: object
       properties:
         id:
@@ -234,12 +144,6 @@ components:
       - status
       - bank_transaction_reference
   securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
     bearer:
       type: http
       scheme: bearer
-x-refined-from:
-- lean-technologies-payments-core-openapi.yml
-- lean-technologies-payments-openapi.yml

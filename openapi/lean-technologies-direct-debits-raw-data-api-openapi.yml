@@ -18,7 +18,11 @@ paths:
     get:
       operationId: fetchDirectDebits
       summary: Get Direct Debits
-      description: "Get the direct debits for a specific account given an accountId.\nThe accountId can be found by making a call to the /accounts endpoint.  \nRequires the following permissions: `direct_debits`\n"
+      description: 'Get the direct debits for a specific account given an accountId.
+
+        The accountId can be found by making a call to the /accounts endpoint.
+
+        Requires the following permissions: `direct_debits`'
       parameters:
       - $ref: '#/components/parameters/AccountIdParameter'
       - $ref: '#/components/parameters/AsyncParameter'
@@ -123,13 +127,14 @@ paths:
       - Direct Debits Raw Data
 components:
   parameters:
-    MetaParameter:
-      name: meta
-      description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
+    EntityIdParameter:
+      name: entity_id
+      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
       in: query
       required: false
       schema:
         type: string
+        format: uuid
     PageParameter:
       name: page
       in: query
@@ -148,19 +153,18 @@ components:
         type: boolean
         default: false
       deprecated: true
+    MetaParameter:
+      name: meta
+      description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
+      in: query
+      required: false
+      schema:
+        type: string
     AccountIdParameter:
       name: account_id
       description: The account_id used to fetch requested data
       in: path
       required: true
-      schema:
-        type: string
-        format: uuid
-    EntityIdParameter:
-      name: entity_id
-      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
-      in: query
-      required: false
       schema:
         type: string
         format: uuid
@@ -175,6 +179,12 @@ components:
         maximum: 100
         minimum: 1
   schemas:
+    Currency:
+      description: The ISO 3 letter currency code
+      type: string
+      examples:
+      - AED
+      pattern: ^[A-Z]{3}$
     ResultStatus:
       description: The status of the request
       type: string
@@ -185,49 +195,75 @@ components:
       - CONSENT_EXPIRED
       - RECONNECT_REQUIRED
       - PROCESSING_STARTED
-    PageMetadata:
-      description: Metadata about the current page of results
+    DataResult:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          refreshed_at:
+            description: The datetime of when the data was refreshed
+            type:
+            - string
+            - 'null'
+            format: date-time
+          type:
+            description: The endpoint the original request was made to.
+            type:
+            - string
+            - 'null'
+    DirectDebit:
       type: object
       properties:
-        number:
-          description: The current page being returned by the API
-          type: integer
-          format: int32
-        size:
-          description: The page size requested
-          type: integer
-          format: int32
-        total_elements:
-          description: The total number of elements in all pages
-          type: integer
-          format: int64
-        total_pages:
-          description: The total number of pages retrievable
-          type: integer
-          format: int32
-        sort:
-          description: Sort parameters applied to the results
+        entity_id:
+          description: The unique identifier for the entity. Provided as a UUID.
+          type: string
+          format: uuid
+        account_id:
+          description: The account_id this direct debit is related to.
+          type: string
+        direct_debit_id:
+          description: A unique identifier of the direct debit resource. This identifier has no meaning to the account owner.
+          type: string
+        name:
+          description: This is the name of the regulated beneficiary entity that initiates the Direct Debit collection.
+          type: string
+        status_code:
+          $ref: '#/components/schemas/StatusCode'
+        frequency:
+          $ref: '#/components/schemas/Frequency'
+        mandate_identification:
+          description: Direct Debit reference. For AUDDIS service users provide Core Reference. For non AUDDIS service users provide Core reference if possible or last used reference.
+          type: string
+        previous_payment_date_time:
+          description: Date of most recent direct debit collection.
+          type: string
+          format: date-time
+        previous_payment_amount:
+          description: The amount of the most recent direct debit collection.
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+      x-builder: true
+    DirectDebitsData:
+      type:
+      - object
+      - 'null'
+      properties:
+        type:
+          description: The endpoint the original request was made to.
+          type: string
+          const: direct-debits
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+        direct_debits:
+          description: List of direct debits for an Account
           type: array
           items:
-            type: string
+            $ref: '#/components/schemas/DirectDebit'
       required:
-      - number
-      - size
-      - total_elements
-      - total_pages
-    Currency:
-      description: The ISO 3 letter currency code
-      type: string
-      examples:
-      - AED
-      pattern: ^[A-Z]{3}$
-    StatusCode:
-      description: Specifies the status of the direct debit in code form.
-      type: string
-      enum:
-      - ACTIVE
-      - INACTIVE
-      - UNSUPPORTED
+      - type
+      x-toBuilder: true
     Frequency:
       description: Regularity with which direct debit instructions are to be created and processed.
       type: string
@@ -267,47 +303,43 @@ components:
           type:
           - string
           - 'null'
-    DirectDebit:
+    StatusCode:
+      description: Specifies the status of the direct debit in code form.
+      type: string
+      enum:
+      - ACTIVE
+      - INACTIVE
+      - UNSUPPORTED
+    PageMetadata:
+      description: Metadata about the current page of results
       type: object
       properties:
-        entity_id:
-          description: The unique identifier for the entity. Provided as a UUID.
-          type: string
-          format: uuid
-        account_id:
-          description: The account_id this direct debit is related to.
-          type: string
-        direct_debit_id:
-          description: A unique identifier of the direct debit resource. This identifier has no meaning to the account owner.
-          type: string
-        name:
-          description: This is the name of the regulated beneficiary entity that initiates the Direct Debit collection.
-          type: string
-        status_code:
-          $ref: '#/components/schemas/StatusCode'
-        frequency:
-          $ref: '#/components/schemas/Frequency'
-        mandate_identification:
-          description: Direct Debit reference. For AUDDIS service users provide Core Reference. For non AUDDIS service users provide Core reference if possible or last used reference.
-          type: string
-        previous_payment_date_time:
-          description: Date of most recent direct debit collection.
-          type: string
-          format: date-time
-        previous_payment_amount:
-          description: The amount of the most recent direct debit collection.
-          type: object
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-      x-builder: true
-    DirectDebitsResult:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/DataResult'
-      - type: object
-        properties:
-          data:
-            $ref: '#/components/schemas/DirectDebitsData'
+        number:
+          description: The current page being returned by the API
+          type: integer
+          format: int32
+        size:
+          description: The page size requested
+          type: integer
+          format: int32
+        total_elements:
+          description: The total number of elements in all pages
+          type: integer
+          format: int64
+        total_pages:
+          description: The total number of pages retrievable
+          type: integer
+          format: int32
+        sort:
+          description: Sort parameters applied to the results
+          type: array
+          items:
+            type: string
+      required:
+      - number
+      - size
+      - total_elements
+      - total_pages
     Result:
       type: object
       properties:
@@ -343,52 +375,15 @@ components:
       - results_id
       - message
       - timestamp
-    DirectDebitsData:
-      type:
-      - object
-      - 'null'
-      properties:
-        type:
-          description: The endpoint the original request was made to.
-          type: string
-          const: direct-debits
-        page:
-          $ref: '#/components/schemas/PageMetadata'
-        direct_debits:
-          description: List of direct debits for an Account
-          type: array
-          items:
-            $ref: '#/components/schemas/DirectDebit'
-      required:
-      - type
-      x-toBuilder: true
-    DataResult:
+    DirectDebitsResult:
       type: object
       allOf:
-      - $ref: '#/components/schemas/Result'
+      - $ref: '#/components/schemas/DataResult'
       - type: object
         properties:
-          refreshed_at:
-            description: The datetime of when the data was refreshed
-            type:
-            - string
-            - 'null'
-            format: date-time
-          type:
-            description: The endpoint the original request was made to.
-            type:
-            - string
-            - 'null'
+          data:
+            $ref: '#/components/schemas/DirectDebitsData'
   examples:
-    UnknownAccountExample:
-      summary: Account not found error response
-      description: Response when the provided account_id does not match an account for the entity_id
-      value:
-        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
-        timestamp: '2025-09-11T18:55:42.579432745Z'
-        status: UNKNOWN_ACCOUNT
-        message: The account_id provided does not match an account with the entity_id provided.
-        metadata: null
     UnknownEntityExample:
       summary: Entity not found error response
       description: Response when the provided entity_id is not found
@@ -419,6 +414,15 @@ components:
         timestamp: '2025-08-07T13:07:38.834977945Z'
         status: INTERNAL_SERVER_ERROR
         message: Something has gone wrong. If you continue to see this error, please get in touch with Lean.
+        metadata: null
+    UnknownAccountExample:
+      summary: Account not found error response
+      description: Response when the provided account_id does not match an account for the entity_id
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-11T18:55:42.579432745Z'
+        status: UNKNOWN_ACCOUNT
+        message: The account_id provided does not match an account with the entity_id provided.
         metadata: null
     InvalidParametersExample:
       summary: Invalid parameters error response

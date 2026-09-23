@@ -74,129 +74,6 @@ paths:
       - Consents Account On File
 components:
   schemas:
-    PeriodType:
-      description: "Defines the time period used for applying limits on a long‑lived consent. \nThis value determines how consumption limits (e.g., maximum amounts or number of payments) are calculated within each period.\n\n**Supported values:**\n- `Day` – A single calendar day (00:00 to 23:59).\n- `Week` – Seven consecutive days.\n- `Month` – A full calendar month (from the 1st to the last day).\n- `Year` – A full calendar year (12 consecutive months)."
-      type: string
-      enum:
-      - Day
-      - Week
-      - Month
-      - Year
-      title: PeriodType
-    ControlParameters:
-      type: object
-      discriminator:
-        propertyName: type
-        mapping:
-          VariableOnDemand: '#/components/schemas/AccountOnFileControlParameters'
-      oneOf:
-      - $ref: '#/components/schemas/AccountOnFileControlParameters'
-    Reference:
-      description: A reason or reference in relation to a payment. Maximum 64 chars
-      type: string
-      examples:
-      - 'Invoice #12345'
-      maxLength: 64
-      title: Reference
-    ConsentStatus:
-      description: Current status of this consent.
-      type: string
-      enum:
-      - AWAITING_AUTHORISATION
-      - AUTHORISED
-      - REVOKED
-      - REJECTED
-      - EXPIRED
-      - CONSUMED
-      - SUSPENDED
-    CreateAccountOnFileResponse:
-      type: object
-      properties:
-        id:
-          description: The unique identifier for the consent. Provided as a UUID.
-          type: string
-          format: uuid
-        application_id:
-          description: Application identifier owning this consent
-          type: string
-        start_date_time:
-          description: Date and time from when the consent will be active
-          type: string
-          format: date-time
-        expiration_date_time:
-          description: Date and time of the expiration of this consent
-          type: string
-          format: date-time
-        customer_id:
-          description: Id of a customer that this consent belongs to
-          type: string
-          format: uuid
-        status:
-          $ref: '#/components/schemas/ConsentStatus'
-        destination_account_id:
-          description: Account id that this consent allows payments to
-          type: string
-          format: uuid
-        reference:
-          description: A reason or reference in relation to a payment. Passed as a part of OF `creditor_reference`. This value will be used as default reference for payments made with this consent.
-          type: string
-        currency:
-          $ref: '#/components/schemas/Currency'
-        purpose:
-          $ref: '#/components/schemas/PaymentPurposeCode'
-        control_parameters:
-          $ref: '#/components/schemas/ControlParameters'
-        immediate_payment:
-          $ref: '#/components/schemas/ImmediatePayment'
-      required:
-      - id
-      - application_id
-      - start_date_time
-      - expiration_date_time
-      - customer_id
-      - status
-      - destination_account_id
-      - reference
-      - currency
-      - purpose
-      - control_parameters
-    Currency:
-      description: The ISO 3 letter currency code
-      type: string
-      examples:
-      - AED
-      pattern: ^[A-Z]{3}$
-    GovernmentIdentifierRequest:
-      type: object
-      properties:
-        value:
-          description: The identifier value
-          type: string
-          minLength: 1
-          pattern: ^(?!\s*$).+
-        type:
-          description: The type of Government ID
-          type: string
-          enum:
-          - EMIRATES_ID
-          - TRADE_LICENSE_NUMBER
-      required:
-      - type
-      - value
-    PaymentPurposeCode:
-      description: "A category code that relates to the type of services or goods that corresponds to the underlying purpose of the payment.  \nThe code must conform to the payment purpose code list.  \n**Supported values:**  \n- `FIS` – Financial services\n- `TCS` – Telecommunication services\n- `MWP` – Mobile wallet card payments\n- `OAT` – Own account transfer\n- `IFS` – Information services\n- `RNT` – Rent payments\n- `LNC` – Loan charges\n- `PIN` – Personal investments\n- `GDS` – Goods bought or sold"
-      type: string
-      enum:
-      - FIS
-      - TCS
-      - MWP
-      - OAT
-      - IFS
-      - RNT
-      - LNC
-      - PIN
-      - GDS
-      title: PaymentPurposeCode
     ImmediatePayment:
       description: 'Details of a payment that will be executed immediately after the user successfully authorizes the consent. If present, the payment is initiated automatically as part of the consent authorization flow.
 
@@ -260,6 +137,129 @@ components:
       - period_type
       title: AccountOnFileControlParameters
       x-class-extra-annotation: '@me.leantech.api.validation.AtLeastOneControlParameter @me.leantech.api.validation.WithinMaxIndividualAmountLimit'
+    PaymentPurposeCode:
+      description: "A category code that relates to the type of services or goods that corresponds to the underlying purpose of the payment.  \nThe code must conform to the payment purpose code list.  \n**Supported values:**  \n- `FIS` – Financial services\n- `TCS` – Telecommunication services\n- `MWP` – Mobile wallet card payments\n- `OAT` – Own account transfer\n- `IFS` – Information services\n- `RNT` – Rent payments\n- `LNC` – Loan charges\n- `PIN` – Personal investments\n- `GDS` – Goods bought or sold"
+      type: string
+      enum:
+      - FIS
+      - TCS
+      - MWP
+      - OAT
+      - IFS
+      - RNT
+      - LNC
+      - PIN
+      - GDS
+      title: PaymentPurposeCode
+    CreateAccountOnFileResponse:
+      type: object
+      properties:
+        id:
+          description: The unique identifier for the consent. Provided as a UUID.
+          type: string
+          format: uuid
+        application_id:
+          description: Application identifier owning this consent
+          type: string
+        start_date_time:
+          description: Date and time from when the consent will be active
+          type: string
+          format: date-time
+        expiration_date_time:
+          description: Date and time of the expiration of this consent
+          type: string
+          format: date-time
+        customer_id:
+          description: Id of a customer that this consent belongs to
+          type: string
+          format: uuid
+        status:
+          $ref: '#/components/schemas/ConsentStatus'
+        destination_account_id:
+          description: Account id that this consent allows payments to
+          type: string
+          format: uuid
+        reference:
+          description: A reason or reference in relation to a payment. Passed as a part of OF `creditor_reference`. This value will be used as default reference for payments made with this consent.
+          type: string
+        currency:
+          $ref: '#/components/schemas/Currency'
+        purpose:
+          $ref: '#/components/schemas/PaymentPurposeCode'
+        control_parameters:
+          $ref: '#/components/schemas/ControlParameters'
+        immediate_payment:
+          $ref: '#/components/schemas/ImmediatePayment'
+      required:
+      - id
+      - application_id
+      - start_date_time
+      - expiration_date_time
+      - customer_id
+      - status
+      - destination_account_id
+      - reference
+      - currency
+      - purpose
+      - control_parameters
+    Reference:
+      description: A reason or reference in relation to a payment. Maximum 64 chars
+      type: string
+      examples:
+      - 'Invoice #12345'
+      maxLength: 64
+      title: Reference
+    PeriodType:
+      description: "Defines the time period used for applying limits on a long‑lived consent. \nThis value determines how consumption limits (e.g., maximum amounts or number of payments) are calculated within each period.\n\n**Supported values:**\n- `Day` – A single calendar day (00:00 to 23:59).\n- `Week` – Seven consecutive days.\n- `Month` – A full calendar month (from the 1st to the last day).\n- `Year` – A full calendar year (12 consecutive months)."
+      type: string
+      enum:
+      - Day
+      - Week
+      - Month
+      - Year
+      title: PeriodType
+    Currency:
+      description: The ISO 3 letter currency code
+      type: string
+      examples:
+      - AED
+      pattern: ^[A-Z]{3}$
+    ConsentStatus:
+      description: Current status of this consent.
+      type: string
+      enum:
+      - AWAITING_AUTHORISATION
+      - AUTHORISED
+      - REVOKED
+      - REJECTED
+      - EXPIRED
+      - CONSUMED
+      - SUSPENDED
+    ControlParameters:
+      type: object
+      discriminator:
+        propertyName: type
+        mapping:
+          VariableOnDemand: '#/components/schemas/AccountOnFileControlParameters'
+      oneOf:
+      - $ref: '#/components/schemas/AccountOnFileControlParameters'
+    GovernmentIdentifierRequest:
+      type: object
+      properties:
+        value:
+          description: The identifier value
+          type: string
+          minLength: 1
+          pattern: ^(?!\s*$).+
+        type:
+          description: The type of Government ID
+          type: string
+          enum:
+          - EMIRATES_ID
+          - TRADE_LICENSE_NUMBER
+      required:
+      - type
+      - value
   requestBodies:
     CreateAccountOnFile:
       content:

@@ -18,7 +18,9 @@ paths:
     get:
       operationId: fetchIdentitiesV2
       summary: Get identity
-      description: "Get the identity details of the account holder stored at the bank. \nRequires the following permissions: `identity`\n"
+      description: 'Get the identity details of the account holder stored at the bank.
+
+        Requires the following permissions: `identity`'
       parameters:
       - $ref: '#/components/parameters/AsyncParameter'
       - $ref: '#/components/parameters/PageParameter'
@@ -113,6 +115,14 @@ paths:
       - Identity Raw Data
 components:
   parameters:
+    EntityIdParameter:
+      name: entity_id
+      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
+      in: query
+      required: false
+      schema:
+        type: string
+        format: uuid
     PageParameter:
       name: page
       in: query
@@ -122,13 +132,6 @@ components:
         type: integer
         default: 0
         minimum: 0
-    MetaParameter:
-      name: meta
-      description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
-      in: query
-      required: false
-      schema:
-        type: string
     AsyncParameter:
       name: async
       in: query
@@ -138,14 +141,13 @@ components:
         type: boolean
         default: false
       deprecated: true
-    EntityIdParameter:
-      name: entity_id
-      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
+    MetaParameter:
+      name: meta
+      description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
       in: query
       required: false
       schema:
         type: string
-        format: uuid
     SizeParameter:
       name: size
       description: The number of objects you want to return as a page size.
@@ -157,6 +159,112 @@ components:
         maximum: 100
         minimum: 1
   schemas:
+    Address:
+      description: The full address details
+      type: object
+      properties:
+        address_line:
+          description: Full address line as retrieved from bank
+          type: string
+        address_type:
+          description: The type of address (e.g., residential, business).
+          type: string
+        building_type:
+          description: The type of building, apartments or villa for example.
+          type: string
+        apartment_or_villa_number:
+          description: The apartment or villa/house number.
+          type: string
+        building_name:
+          description: The name of the building.
+          type: string
+        street:
+          description: The street name.
+          type: string
+        area:
+          description: The area or neighborhood.
+          type: string
+        street_address:
+          description: Street address which may include house number, street name and PO Box
+          type: string
+        post_code:
+          description: The Zip or postal code associated with the address.
+          type: string
+        town_name:
+          description: The town or city name where the address is located.
+          type: string
+        region:
+          description: The region of the address. State, province, prefecture, or region
+          type: string
+        po_box:
+          description: The post office box number.
+          type: string
+        country:
+          description: The country where the address is located.
+          type: string
+      x-toBuilder: true
+    ResultStatus:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - RECONNECT_REQUIRED
+      - PROCESSING_STARTED
+    DataResult:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          refreshed_at:
+            description: The datetime of when the data was refreshed
+            type:
+            - string
+            - 'null'
+            format: date-time
+          type:
+            description: The endpoint the original request was made to.
+            type:
+            - string
+            - 'null'
+    IdentityData:
+      type: object
+      properties:
+        account_id:
+          description: Account ID
+          type: string
+          format: uuid
+        type:
+          description: The endpoint the original request was made to.
+          type: string
+        identities:
+          description: An array of identities associated with the Entity.
+          type: array
+          items:
+            $ref: '#/components/schemas/IdentityV2data'
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+      required:
+      - type
+      x-toBuilder: true
+    StatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        granular_status_code:
+          description: Granular status code
+          type:
+          - string
+          - 'null'
+        status_additional_info:
+          description: Additional information about the status
+          type:
+          - string
+          - 'null'
     IdentityV2data:
       type: object
       properties:
@@ -212,69 +320,6 @@ components:
           description: Party number assigned by the institution
           type: string
       x-toBuilder: true
-    ResultStatus:
-      description: The status of the request
-      type: string
-      enum:
-      - OK
-      - PENDING
-      - FAILED
-      - CONSENT_EXPIRED
-      - RECONNECT_REQUIRED
-      - PROCESSING_STARTED
-    FetchIdentityV2Result:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/DataResult'
-      - properties:
-          data:
-            $ref: '#/components/schemas/IdentityData'
-        type: object
-      x-toBuilder: true
-    Address:
-      description: The full address details
-      type: object
-      properties:
-        address_line:
-          description: Full address line as retrieved from bank
-          type: string
-        address_type:
-          description: The type of address (e.g., residential, business).
-          type: string
-        building_type:
-          description: The type of building, apartments or villa for example.
-          type: string
-        apartment_or_villa_number:
-          description: The apartment or villa/house number.
-          type: string
-        building_name:
-          description: The name of the building.
-          type: string
-        street:
-          description: The street name.
-          type: string
-        area:
-          description: The area or neighborhood.
-          type: string
-        street_address:
-          description: Street address which may include house number, street name and PO Box
-          type: string
-        post_code:
-          description: The Zip or postal code associated with the address.
-          type: string
-        town_name:
-          description: The town or city name where the address is located.
-          type: string
-        region:
-          description: The region of the address. State, province, prefecture, or region
-          type: string
-        po_box:
-          description: The post office box number.
-          type: string
-        country:
-          description: The country where the address is located.
-          type: string
-      x-toBuilder: true
     PageMetadata:
       description: Metadata about the current page of results
       type: object
@@ -305,21 +350,6 @@ components:
       - size
       - total_elements
       - total_pages
-    StatusDetail:
-      type:
-      - object
-      - 'null'
-      properties:
-        granular_status_code:
-          description: Granular status code
-          type:
-          - string
-          - 'null'
-        status_additional_info:
-          description: Additional information about the status
-          type:
-          - string
-          - 'null'
     Result:
       type: object
       properties:
@@ -355,43 +385,15 @@ components:
       - results_id
       - message
       - timestamp
-    IdentityData:
-      type: object
-      properties:
-        account_id:
-          description: Account ID
-          type: string
-          format: uuid
-        type:
-          description: The endpoint the original request was made to.
-          type: string
-        identities:
-          description: An array of identities associated with the Entity.
-          type: array
-          items:
-            $ref: '#/components/schemas/IdentityV2data'
-        page:
-          $ref: '#/components/schemas/PageMetadata'
-      required:
-      - type
-      x-toBuilder: true
-    DataResult:
+    FetchIdentityV2Result:
       type: object
       allOf:
-      - $ref: '#/components/schemas/Result'
-      - type: object
-        properties:
-          refreshed_at:
-            description: The datetime of when the data was refreshed
-            type:
-            - string
-            - 'null'
-            format: date-time
-          type:
-            description: The endpoint the original request was made to.
-            type:
-            - string
-            - 'null'
+      - $ref: '#/components/schemas/DataResult'
+      - properties:
+          data:
+            $ref: '#/components/schemas/IdentityData'
+        type: object
+      x-toBuilder: true
   examples:
     UnknownEntityExample:
       summary: Entity not found error response

@@ -1,6 +1,6 @@
 openapi: 3.2.0
 info:
-  title: Lean API - Beneficiary Name Verification Freelancer Verification API
+  title: Lean API - Beneficiary Name Verification Freelancer…
   description: API for retrieving beneficiary name from an IBAN
   version: v2.0.0
 servers:
@@ -331,37 +331,57 @@ paths:
       - Freelancer Verification
 components:
   schemas:
-    Identification:
+    FreelancerVerificationResponse:
       type: object
       properties:
-        type:
-          description: Type of identification document
-          anyOf:
-          - $ref: '#/components/schemas/FreelancerIdentificationType'
-        value:
-          description: Value of the identification document
+        status:
+          description: Status of the verification request
           type: string
+          enum:
+          - OK
+          - FAILED
+        results_id:
+          description: Unique identifier for this verification result
+          type: string
+          format: uuid
+        message:
+          description: Human-readable message about the verification result
+          type: string
+        timestamp:
+          description: Timestamp when the verification was processed
+          type: string
+          format: date-time
+        meta:
+          description: Additional metadata about the verification
+          type:
+          - object
+          - 'null'
+        status_detail:
+          description: Detailed status information
+          type:
+          - string
+          - 'null'
+        verifications:
+          $ref: '#/components/schemas/FreelancerVerificationResult'
       required:
-      - type
-      - value
-    FreelancerIdentificationType:
-      description: Types of identification documents accepted for freelancer verification
-      type: string
-      enum:
-      - NATIONAL_ID
-      - FREELANCER_NUMBER
-    Name:
+      - status
+      - results_id
+      - message
+      - timestamp
+      - verifications
+    Category:
       type: object
       properties:
-        ar:
-          description: Name in Arabic
-          type: string
-        en:
-          description: Name in English
+        name:
+          description: Category name in Arabic and English
+          allOf:
+          - $ref: '#/components/schemas/Name'
+        code:
+          description: Category code
           type: string
       required:
-      - ar
-      - en
+      - name
+      - code
     FreelancerVerificationType:
       description: 'Type of freelancer verification request. Determines pricing and data visibility. FULL_LIST: retrieve all certificates by National ID only. FULL: verify certificate ownership with National ID and Freelancer Number. BASIC: basic verification with National ID and Freelancer Number (reduced data).'
       type: string
@@ -425,22 +445,32 @@ components:
       - number
       - status
       - issue_date
-    FreelancerVerificationRequest:
+    Name:
       type: object
       properties:
-        type:
-          description: Type of freelancer verification. If not provided, defaults based on app configuration.
-          anyOf:
-          - $ref: '#/components/schemas/FreelancerVerificationType'
-        identifications:
-          description: Array of identification documents. FULL_LIST type requires NATIONAL_ID only. FULL type requires both NATIONAL_ID and FREELANCER_NUMBER. BASIC type requires both NATIONAL_ID and FREELANCER_NUMBER.
-          type: array
-          items:
-            $ref: '#/components/schemas/Identification'
-          maxItems: 2
-          minItems: 1
+        ar:
+          description: Name in Arabic
+          type: string
+        en:
+          description: Name in English
+          type: string
       required:
-      - identifications
+      - ar
+      - en
+    CertificateStatus:
+      description: Possible statuses of a freelancer certificate
+      type: string
+      enum:
+      - ACTIVE
+      - EXPIRED
+      - CANCELED
+      - REVOKED
+      - REJECTED
+      - PENDING
+      - CANCELED_BEFORE_ACTIVE
+      - EDITED
+      - SEND_IT_BACK
+      - UNKNOWN
     FreelancerVerificationResult:
       type: object
       properties:
@@ -486,71 +516,41 @@ components:
       required:
       - certificate_ownership_verified
       - certificate
-    CertificateStatus:
-      description: Possible statuses of a freelancer certificate
+    Identification:
+      type: object
+      properties:
+        type:
+          description: Type of identification document
+          anyOf:
+          - $ref: '#/components/schemas/FreelancerIdentificationType'
+        value:
+          description: Value of the identification document
+          type: string
+      required:
+      - type
+      - value
+    FreelancerVerificationRequest:
+      type: object
+      properties:
+        type:
+          description: Type of freelancer verification. If not provided, defaults based on app configuration.
+          anyOf:
+          - $ref: '#/components/schemas/FreelancerVerificationType'
+        identifications:
+          description: Array of identification documents. FULL_LIST type requires NATIONAL_ID only. FULL type requires both NATIONAL_ID and FREELANCER_NUMBER. BASIC type requires both NATIONAL_ID and FREELANCER_NUMBER.
+          type: array
+          items:
+            $ref: '#/components/schemas/Identification'
+          maxItems: 2
+          minItems: 1
+      required:
+      - identifications
+    FreelancerIdentificationType:
+      description: Types of identification documents accepted for freelancer verification
       type: string
       enum:
-      - ACTIVE
-      - EXPIRED
-      - CANCELED
-      - REVOKED
-      - REJECTED
-      - PENDING
-      - CANCELED_BEFORE_ACTIVE
-      - EDITED
-      - SEND_IT_BACK
-      - UNKNOWN
-    Category:
-      type: object
-      properties:
-        name:
-          description: Category name in Arabic and English
-          allOf:
-          - $ref: '#/components/schemas/Name'
-        code:
-          description: Category code
-          type: string
-      required:
-      - name
-      - code
-    FreelancerVerificationResponse:
-      type: object
-      properties:
-        status:
-          description: Status of the verification request
-          type: string
-          enum:
-          - OK
-          - FAILED
-        results_id:
-          description: Unique identifier for this verification result
-          type: string
-          format: uuid
-        message:
-          description: Human-readable message about the verification result
-          type: string
-        timestamp:
-          description: Timestamp when the verification was processed
-          type: string
-          format: date-time
-        meta:
-          description: Additional metadata about the verification
-          type:
-          - object
-          - 'null'
-        status_detail:
-          description: Detailed status information
-          type:
-          - string
-          - 'null'
-        verifications:
-          $ref: '#/components/schemas/FreelancerVerificationResult'
-      required:
-      - status
-      - results_id
-      - message
-      - timestamp
-      - verifications
+      - NATIONAL_ID
+      - FREELANCER_NUMBER
   securitySchemes:
     bearerAuth:
       type: http

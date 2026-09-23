@@ -217,23 +217,6 @@ paths:
       - bearer: []
 components:
   schemas:
-    GovernmentIdentifierRequest:
-      type: object
-      required:
-      - type
-      - value
-      properties:
-        value:
-          type: string
-          description: The identifier value
-          minLength: 1
-          pattern: ^(?!\s*$).+
-        type:
-          type: string
-          description: The type of Government ID
-          enum:
-          - EMIRATES_ID
-          - TRADE_LICENSE_NUMBER
     Customer:
       type: object
       properties:
@@ -272,6 +255,23 @@ components:
       - size
       - total_elements
       - total_pages
+    GovernmentIdentifierRequest:
+      type: object
+      required:
+      - type
+      - value
+      properties:
+        value:
+          type: string
+          description: The identifier value
+          minLength: 1
+          pattern: ^(?!\s*$).+
+        type:
+          type: string
+          description: The type of Government ID
+          enum:
+          - EMIRATES_ID
+          - TRADE_LICENSE_NUMBER
   securitySchemes:
     bearer:
       type: http

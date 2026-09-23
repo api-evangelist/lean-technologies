@@ -56,6 +56,130 @@ paths:
       - Deposits
 components:
   schemas:
+    DepositResponse:
+      type: object
+      properties:
+        id:
+          description: The unique identifier for the deposit.
+          type: string
+          format: uuid
+        bank_deposit_reference:
+          description: The reference number provided by the bank.
+          type: string
+        amount:
+          description: The amount of the deposit.
+          type: number
+        currency:
+          description: The currency of the deposit.
+          type: string
+        description:
+          description: The description of the deposit as found in the bank statement.
+          type:
+          - string
+          - 'null'
+        timestamp:
+          description: The transaction timestamp.
+          type: string
+          format: date-time
+        local_timestamp:
+          description: The transaction timestamp adjusted to the timezone specified in the 'timeZone' query parameter.
+          type: string
+          format: date-time
+        beneficiary_account:
+          $ref: '#/components/schemas/BeneficiaryAccount'
+        reconciliation:
+          $ref: '#/components/schemas/Reconciliation'
+        deposit_source_id:
+          description: The unique identifier for the deposit source - ie the corporate bank account where the deposit was made.
+          type: string
+          format: uuid
+        sender_account:
+          $ref: '#/components/schemas/SenderAccount'
+      required:
+      - id
+      - bank_deposit_reference
+      - amount
+      - currency
+      - timestamp
+      - local_timestamp
+      - beneficiary_account
+      - reconciliation
+      - deposit_source_id
+    BeneficiaryAccount:
+      description: The account that the deposit was made to.
+      type: object
+      properties:
+        account_id:
+          description: The account ID referencing the account number.
+          type: string
+          format: uuid
+        iban:
+          description: The International Bank Account Number (IBAN) of the account.
+          type: string
+      required:
+      - account_id
+      - iban
+    Reconciliation:
+      description: The reconciliation status of the deposit.
+      type: object
+      properties:
+        payment_id:
+          description: The unique identifier for the payment.
+          type: string
+          format: uuid
+        status:
+          description: The reconciliation status of the payment with this deposit.
+          type: string
+          enum:
+          - RECONCILED
+          - NOT_RECONCILED
+      required:
+      - status
+      - payment_id
+    SenderAccount:
+      description: The account that the deposit was made from.
+      type: object
+      properties:
+        account_number:
+          description: The account ID referencing the account number.
+          type: string
+        iban:
+          description: The International Bank Account Number (IBAN) of the account.
+          type: string
+      required:
+      - account_number
+      - iban
+      x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)'
+    PageMetadata:
+      description: Metadata about the current page of results
+      type: object
+      properties:
+        number:
+          description: The current page being returned by the API
+          type: integer
+          format: int32
+        size:
+          description: The page size requested
+          type: integer
+          format: int32
+        total_elements:
+          description: The total number of elements in all pages
+          type: integer
+          format: int64
+        total_pages:
+          description: The total number of pages retrievable
+          type: integer
+          format: int32
+        sort:
+          description: Sort parameters applied to the results
+          type: array
+          items:
+            type: string
+      required:
+      - number
+      - size
+      - total_elements
+      - total_pages
     DepositsQuery:
       type: object
       properties:
@@ -109,116 +233,6 @@ components:
       x-explicit-constructor: true
       x-implements:
       - me.leantech.api.validation.LocalDateRange
-    PageMetadata:
-      description: Metadata about the current page of results
-      type: object
-      properties:
-        number:
-          description: The current page being returned by the API
-          type: integer
-          format: int32
-        size:
-          description: The page size requested
-          type: integer
-          format: int32
-        total_elements:
-          description: The total number of elements in all pages
-          type: integer
-          format: int64
-        total_pages:
-          description: The total number of pages retrievable
-          type: integer
-          format: int32
-        sort:
-          description: Sort parameters applied to the results
-          type: array
-          items:
-            type: string
-      required:
-      - number
-      - size
-      - total_elements
-      - total_pages
-    BeneficiaryAccount:
-      description: The account that the deposit was made to.
-      type: object
-      properties:
-        account_id:
-          description: The account ID referencing the account number.
-          type: string
-          format: uuid
-        iban:
-          description: The International Bank Account Number (IBAN) of the account.
-          type: string
-      required:
-      - account_id
-      - iban
-    Reconciliation:
-      description: The reconciliation status of the deposit.
-      type: object
-      properties:
-        payment_id:
-          description: The unique identifier for the payment.
-          type: string
-          format: uuid
-        status:
-          description: The reconciliation status of the payment with this deposit.
-          type: string
-          enum:
-          - RECONCILED
-          - NOT_RECONCILED
-      required:
-      - status
-      - payment_id
-    DepositResponse:
-      type: object
-      properties:
-        id:
-          description: The unique identifier for the deposit.
-          type: string
-          format: uuid
-        bank_deposit_reference:
-          description: The reference number provided by the bank.
-          type: string
-        amount:
-          description: The amount of the deposit.
-          type: number
-        currency:
-          description: The currency of the deposit.
-          type: string
-        description:
-          description: The description of the deposit as found in the bank statement.
-          type:
-          - string
-          - 'null'
-        timestamp:
-          description: The transaction timestamp.
-          type: string
-          format: date-time
-        local_timestamp:
-          description: The transaction timestamp adjusted to the timezone specified in the 'timeZone' query parameter.
-          type: string
-          format: date-time
-        beneficiary_account:
-          $ref: '#/components/schemas/BeneficiaryAccount'
-        reconciliation:
-          $ref: '#/components/schemas/Reconciliation'
-        deposit_source_id:
-          description: The unique identifier for the deposit source - ie the corporate bank account where the deposit was made.
-          type: string
-          format: uuid
-        sender_account:
-          $ref: '#/components/schemas/SenderAccount'
-      required:
-      - id
-      - bank_deposit_reference
-      - amount
-      - currency
-      - timestamp
-      - local_timestamp
-      - beneficiary_account
-      - reconciliation
-      - deposit_source_id
     PageableResponse:
       type: object
       properties:
@@ -229,20 +243,6 @@ components:
             $ref: '#/components/schemas/DepositResponse'
         page:
           $ref: '#/components/schemas/PageMetadata'
-    SenderAccount:
-      description: The account that the deposit was made from.
-      type: object
-      properties:
-        account_number:
-          description: The account ID referencing the account number.
-          type: string
-        iban:
-          description: The International Bank Account Number (IBAN) of the account.
-          type: string
-      required:
-      - account_number
-      - iban
-      x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)'
   securitySchemes:
     bearerAuth:
       type: http

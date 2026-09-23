@@ -9,7 +9,7 @@ servers:
 - url: https://api2.leantech.me
   description: Production
 tags:
-- name: reconciliation
+- name: Reconciliation
   x-displayName: reconciliation
 paths:
   /reconciliation/v1/payments:
@@ -56,7 +56,7 @@ paths:
                       results_per_page: 20
                       total_results: 100
       tags:
-      - reconciliation
+      - Reconciliation
       security:
       - bearerAuth: []
   /reconciliation/v1/payments/{paymentId}:
@@ -102,7 +102,7 @@ paths:
         '404':
           description: Payment not found
       tags:
-      - reconciliation
+      - Reconciliation
       security:
       - bearerAuth: []
   /reconciliation/v1/deposits/:
@@ -112,7 +112,7 @@ paths:
       description: Retrieve deposits from your connected bank accounts
       operationId: getDeposits
       tags:
-      - reconciliation
+      - Reconciliation
       parameters:
       - name: page
         in: query
@@ -274,7 +274,7 @@ paths:
       description: Retrieve a specific payment from your connected bank accounts
       operationId: getReconciliationPaymentById
       tags:
-      - reconciliation
+      - Reconciliation
       parameters:
       - name: payment_id
         in: path
@@ -381,6 +381,34 @@ paths:
       description: Production / Pre-live
 components:
   schemas:
+    PaymentsSummary:
+      type: object
+      properties:
+        payments:
+          description: List of payments
+          type: array
+          items:
+            $ref: '#/components/schemas/Payment'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+      required:
+      - payments
+    Pagination:
+      type: object
+      properties:
+        page_number:
+          description: Page number
+          type: integer
+        results_per_page:
+          description: Page size
+          type: integer
+        total_results:
+          description: Total number of results
+          type: integer
+      required:
+      - page_number
+      - results_per_page
+      - total_results
     PaymentQuery:
       type: object
       properties:
@@ -453,28 +481,6 @@ components:
           - 'null'
       required:
       - payment_initiation_date
-    Payment:
-      type: object
-      properties:
-        id:
-          description: Payment Id
-          type: string
-          format: uuid
-        customer_id:
-          description: Customer Id
-          type: string
-          format: uuid
-        payment_initiation_timestamp:
-          description: Timestamp the payment was initiated.
-          type: string
-          format: date-time
-        reconciliation:
-          $ref: '#/components/schemas/PaymentReconciliation'
-      required:
-      - id
-      - customer_id
-      - payment_initiation_timestamp
-      - reconciliation
     AmountRequest:
       type: object
       properties:
@@ -488,52 +494,6 @@ components:
           type:
           - number
           - 'null'
-    PaymentsSummary:
-      type: object
-      properties:
-        payments:
-          description: List of payments
-          type: array
-          items:
-            $ref: '#/components/schemas/Payment'
-        pagination:
-          $ref: '#/components/schemas/Pagination'
-      required:
-      - payments
-    Pagination:
-      type: object
-      properties:
-        page_number:
-          description: Page number
-          type: integer
-        results_per_page:
-          description: Page size
-          type: integer
-        total_results:
-          description: Total number of results
-          type: integer
-      required:
-      - page_number
-      - results_per_page
-      - total_results
-    DateRequest:
-      type: object
-      properties:
-        from:
-          description: Min datetime in ISO format yyyy-MM-dd
-          type: string
-          format: date
-          examples:
-          - '2025-09-15'
-        to:
-          description: Max datetime in ISO format yyyy-MM-dd
-          type: string
-          format: date
-          examples:
-          - '2025-10-01'
-      required:
-      - from
-      - to
     Deposit:
       type: object
       properties:
@@ -560,6 +520,46 @@ components:
       - timestamp
       - amount
       - currency_code
+    DateRequest:
+      type: object
+      properties:
+        from:
+          description: Min datetime in ISO format yyyy-MM-dd
+          type: string
+          format: date
+          examples:
+          - '2025-09-15'
+        to:
+          description: Max datetime in ISO format yyyy-MM-dd
+          type: string
+          format: date
+          examples:
+          - '2025-10-01'
+      required:
+      - from
+      - to
+    Payment:
+      type: object
+      properties:
+        id:
+          description: Payment Id
+          type: string
+          format: uuid
+        customer_id:
+          description: Customer Id
+          type: string
+          format: uuid
+        payment_initiation_timestamp:
+          description: Timestamp the payment was initiated.
+          type: string
+          format: date-time
+        reconciliation:
+          $ref: '#/components/schemas/PaymentReconciliation'
+      required:
+      - id
+      - customer_id
+      - payment_initiation_timestamp
+      - reconciliation
     PaymentReconciliation:
       type: object
       properties:

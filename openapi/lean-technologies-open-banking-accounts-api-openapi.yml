@@ -24,9 +24,7 @@ paths:
 
         (such as IBAN), and other account-level data.
 
-        Requires ReadAccountsBasic or ReadAccountsDetail consent permission.
-
-        '
+        Requires ReadAccountsBasic or ReadAccountsDetail consent permission.'
       parameters:
       - $ref: '#/components/parameters/FapiInteractionId'
       - $ref: '#/components/parameters/EntityId'
@@ -179,40 +177,72 @@ paths:
       - Open Banking Accounts
 components:
   schemas:
-    OBAccountIdentificationType:
-      description: Name of the identification scheme for the account.
-      type: string
-      enum:
-      - KSAOB.IBAN
-      - KSAOB.MaskedPAN
-      - KSAOB.AccountNumber
-      - KSAOB.CommercialRegistrationNumber
-      - KSAOB.Email
-      - KSAOB.MobileNumber
-      - KSAOB.NationalID
-      - KSAOB.IqamaNumber
-      - KSAOB.PassportNumber
-    OBAccountIdentifier:
-      description: Details to identify an account using a specific identification scheme.
-      type: object
+    OBStatusDetail:
+      type:
+      - object
+      - 'null'
       properties:
-        IdentificationType:
-          $ref: '#/components/schemas/OBAccountIdentificationType'
-        Identification:
-          description: Account identification value under the given scheme (e.g. IBAN value, masked PAN, account number).
-          type: string
-          maxLength: 400
-          minLength: 1
-        Name:
-          description: Name of the account owner(s) at the account identifier level.
+        GranularStatusCode:
+          description: Granular status code providing additional information on the request status.
           type:
           - string
           - 'null'
-          maxLength: 350
-          minLength: 1
+        StatusAdditionalInfo:
+          description: Additional human-readable information about the status.
+          type:
+          - string
+          - 'null'
+    OBMeta:
+      description: Metadata relevant to the resource.
+      type: object
+      properties:
+        TotalPages:
+          description: Total number of pages where a result set is paginated.
+          type:
+          - integer
+          - 'null'
+          format: int32
+          minimum: 0
+    OBAccountsData:
+      description: Container for the list of Open Banking accounts.
+      type: object
+      properties:
+        CustomerId:
+          description: Lean provided customer ID
+          type:
+          - string
+          - 'null'
+          format: uuid
+        Account:
+          description: List of accounts associated with the entity.
+          type: array
+          items:
+            $ref: '#/components/schemas/OBAccount'
       required:
-      - IdentificationType
-      - Identification
+      - Account
+    OBAccountType:
+      description: Specifies the type of account (Retail or Corporate).
+      type: string
+      enum:
+      - KSAOB.Retail
+      - KSAOB.Corporate
+    OBAccountSubType:
+      description: Specifies the sub-type of account (product family group).
+      type: string
+      enum:
+      - CurrentAccount
+      - Savings
+      - CreditCard
+      - PrePaidCard
+      - EMoney
+      - ChargeCard
+      - Other
+    OBServicerIdentificationType:
+      description: Name of the identification scheme for the servicing institution.
+      type: string
+      enum:
+      - KSAOB.BICFI
+      - KSAOB.OTHER
     OBAccount:
       description: Unambiguous identification of the account to which credit and debit entries are made.
       type: object
@@ -302,6 +332,33 @@ components:
       - Currency
       - AccountType
       - AccountIdentifiers
+    OBAccountIdentificationType:
+      description: Name of the identification scheme for the account.
+      type: string
+      enum:
+      - KSAOB.IBAN
+      - KSAOB.MaskedPAN
+      - KSAOB.AccountNumber
+      - KSAOB.CommercialRegistrationNumber
+      - KSAOB.Email
+      - KSAOB.MobileNumber
+      - KSAOB.NationalID
+      - KSAOB.IqamaNumber
+      - KSAOB.PassportNumber
+    OBAccountServicer:
+      description: Party that manages the account on behalf of the account owner, managing registration and booking of entries.
+      type: object
+      properties:
+        IdentificationType:
+          $ref: '#/components/schemas/OBServicerIdentificationType'
+        Identification:
+          description: Unique identification of the servicing institution.
+          type: string
+          maxLength: 35
+          minLength: 1
+      required:
+      - IdentificationType
+      - Identification
     OBGetAccountsResponse:
       description: Response envelope for the Open Banking accounts list.
       type: object
@@ -360,23 +417,54 @@ components:
       - Status
       - Message
       - Timestamp
-    OBAccountType:
-      description: Specifies the type of account (Retail or Corporate).
+    OBAccountStatus:
+      description: 'Status of the account:
+
+        * Active — account exists and is active
+
+        * NotActive — inactive for 6 to 12 months
+
+        * Dormant — inactive for 1 to 5 years
+
+        * Unclaimed — inactive for more than 5 years
+
+        * Deceased — account holder has passed away
+
+        * Suspended — account suspended (e.g. for security reasons)
+
+        * Closed — account is closed
+
+        '
       type: string
       enum:
-      - KSAOB.Retail
-      - KSAOB.Corporate
-    OBAccountSubType:
-      description: Specifies the sub-type of account (product family group).
-      type: string
-      enum:
-      - CurrentAccount
-      - Savings
-      - CreditCard
-      - PrePaidCard
-      - EMoney
-      - ChargeCard
-      - Other
+      - Active
+      - NotActive
+      - Dormant
+      - Unclaimed
+      - Deceased
+      - Suspended
+      - Closed
+    OBAccountIdentifier:
+      description: Details to identify an account using a specific identification scheme.
+      type: object
+      properties:
+        IdentificationType:
+          $ref: '#/components/schemas/OBAccountIdentificationType'
+        Identification:
+          description: Account identification value under the given scheme (e.g. IBAN value, masked PAN, account number).
+          type: string
+          maxLength: 400
+          minLength: 1
+        Name:
+          description: Name of the account owner(s) at the account identifier level.
+          type:
+          - string
+          - 'null'
+          maxLength: 350
+          minLength: 1
+      required:
+      - IdentificationType
+      - Identification
     OBLinks:
       description: Links relevant to the resource for pagination navigation.
       type: object
@@ -411,101 +499,11 @@ components:
           format: uri
       required:
       - Self
-    OBAccountsData:
-      description: Container for the list of Open Banking accounts.
-      type: object
-      properties:
-        CustomerId:
-          description: Lean provided customer ID
-          type:
-          - string
-          - 'null'
-          format: uuid
-        Account:
-          description: List of accounts associated with the entity.
-          type: array
-          items:
-            $ref: '#/components/schemas/OBAccount'
-      required:
-      - Account
-    OBMeta:
-      description: Metadata relevant to the resource.
-      type: object
-      properties:
-        TotalPages:
-          description: Total number of pages where a result set is paginated.
-          type:
-          - integer
-          - 'null'
-          format: int32
-          minimum: 0
-    OBServicerIdentificationType:
-      description: Name of the identification scheme for the servicing institution.
-      type: string
-      enum:
-      - KSAOB.BICFI
-      - KSAOB.OTHER
-    OBAccountServicer:
-      description: Party that manages the account on behalf of the account owner, managing registration and booking of entries.
-      type: object
-      properties:
-        IdentificationType:
-          $ref: '#/components/schemas/OBServicerIdentificationType'
-        Identification:
-          description: Unique identification of the servicing institution.
-          type: string
-          maxLength: 35
-          minLength: 1
-      required:
-      - IdentificationType
-      - Identification
-    OBAccountStatus:
-      description: 'Status of the account:
-
-        * Active — account exists and is active
-
-        * NotActive — inactive for 6 to 12 months
-
-        * Dormant — inactive for 1 to 5 years
-
-        * Unclaimed — inactive for more than 5 years
-
-        * Deceased — account holder has passed away
-
-        * Suspended — account suspended (e.g. for security reasons)
-
-        * Closed — account is closed
-
-        '
-      type: string
-      enum:
-      - Active
-      - NotActive
-      - Dormant
-      - Unclaimed
-      - Deceased
-      - Suspended
-      - Closed
-    OBStatusDetail:
-      type:
-      - object
-      - 'null'
-      properties:
-        GranularStatusCode:
-          description: Granular status code providing additional information on the request status.
-          type:
-          - string
-          - 'null'
-        StatusAdditionalInfo:
-          description: Additional human-readable information about the status.
-          type:
-          - string
-          - 'null'
   parameters:
-    CustomerId:
-      name: CustomerId
+    EntityId:
+      name: EntityId
       in: query
-      description: The customer_id of the connected customer.
+      description: The entity_id of the connected customer.
       required: false
       schema:
         type: string
@@ -529,6 +527,14 @@ components:
         type: integer
         default: 0
         minimum: 0
+    CustomerId:
+      name: CustomerId
+      in: query
+      description: The customer_id of the connected customer.
+      required: false
+      schema:
+        type: string
+        format: uuid
     FapiInteractionId:
       name: x-fapi-interaction-id
       in: header
@@ -536,14 +542,6 @@ components:
       required: false
       schema:
         type: string
-    EntityId:
-      name: EntityId
-      in: query
-      description: The entity_id of the connected customer.
-      required: false
-      schema:
-        type: string
-        format: uuid
   securitySchemes:
     bearerAuth:
       type: http

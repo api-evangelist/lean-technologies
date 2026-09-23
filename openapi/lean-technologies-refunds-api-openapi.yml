@@ -174,7 +174,7 @@ paths:
     put:
       summary: Process Refunds
       deprecated: false
-      description: 'Updates the refund status based on the approver''s (or checker''s) confirmation or rejection. This serves as a fail-safe mechanism to validate the refund decision after the transaction is initiated, rather than processing it immediately. '
+      description: Updates the refund status based on the approver's (or checker's) confirmation or rejection. This serves as a fail-safe mechanism to validate the refund decision after the transaction is initiated, rather than processing it immediately.
       operationId: processRefunds
       tags:
       - Refunds
