@@ -384,17 +384,96 @@ components:
       - recurring_average
       - median_days
       x-parent: true
-    CashBalanceInflowFactors:
+    CashBalance:
       type: object
       properties:
-        percent_salary_transaction:
-          description: Percentage of salary inflows
+        total:
+          $ref: '#/components/schemas/CashBalanceTotal'
+        monthly_totals:
+          type: array
+          items:
+            $ref: '#/components/schemas/CashBalanceMonthlyTotal'
+        balance_factors:
+          $ref: '#/components/schemas/BalanceFactors'
+      additionalProperties: false
+    BigPaymentsPeriod:
+      type: object
+      properties:
+        period:
+          description: The time period
+          type: string
+        average_max_monthly_credit_amount:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_max_monthly_debit_amount:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_max_monthly_credit_debit_amount_ratio:
+          description: The ratio of credit to debit amounts
           type: number
-      allOf:
-      - $ref: '#/components/schemas/BaseInflowOutflowFactors'
       required:
-      - pct_salary
-      x-child: true
+      - period
+      - average_max_monthly_credit_amount
+      - average_max_monthly_debit_amount
+      - average_max_monthly_credit_debit_amount_ratio
+    CashFlowResult:
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          insights:
+            type:
+            - object
+            - 'null'
+            allOf:
+            - $ref: '#/components/schemas/CashFlow'
+    CashFlowNet:
+      type: object
+      properties:
+        overall_amount:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        net_cashflow:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+    StatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        granular_status_code:
+          description: Granular status code
+          type:
+          - string
+          - 'null'
+        status_additional_info:
+          description: Additional information about the status
+          type:
+          - string
+          - 'null'
+    CashFlowCategoryAmountCount:
+      type: object
+      properties:
+        category:
+          description: The category of the cash flow
+          type: string
+        amount:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        count:
+          description: The count of transactions in this category
+          type: integer
+    CurrencyAmount:
+      type: object
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          description: The amount of money in the currency specified.
+          type: number
+      required:
+      - currency
+      - amount
     CashBalanceResult:
       allOf:
       - $ref: '#/components/schemas/Result'
@@ -406,6 +485,15 @@ components:
             - 'null'
             allOf:
             - $ref: '#/components/schemas/CashBalance'
+    CreditDebitBehaviour:
+      type: object
+      properties:
+        periods:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreditDebitBehaviourPeriod'
+      required:
+      - periods
     CashFlowMonthlyTotal:
       type: object
       properties:
@@ -428,24 +516,6 @@ components:
             $ref: '#/components/schemas/CashFlowCategoryAmountCount'
         net:
           $ref: '#/components/schemas/CashFlowNet'
-    CashBalanceTotal:
-      type: object
-      properties:
-        average_balance:
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-        initial_balance:
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-        current_balance:
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-        available_balance:
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-        frequency_of_contributions:
-          description: How often deposits are made to the account
-          type: string
     MonthlyAmount:
       type: object
       properties:
@@ -461,50 +531,62 @@ components:
           description: The transaction amount
           type: number
       x-class-extra-annotation: '@lombok.AllArgsConstructor'
-    CashFlowNet:
+    CashBalanceInflowFactors:
       type: object
       properties:
-        overall_amount:
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-        net_cashflow:
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-    BigPayments:
-      type: object
-      properties:
-        periods:
-          type: array
-          items:
-            $ref: '#/components/schemas/BigPaymentsPeriod'
+        percent_salary_transaction:
+          description: Percentage of salary inflows
+          type: number
+      allOf:
+      - $ref: '#/components/schemas/BaseInflowOutflowFactors'
       required:
-      - periods
-    Currency:
-      description: The ISO 3 letter currency code
-      type: string
-      examples:
-      - AED
-      pattern: ^[A-Z]{3}$
-    BigPaymentsPeriod:
+      - pct_salary
+      x-child: true
+    Result:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ResultStatus'
+        results_id:
+          description: The unique identifier for the request
+          type: string
+          format: uuid
+        message:
+          description: A message describing the status of the request
+          type: string
+        meta:
+          description: Meta information about the request
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: string
+        timestamp:
+          description: The datetime of when the request was made
+          type: string
+          format: date-time
+        status_detail:
+          description: Additional information about the status
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/StatusDetail'
+      required:
+      - status
+      - results_id
+      - message
+      - timestamp
+    BalanceFactorsPeriod:
       type: object
       properties:
         period:
           description: The time period
           type: string
-        average_max_monthly_credit_amount:
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-        average_max_monthly_debit_amount:
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-        average_max_monthly_credit_debit_amount_ratio:
-          description: The ratio of credit to debit amounts
+        average_balance:
+          description: The average balance for the period
           type: number
-      required:
-      - period
-      - average_max_monthly_credit_amount
-      - average_max_monthly_debit_amount
-      - average_max_monthly_credit_debit_amount_ratio
+      x-class-extra-annotation: '@lombok.AllArgsConstructor'
     ResultStatus:
       description: The status of the request
       type: string
@@ -515,64 +597,6 @@ components:
       - CONSENT_EXPIRED
       - RECONNECT_REQUIRED
       - PROCESSING_STARTED
-    CashBalanceOutflowFactors:
-      type: object
-      properties:
-        spike_transactions:
-          type: array
-          items:
-            $ref: '#/components/schemas/MonthlyAmount'
-      allOf:
-      - $ref: '#/components/schemas/BaseInflowOutflowFactors'
-      required:
-      - spike_transactions
-      x-child: true
-    CreditDebitBehaviour:
-      type: object
-      properties:
-        periods:
-          type: array
-          items:
-            $ref: '#/components/schemas/CreditDebitBehaviourPeriod'
-      required:
-      - periods
-    CashFlow:
-      type: object
-      properties:
-        total:
-          type: object
-          properties:
-            inwards:
-              type: array
-              items:
-                $ref: '#/components/schemas/CashFlowCategoryAmountCount'
-            outwards:
-              type: array
-              items:
-                $ref: '#/components/schemas/CashFlowCategoryAmountCount'
-            net:
-              $ref: '#/components/schemas/CashFlowNet'
-        monthly_totals:
-          type: array
-          items:
-            $ref: '#/components/schemas/CashFlowMonthlyTotal'
-        credit_debit_behaviour:
-          $ref: '#/components/schemas/CreditDebitBehaviour'
-        big_payments:
-          $ref: '#/components/schemas/BigPayments'
-      additionalProperties: false
-    CashBalance:
-      type: object
-      properties:
-        total:
-          $ref: '#/components/schemas/CashBalanceTotal'
-        monthly_totals:
-          type: array
-          items:
-            $ref: '#/components/schemas/CashBalanceMonthlyTotal'
-        balance_factors:
-          $ref: '#/components/schemas/BalanceFactors'
-      additionalProperties: false
     BalanceFactors:
       type: object
       properties:
@@ -609,6 +633,70 @@ components:
       - inflow_factors
       - outflow_factors
       - daily_net_cashflow_estimate
+    BigPayments:
+      type: object
+      properties:
+        periods:
+          type: array
+          items:
+            $ref: '#/components/schemas/BigPaymentsPeriod'
+      required:
+      - periods
+    CashFlow:
+      type: object
+      properties:
+        total:
+          type: object
+          properties:
+            inwards:
+              type: array
+              items:
+                $ref: '#/components/schemas/CashFlowCategoryAmountCount'
+            outwards:
+              type: array
+              items:
+                $ref: '#/components/schemas/CashFlowCategoryAmountCount'
+            net:
+              $ref: '#/components/schemas/CashFlowNet'
+        monthly_totals:
+          type: array
+          items:
+            $ref: '#/components/schemas/CashFlowMonthlyTotal'
+        credit_debit_behaviour:
+          $ref: '#/components/schemas/CreditDebitBehaviour'
+        big_payments:
+          $ref: '#/components/schemas/BigPayments'
+      additionalProperties: false
+    CashBalanceTotal:
+      type: object
+      properties:
+        average_balance:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        initial_balance:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        current_balance:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        available_balance:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        frequency_of_contributions:
+          description: How often deposits are made to the account
+          type: string
+    CashBalanceOutflowFactors:
+      type: object
+      properties:
+        spike_transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/MonthlyAmount'
+      allOf:
+      - $ref: '#/components/schemas/BaseInflowOutflowFactors'
+      required:
+      - spike_transactions
+      x-child: true
     CreditDebitBehaviourPeriod:
       type: object
       properties:
@@ -653,65 +741,12 @@ components:
       - total_volume_of_credit
       - total_volume_of_debit
       - total_volume_of_credit_debit_ratio
-    BalanceFactorsPeriod:
-      type: object
-      properties:
-        period:
-          description: The time period
-          type: string
-        average_balance:
-          description: The average balance for the period
-          type: number
-      x-class-extra-annotation: '@lombok.AllArgsConstructor'
-    CurrencyAmount:
-      type: object
-      properties:
-        currency:
-          $ref: '#/components/schemas/Currency'
-        amount:
-          description: The amount of money in the currency specified.
-          type: number
-      required:
-      - currency
-      - amount
-    CashFlowCategoryAmountCount:
-      type: object
-      properties:
-        category:
-          description: The category of the cash flow
-          type: string
-        amount:
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-        count:
-          description: The count of transactions in this category
-          type: integer
-    CashFlowResult:
-      allOf:
-      - $ref: '#/components/schemas/Result'
-      - type: object
-        properties:
-          insights:
-            type:
-            - object
-            - 'null'
-            allOf:
-            - $ref: '#/components/schemas/CashFlow'
-    StatusDetail:
-      type:
-      - object
-      - 'null'
-      properties:
-        granular_status_code:
-          description: Granular status code
-          type:
-          - string
-          - 'null'
-        status_additional_info:
-          description: Additional information about the status
-          type:
-          - string
-          - 'null'
+    Currency:
+      description: The ISO 3 letter currency code
+      type: string
+      examples:
+      - AED
+      pattern: ^[A-Z]{3}$
     CashBalanceMonthlyTotal:
       type: object
       properties:
@@ -736,41 +771,6 @@ components:
         initial_balance:
           allOf:
           - $ref: '#/components/schemas/CurrencyAmount'
-    Result:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/ResultStatus'
-        results_id:
-          description: The unique identifier for the request
-          type: string
-          format: uuid
-        message:
-          description: A message describing the status of the request
-          type: string
-        meta:
-          description: Meta information about the request
-          type:
-          - object
-          - 'null'
-          additionalProperties:
-            type: string
-        timestamp:
-          description: The datetime of when the request was made
-          type: string
-          format: date-time
-        status_detail:
-          description: Additional information about the status
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/StatusDetail'
-      required:
-      - status
-      - results_id
-      - message
-      - timestamp
     ResultStatus_2:
       description: The status of the request
       type: string

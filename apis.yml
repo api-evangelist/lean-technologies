@@ -661,7 +661,7 @@ apis:
   - type: OpenAPI
     url: openapi/lean-technologies-raw-data-api-openapi.yml
 - aid: lean-technologies:lean-technologies-reconciliation-api
-  name: Lean Technologies reconciliation API
+  name: Lean Technologies Reconciliation API
   description: The reconciliation API from Lean Technologies — 4 operation(s) for reconciliation.
   humanURL: https://docs.leantech.me
   baseURL: https://api2.leantech.me

@@ -136,6 +136,59 @@ paths:
       security:
       - bearerAuth: []
 components:
+  parameters:
+    SizeParameter:
+      name: size
+      description: The number of objects you want to return as a page size.
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 50
+        maximum: 100
+        minimum: 1
+    ResultsIdParameter:
+      name: results_id
+      in: path
+      description: results_id was returned from a request with `async=true`
+      required: true
+      example: 549fd28b-1268-4ab3-a34d-bed7d4710c00
+      schema:
+        type: string
+        format: uuid
+    PageParameter:
+      name: page
+      in: query
+      description: The page you're requesting - returns page 0 of a response if not specified.
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+    EntityIdParameter:
+      name: entity_id
+      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
+      in: query
+      required: false
+      schema:
+        type: string
+        format: uuid
+    MetaParameter:
+      name: meta
+      description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
+      in: query
+      required: false
+      schema:
+        type: string
+    AsyncParameter:
+      name: async
+      in: query
+      description: 'When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. **Note: it''s recommended to use the sync flow (async=false) for all requests by adapting the [data workflow](https://docs.leantech.me/docs/data-workflow) for connected entities.**'
+      required: false
+      schema:
+        type: boolean
+        default: false
+      deprecated: true
   examples:
     UnknownResultExample:
       summary: Result not found error response
@@ -155,75 +208,17 @@ components:
         status: INTERNAL_SERVER_ERROR
         message: Something has gone wrong. If you continue to see this error, please get in touch with Lean.
         metadata: null
-  parameters:
-    EntityIdParameter:
-      name: entity_id
-      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
-      in: query
-      required: false
-      schema:
-        type: string
-        format: uuid
-    ResultsIdParameter:
-      name: results_id
-      in: path
-      description: results_id was returned from a request with `async=true`
-      required: true
-      example: 549fd28b-1268-4ab3-a34d-bed7d4710c00
-      schema:
-        type: string
-        format: uuid
-    MetaParameter:
-      name: meta
-      description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
-      in: query
-      required: false
-      schema:
-        type: string
-    SizeParameter:
-      name: size
-      description: The number of objects you want to return as a page size.
-      in: query
-      required: false
-      schema:
-        type: integer
-        default: 50
-        maximum: 100
-        minimum: 1
-    PageParameter:
-      name: page
-      in: query
-      description: The page you're requesting - returns page 0 of a response if not specified.
-      required: false
-      schema:
-        type: integer
-        default: 0
-        minimum: 0
-    AsyncParameter:
-      name: async
-      in: query
-      description: 'When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. **Note: it''s recommended to use the sync flow (async=false) for all requests by adapting the [data workflow](https://docs.leantech.me/docs/data-workflow) for connected entities.**'
-      required: false
-      schema:
-        type: boolean
-        default: false
-      deprecated: true
   schemas:
-    AgentIdentifier:
+    StatusDetailObject:
+      description: Status Details
       type: object
       properties:
-        scheme_name:
+        granular_status_code:
+          description: Detailed error code
           type: string
-          description: The name of the identification scheme for the Bank
-          enum:
-          - BICFI
-          - OTHER
-          - UNSUPPORTED
-          examples:
-          - BICFI
-        identification:
+        status_additional_info:
+          description: Further detail on the encountered error
           type: string
-          description: Unique and unambiguous identification of the Bank
     AccountsResponse:
       allOf:
       - type: object
@@ -231,6 +226,14 @@ components:
           data:
             $ref: '#/components/schemas/AccountsData'
       - $ref: '#/components/schemas/DataResponse'
+    AccountRegionalData:
+      allOf:
+      - type: object
+        properties:
+          data:
+            type: object
+            properties: {}
+      - $ref: '#/components/schemas/StandardSau'
     Account:
       type: object
       properties:
@@ -313,6 +316,26 @@ components:
         regional_data:
           description: Region specific data response. Only provided when `verbose=true` in the originating request.
           $ref: '#/components/schemas/AccountRegionalData'
+    ResultsResponse:
+      anyOf:
+      - $ref: '#/components/schemas/AccountsResponse'
+      - type: object
+        properties: {}
+      - type: object
+        properties: {}
+      - type: object
+        properties: {}
+      - type: object
+        properties: {}
+      - type: object
+        properties: {}
+      - type: object
+        properties: {}
+      - type: object
+        properties: {}
+      - $ref: '#/components/schemas/DirectDebitsResponse'
+      title: Results Response
+      description: ''
     DataResponse:
       type: object
       properties:
@@ -358,44 +381,14 @@ components:
             type: object
             properties: {}
       - $ref: '#/components/schemas/DataResponse'
-    StatusDetailObject:
-      description: Status Details
+    StandardSau:
       type: object
       properties:
-        granular_status_code:
-          description: Detailed error code
+        standard:
+          description: A description of the standard the regional data is returned in formatted as `"{ISO 3 Letter Country Code}.{Standard}.{Version}"`. In the KSA V2 API this will always return as `"SAU.SAMA.V1"`
           type: string
-        status_additional_info:
-          description: Further detail on the encountered error
-          type: string
-    ResultsResponse:
-      anyOf:
-      - $ref: '#/components/schemas/AccountsResponse'
-      - type: object
-        properties: {}
-      - type: object
-        properties: {}
-      - type: object
-        properties: {}
-      - type: object
-        properties: {}
-      - type: object
-        properties: {}
-      - type: object
-        properties: {}
-      - type: object
-        properties: {}
-      - $ref: '#/components/schemas/DirectDebitsResponse'
-      title: Results Response
-      description: ''
-    AccountRegionalData:
-      allOf:
-      - type: object
-        properties:
-          data:
-            type: object
-            properties: {}
-      - $ref: '#/components/schemas/StandardSau'
+          examples:
+          - SAU.SAMA.V1
     AccountsData:
       allOf:
       - type: object
@@ -407,14 +400,21 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/Account'
-    StandardSau:
+    AgentIdentifier:
       type: object
       properties:
-        standard:
-          description: A description of the standard the regional data is returned in formatted as `"{ISO 3 Letter Country Code}.{Standard}.{Version}"`. In the KSA V2 API this will always return as `"SAU.SAMA.V1"`
+        scheme_name:
           type: string
+          description: The name of the identification scheme for the Bank
+          enum:
+          - BICFI
+          - OTHER
+          - UNSUPPORTED
           examples:
-          - SAU.SAMA.V1
+          - BICFI
+        identification:
+          type: string
+          description: Unique and unambiguous identification of the Bank
   securitySchemes:
     bearerAuth:
       type: http

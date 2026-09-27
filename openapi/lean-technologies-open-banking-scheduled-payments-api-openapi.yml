@@ -152,23 +152,6 @@ paths:
       - Open Banking Scheduled Payments
 components:
   parameters:
-    OBPageParm:
-      name: Page
-      in: query
-      description: The page you're requesting - returns page 0 of a response if not specified.
-      required: false
-      schema:
-        type: integer
-        default: 0
-        minimum: 0
-    AccountId:
-      name: AccountId
-      in: path
-      description: The Lean account identifier uniquely identifying the account within Lean.
-      required: true
-      schema:
-        type: string
-        format: uuid
     FapiInteractionId:
       name: x-fapi-interaction-id
       in: header
@@ -202,250 +185,24 @@ components:
       schema:
         type: string
         format: uuid
+    OBPageParm:
+      name: Page
+      in: query
+      description: The page you're requesting - returns page 0 of a response if not specified.
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+    AccountId:
+      name: AccountId
+      in: path
+      description: The Lean account identifier uniquely identifying the account within Lean.
+      required: true
+      schema:
+        type: string
+        format: uuid
   schemas:
-    OBStatusDetail:
-      type:
-      - object
-      - 'null'
-      properties:
-        GranularStatusCode:
-          description: Granular status code providing additional information on the request status.
-          type:
-          - string
-          - 'null'
-        StatusAdditionalInfo:
-          description: Additional human-readable information about the status.
-          type:
-          - string
-          - 'null'
-    OBMeta:
-      description: Metadata relevant to the resource.
-      type: object
-      properties:
-        TotalPages:
-          description: Total number of pages where a result set is paginated.
-          type:
-          - integer
-          - 'null'
-          format: int32
-          minimum: 0
-    OBGetScheduledPaymentsResponse:
-      description: Response envelope for the Open Banking account scheduled payments.
-      type: object
-      properties:
-        Data:
-          description: Container for the list of Open Banking account scheduled payments. Null when the request fails.
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/OBScheduledPaymentsData'
-        Status:
-          description: Status of the request.
-          type: string
-          enum:
-          - OK
-          - PENDING
-          - FAILED
-          - CONSENT_EXPIRED
-        Message:
-          description: Human-readable message describing the status of the request.
-          type: string
-        Timestamp:
-          description: Date and time when the response was generated.
-          type: string
-          format: date-time
-        RefreshedAt:
-          description: Date and time when the data was last refreshed from the bank.
-          type:
-          - string
-          - 'null'
-          format: date-time
-        StatusDetail:
-          description: Additional details about the request status.
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/OBStatusDetail'
-        Meta:
-          description: Metadata relevant to the resource, including pagination information.
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/OBMeta'
-        Links:
-          description: Links relevant to the resource for pagination navigation.
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/OBLinks'
-      required:
-      - Data
-      - Status
-      - Message
-      - Timestamp
-    OBScheduledTypeCode:
-      description: Specifies the scheduled payment date type.
-      type: string
-      enum:
-      - KSAOB.Arrival
-      - KSAOB.Execution
-    OpenBankingPostalAddress:
-      description: Information that locates and identifies a specific address, as defined by postal services.
-      type: object
-      properties:
-        AddressType:
-          description: Identifies the nature of the postal address.
-          type:
-          - string
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/OBAddressTypeCode'
-        ShortAddress:
-          description: Short address (National Addressing System) of the location.
-          type:
-          - string
-          - 'null'
-          maxLength: 8
-          minLength: 1
-        BuildingNumber:
-          description: Number that identifies the position of a building on a street.
-          type:
-          - string
-          - 'null'
-          maxLength: 4
-          minLength: 4
-        UnitNumber:
-          description: Unit number within a building.
-          type:
-          - number
-          - 'null'
-        StreetName:
-          description: Name of a street or thoroughfare.
-          type:
-          - string
-          - 'null'
-          maxLength: 70
-          minLength: 1
-        SecondaryNumber:
-          description: Secondary number for the address (National Addressing System).
-          type:
-          - string
-          - 'null'
-          maxLength: 4
-          minLength: 4
-        District:
-          description: Identifies a subdivision of a city, town or country.
-          type:
-          - string
-          - 'null'
-          maxLength: 35
-          minLength: 1
-        PostalCode:
-          description: Identifier of a group of letters or numbers added to a postal address to assist the sorting of mail.
-          type:
-          - string
-          - 'null'
-          maxLength: 16
-          minLength: 1
-        City:
-          description: Name of a built-up area, with defined boundaries, and a local government.
-          type:
-          - string
-          - 'null'
-          maxLength: 35
-          minLength: 1
-        Country:
-          description: Nation with its own government (ISO 3166-1 alpha-2 country code).
-          type:
-          - string
-          - 'null'
-          pattern: ^[A-Z]{2,2}$
-    OBCashAccountIdentificationType:
-      description: Name of the identification scheme for the cash account.
-      type: string
-      enum:
-      - KSAOB.IBAN
-      - KSAOB.MaskedPAN
-      - KSAOB.AccountNumber
-      - KSAOB.CommercialRegistrationNumber
-      - KSAOB.Email
-      - KSAOB.MobileNumber
-      - KSAOB.NationalID
-      - KSAOB.IqamaNumber
-      - KSAOB.PassportNumber
-    OBCreditorAgentIdentificationType:
-      description: Name of the identification scheme for the creditor or debtor agent.
-      type: string
-      enum:
-      - KSAOB.BICFI
-      - KSAOB.OTHER
-    OBAddressTypeCode:
-      description: Postal address type specifying the nature of the postal address.
-      type: string
-      enum:
-      - KSAOB.Business
-      - KSAOB.Correspondence
-      - KSAOB.DeliveryTo
-      - KSAOB.MailTo
-      - KSAOB.POBox
-      - KSAOB.Postal
-      - KSAOB.Residential
-      - KSAOB.Statement
-    OBScheduledPaymentsData:
-      description: Container for the list of Open Banking account scheduled payments.
-      type: object
-      properties:
-        CustomerId:
-          description: Lean provided customer ID
-          type:
-          - string
-          - 'null'
-          format: uuid
-        ScheduledPayment:
-          description: List of scheduled payments for the account.
-          type: array
-          items:
-            $ref: '#/components/schemas/OBScheduledPayment'
-      required:
-      - ScheduledPayment
-    OBLinks:
-      description: Links relevant to the resource for pagination navigation.
-      type: object
-      properties:
-        Self:
-          description: A link to the current resource.
-          type: string
-          format: uri
-        First:
-          description: A link to the first page in a paginated result set.
-          type:
-          - string
-          - 'null'
-          format: uri
-        Prev:
-          description: A link to the previous page in a paginated result set.
-          type:
-          - string
-          - 'null'
-          format: uri
-        Next:
-          description: A link to the next page in a paginated result set.
-          type:
-          - string
-          - 'null'
-          format: uri
-        Last:
-          description: A link to the last page in a paginated result set.
-          type:
-          - string
-          - 'null'
-          format: uri
-      required:
-      - Self
     OBAmount:
       description: Active or historic currency and amount.
       type: object
@@ -526,6 +283,77 @@ components:
       - ScheduledType
       - ScheduledPaymentDateTime
       - InstructedAmount
+    OpenBankingPostalAddress:
+      description: Information that locates and identifies a specific address, as defined by postal services.
+      type: object
+      properties:
+        AddressType:
+          description: Identifies the nature of the postal address.
+          type:
+          - string
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBAddressTypeCode'
+        ShortAddress:
+          description: Short address (National Addressing System) of the location.
+          type:
+          - string
+          - 'null'
+          maxLength: 8
+          minLength: 1
+        BuildingNumber:
+          description: Number that identifies the position of a building on a street.
+          type:
+          - string
+          - 'null'
+          maxLength: 4
+          minLength: 4
+        UnitNumber:
+          description: Unit number within a building.
+          type:
+          - number
+          - 'null'
+        StreetName:
+          description: Name of a street or thoroughfare.
+          type:
+          - string
+          - 'null'
+          maxLength: 70
+          minLength: 1
+        SecondaryNumber:
+          description: Secondary number for the address (National Addressing System).
+          type:
+          - string
+          - 'null'
+          maxLength: 4
+          minLength: 4
+        District:
+          description: Identifies a subdivision of a city, town or country.
+          type:
+          - string
+          - 'null'
+          maxLength: 35
+          minLength: 1
+        PostalCode:
+          description: Identifier of a group of letters or numbers added to a postal address to assist the sorting of mail.
+          type:
+          - string
+          - 'null'
+          maxLength: 16
+          minLength: 1
+        City:
+          description: Name of a built-up area, with defined boundaries, and a local government.
+          type:
+          - string
+          - 'null'
+          maxLength: 35
+          minLength: 1
+        Country:
+          description: Nation with its own government (ISO 3166-1 alpha-2 country code).
+          type:
+          - string
+          - 'null'
+          pattern: ^[A-Z]{2,2}$
     OBCreditorAgent:
       description: Financial institution servicing an account for the creditor or debtor.
       type: object
@@ -554,6 +382,144 @@ components:
       required:
       - IdentificationType
       - Identification
+    OBAddressTypeCode:
+      description: Postal address type specifying the nature of the postal address.
+      type: string
+      enum:
+      - KSAOB.Business
+      - KSAOB.Correspondence
+      - KSAOB.DeliveryTo
+      - KSAOB.MailTo
+      - KSAOB.POBox
+      - KSAOB.Postal
+      - KSAOB.Residential
+      - KSAOB.Statement
+    OBGetScheduledPaymentsResponse:
+      description: Response envelope for the Open Banking account scheduled payments.
+      type: object
+      properties:
+        Data:
+          description: Container for the list of Open Banking account scheduled payments. Null when the request fails.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBScheduledPaymentsData'
+        Status:
+          description: Status of the request.
+          type: string
+          enum:
+          - OK
+          - PENDING
+          - FAILED
+          - CONSENT_EXPIRED
+        Message:
+          description: Human-readable message describing the status of the request.
+          type: string
+        Timestamp:
+          description: Date and time when the response was generated.
+          type: string
+          format: date-time
+        RefreshedAt:
+          description: Date and time when the data was last refreshed from the bank.
+          type:
+          - string
+          - 'null'
+          format: date-time
+        StatusDetail:
+          description: Additional details about the request status.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBStatusDetail'
+        Meta:
+          description: Metadata relevant to the resource, including pagination information.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBMeta'
+        Links:
+          description: Links relevant to the resource for pagination navigation.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBLinks'
+      required:
+      - Data
+      - Status
+      - Message
+      - Timestamp
+    OBCreditorAgentIdentificationType:
+      description: Name of the identification scheme for the creditor or debtor agent.
+      type: string
+      enum:
+      - KSAOB.BICFI
+      - KSAOB.OTHER
+    OBStatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        GranularStatusCode:
+          description: Granular status code providing additional information on the request status.
+          type:
+          - string
+          - 'null'
+        StatusAdditionalInfo:
+          description: Additional human-readable information about the status.
+          type:
+          - string
+          - 'null'
+    OBMeta:
+      description: Metadata relevant to the resource.
+      type: object
+      properties:
+        TotalPages:
+          description: Total number of pages where a result set is paginated.
+          type:
+          - integer
+          - 'null'
+          format: int32
+          minimum: 0
+    OBScheduledPaymentsData:
+      description: Container for the list of Open Banking account scheduled payments.
+      type: object
+      properties:
+        CustomerId:
+          description: Lean provided customer ID
+          type:
+          - string
+          - 'null'
+          format: uuid
+        ScheduledPayment:
+          description: List of scheduled payments for the account.
+          type: array
+          items:
+            $ref: '#/components/schemas/OBScheduledPayment'
+      required:
+      - ScheduledPayment
+    OBScheduledTypeCode:
+      description: Specifies the scheduled payment date type.
+      type: string
+      enum:
+      - KSAOB.Arrival
+      - KSAOB.Execution
+    OBCashAccountIdentificationType:
+      description: Name of the identification scheme for the cash account.
+      type: string
+      enum:
+      - KSAOB.IBAN
+      - KSAOB.MaskedPAN
+      - KSAOB.AccountNumber
+      - KSAOB.CommercialRegistrationNumber
+      - KSAOB.Email
+      - KSAOB.MobileNumber
+      - KSAOB.NationalID
+      - KSAOB.IqamaNumber
+      - KSAOB.PassportNumber
     OBCashAccount:
       description: Details to identify a cash account for a creditor or debtor.
       type: object
@@ -575,6 +541,40 @@ components:
       required:
       - IdentificationType
       - Identification
+    OBLinks:
+      description: Links relevant to the resource for pagination navigation.
+      type: object
+      properties:
+        Self:
+          description: A link to the current resource.
+          type: string
+          format: uri
+        First:
+          description: A link to the first page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+        Prev:
+          description: A link to the previous page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+        Next:
+          description: A link to the next page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+        Last:
+          description: A link to the last page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+      required:
+      - Self
   securitySchemes:
     bearerAuth:
       type: http

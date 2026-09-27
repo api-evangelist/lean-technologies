@@ -256,16 +256,6 @@ components:
           type: number
           description: The decimal amount for the transaction
       description: The total amount for the category.
-    StatusDetailObject:
-      description: Status Details
-      type: object
-      properties:
-        granular_status_code:
-          description: Detailed error code
-          type: string
-        status_additional_info:
-          description: Further detail on the encountered error
-          type: string
     balance_factors:
       type: object
       title: BalanceFactors
@@ -506,6 +496,16 @@ components:
       - inflow_factors
       - outflow_factors
       - daily_net_cashflow_estimate
+    StatusDetailObject:
+      description: Status Details
+      type: object
+      properties:
+        granular_status_code:
+          description: Detailed error code
+          type: string
+        status_additional_info:
+          description: Further detail on the encountered error
+          type: string
     MonthlyTotalsBalances:
       type: object
       properties:

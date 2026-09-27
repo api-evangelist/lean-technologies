@@ -201,25 +201,45 @@ paths:
       - Accounts Raw Data
 components:
   schemas:
-    AccountStatus:
-      description: The current status of the account. Indicating whether it is in active use or not.
-      type:
-      - string
-      - 'null'
-      enum:
-      - DELETED
-      - DISABLED
-      - ENABLED
-      - PENDING
-      - PROFORMA
-      - UNSUPPORTED
-    ServicerSchemeName:
-      description: Servicer identification scheme name
-      type: string
-      enum:
-      - BICFI
-      - OTHER
-      - UNSUPPORTED
+    PageMetadata:
+      description: Metadata about the current page of results
+      type: object
+      properties:
+        number:
+          description: The current page being returned by the API
+          type: integer
+          format: int32
+        size:
+          description: The page size requested
+          type: integer
+          format: int32
+        total_elements:
+          description: The total number of elements in all pages
+          type: integer
+          format: int64
+        total_pages:
+          description: The total number of pages retrievable
+          type: integer
+          format: int32
+        sort:
+          description: Sort parameters applied to the results
+          type: array
+          items:
+            type: string
+      required:
+      - number
+      - size
+      - total_elements
+      - total_pages
+    Servicer:
+      type: object
+      properties:
+        scheme_name:
+          $ref: '#/components/schemas/ServicerSchemeName'
+        identification:
+          description: Servicer identification code
+          type: string
+      x-toBuilder: true
     Account:
       type: object
       properties:
@@ -285,40 +305,47 @@ components:
       required:
       - account_id
       x-toBuilder: true
-    AccountsRequestResultV2:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/DataResult'
-      - properties:
-          data:
-            $ref: '#/components/schemas/AccountsData'
-        type: object
-      x-toBuilder: true
-    Currency:
-      description: The ISO 3 letter currency code
-      type: string
-      examples:
-      - AED
-      pattern: ^[A-Z]{3}$
-    ResultStatus:
-      description: The status of the request
+    StatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        granular_status_code:
+          description: Granular status code
+          type:
+          - string
+          - 'null'
+        status_additional_info:
+          description: Additional information about the status
+          type:
+          - string
+          - 'null'
+    AccountSubType:
+      description: Specifies the sub type of account i.e., product family group such as CURRENT, SAVINGS, SAVINGS and CREDIT
       type: string
       enum:
-      - OK
-      - PENDING
-      - FAILED
-      - CONSENT_EXPIRED
-      - RECONNECT_REQUIRED
-      - PROCESSING_STARTED
-    Servicer:
+      - CHARGE_CARD
+      - CREDIT
+      - CURRENT
+      - EMONEY
+      - LOAN
+      - MORTGAGE
+      - PERSONAL_LOAN
+      - PREPAID
+      - SAVINGS
+      - CALL
+      - UNSUPPORTED
+    AccountIdentification:
       type: object
       properties:
         scheme_name:
-          $ref: '#/components/schemas/ServicerSchemeName'
+          $ref: '#/components/schemas/SchemeName'
         identification:
-          description: Servicer identification code
+          description: The identification value for the account assigned by the Bank based on the Account Scheme Name.
           type: string
-      x-toBuilder: true
+        name:
+          description: Account name
+          type: string
     SchemeName:
       description: The scheme name of the account identification value
       type: string
@@ -334,6 +361,15 @@ components:
       - PASSPORT_NUMBER
       - OTHER
       - UNSUPPORTED
+    AccountsRequestResultV2:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/DataResult'
+      - properties:
+          data:
+            $ref: '#/components/schemas/AccountsData'
+        type: object
+      x-toBuilder: true
     DataResult:
       type: object
       allOf:
@@ -351,28 +387,6 @@ components:
             type:
             - string
             - 'null'
-    AccountType:
-      description: Specifies the type of account (PERSONAL or BUSINESS).
-      type: string
-      enum:
-      - PERSONAL
-      - BUSINESS
-      - UNSUPPORTED
-    AccountSubType:
-      description: Specifies the sub type of account i.e., product family group such as CURRENT, SAVINGS, SAVINGS and CREDIT
-      type: string
-      enum:
-      - CHARGE_CARD
-      - CREDIT
-      - CURRENT
-      - EMONEY
-      - LOAN
-      - MORTGAGE
-      - PERSONAL_LOAN
-      - PREPAID
-      - SAVINGS
-      - CALL
-      - UNSUPPORTED
     AccountsData:
       type: object
       properties:
@@ -391,62 +405,13 @@ components:
       - page
       - accounts
       x-toBuilder: true
-    StatusDetail:
-      type:
-      - object
-      - 'null'
-      properties:
-        granular_status_code:
-          description: Granular status code
-          type:
-          - string
-          - 'null'
-        status_additional_info:
-          description: Additional information about the status
-          type:
-          - string
-          - 'null'
-    AccountIdentification:
-      type: object
-      properties:
-        scheme_name:
-          $ref: '#/components/schemas/SchemeName'
-        identification:
-          description: The identification value for the account assigned by the Bank based on the Account Scheme Name.
-          type: string
-        name:
-          description: Account name
-          type: string
-    PageMetadata:
-      description: Metadata about the current page of results
-      type: object
-      properties:
-        number:
-          description: The current page being returned by the API
-          type: integer
-          format: int32
-        size:
-          description: The page size requested
-          type: integer
-          format: int32
-        total_elements:
-          description: The total number of elements in all pages
-          type: integer
-          format: int64
-        total_pages:
-          description: The total number of pages retrievable
-          type: integer
-          format: int32
-        sort:
-          description: Sort parameters applied to the results
-          type: array
-          items:
-            type: string
-      required:
-      - number
-      - size
-      - total_elements
-      - total_pages
+    ServicerSchemeName:
+      description: Servicer identification scheme name
+      type: string
+      enum:
+      - BICFI
+      - OTHER
+      - UNSUPPORTED
     Result:
       type: object
       properties:
@@ -482,50 +447,41 @@ components:
       - results_id
       - message
       - timestamp
-  parameters:
-    EntityIdParameter:
-      name: entity_id
-      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
-      in: query
-      required: false
-      schema:
-        type: string
-        format: uuid
-    PageParameter:
-      name: page
-      in: query
-      description: The page you're requesting - returns page 0 of a response if not specified.
-      required: false
-      schema:
-        type: integer
-        default: 0
-        minimum: 0
-    AsyncParameter:
-      name: async
-      in: query
-      description: 'When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. **Note: it''s recommended to use the sync flow (async=false) for all requests by adapting the [data workflow](https://docs.leantech.me/docs/data-workflow) for connected entities.**'
-      required: false
-      schema:
-        type: boolean
-        default: false
-      deprecated: true
-    MetaParameter:
-      name: meta
-      description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
-      in: query
-      required: false
-      schema:
-        type: string
-    SizeParameter:
-      name: size
-      description: The number of objects you want to return as a page size.
-      in: query
-      required: false
-      schema:
-        type: integer
-        default: 50
-        maximum: 100
-        minimum: 1
+    ResultStatus:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - RECONNECT_REQUIRED
+      - PROCESSING_STARTED
+    AccountType:
+      description: Specifies the type of account (PERSONAL or BUSINESS).
+      type: string
+      enum:
+      - PERSONAL
+      - BUSINESS
+      - UNSUPPORTED
+    AccountStatus:
+      description: The current status of the account. Indicating whether it is in active use or not.
+      type:
+      - string
+      - 'null'
+      enum:
+      - DELETED
+      - DISABLED
+      - ENABLED
+      - PENDING
+      - PROFORMA
+      - UNSUPPORTED
+    Currency:
+      description: The ISO 3 letter currency code
+      type: string
+      examples:
+      - AED
+      pattern: ^[A-Z]{3}$
   examples:
     UnknownEntityExample:
       summary: Entity not found error response
@@ -581,6 +537,50 @@ components:
         status: INVALID_PARAMETERS
         message: 'The request is badly formatted or a parameter of the wrong type has been provided, field: entity_id, value: e34d8e49-9af2-4252-a53e-bd2df855134.'
         metadata: null
+  parameters:
+    AsyncParameter:
+      name: async
+      in: query
+      description: 'When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. **Note: it''s recommended to use the sync flow (async=false) for all requests by adapting the [data workflow](https://docs.leantech.me/docs/data-workflow) for connected entities.**'
+      required: false
+      schema:
+        type: boolean
+        default: false
+      deprecated: true
+    SizeParameter:
+      name: size
+      description: The number of objects you want to return as a page size.
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 50
+        maximum: 100
+        minimum: 1
+    MetaParameter:
+      name: meta
+      description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
+      in: query
+      required: false
+      schema:
+        type: string
+    PageParameter:
+      name: page
+      in: query
+      description: The page you're requesting - returns page 0 of a response if not specified.
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+    EntityIdParameter:
+      name: entity_id
+      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
+      in: query
+      required: false
+      schema:
+        type: string
+        format: uuid
   securitySchemes:
     bearerAuth:
       type: http

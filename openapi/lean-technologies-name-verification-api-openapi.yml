@@ -47,23 +47,13 @@ paths:
       - Name Verification
 components:
   schemas:
-    NameVerificationRequestDto:
+    StatusAdditionalDetail:
       type: object
       properties:
-        entity_id:
+        granular_status_code:
           type: string
-          format: uuid
-        full_name:
+        status_additional_info:
           type: string
-        async:
-          type: boolean
-        meta:
-          type: object
-          additionalProperties:
-            type: string
-      required:
-      - entity_id
-      - full_name
     DataRequestResultNameVerificationDto:
       type: object
       properties:
@@ -112,13 +102,23 @@ components:
         confidence:
           description: Between 0 and 1
           type: number
-    StatusAdditionalDetail:
+    NameVerificationRequestDto:
       type: object
       properties:
-        granular_status_code:
+        entity_id:
           type: string
-        status_additional_info:
+          format: uuid
+        full_name:
           type: string
+        async:
+          type: boolean
+        meta:
+          type: object
+          additionalProperties:
+            type: string
+      required:
+      - entity_id
+      - full_name
     ResultStatus:
       description: The status of the request
       type: string

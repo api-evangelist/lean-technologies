@@ -126,92 +126,56 @@ paths:
       tags:
       - Direct Debits Raw Data
 components:
-  parameters:
-    EntityIdParameter:
-      name: entity_id
-      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
-      in: query
-      required: false
-      schema:
-        type: string
-        format: uuid
-    PageParameter:
-      name: page
-      in: query
-      description: The page you're requesting - returns page 0 of a response if not specified.
-      required: false
-      schema:
-        type: integer
-        default: 0
-        minimum: 0
-    AsyncParameter:
-      name: async
-      in: query
-      description: 'When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. **Note: it''s recommended to use the sync flow (async=false) for all requests by adapting the [data workflow](https://docs.leantech.me/docs/data-workflow) for connected entities.**'
-      required: false
-      schema:
-        type: boolean
-        default: false
-      deprecated: true
-    MetaParameter:
-      name: meta
-      description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
-      in: query
-      required: false
-      schema:
-        type: string
-    AccountIdParameter:
-      name: account_id
-      description: The account_id used to fetch requested data
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
-    SizeParameter:
-      name: size
-      description: The number of objects you want to return as a page size.
-      in: query
-      required: false
-      schema:
-        type: integer
-        default: 50
-        maximum: 100
-        minimum: 1
   schemas:
-    Currency:
-      description: The ISO 3 letter currency code
-      type: string
-      examples:
-      - AED
-      pattern: ^[A-Z]{3}$
-    ResultStatus:
-      description: The status of the request
-      type: string
-      enum:
-      - OK
-      - PENDING
-      - FAILED
-      - CONSENT_EXPIRED
-      - RECONNECT_REQUIRED
-      - PROCESSING_STARTED
-    DataResult:
+    PageMetadata:
+      description: Metadata about the current page of results
       type: object
-      allOf:
-      - $ref: '#/components/schemas/Result'
-      - type: object
-        properties:
-          refreshed_at:
-            description: The datetime of when the data was refreshed
-            type:
-            - string
-            - 'null'
-            format: date-time
-          type:
-            description: The endpoint the original request was made to.
-            type:
-            - string
-            - 'null'
+      properties:
+        number:
+          description: The current page being returned by the API
+          type: integer
+          format: int32
+        size:
+          description: The page size requested
+          type: integer
+          format: int32
+        total_elements:
+          description: The total number of elements in all pages
+          type: integer
+          format: int64
+        total_pages:
+          description: The total number of pages retrievable
+          type: integer
+          format: int32
+        sort:
+          description: Sort parameters applied to the results
+          type: array
+          items:
+            type: string
+      required:
+      - number
+      - size
+      - total_elements
+      - total_pages
+    DirectDebitsData:
+      type:
+      - object
+      - 'null'
+      properties:
+        type:
+          description: The endpoint the original request was made to.
+          type: string
+          const: direct-debits
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+        direct_debits:
+          description: List of direct debits for an Account
+          type: array
+          items:
+            $ref: '#/components/schemas/DirectDebit'
+      required:
+      - type
+      x-toBuilder: true
     DirectDebit:
       type: object
       properties:
@@ -245,49 +209,6 @@ components:
           allOf:
           - $ref: '#/components/schemas/CurrencyAmount'
       x-builder: true
-    DirectDebitsData:
-      type:
-      - object
-      - 'null'
-      properties:
-        type:
-          description: The endpoint the original request was made to.
-          type: string
-          const: direct-debits
-        page:
-          $ref: '#/components/schemas/PageMetadata'
-        direct_debits:
-          description: List of direct debits for an Account
-          type: array
-          items:
-            $ref: '#/components/schemas/DirectDebit'
-      required:
-      - type
-      x-toBuilder: true
-    Frequency:
-      description: Regularity with which direct debit instructions are to be created and processed.
-      type: string
-      enum:
-      - MONTHLY
-      - QUARTERLY
-      - HALF_YEARLY
-      - ANNUAL
-      - FORTNIGHTLY
-      - DAILY
-      - WEEKLY
-      - NOT_KNOWN
-      - UNSUPPORTED
-    CurrencyAmount:
-      type: object
-      properties:
-        currency:
-          $ref: '#/components/schemas/Currency'
-        amount:
-          description: The amount of money in the currency specified.
-          type: number
-      required:
-      - currency
-      - amount
     StatusDetail:
       type:
       - object
@@ -303,43 +224,34 @@ components:
           type:
           - string
           - 'null'
-    StatusCode:
-      description: Specifies the status of the direct debit in code form.
-      type: string
-      enum:
-      - ACTIVE
-      - INACTIVE
-      - UNSUPPORTED
-    PageMetadata:
-      description: Metadata about the current page of results
+    CurrencyAmount:
       type: object
       properties:
-        number:
-          description: The current page being returned by the API
-          type: integer
-          format: int32
-        size:
-          description: The page size requested
-          type: integer
-          format: int32
-        total_elements:
-          description: The total number of elements in all pages
-          type: integer
-          format: int64
-        total_pages:
-          description: The total number of pages retrievable
-          type: integer
-          format: int32
-        sort:
-          description: Sort parameters applied to the results
-          type: array
-          items:
-            type: string
+        currency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          description: The amount of money in the currency specified.
+          type: number
       required:
-      - number
-      - size
-      - total_elements
-      - total_pages
+      - currency
+      - amount
+    DataResult:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          refreshed_at:
+            description: The datetime of when the data was refreshed
+            type:
+            - string
+            - 'null'
+            format: date-time
+          type:
+            description: The endpoint the original request was made to.
+            type:
+            - string
+            - 'null'
     Result:
       type: object
       properties:
@@ -375,6 +287,36 @@ components:
       - results_id
       - message
       - timestamp
+    StatusCode:
+      description: Specifies the status of the direct debit in code form.
+      type: string
+      enum:
+      - ACTIVE
+      - INACTIVE
+      - UNSUPPORTED
+    Frequency:
+      description: Regularity with which direct debit instructions are to be created and processed.
+      type: string
+      enum:
+      - MONTHLY
+      - QUARTERLY
+      - HALF_YEARLY
+      - ANNUAL
+      - FORTNIGHTLY
+      - DAILY
+      - WEEKLY
+      - NOT_KNOWN
+      - UNSUPPORTED
+    ResultStatus:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - RECONNECT_REQUIRED
+      - PROCESSING_STARTED
     DirectDebitsResult:
       type: object
       allOf:
@@ -383,6 +325,12 @@ components:
         properties:
           data:
             $ref: '#/components/schemas/DirectDebitsData'
+    Currency:
+      description: The ISO 3 letter currency code
+      type: string
+      examples:
+      - AED
+      pattern: ^[A-Z]{3}$
   examples:
     UnknownEntityExample:
       summary: Entity not found error response
@@ -415,15 +363,6 @@ components:
         status: INTERNAL_SERVER_ERROR
         message: Something has gone wrong. If you continue to see this error, please get in touch with Lean.
         metadata: null
-    UnknownAccountExample:
-      summary: Account not found error response
-      description: Response when the provided account_id does not match an account for the entity_id
-      value:
-        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
-        timestamp: '2025-09-11T18:55:42.579432745Z'
-        status: UNKNOWN_ACCOUNT
-        message: The account_id provided does not match an account with the entity_id provided.
-        metadata: null
     InvalidParametersExample:
       summary: Invalid parameters error response
       description: Response when required parameters are missing or invalid
@@ -433,6 +372,67 @@ components:
         status: INVALID_PARAMETERS
         message: 'The request is badly formatted or a parameter of the wrong type has been provided, field: entity_id, value: e34d8e49-9af2-4252-a53e-bd2df855134.'
         metadata: null
+    UnknownAccountExample:
+      summary: Account not found error response
+      description: Response when the provided account_id does not match an account for the entity_id
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-11T18:55:42.579432745Z'
+        status: UNKNOWN_ACCOUNT
+        message: The account_id provided does not match an account with the entity_id provided.
+        metadata: null
+  parameters:
+    AccountIdParameter:
+      name: account_id
+      description: The account_id used to fetch requested data
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    AsyncParameter:
+      name: async
+      in: query
+      description: 'When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. **Note: it''s recommended to use the sync flow (async=false) for all requests by adapting the [data workflow](https://docs.leantech.me/docs/data-workflow) for connected entities.**'
+      required: false
+      schema:
+        type: boolean
+        default: false
+      deprecated: true
+    SizeParameter:
+      name: size
+      description: The number of objects you want to return as a page size.
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 50
+        maximum: 100
+        minimum: 1
+    MetaParameter:
+      name: meta
+      description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
+      in: query
+      required: false
+      schema:
+        type: string
+    PageParameter:
+      name: page
+      in: query
+      description: The page you're requesting - returns page 0 of a response if not specified.
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+    EntityIdParameter:
+      name: entity_id
+      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
+      in: query
+      required: false
+      schema:
+        type: string
+        format: uuid
   securitySchemes:
     bearerAuth:
       type: http

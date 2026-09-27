@@ -1919,7 +1919,7 @@ paths:
       summary: Get Payment History
       deprecated: false
       description: ''
-      operationId: getPaymentHistory
+      operationId: getPayoutsV1PaymentsByPaymentIdHistory
       tags:
       - Payouts
       parameters:
@@ -2031,6 +2031,8 @@ paths:
           headers: {}
       security:
       - bearer: []
+      x-operation-id-source: normalized
+      x-operation-id-original: getPaymentHistory
     servers:
     - url: https://sandbox.leantech.me
       description: Sandbox
@@ -2038,26 +2040,6 @@ paths:
       description: Production / Pre-live
 components:
   schemas:
-    PayoutByDestinationID:
-      type: object
-      properties:
-        destination_id:
-          type: string
-          format: uuid
-        amount:
-          type: number
-          description: The amount that should be debited in the payout.
-        currency:
-          type: string
-          description: The currency of the amount to be debited
-        description:
-          type: string
-          description: The description submitted to the bank as a reference when initiating a payment. Can be used for reconciliation. By default this value is a the Payment Intent UUID without hyphens but you can also specify the description upon creation of a payment intent.
-      required:
-      - destination_id
-      - amount
-      - description
-      - currency
     PaymentDestination:
       type: object
       properties:
@@ -2134,6 +2116,26 @@ components:
       - city
       - country
       - account_number
+    PayoutByDestinationID:
+      type: object
+      properties:
+        destination_id:
+          type: string
+          format: uuid
+        amount:
+          type: number
+          description: The amount that should be debited in the payout.
+        currency:
+          type: string
+          description: The currency of the amount to be debited
+        description:
+          type: string
+          description: The description submitted to the bank as a reference when initiating a payment. Can be used for reconciliation. By default this value is a the Payment Intent UUID without hyphens but you can also specify the description upon creation of a payment intent.
+      required:
+      - destination_id
+      - amount
+      - description
+      - currency
     PayoutByDestinationPayload:
       type: object
       properties:

@@ -182,43 +182,56 @@ paths:
       - Consents
 components:
   schemas:
-    ImmediatePayment:
-      description: 'Details of a payment that will be executed immediately after the user successfully authorizes the consent. If present, the payment is initiated automatically as part of the consent authorization flow.
-
-        '
-      type:
-      - object
-      - 'null'
-      properties:
-        amount:
-          description: The amount to be paid immediately upon consent authorization
-          type:
-          - number
-          format: decimal
-          examples:
-          - 123.45
-          minimum: 0.01
-        reference:
-          $ref: '#/components/schemas/Reference'
-        creditor_reference:
-          description: Clients identifier that can be used in their ERP systems
-          type:
-          - string
-          - 'null'
-      required:
-      - amount
-    ListPaymentConsentsResponse:
+    PageMetadata:
+      description: Metadata about the current page of results
       type: object
       properties:
-        data:
+        number:
+          description: The current page being returned by the API
+          type: integer
+          format: int32
+        size:
+          description: The page size requested
+          type: integer
+          format: int32
+        total_elements:
+          description: The total number of elements in all pages
+          type: integer
+          format: int64
+        total_pages:
+          description: The total number of pages retrievable
+          type: integer
+          format: int32
+        sort:
+          description: Sort parameters applied to the results
           type: array
           items:
-            $ref: '#/components/schemas/GetPaymentConsentResponse'
-        page:
-          $ref: '#/components/schemas/PageMetadata'
+            type: string
       required:
-      - data
-      - page
+      - number
+      - size
+      - total_elements
+      - total_pages
+    PaymentPurpose:
+      description: Indicates the reason for the payment using a standardized code and human-readable description.
+      type: object
+      properties:
+        code:
+          $ref: '#/components/schemas/PaymentPurposeCode'
+        description:
+          description: A human-readable description of payment purpose
+          type: string
+      required:
+      - code
+      - description
+      title: PaymentPurpose
+    Reference:
+      description: A reason or reference in relation to a payment. Maximum 64 chars
+      type: string
+      examples:
+      - 'Invoice #12345'
+      maxLength: 64
+      title: Reference
     AccountOnFileControlParameters:
       description: 'Defines the control parameters for a Account On File (AoF) consent.
 
@@ -257,20 +270,25 @@ components:
       - period_type
       title: AccountOnFileControlParameters
       x-class-extra-annotation: '@me.leantech.api.validation.AtLeastOneControlParameter @me.leantech.api.validation.WithinMaxIndividualAmountLimit'
-    ConsentBalanceResponse:
+    ConsentStatus:
+      description: Current status of this consent.
+      type: string
+      enum:
+      - AWAITING_AUTHORISATION
+      - AUTHORISED
+      - REVOKED
+      - REJECTED
+      - EXPIRED
+      - CONSUMED
+      - SUSPENDED
+    ControlParameters:
       type: object
-      properties:
-        currency:
-          $ref: '#/components/schemas/Currency'
-        balance:
-          description: The current balance of the account associated with the specified consent.
-          type: number
-          format: decimal
-          examples:
-          - 2500
-      required:
-      - currency
-      - balance
+      discriminator:
+        propertyName: type
+        mapping:
+          VariableOnDemand: '#/components/schemas/AccountOnFileControlParameters'
+      oneOf:
+      - $ref: '#/components/schemas/AccountOnFileControlParameters'
     ConsentRevocationReason:
       description: "The reason the consent is being revoked. Must be one of the predefined values:\n  - `END_USER_REQUESTED`: The end user has requested revocation of their consent through the Lean-provided consent management interface or via the client's customer support.\n  - `CONSENT_RENEWAL`: The consent is being revoked as part of a renewal flow, where a replacement consent has been authorized to supersede it.\n  - `KYC_VERIFICATION_FAILED`: The client's KYC or identity verification checks on the end user have failed or could not be completed.\n  - `REGULATORY_RESTRICTION`: A regulatory, compliance, or jurisdictional obligation requires the client to revoke the consent.\n  - `FRAUD_SUSPECTED`: Suspicious or potentially fraudulent activity has been detected on the end user's account or transactions.\n  - `CLIENT_TERMINATED_RELATIONSHIP`: The client has ended their commercial relationship with the end user.\n  - `ACCOUNT_CLOSED_BY_USER`: The end user has permanently closed their account with the client.\n  - `DUPLICATE_CONSENT`: A duplicate or superseding consent exists for the same end user and payment source, and this consent is being retired."
       type: string
@@ -306,43 +324,31 @@ components:
         holder_name:
           description: Consented account holder name.
           type: string
-    Reference:
-      description: A reason or reference in relation to a payment. Maximum 64 chars
-      type: string
-      examples:
-      - 'Invoice #12345'
-      maxLength: 64
-      title: Reference
-    PageMetadata:
-      description: Metadata about the current page of results
-      type: object
+    ImmediatePayment:
+      description: 'Details of a payment that will be executed immediately after the user successfully authorizes the consent. If present, the payment is initiated automatically as part of the consent authorization flow.
+
+        '
+      type:
+      - object
+      - 'null'
       properties:
-        number:
-          description: The current page being returned by the API
-          type: integer
-          format: int32
-        size:
-          description: The page size requested
-          type: integer
-          format: int32
-        total_elements:
-          description: The total number of elements in all pages
-          type: integer
-          format: int64
-        total_pages:
-          description: The total number of pages retrievable
-          type: integer
-          format: int32
-        sort:
-          description: Sort parameters applied to the results
-          type: array
-          items:
-            type: string
+        amount:
+          description: The amount to be paid immediately upon consent authorization
+          type:
+          - number
+          format: decimal
+          examples:
+          - 123.45
+          minimum: 0.01
+        reference:
+          $ref: '#/components/schemas/Reference'
+        creditor_reference:
+          description: Clients identifier that can be used in their ERP systems
+          type:
+          - string
+          - 'null'
       required:
-      - number
-      - size
-      - total_elements
-      - total_pages
+      - amount
     PeriodType:
       description: "Defines the time period used for applying limits on a long‑lived consent. \nThis value determines how consumption limits (e.g., maximum amounts or number of payments) are calculated within each period.\n\n**Supported values:**\n- `Day` – A single calendar day (00:00 to 23:59).\n- `Week` – Seven consecutive days.\n- `Month` – A full calendar month (from the 1st to the last day).\n- `Year` – A full calendar year (12 consecutive months)."
       type: string
@@ -352,44 +358,38 @@ components:
       - Month
       - Year
       title: PeriodType
+    ConsentBalanceResponse:
+      type: object
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        balance:
+          description: The current balance of the account associated with the specified consent.
+          type: number
+          format: decimal
+          examples:
+          - 2500
+      required:
+      - currency
+      - balance
     Currency:
       description: The ISO 3 letter currency code
       type: string
       examples:
       - AED
       pattern: ^[A-Z]{3}$
-    ConsentStatus:
-      description: Current status of this consent.
-      type: string
-      enum:
-      - AWAITING_AUTHORISATION
-      - AUTHORISED
-      - REVOKED
-      - REJECTED
-      - EXPIRED
-      - CONSUMED
-      - SUSPENDED
-    ControlParameters:
-      type: object
-      discriminator:
-        propertyName: type
-        mapping:
-          VariableOnDemand: '#/components/schemas/AccountOnFileControlParameters'
-      oneOf:
-      - $ref: '#/components/schemas/AccountOnFileControlParameters'
-    PaymentPurpose:
-      description: Indicates the reason for the payment using a standardized code and human-readable description.
+    ListPaymentConsentsResponse:
       type: object
       properties:
-        code:
-          $ref: '#/components/schemas/PaymentPurposeCode'
-        description:
-          description: A human-readable description of payment purpose
-          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetPaymentConsentResponse'
+        page:
+          $ref: '#/components/schemas/PageMetadata'
       required:
-      - code
-      - description
-      title: PaymentPurpose
+      - data
+      - page
     GetPaymentConsentResponse:
       type: object
       properties:

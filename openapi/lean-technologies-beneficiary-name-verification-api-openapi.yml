@@ -116,14 +116,6 @@ components:
         properties:
           verifications:
             $ref: '#/components/schemas/BeneficiaryNamePayload'
-    BeneficiaryNameRequest:
-      type: object
-      properties:
-        iban:
-          description: International Bank Account Number to retrieve beneficiary name for
-          type: string
-      required:
-      - iban
     BeneficiaryNamePayload:
       description: Beneficiary name and account status retrieved from the bank
       type: object
@@ -137,15 +129,6 @@ components:
       required:
       - beneficiary_name
       - account_status
-    ResultStatus:
-      description: The status of the request
-      type: string
-      enum:
-      - OK
-      - PENDING
-      - FAILED
-      - CONSENT_EXPIRED
-      - PROCESSING_STARTED
     Result:
       type: object
       properties:
@@ -181,6 +164,14 @@ components:
       - results_id
       - message
       - timestamp
+    BeneficiaryNameRequest:
+      type: object
+      properties:
+        iban:
+          description: International Bank Account Number to retrieve beneficiary name for
+          type: string
+      required:
+      - iban
     StatusDetail:
       type:
       - object
@@ -196,6 +187,15 @@ components:
           type:
           - string
           - 'null'
+    ResultStatus:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - PROCESSING_STARTED
   securitySchemes:
     bearerAuth:
       type: http
