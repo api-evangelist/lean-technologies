@@ -115,36 +115,56 @@ paths:
       - Identity Raw Data
 components:
   schemas:
-    PageMetadata:
-      description: Metadata about the current page of results
+    StatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        granular_status_code:
+          description: Granular status code
+          type:
+          - string
+          - 'null'
+        status_additional_info:
+          description: Additional information about the status
+          type:
+          - string
+          - 'null'
+    Result:
       type: object
       properties:
-        number:
-          description: The current page being returned by the API
-          type: integer
-          format: int32
-        size:
-          description: The page size requested
-          type: integer
-          format: int32
-        total_elements:
-          description: The total number of elements in all pages
-          type: integer
-          format: int64
-        total_pages:
-          description: The total number of pages retrievable
-          type: integer
-          format: int32
-        sort:
-          description: Sort parameters applied to the results
-          type: array
-          items:
+        status:
+          $ref: '#/components/schemas/ResultStatus'
+        results_id:
+          description: The unique identifier for the request
+          type: string
+          format: uuid
+        message:
+          description: A message describing the status of the request
+          type: string
+        meta:
+          description: Meta information about the request
+          type:
+          - object
+          - 'null'
+          additionalProperties:
             type: string
+        timestamp:
+          description: The datetime of when the request was made
+          type: string
+          format: date-time
+        status_detail:
+          description: Additional information about the status
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/StatusDetail'
       required:
-      - number
-      - size
-      - total_elements
-      - total_pages
+      - status
+      - results_id
+      - message
+      - timestamp
     Address:
       description: The full address details
       type: object
@@ -189,21 +209,6 @@ components:
           description: The country where the address is located.
           type: string
       x-toBuilder: true
-    StatusDetail:
-      type:
-      - object
-      - 'null'
-      properties:
-        granular_status_code:
-          description: Granular status code
-          type:
-          - string
-          - 'null'
-        status_additional_info:
-          description: Additional information about the status
-          type:
-          - string
-          - 'null'
     DataResult:
       type: object
       allOf:
@@ -230,41 +235,6 @@ components:
             $ref: '#/components/schemas/IdentityData'
         type: object
       x-toBuilder: true
-    Result:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/ResultStatus'
-        results_id:
-          description: The unique identifier for the request
-          type: string
-          format: uuid
-        message:
-          description: A message describing the status of the request
-          type: string
-        meta:
-          description: Meta information about the request
-          type:
-          - object
-          - 'null'
-          additionalProperties:
-            type: string
-        timestamp:
-          description: The datetime of when the request was made
-          type: string
-          format: date-time
-        status_detail:
-          description: Additional information about the status
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/StatusDetail'
-      required:
-      - status
-      - results_id
-      - message
-      - timestamp
     ResultStatus:
       description: The status of the request
       type: string
@@ -350,16 +320,37 @@ components:
       required:
       - type
       x-toBuilder: true
+    PageMetadata:
+      description: Metadata about the current page of results
+      type: object
+      properties:
+        number:
+          description: The current page being returned by the API
+          type: integer
+          format: int32
+        size:
+          description: The page size requested
+          type: integer
+          format: int32
+        total_elements:
+          description: The total number of elements in all pages
+          type: integer
+          format: int64
+        total_pages:
+          description: The total number of pages retrievable
+          type: integer
+          format: int32
+        sort:
+          description: Sort parameters applied to the results
+          type: array
+          items:
+            type: string
+      required:
+      - number
+      - size
+      - total_elements
+      - total_pages
   examples:
-    UnknownEntityExample:
-      summary: Entity not found error response
-      description: Response when the provided entity_id is not found
-      value:
-        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
-        timestamp: '2025-09-10T21:03:05.413806605Z'
-        status: UNKNOWN_ENTITY
-        message: The entity_id provided did not match an account in our records.
-        metadata: null
     AsyncProcessingV2Example:
       summary: Asynchronous processing response with async=true
       description: Response to request with async=true
@@ -373,6 +364,33 @@ components:
         data: null
         type: null
         refreshed_at: null
+    InvalidParametersExample:
+      summary: Invalid parameters error response
+      description: Response when required parameters are missing or invalid
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-10T21:05:59.919233187Z'
+        status: INVALID_PARAMETERS
+        message: 'The request is badly formatted or a parameter of the wrong type has been provided, field: entity_id, value: e34d8e49-9af2-4252-a53e-bd2df855134.'
+        metadata: null
+    InternalServerErrorExample:
+      summary: Internal server error response
+      description: Response when an unexpected server error occurs
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-08-07T13:07:38.834977945Z'
+        status: INTERNAL_SERVER_ERROR
+        message: Something has gone wrong. If you continue to see this error, please get in touch with Lean.
+        metadata: null
+    UnknownEntityExample:
+      summary: Entity not found error response
+      description: Response when the provided entity_id is not found
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-10T21:03:05.413806605Z'
+        status: UNKNOWN_ENTITY
+        message: The entity_id provided did not match an account in our records.
+        metadata: null
     BankIssueV2Example:
       summary: Failed request due to bank technical issues
       description: Response when the bank is experiencing technical problems
@@ -387,25 +405,24 @@ components:
           status_additional_info: Your bank is currently experiencing technological problems. Please try again later.
         type: null
         refreshed_at: null
-    InternalServerErrorExample:
-      summary: Internal server error response
-      description: Response when an unexpected server error occurs
-      value:
-        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
-        timestamp: '2025-08-07T13:07:38.834977945Z'
-        status: INTERNAL_SERVER_ERROR
-        message: Something has gone wrong. If you continue to see this error, please get in touch with Lean.
-        metadata: null
-    InvalidParametersExample:
-      summary: Invalid parameters error response
-      description: Response when required parameters are missing or invalid
-      value:
-        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
-        timestamp: '2025-09-10T21:05:59.919233187Z'
-        status: INVALID_PARAMETERS
-        message: 'The request is badly formatted or a parameter of the wrong type has been provided, field: entity_id, value: e34d8e49-9af2-4252-a53e-bd2df855134.'
-        metadata: null
   parameters:
+    EntityIdParameter:
+      name: entity_id
+      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
+      in: query
+      required: false
+      schema:
+        type: string
+        format: uuid
+    PageParameter:
+      name: page
+      in: query
+      description: The page you're requesting - returns page 0 of a response if not specified.
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
     AsyncParameter:
       name: async
       in: query
@@ -432,23 +449,6 @@ components:
       required: false
       schema:
         type: string
-    PageParameter:
-      name: page
-      in: query
-      description: The page you're requesting - returns page 0 of a response if not specified.
-      required: false
-      schema:
-        type: integer
-        default: 0
-        minimum: 0
-    EntityIdParameter:
-      name: entity_id
-      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
-      in: query
-      required: false
-      schema:
-        type: string
-        format: uuid
   securitySchemes:
     bearerAuth:
       type: http

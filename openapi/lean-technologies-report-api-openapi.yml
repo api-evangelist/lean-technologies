@@ -322,6 +322,8 @@ paths:
       - Report
 components:
   schemas:
+    CreateVerificationOfIncomeReportRequestBody:
+      type: object
     BankStatementAccount:
       type: object
       properties:
@@ -339,17 +341,6 @@ components:
       - account
       - balance
       - transactions
-    BankStatementIdentity:
-      type: object
-      properties:
-        full_name:
-          description: Full name of the account holder
-          type: string
-        address_line:
-          description: Address of the account holder
-          type: string
-    CreateVerificationOfIncomeReportRequestBody:
-      type: object
     StatusDetail:
       type:
       - object
@@ -365,70 +356,61 @@ components:
           type:
           - string
           - 'null'
-    DateRange:
+    BankStatementBank:
       type: object
       properties:
-        start_date:
-          description: Start date for transactions range
+        bank_identifier:
+          description: Bank identifier code
           type: string
-          format: date
-        end_date:
-          description: End date for transactions range
+        bank_name:
+          description: Name of the bank
           type: string
-          format: date
-      required:
-      - start_date
-      - end_date
-    CreateBankStatementsReportRequestBody:
-      type: object
-      properties:
-        start_date:
-          description: Start date for transactions range
-          type: string
-          format: date
-        end_date:
-          description: End date for transactions range
-          type: string
-          format: date
-        account_sub_types:
-          description: Account sub types to include in the statements, if undefined all sub types will be included
-          type:
-          - array
-          - 'null'
-          items:
-            type: string
-      required:
-      - start_date
-      - end_date
-    VerificationOfIncomeReport:
-      type: object
-      properties:
-        properties:
-          allOf:
-          - $ref: '#/components/schemas/DateRange'
-          x-field-extra-annotation: '@me.leantech.api.validation.ValidDateRange'
+        identity:
+          $ref: '#/components/schemas/BankStatementIdentity'
         accounts:
           type: array
           items:
-            $ref: '#/components/schemas/ReportBankAccount'
-        income_sources:
-          type: array
-          items:
-            $ref: '#/components/schemas/IncomeSource'
-        income_summary:
-          $ref: '#/components/schemas/IncomeSummary'
+            $ref: '#/components/schemas/BankStatementAccount'
       required:
-      - properties
+      - bank_identifier
+      - bank_name
+      - identity
       - accounts
-      - income_sources
-      - income_summary
-    GetBankStatementsReportResponseBody:
+    GetVerificationOfIncomeReportResponseBody:
       allOf:
       - $ref: '#/components/schemas/GetReportResponseBody'
       - type: object
         properties:
           report:
-            $ref: '#/components/schemas/BankStatementsReport'
+            $ref: '#/components/schemas/VerificationOfIncomeReport'
+    ReportAccount:
+      type: object
+      properties:
+        nickname:
+          description: User-friendly name for the account
+          type: string
+        description:
+          description: Account description or purpose
+          type: string
+        account_type:
+          description: Type of account (CHECKING, SAVINGS, etc.)
+          type: string
+        account_sub_type:
+          description: Sub-type of account (CURRENT, SAVINGS, etc.)
+          type: string
+        account_holder_name:
+          description: Name of the account holder
+          type: string
+        account:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountIdentification'
+      required:
+      - nickname
+      - description
+      - account_type
+      - account_sub_type
+      - account_holder_name
     ReportBankAccount:
       allOf:
       - $ref: '#/components/schemas/ReportAccount'
@@ -441,17 +423,6 @@ components:
         required:
         - bank_identifier
         - bank_name
-    AccountIdentification:
-      type: object
-      properties:
-        scheme_name:
-          $ref: '#/components/schemas/SchemeName'
-        identification:
-          description: The identification value for the account assigned by the Bank based on the Account Scheme Name.
-          type: string
-        name:
-          description: Account name
-          type: string
     CurrencyAmount:
       type: object
       properties:
@@ -495,21 +466,26 @@ components:
       - amount
       - credit_debit_indicator
       - transaction_information
-    SchemeName:
-      description: The scheme name of the account identification value
+    BankStatementAccountBalance:
+      type: object
+      properties:
+        type:
+          description: Type of balance (OPENING, CLOSING, etc.)
+          type: string
+        credit_debit_indicator:
+          $ref: '#/components/schemas/CreditDebitIndicator'
+        amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+        credit_line:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreditLine'
+    Currency:
+      description: The ISO 3 letter currency code
       type: string
-      enum:
-      - PAN
-      - IBAN
-      - BBAN
-      - COMMERCIAL_REGISTRATION_NUMBER
-      - EMAIL
-      - MOBILE_NUMBER
-      - NATIONAL_ID
-      - IQAMA_NUMBER
-      - PASSPORT_NUMBER
-      - OTHER
-      - UNSUPPORTED
+      examples:
+      - AED
+      pattern: ^[A-Z]{3}$
     ReportStatus:
       description: Status of the report (PENDING, OK, FAILED)
       type: string
@@ -517,20 +493,37 @@ components:
       - OK
       - PENDING
       - FAILED
-    GetVerificationOfIncomeReportResponseBody:
-      allOf:
-      - $ref: '#/components/schemas/GetReportResponseBody'
-      - type: object
+    BankStatementsReport:
+      type: object
+      properties:
         properties:
-          report:
-            $ref: '#/components/schemas/VerificationOfIncomeReport'
-    CreditDebitIndicator:
-      description: Indicates whether the balance is a credit or debit balance
-      type: string
-      enum:
-      - CREDIT
-      - DEBIT
-      - UNSUPPORTED
+          type: object
+          properties:
+            account_sub_types:
+              type:
+              - array
+              - 'null'
+              items:
+                type: string
+              description: Account sub types to include in the statements, if undefined all sub types will be included
+            end_date:
+              type: string
+              format: date
+              description: End date for transactions range
+            start_date:
+              type: string
+              format: date
+              description: Start date for transactions range
+          required:
+          - start_date
+          - end_date
+        banks:
+          type: array
+          items:
+            $ref: '#/components/schemas/BankStatementBank'
+      required:
+      - properties
+      - banks
     IncomeSource:
       description: Detailed information about a specific income source (used in reports)
       type: object
@@ -589,15 +582,48 @@ components:
       - average_monthly_income
       - average_monthly_received_value
       - predicted_average_monthly_income
-    CreditLineType:
-      description: The type of credit line
+    CreateBankStatementsReportRequestBody:
+      type: object
+      properties:
+        start_date:
+          description: Start date for transactions range
+          type: string
+          format: date
+        end_date:
+          description: End date for transactions range
+          type: string
+          format: date
+        account_sub_types:
+          description: Account sub types to include in the statements, if undefined all sub types will be included
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+      required:
+      - start_date
+      - end_date
+    SchemeName:
+      description: The scheme name of the account identification value
       type: string
       enum:
-      - AVAILABLE
+      - PAN
+      - IBAN
+      - BBAN
+      - COMMERCIAL_REGISTRATION_NUMBER
+      - EMAIL
+      - MOBILE_NUMBER
+      - NATIONAL_ID
+      - IQAMA_NUMBER
+      - PASSPORT_NUMBER
+      - OTHER
+      - UNSUPPORTED
+    CreditDebitIndicator:
+      description: Indicates whether the balance is a credit or debit balance
+      type: string
+      enum:
       - CREDIT
-      - EMERGENCY
-      - PRE_AGREED
-      - TEMPORARY
+      - DEBIT
       - UNSUPPORTED
     IncomeSourceType:
       description: Classification of income source type (combined enum for all income sources)
@@ -617,6 +643,106 @@ components:
       - SIDE_BUSINESS
       - BONUS
       - CASH_DEPOSIT
+    GetBankStatementsReportResponseBody:
+      allOf:
+      - $ref: '#/components/schemas/GetReportResponseBody'
+      - type: object
+        properties:
+          report:
+            $ref: '#/components/schemas/BankStatementsReport'
+    CreditLine:
+      type: object
+      properties:
+        included:
+          description: 'Indicates whether or not a credit line is included in the balance of the account. Usage: If false, credit line is not included in the balance amount of the account'
+          type: boolean
+          default: false
+        amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+        type:
+          $ref: '#/components/schemas/CreditLineType'
+    DateRange:
+      type: object
+      properties:
+        start_date:
+          description: Start date for transactions range
+          type: string
+          format: date
+        end_date:
+          description: End date for transactions range
+          type: string
+          format: date
+      required:
+      - start_date
+      - end_date
+    CreateReportResponseBody:
+      type: object
+      properties:
+        report_id:
+          description: Unique identifier for the created report
+          type: string
+          format: uuid
+        status:
+          description: Status of the report (PENDING, OK, FAILED)
+          type: string
+          const: PENDING
+      required:
+      - report_id
+      - status
+    CreditLineType:
+      description: The type of credit line
+      type: string
+      enum:
+      - AVAILABLE
+      - CREDIT
+      - EMERGENCY
+      - PRE_AGREED
+      - TEMPORARY
+      - UNSUPPORTED
+    IncomeSummary:
+      description: Summary of all income sources (used in reports)
+      type: object
+      properties:
+        average_monthly_income:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        average_monthly_received_value:
+          description: The average received value calculated as total amount divided by the count of months that had income (excluding zero months)
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        predicted_average_monthly_income:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+        annual_income:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+      required:
+      - average_monthly_income
+      - average_monthly_received_value
+      - predicted_average_monthly_income
+      - annual_income
+    VerificationOfIncomeReport:
+      type: object
+      properties:
+        properties:
+          allOf:
+          - $ref: '#/components/schemas/DateRange'
+          x-field-extra-annotation: '@me.leantech.api.validation.ValidDateRange'
+        accounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReportBankAccount'
+        income_sources:
+          type: array
+          items:
+            $ref: '#/components/schemas/IncomeSource'
+        income_summary:
+          $ref: '#/components/schemas/IncomeSummary'
+      required:
+      - properties
+      - accounts
+      - income_sources
+      - income_summary
     GetReportResponseBody:
       type: object
       properties:
@@ -640,152 +766,26 @@ components:
       - report_id
       - status
       - created_at
-    IncomeSummary:
-      description: Summary of all income sources (used in reports)
+    AccountIdentification:
       type: object
       properties:
-        average_monthly_income:
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-        average_monthly_received_value:
-          description: The average received value calculated as total amount divided by the count of months that had income (excluding zero months)
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-        predicted_average_monthly_income:
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-        annual_income:
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-      required:
-      - average_monthly_income
-      - average_monthly_received_value
-      - predicted_average_monthly_income
-      - annual_income
-    CreateReportResponseBody:
+        scheme_name:
+          $ref: '#/components/schemas/SchemeName'
+        identification:
+          description: The identification value for the account assigned by the Bank based on the Account Scheme Name.
+          type: string
+        name:
+          description: Account name
+          type: string
+    BankStatementIdentity:
       type: object
       properties:
-        report_id:
-          description: Unique identifier for the created report
+        full_name:
+          description: Full name of the account holder
           type: string
-          format: uuid
-        status:
-          description: Status of the report (PENDING, OK, FAILED)
+        address_line:
+          description: Address of the account holder
           type: string
-          const: PENDING
-      required:
-      - report_id
-      - status
-    BankStatementBank:
-      type: object
-      properties:
-        bank_identifier:
-          description: Bank identifier code
-          type: string
-        bank_name:
-          description: Name of the bank
-          type: string
-        identity:
-          $ref: '#/components/schemas/BankStatementIdentity'
-        accounts:
-          type: array
-          items:
-            $ref: '#/components/schemas/BankStatementAccount'
-      required:
-      - bank_identifier
-      - bank_name
-      - identity
-      - accounts
-    BankStatementsReport:
-      type: object
-      properties:
-        properties:
-          type: object
-          properties:
-            account_sub_types:
-              type:
-              - array
-              - 'null'
-              items:
-                type: string
-              description: Account sub types to include in the statements, if undefined all sub types will be included
-            end_date:
-              type: string
-              format: date
-              description: End date for transactions range
-            start_date:
-              type: string
-              format: date
-              description: Start date for transactions range
-          required:
-          - start_date
-          - end_date
-        banks:
-          type: array
-          items:
-            $ref: '#/components/schemas/BankStatementBank'
-      required:
-      - properties
-      - banks
-    BankStatementAccountBalance:
-      type: object
-      properties:
-        type:
-          description: Type of balance (OPENING, CLOSING, etc.)
-          type: string
-        credit_debit_indicator:
-          $ref: '#/components/schemas/CreditDebitIndicator'
-        amount:
-          $ref: '#/components/schemas/CurrencyAmount'
-        credit_line:
-          type: array
-          items:
-            $ref: '#/components/schemas/CreditLine'
-    Currency:
-      description: The ISO 3 letter currency code
-      type: string
-      examples:
-      - AED
-      pattern: ^[A-Z]{3}$
-    CreditLine:
-      type: object
-      properties:
-        included:
-          description: 'Indicates whether or not a credit line is included in the balance of the account. Usage: If false, credit line is not included in the balance amount of the account'
-          type: boolean
-          default: false
-        amount:
-          $ref: '#/components/schemas/CurrencyAmount'
-        type:
-          $ref: '#/components/schemas/CreditLineType'
-    ReportAccount:
-      type: object
-      properties:
-        nickname:
-          description: User-friendly name for the account
-          type: string
-        description:
-          description: Account description or purpose
-          type: string
-        account_type:
-          description: Type of account (CHECKING, SAVINGS, etc.)
-          type: string
-        account_sub_type:
-          description: Sub-type of account (CURRENT, SAVINGS, etc.)
-          type: string
-        account_holder_name:
-          description: Name of the account holder
-          type: string
-        account:
-          type: array
-          items:
-            $ref: '#/components/schemas/AccountIdentification'
-      required:
-      - nickname
-      - description
-      - account_type
-      - account_sub_type
-      - account_holder_name
   securitySchemes:
     bearerAuth:
       type: http

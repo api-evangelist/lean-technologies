@@ -182,105 +182,6 @@ paths:
       - Consents
 components:
   schemas:
-    PageMetadata:
-      description: Metadata about the current page of results
-      type: object
-      properties:
-        number:
-          description: The current page being returned by the API
-          type: integer
-          format: int32
-        size:
-          description: The page size requested
-          type: integer
-          format: int32
-        total_elements:
-          description: The total number of elements in all pages
-          type: integer
-          format: int64
-        total_pages:
-          description: The total number of pages retrievable
-          type: integer
-          format: int32
-        sort:
-          description: Sort parameters applied to the results
-          type: array
-          items:
-            type: string
-      required:
-      - number
-      - size
-      - total_elements
-      - total_pages
-    PaymentPurpose:
-      description: Indicates the reason for the payment using a standardized code and human-readable description.
-      type: object
-      properties:
-        code:
-          $ref: '#/components/schemas/PaymentPurposeCode'
-        description:
-          description: A human-readable description of payment purpose
-          type: string
-      required:
-      - code
-      - description
-      title: PaymentPurpose
-    Reference:
-      description: A reason or reference in relation to a payment. Maximum 64 chars
-      type: string
-      examples:
-      - 'Invoice #12345'
-      maxLength: 64
-      title: Reference
-    AccountOnFileControlParameters:
-      description: 'Defines the control parameters for a Account On File (AoF) consent.
-
-        These parameters specify the applicable limits for individual payments, cumulative amounts, and the number of payments allowed within a defined period or across the consent''s lifetime.
-
-        At least one of `max_individual_amount`, `max_cumulative_amount`, or `max_cumulative_number_of_payments` must be provided.'
-      type: object
-      properties:
-        type:
-          description: Discriminator type identifying the control parameters variant
-          type: string
-        period_type:
-          $ref: '#/components/schemas/PeriodType'
-        max_individual_amount:
-          description: Maximum amount allowed for a single payment
-          type: number
-          minimum: 0.01
-        max_cumulative_amount:
-          description: Maximum cumulative amount allowed across all payments
-          type: number
-          minimum: 0.01
-        max_cumulative_number_of_payments:
-          description: Maximum number of payments allowed in total
-          type: integer
-          minimum: 1
-        max_cumulative_amount_per_period:
-          description: Maximum cumulative amount allowed per period
-          type: number
-          minimum: 0.01
-        max_cumulative_number_of_payments_per_period:
-          description: Maximum number of payments allowed per period
-          type: integer
-          minimum: 1
-      required:
-      - type
-      - period_type
-      title: AccountOnFileControlParameters
-      x-class-extra-annotation: '@me.leantech.api.validation.AtLeastOneControlParameter @me.leantech.api.validation.WithinMaxIndividualAmountLimit'
-    ConsentStatus:
-      description: Current status of this consent.
-      type: string
-      enum:
-      - AWAITING_AUTHORISATION
-      - AUTHORISED
-      - REVOKED
-      - REJECTED
-      - EXPIRED
-      - CONSUMED
-      - SUSPENDED
     ControlParameters:
       type: object
       discriminator:
@@ -301,20 +202,6 @@ components:
       - CLIENT_TERMINATED_RELATIONSHIP
       - ACCOUNT_CLOSED_BY_USER
       - DUPLICATE_CONSENT
-    PaymentPurposeCode:
-      description: "A category code that relates to the type of services or goods that corresponds to the underlying purpose of the payment.  \nThe code must conform to the payment purpose code list.  \n**Supported values:**  \n- `FIS` – Financial services\n- `TCS` – Telecommunication services\n- `MWP` – Mobile wallet card payments\n- `OAT` – Own account transfer\n- `IFS` – Information services\n- `RNT` – Rent payments\n- `LNC` – Loan charges\n- `PIN` – Personal investments\n- `GDS` – Goods bought or sold"
-      type: string
-      enum:
-      - FIS
-      - TCS
-      - MWP
-      - OAT
-      - IFS
-      - RNT
-      - LNC
-      - PIN
-      - GDS
-      title: PaymentPurposeCode
     ConsentedAccount:
       type: object
       properties:
@@ -324,72 +211,6 @@ components:
         holder_name:
           description: Consented account holder name.
           type: string
-    ImmediatePayment:
-      description: 'Details of a payment that will be executed immediately after the user successfully authorizes the consent. If present, the payment is initiated automatically as part of the consent authorization flow.
-
-        '
-      type:
-      - object
-      - 'null'
-      properties:
-        amount:
-          description: The amount to be paid immediately upon consent authorization
-          type:
-          - number
-          format: decimal
-          examples:
-          - 123.45
-          minimum: 0.01
-        reference:
-          $ref: '#/components/schemas/Reference'
-        creditor_reference:
-          description: Clients identifier that can be used in their ERP systems
-          type:
-          - string
-          - 'null'
-      required:
-      - amount
-    PeriodType:
-      description: "Defines the time period used for applying limits on a long‑lived consent. \nThis value determines how consumption limits (e.g., maximum amounts or number of payments) are calculated within each period.\n\n**Supported values:**\n- `Day` – A single calendar day (00:00 to 23:59).\n- `Week` – Seven consecutive days.\n- `Month` – A full calendar month (from the 1st to the last day).\n- `Year` – A full calendar year (12 consecutive months)."
-      type: string
-      enum:
-      - Day
-      - Week
-      - Month
-      - Year
-      title: PeriodType
-    ConsentBalanceResponse:
-      type: object
-      properties:
-        currency:
-          $ref: '#/components/schemas/Currency'
-        balance:
-          description: The current balance of the account associated with the specified consent.
-          type: number
-          format: decimal
-          examples:
-          - 2500
-      required:
-      - currency
-      - balance
-    Currency:
-      description: The ISO 3 letter currency code
-      type: string
-      examples:
-      - AED
-      pattern: ^[A-Z]{3}$
-    ListPaymentConsentsResponse:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/GetPaymentConsentResponse'
-        page:
-          $ref: '#/components/schemas/PageMetadata'
-      required:
-      - data
-      - page
     GetPaymentConsentResponse:
       type: object
       properties:
@@ -484,26 +305,185 @@ components:
       - currency
       - payment_purpose
       - control_parameters
-  parameters:
-    PageSizeParameter:
-      name: page_size
-      description: Size of a single page of results to return
-      in: query
-      required: false
-      schema:
-        type: integer
-        default: 100
-        maximum: 100
-        minimum: 1
-    PageNumberParameter:
-      name: page_number
-      in: query
-      description: Indicator of which page of results to return, starts at 0
-      required: false
-      schema:
-        type: integer
-        default: 0
-        minimum: 0
+    PeriodType:
+      description: "Defines the time period used for applying limits on a long‑lived consent. \nThis value determines how consumption limits (e.g., maximum amounts or number of payments) are calculated within each period.\n\n**Supported values:**\n- `Day` – A single calendar day (00:00 to 23:59).\n- `Week` – Seven consecutive days.\n- `Month` – A full calendar month (from the 1st to the last day).\n- `Year` – A full calendar year (12 consecutive months)."
+      type: string
+      enum:
+      - Day
+      - Week
+      - Month
+      - Year
+      title: PeriodType
+    Currency:
+      description: The ISO 3 letter currency code
+      type: string
+      examples:
+      - AED
+      pattern: ^[A-Z]{3}$
+    ConsentStatus:
+      description: Current status of this consent.
+      type: string
+      enum:
+      - AWAITING_AUTHORISATION
+      - AUTHORISED
+      - REVOKED
+      - REJECTED
+      - EXPIRED
+      - CONSUMED
+      - SUSPENDED
+    PaymentPurpose:
+      description: Indicates the reason for the payment using a standardized code and human-readable description.
+      type: object
+      properties:
+        code:
+          $ref: '#/components/schemas/PaymentPurposeCode'
+        description:
+          description: A human-readable description of payment purpose
+          type: string
+      required:
+      - code
+      - description
+      title: PaymentPurpose
+    PaymentPurposeCode:
+      description: "A category code that relates to the type of services or goods that corresponds to the underlying purpose of the payment.  \nThe code must conform to the payment purpose code list.  \n**Supported values:**  \n- `FIS` – Financial services\n- `TCS` – Telecommunication services\n- `MWP` – Mobile wallet card payments\n- `OAT` – Own account transfer\n- `IFS` – Information services\n- `RNT` – Rent payments\n- `LNC` – Loan charges\n- `PIN` – Personal investments\n- `GDS` – Goods bought or sold"
+      type: string
+      enum:
+      - FIS
+      - TCS
+      - MWP
+      - OAT
+      - IFS
+      - RNT
+      - LNC
+      - PIN
+      - GDS
+      title: PaymentPurposeCode
+    ListPaymentConsentsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetPaymentConsentResponse'
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+      required:
+      - data
+      - page
+    Reference:
+      description: A reason or reference in relation to a payment. Maximum 64 chars
+      type: string
+      examples:
+      - 'Invoice #12345'
+      maxLength: 64
+      title: Reference
+    AccountOnFileControlParameters:
+      description: 'Defines the control parameters for a Account On File (AoF) consent.
+
+        These parameters specify the applicable limits for individual payments, cumulative amounts, and the number of payments allowed within a defined period or across the consent''s lifetime.
+
+        At least one of `max_individual_amount`, `max_cumulative_amount`, or `max_cumulative_number_of_payments` must be provided.'
+      type: object
+      properties:
+        type:
+          description: Discriminator type identifying the control parameters variant
+          type: string
+        period_type:
+          $ref: '#/components/schemas/PeriodType'
+        max_individual_amount:
+          description: Maximum amount allowed for a single payment
+          type: number
+          minimum: 0.01
+        max_cumulative_amount:
+          description: Maximum cumulative amount allowed across all payments
+          type: number
+          minimum: 0.01
+        max_cumulative_number_of_payments:
+          description: Maximum number of payments allowed in total
+          type: integer
+          minimum: 1
+        max_cumulative_amount_per_period:
+          description: Maximum cumulative amount allowed per period
+          type: number
+          minimum: 0.01
+        max_cumulative_number_of_payments_per_period:
+          description: Maximum number of payments allowed per period
+          type: integer
+          minimum: 1
+      required:
+      - type
+      - period_type
+      title: AccountOnFileControlParameters
+      x-class-extra-annotation: '@me.leantech.api.validation.AtLeastOneControlParameter @me.leantech.api.validation.WithinMaxIndividualAmountLimit'
+    ConsentBalanceResponse:
+      type: object
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        balance:
+          description: The current balance of the account associated with the specified consent.
+          type: number
+          format: decimal
+          examples:
+          - 2500
+      required:
+      - currency
+      - balance
+    PageMetadata:
+      description: Metadata about the current page of results
+      type: object
+      properties:
+        number:
+          description: The current page being returned by the API
+          type: integer
+          format: int32
+        size:
+          description: The page size requested
+          type: integer
+          format: int32
+        total_elements:
+          description: The total number of elements in all pages
+          type: integer
+          format: int64
+        total_pages:
+          description: The total number of pages retrievable
+          type: integer
+          format: int32
+        sort:
+          description: Sort parameters applied to the results
+          type: array
+          items:
+            type: string
+      required:
+      - number
+      - size
+      - total_elements
+      - total_pages
+    ImmediatePayment:
+      description: 'Details of a payment that will be executed immediately after the user successfully authorizes the consent. If present, the payment is initiated automatically as part of the consent authorization flow.
+
+        '
+      type:
+      - object
+      - 'null'
+      properties:
+        amount:
+          description: The amount to be paid immediately upon consent authorization
+          type:
+          - number
+          format: decimal
+          examples:
+          - 123.45
+          minimum: 0.01
+        reference:
+          $ref: '#/components/schemas/Reference'
+        creditor_reference:
+          description: Clients identifier that can be used in their ERP systems
+          type:
+          - string
+          - 'null'
+      required:
+      - amount
   requestBodies:
     RevokeConsent:
       description: Revocation reason supplied with the request.
@@ -538,6 +518,26 @@ components:
               value:
                 reason: FRAUD_SUSPECTED
                 additional_context: Customer raised a fraud report on 2025-05-19.
+  parameters:
+    PageSizeParameter:
+      name: page_size
+      description: Size of a single page of results to return
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 100
+        maximum: 100
+        minimum: 1
+    PageNumberParameter:
+      name: page_number
+      in: query
+      description: Indicator of which page of results to return, starts at 0
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
   securitySchemes:
     bearerAuth:
       type: http

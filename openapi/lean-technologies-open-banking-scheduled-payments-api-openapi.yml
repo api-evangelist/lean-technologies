@@ -152,23 +152,6 @@ paths:
       - Open Banking Scheduled Payments
 components:
   parameters:
-    FapiInteractionId:
-      name: x-fapi-interaction-id
-      in: header
-      description: An RFC4122 UID used as a correlation id.
-      required: false
-      schema:
-        type: string
-    OBSizeParam:
-      name: Size
-      description: The number of objects you want to return as a page size.
-      in: query
-      required: false
-      schema:
-        type: integer
-        default: 50
-        maximum: 100
-        minimum: 1
     CustomerId:
       name: CustomerId
       in: query
@@ -185,6 +168,13 @@ components:
       schema:
         type: string
         format: uuid
+    FapiInteractionId:
+      name: x-fapi-interaction-id
+      in: header
+      description: An RFC4122 UID used as a correlation id.
+      required: false
+      schema:
+        type: string
     OBPageParm:
       name: Page
       in: query
@@ -202,24 +192,72 @@ components:
       schema:
         type: string
         format: uuid
+    OBSizeParam:
+      name: Size
+      description: The number of objects you want to return as a page size.
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 50
+        maximum: 100
+        minimum: 1
   schemas:
-    OBAmount:
-      description: Active or historic currency and amount.
+    OBLinks:
+      description: Links relevant to the resource for pagination navigation.
       type: object
       properties:
-        Amount:
-          description: A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.
+        Self:
+          description: A link to the current resource.
           type: string
-          pattern: ^\d{1,13}$|^\d{1,13}\.\d{1,5}$
-        Currency:
-          description: ISO 4217 currency code in which the amount is expressed.
-          type: string
-          examples:
-          - SAR
-          pattern: ^[A-Z]{3,3}$
+          format: uri
+        First:
+          description: A link to the first page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+        Prev:
+          description: A link to the previous page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+        Next:
+          description: A link to the next page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+        Last:
+          description: A link to the last page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
       required:
-      - Amount
-      - Currency
+      - Self
+    OBCashAccount:
+      description: Details to identify a cash account for a creditor or debtor.
+      type: object
+      properties:
+        IdentificationType:
+          $ref: '#/components/schemas/OBCashAccountIdentificationType'
+        Identification:
+          description: Identification assigned by an institution to identify an account. This identification is known by the account owner.
+          type: string
+          maxLength: 400
+          minLength: 1
+        Name:
+          description: Name of the account, as assigned by the account servicing institution.
+          type:
+          - string
+          - 'null'
+          maxLength: 350
+          minLength: 1
+      required:
+      - IdentificationType
+      - Identification
     OBScheduledPayment:
       description: Unambiguous identification of the scheduled payment.
       type: object
@@ -283,6 +321,157 @@ components:
       - ScheduledType
       - ScheduledPaymentDateTime
       - InstructedAmount
+    OBAddressTypeCode:
+      description: Postal address type specifying the nature of the postal address.
+      type: string
+      enum:
+      - KSAOB.Business
+      - KSAOB.Correspondence
+      - KSAOB.DeliveryTo
+      - KSAOB.MailTo
+      - KSAOB.POBox
+      - KSAOB.Postal
+      - KSAOB.Residential
+      - KSAOB.Statement
+    OBCashAccountIdentificationType:
+      description: Name of the identification scheme for the cash account.
+      type: string
+      enum:
+      - KSAOB.IBAN
+      - KSAOB.MaskedPAN
+      - KSAOB.AccountNumber
+      - KSAOB.CommercialRegistrationNumber
+      - KSAOB.Email
+      - KSAOB.MobileNumber
+      - KSAOB.NationalID
+      - KSAOB.IqamaNumber
+      - KSAOB.PassportNumber
+    OBMeta:
+      description: Metadata relevant to the resource.
+      type: object
+      properties:
+        TotalPages:
+          description: Total number of pages where a result set is paginated.
+          type:
+          - integer
+          - 'null'
+          format: int32
+          minimum: 0
+    OBScheduledTypeCode:
+      description: Specifies the scheduled payment date type.
+      type: string
+      enum:
+      - KSAOB.Arrival
+      - KSAOB.Execution
+    OBScheduledPaymentsData:
+      description: Container for the list of Open Banking account scheduled payments.
+      type: object
+      properties:
+        CustomerId:
+          description: Lean provided customer ID
+          type:
+          - string
+          - 'null'
+          format: uuid
+        ScheduledPayment:
+          description: List of scheduled payments for the account.
+          type: array
+          items:
+            $ref: '#/components/schemas/OBScheduledPayment'
+      required:
+      - ScheduledPayment
+    OBGetScheduledPaymentsResponse:
+      description: Response envelope for the Open Banking account scheduled payments.
+      type: object
+      properties:
+        Data:
+          description: Container for the list of Open Banking account scheduled payments. Null when the request fails.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBScheduledPaymentsData'
+        Status:
+          description: Status of the request.
+          type: string
+          enum:
+          - OK
+          - PENDING
+          - FAILED
+          - CONSENT_EXPIRED
+        Message:
+          description: Human-readable message describing the status of the request.
+          type: string
+        Timestamp:
+          description: Date and time when the response was generated.
+          type: string
+          format: date-time
+        RefreshedAt:
+          description: Date and time when the data was last refreshed from the bank.
+          type:
+          - string
+          - 'null'
+          format: date-time
+        StatusDetail:
+          description: Additional details about the request status.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBStatusDetail'
+        Meta:
+          description: Metadata relevant to the resource, including pagination information.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBMeta'
+        Links:
+          description: Links relevant to the resource for pagination navigation.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBLinks'
+      required:
+      - Data
+      - Status
+      - Message
+      - Timestamp
+    OBCreditorAgentIdentificationType:
+      description: Name of the identification scheme for the creditor or debtor agent.
+      type: string
+      enum:
+      - KSAOB.BICFI
+      - KSAOB.OTHER
+    OBCreditorAgent:
+      description: Financial institution servicing an account for the creditor or debtor.
+      type: object
+      properties:
+        IdentificationType:
+          $ref: '#/components/schemas/OBCreditorAgentIdentificationType'
+        Identification:
+          description: Unique and unambiguous identification of the financial institution.
+          type: string
+          maxLength: 35
+          minLength: 1
+        Name:
+          description: Name by which an agent is known and which is usually used to identify that agent.
+          type:
+          - string
+          - 'null'
+          maxLength: 350
+          minLength: 1
+        PostalAddress:
+          description: Information that locates and identifies a specific address, as defined by postal services.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OpenBankingPostalAddress'
+      required:
+      - IdentificationType
+      - Identification
     OpenBankingPostalAddress:
       description: Information that locates and identifies a specific address, as defined by postal services.
       type: object
@@ -354,110 +543,23 @@ components:
           - string
           - 'null'
           pattern: ^[A-Z]{2,2}$
-    OBCreditorAgent:
-      description: Financial institution servicing an account for the creditor or debtor.
+    OBAmount:
+      description: Active or historic currency and amount.
       type: object
       properties:
-        IdentificationType:
-          $ref: '#/components/schemas/OBCreditorAgentIdentificationType'
-        Identification:
-          description: Unique and unambiguous identification of the financial institution.
+        Amount:
+          description: A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.
           type: string
-          maxLength: 35
-          minLength: 1
-        Name:
-          description: Name by which an agent is known and which is usually used to identify that agent.
-          type:
-          - string
-          - 'null'
-          maxLength: 350
-          minLength: 1
-        PostalAddress:
-          description: Information that locates and identifies a specific address, as defined by postal services.
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/OpenBankingPostalAddress'
+          pattern: ^\d{1,13}$|^\d{1,13}\.\d{1,5}$
+        Currency:
+          description: ISO 4217 currency code in which the amount is expressed.
+          type: string
+          examples:
+          - SAR
+          pattern: ^[A-Z]{3,3}$
       required:
-      - IdentificationType
-      - Identification
-    OBAddressTypeCode:
-      description: Postal address type specifying the nature of the postal address.
-      type: string
-      enum:
-      - KSAOB.Business
-      - KSAOB.Correspondence
-      - KSAOB.DeliveryTo
-      - KSAOB.MailTo
-      - KSAOB.POBox
-      - KSAOB.Postal
-      - KSAOB.Residential
-      - KSAOB.Statement
-    OBGetScheduledPaymentsResponse:
-      description: Response envelope for the Open Banking account scheduled payments.
-      type: object
-      properties:
-        Data:
-          description: Container for the list of Open Banking account scheduled payments. Null when the request fails.
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/OBScheduledPaymentsData'
-        Status:
-          description: Status of the request.
-          type: string
-          enum:
-          - OK
-          - PENDING
-          - FAILED
-          - CONSENT_EXPIRED
-        Message:
-          description: Human-readable message describing the status of the request.
-          type: string
-        Timestamp:
-          description: Date and time when the response was generated.
-          type: string
-          format: date-time
-        RefreshedAt:
-          description: Date and time when the data was last refreshed from the bank.
-          type:
-          - string
-          - 'null'
-          format: date-time
-        StatusDetail:
-          description: Additional details about the request status.
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/OBStatusDetail'
-        Meta:
-          description: Metadata relevant to the resource, including pagination information.
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/OBMeta'
-        Links:
-          description: Links relevant to the resource for pagination navigation.
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/OBLinks'
-      required:
-      - Data
-      - Status
-      - Message
-      - Timestamp
-    OBCreditorAgentIdentificationType:
-      description: Name of the identification scheme for the creditor or debtor agent.
-      type: string
-      enum:
-      - KSAOB.BICFI
-      - KSAOB.OTHER
+      - Amount
+      - Currency
     OBStatusDetail:
       type:
       - object
@@ -473,108 +575,6 @@ components:
           type:
           - string
           - 'null'
-    OBMeta:
-      description: Metadata relevant to the resource.
-      type: object
-      properties:
-        TotalPages:
-          description: Total number of pages where a result set is paginated.
-          type:
-          - integer
-          - 'null'
-          format: int32
-          minimum: 0
-    OBScheduledPaymentsData:
-      description: Container for the list of Open Banking account scheduled payments.
-      type: object
-      properties:
-        CustomerId:
-          description: Lean provided customer ID
-          type:
-          - string
-          - 'null'
-          format: uuid
-        ScheduledPayment:
-          description: List of scheduled payments for the account.
-          type: array
-          items:
-            $ref: '#/components/schemas/OBScheduledPayment'
-      required:
-      - ScheduledPayment
-    OBScheduledTypeCode:
-      description: Specifies the scheduled payment date type.
-      type: string
-      enum:
-      - KSAOB.Arrival
-      - KSAOB.Execution
-    OBCashAccountIdentificationType:
-      description: Name of the identification scheme for the cash account.
-      type: string
-      enum:
-      - KSAOB.IBAN
-      - KSAOB.MaskedPAN
-      - KSAOB.AccountNumber
-      - KSAOB.CommercialRegistrationNumber
-      - KSAOB.Email
-      - KSAOB.MobileNumber
-      - KSAOB.NationalID
-      - KSAOB.IqamaNumber
-      - KSAOB.PassportNumber
-    OBCashAccount:
-      description: Details to identify a cash account for a creditor or debtor.
-      type: object
-      properties:
-        IdentificationType:
-          $ref: '#/components/schemas/OBCashAccountIdentificationType'
-        Identification:
-          description: Identification assigned by an institution to identify an account. This identification is known by the account owner.
-          type: string
-          maxLength: 400
-          minLength: 1
-        Name:
-          description: Name of the account, as assigned by the account servicing institution.
-          type:
-          - string
-          - 'null'
-          maxLength: 350
-          minLength: 1
-      required:
-      - IdentificationType
-      - Identification
-    OBLinks:
-      description: Links relevant to the resource for pagination navigation.
-      type: object
-      properties:
-        Self:
-          description: A link to the current resource.
-          type: string
-          format: uri
-        First:
-          description: A link to the first page in a paginated result set.
-          type:
-          - string
-          - 'null'
-          format: uri
-        Prev:
-          description: A link to the previous page in a paginated result set.
-          type:
-          - string
-          - 'null'
-          format: uri
-        Next:
-          description: A link to the next page in a paginated result set.
-          type:
-          - string
-          - 'null'
-          format: uri
-        Last:
-          description: A link to the last page in a paginated result set.
-          type:
-          - string
-          - 'null'
-          format: uri
-      required:
-      - Self
   securitySchemes:
     bearerAuth:
       type: http

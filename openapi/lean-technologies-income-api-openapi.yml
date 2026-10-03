@@ -679,21 +679,136 @@ paths:
       - bearerAuth: []
 components:
   schemas:
-    IncomeFactors:
+    IncomeVerificationRequestBody:
       type: object
       properties:
-        periods:
-          description: Array of income periods with their respective statistics
-          type: array
-          items:
-            $ref: '#/components/schemas/IncomeFactorsPeriod'
-        delta_min_max:
-          description: Ratio of the maximum salary amount to minimum salary amount
+        entity_id:
+          description: The `entity_id` you are querying for. The entity needs to have permissions `accounts` and `transactions`.
+          type: string
+          format: uuid
+          x-field-extra-annotation: '@jakarta.validation.constraints.NotNull'
+        start_date:
+          description: 'The start date in UTC (in the format YYYY-MM-DD) you want to query transactions for.
+
+
+            If not provided, we will default to 6 months before now.'
+          type: string
+          format: date
+          x-field-extra-annotation: '@jakarta.validation.constraints.PastOrPresent'
+        estimated_monthly_income:
+          description: 'Monthly income for the user that you have gathered from another source (e.g.: reported by the user).'
           type: number
-        average_monthly_income_change:
-          description: Average of Percentage Change Month on Month within the time period.
+          x-field-extra-annotation: '@jakarta.validation.constraints.Positive'
+        income_type:
+          description: If you want to get salary or non-salary income or both. If you do not provide any value, it will default to ALL.
+          allOf:
+          - $ref: '#/components/schemas/IncomeType'
+      required:
+      - entity_id
+    IncomeSourceDetails:
+      type:
+      - object
+      - 'null'
+      properties:
+        type:
+          description: The type of income source
+          allOf:
+          - $ref: '#/components/schemas/IncomeSourceType'
+        name:
+          description: The name of the employer or the source of the incoming transaction if available
+          type: string
+      x-class-extra-annotation: '@lombok.AllArgsConstructor'
+    IncomeTransaction:
+      type: object
+      properties:
+        account_id:
+          description: The account ID associated with the transaction
+          type: string
+          format: uuid
+        transaction_id:
+          description: The unique transaction identifier
+          type: string
+        transaction_information:
+          description: Additional information about the transaction
+          type: string
+        booking_date_time:
+          description: The date and time when the transaction was booked
+          type: string
+          format: date-time
+        amount:
+          description: The transaction amount
+          type: number
+        income_source:
+          $ref: '#/components/schemas/IncomeSourceDetails'
+      required:
+      - account_id
+      - transaction_id
+      - transaction_information
+      - booking_date_time
+      - amount
+    MonthlyAmount:
+      type: object
+      properties:
+        month:
+          description: The transaction month
+          type: integer
+          format: int32
+        year:
+          description: The transaction year
+          type: integer
+          format: int32
+        amount:
+          description: The transaction amount
           type: number
       x-class-extra-annotation: '@lombok.AllArgsConstructor'
+    IncomeVerificationResponsePayload:
+      type: object
+      properties:
+        salary:
+          $ref: '#/components/schemas/IncomeCategoryPayload'
+        non_salary:
+          $ref: '#/components/schemas/IncomeCategoryPayload'
+      additionalProperties: false
+    InsightsResultType:
+      description: type of insight
+      type: string
+      enum:
+      - income
+      - employment
+      - cashflow
+      - credits-obligations
+      - non-credits-obligations
+      - expenses
+      - cash-balances
+      - freelancer-cashflow
+      - behaviors
+      - cashflow-patterns
+      - credit-assessments
+      - account-controls
+      - credit-obligations
+    CurrencyAmount:
+      type: object
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          description: The amount of money in the currency specified.
+          type: number
+      required:
+      - currency
+      - amount
+    Currency:
+      description: The ISO 3 letter currency code
+      type: string
+      examples:
+      - AED
+      pattern: ^[A-Z]{3}$
+    IncomeType:
+      type: string
+      enum:
+      - SALARY
+      - NON_SALARY
+      - ALL
     IncomeTotal:
       type: object
       properties:
@@ -730,165 +845,6 @@ components:
           allOf:
           - $ref: '#/components/schemas/MonthlyAmount'
       x-toBuilder: true
-    IncomeFactorsPeriod:
-      type: object
-      properties:
-        period:
-          description: The time period
-          type: string
-        income_variation:
-          description: The variation in income for this period
-          type: number
-        average_income:
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-    IncomeMonthlyTotal:
-      type: object
-      properties:
-        month:
-          description: The month of the reporting period
-          type: integer
-          format: int32
-        year:
-          description: The year of the reporting period
-          type: integer
-          format: int32
-        amount:
-          description: The total amount of transactions in the Month
-          type: number
-        count:
-          description: Number of transactions in the month
-          type: integer
-          format: int32
-        is_month_complete:
-          description: Indicates whether the data for this month is complete
-          type: boolean
-      x-class-extra-annotation: '@lombok.AllArgsConstructor'
-      x-toBuilder: true
-    CurrencyAmount:
-      type: object
-      properties:
-        currency:
-          $ref: '#/components/schemas/Currency'
-        amount:
-          description: The amount of money in the currency specified.
-          type: number
-      required:
-      - currency
-      - amount
-    IncomeTransaction:
-      type: object
-      properties:
-        account_id:
-          description: The account ID associated with the transaction
-          type: string
-          format: uuid
-        transaction_id:
-          description: The unique transaction identifier
-          type: string
-        transaction_information:
-          description: Additional information about the transaction
-          type: string
-        booking_date_time:
-          description: The date and time when the transaction was booked
-          type: string
-          format: date-time
-        amount:
-          description: The transaction amount
-          type: number
-        income_source:
-          $ref: '#/components/schemas/IncomeSourceDetails'
-      required:
-      - account_id
-      - transaction_id
-      - transaction_information
-      - booking_date_time
-      - amount
-    IncomeVerificationResponsePayload:
-      type: object
-      properties:
-        salary:
-          $ref: '#/components/schemas/IncomeCategoryPayload'
-        non_salary:
-          $ref: '#/components/schemas/IncomeCategoryPayload'
-      additionalProperties: false
-    MonthlyAmount:
-      type: object
-      properties:
-        month:
-          description: The transaction month
-          type: integer
-          format: int32
-        year:
-          description: The transaction year
-          type: integer
-          format: int32
-        amount:
-          description: The transaction amount
-          type: number
-      x-class-extra-annotation: '@lombok.AllArgsConstructor'
-    InsightsResultType:
-      description: type of insight
-      type: string
-      enum:
-      - income
-      - employment
-      - cashflow
-      - credits-obligations
-      - non-credits-obligations
-      - expenses
-      - cash-balances
-      - freelancer-cashflow
-      - behaviors
-      - cashflow-patterns
-      - credit-assessments
-      - account-controls
-      - credit-obligations
-    IncomeSourceDetails:
-      type:
-      - object
-      - 'null'
-      properties:
-        type:
-          description: The type of income source
-          allOf:
-          - $ref: '#/components/schemas/IncomeSourceType'
-        name:
-          description: The name of the employer or the source of the incoming transaction if available
-          type: string
-      x-class-extra-annotation: '@lombok.AllArgsConstructor'
-    IncomeType:
-      type: string
-      enum:
-      - SALARY
-      - NON_SALARY
-      - ALL
-    IncomeVerificationRequestBody:
-      type: object
-      properties:
-        entity_id:
-          description: The `entity_id` you are querying for. The entity needs to have permissions `accounts` and `transactions`.
-          type: string
-          format: uuid
-          x-field-extra-annotation: '@jakarta.validation.constraints.NotNull'
-        start_date:
-          description: 'The start date in UTC (in the format YYYY-MM-DD) you want to query transactions for.
-
-
-            If not provided, we will default to 6 months before now.'
-          type: string
-          format: date
-          x-field-extra-annotation: '@jakarta.validation.constraints.PastOrPresent'
-        estimated_monthly_income:
-          description: 'Monthly income for the user that you have gathered from another source (e.g.: reported by the user).'
-          type: number
-          x-field-extra-annotation: '@jakarta.validation.constraints.Positive'
-        income_type:
-          description: If you want to get salary or non-salary income or both. If you do not provide any value, it will default to ALL.
-          allOf:
-          - $ref: '#/components/schemas/IncomeType'
-      required:
-      - entity_id
     IncomeSourceType:
       description: Classification of income source type (combined enum for all income sources)
       type: string
@@ -926,104 +882,56 @@ components:
         income_factors:
           $ref: '#/components/schemas/IncomeFactors'
       additionalProperties: false
-    Currency:
-      description: The ISO 3 letter currency code
-      type: string
-      examples:
-      - AED
-      pattern: ^[A-Z]{3}$
-    IncomeRequest:
-      description: ''
-      required:
-      - entity_id
+    IncomeMonthlyTotal:
       type: object
       properties:
-        entity_id:
-          description: The `entity_id` you are querying for. The entity needs to have permissions `accounts` and `transactions`.
-          type: string
-        start_date:
-          format: date
-          description: "The start date in UTC (in the format YYYY-MM-DD) you want to query transactions for. \nIf not provided, we will default to 6 months before now."
-          type: string
-        estimated_monthly_income:
-          description: 'Monthly income for the user that you have gathered from another source (e.g.: reported by the user).'
+        month:
+          description: The month of the reporting period
+          type: integer
+          format: int32
+        year:
+          description: The year of the reporting period
+          type: integer
+          format: int32
+        amount:
+          description: The total amount of transactions in the Month
           type: number
-        income_type:
-          description: If you want to get salary or non-salary income or both. If you do not provide any value, it will default to ALL.
-          enum:
-          - SALARY
-          - NON_SALARY
-          - ALL
+        count:
+          description: Number of transactions in the month
+          type: integer
+          format: int32
+        is_month_complete:
+          description: Indicates whether the data for this month is complete
+          type: boolean
+      x-class-extra-annotation: '@lombok.AllArgsConstructor'
+      x-toBuilder: true
+    IncomeFactorsPeriod:
+      type: object
+      properties:
+        period:
+          description: The time period
           type: string
-    NonSalaryFactors:
+        income_variation:
+          description: The variation in income for this period
+          type: number
+        average_income:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+    IncomeFactors:
       type: object
       properties:
         periods:
-          type: array
           description: Array of income periods with their respective statistics
+          type: array
           items:
-            type: object
-            properties:
-              period:
-                type: string
-                description: 'The time period for which the statistics are calculated. Allowed values: P3M (3 months), P6M (6 months), P9M (9 months), P12M (12 months).'
-                enum:
-                - P3M
-                - P6M
-                - P9M
-                - P12M
-                examples:
-                - P3M
-                - P6M
-                - P9M
-                - P12M
-                pattern: ^P(3|6|9|12)M$
-                default: P3M
-              income_variation:
-                type: number
-                description: The standard deviation of income amounts for the period
-                minimum: 0
-                format: double
-              average_income:
-                type: object
-                description: The average income for the period
-                properties:
-                  currency:
-                    type: string
-                    description: The currency code
-                    pattern: ^[A-Z]{3}$
-                    examples:
-                    - SAR
-                  amount:
-                    type: number
-                    description: The amount in the specified currency
-                    minimum: 0
-                    format: double
-                required:
-                - currency
-                - amount
-                additionalProperties: false
-            required:
-            - period
-            - income_variation
-            - average_income
-            additionalProperties: false
-          minItems: 1
-          maxItems: 4
+            $ref: '#/components/schemas/IncomeFactorsPeriod'
         delta_min_max:
+          description: Ratio of the maximum salary amount to minimum salary amount
           type: number
-          description: 'Ratio of the maximum salary amount to minimum salary amount '
-          minimum: 0
-          format: double
         average_monthly_income_change:
+          description: Average of Percentage Change Month on Month within the time period.
           type: number
-          description: Average of Percentage Change Month on Month over the last 12Month
-          format: double
-      required:
-      - periods
-      - delta_min_max
-      - average_monthly_income_change
-      additionalProperties: false
+      x-class-extra-annotation: '@lombok.AllArgsConstructor'
     SalaryTransaction:
       type: object
       properties:
@@ -1054,107 +962,68 @@ components:
       - transaction_information
       - income_source
       - booking_date_time
-    IncomeInsights:
+    NonSalaryTotal:
       type: object
       properties:
-        salary:
-          $ref: '#/components/schemas/Salary'
-          description: Salary income insights.
-        non_salary:
-          $ref: '#/components/schemas/NonSalary'
-          description: Non-salary income insights.
-    StatusDetailObject:
-      description: Status Details
-      type: object
-      properties:
-        granular_status_code:
-          description: Detailed error code
-          type: string
-        status_additional_info:
-          description: Further detail on the encountered error
-          type: string
-    NonSalaryMonthlyTotals:
-      type: object
-      properties:
-        month:
-          description: 'Number of month within the year (e.g.: January is represented as 1 and December is represented as 12)'
-          type: integer
-        year:
-          description: Year.
+        count:
+          description: Number of non-salary income payments since start_date.
           type: integer
         amount:
-          description: Total non-salary income for the month.
+          description: Total non-salary income since start_date.
           type: number
-        count:
-          description: Number of non-salary income transaction in the month.
-          type: integer
-        is_month_complete:
-          description: Determines if Lean retrieved the data for all days for the month. This will always be `true`, except for the first and last month retrieved.
-          type: boolean
-    NonSalary:
+        first_date_time:
+          type:
+          - string
+          - 'null'
+          description: UTC datetime of first non-salary income payment since start_date.
+          format: date-time
+        last_date_time:
+          type:
+          - string
+          - 'null'
+          description: UTC datetime of last non-salary income payment.
+          format: date-time
+        average_monthly_count:
+          description: Average number of non-salary income payments per month since start_date.
+          type: number
+        average_monthly_amount:
+          description: Average non-salary income amount received per month since start_date.
+          type: number
+        minimum_monthly_amount:
+          $ref: '#/components/schemas/NonSalaryMonthlyAggregate'
+          description: Minimum non-salary income amount received in a month since start_date and month when this happened.
+        maximum_monthly_amount:
+          $ref: '#/components/schemas/NonSalaryMonthlyAggregate'
+          description: Maximum non-salary income amount received in a month since start_date and month when this happened.
+    Salary:
       type: object
       properties:
         currency:
-          description: The 3 Letter ISO code denominating the currency that the non-salary income is provided in. This will be local currency (SAR in KSA).
+          description: The 3 Letter ISO code denominating the currency that the salary is provided in. This will be local currency (SAR in KSA).
           type: string
         total:
-          $ref: '#/components/schemas/NonSalaryTotal'
-          description: Insights on non-salary income received since start_date.
+          $ref: '#/components/schemas/SalaryTotal'
+          description: Insights on all salaries received since start_date.
         monthly_totals:
-          description: Total non-salary income for all months from start_date until today.
+          description: Total salary for all months from start_date until today.
           type: array
           items:
-            $ref: '#/components/schemas/NonSalaryMonthlyTotals'
+            $ref: '#/components/schemas/SalaryMonthlyTotals'
         transactions:
-          type:
-          - array
-          - 'null'
+          type: array
           items:
-            $ref: '#/components/schemas/NonSalaryTransaction'
-          description: List of transactions that correspond to a non-salary income deposit.
+            $ref: '#/components/schemas/SalaryTransaction'
+          description: List of transactions that correspond to a salary deposit.
+          minItems: 0
         income_factors:
-          description: Non-Salary analysis for different time periods
-          $ref: '#/components/schemas/NonSalaryFactors'
+          description: Salary analysis for different time periods
+          $ref: '#/components/schemas/SalaryFactors'
       required:
-      - income_factors
-      - transactions
-      - monthly_totals
       - currency
       - total
-    CurrencyAmount_2:
-      type: object
-      properties:
-        amount:
-          format: float
-          description: The value in the denominated currency.
-          type: number
-        currency:
-          description: ISO 3 letter code for the currency the amount is returned in.
-          type: string
-    SalaryMonthlyTotals:
-      type: object
-      properties:
-        month:
-          description: 'Number of month within the year (e.g.: January is represented as 1 and December is represented as 12)'
-          type: integer
-        year:
-          description: Year.
-          type: integer
-        amount:
-          description: Total salary for the month.
-          type: number
-        count:
-          description: Number of salary transaction in the month.
-          type: integer
-        is_month_complete:
-          description: Determines if Lean retrieved the data for all days for the month. This will always be `true`, except for the first and last month retrieved.
-          type: boolean
-      required:
-      - month
-      - year
-      - amount
-      - count
-      - is_month_complete
+      - monthly_totals
+      - transactions
+      - income_factors
     SalaryTotal:
       type: object
       properties:
@@ -1203,152 +1072,16 @@ components:
       - average_monthly_count
       - minimum_monthly_amount
       - maximum_monthly_amount
-    NonSalaryTransaction:
+    CurrencyAmount_2:
       type: object
       properties:
-        account_id:
-          description: The id of the account where the non-salary income transaction was credited into.
-          type: string
-        transaction_id:
-          description: Unique identifier for a transaction
-          type: string
         amount:
-          $ref: '#/components/schemas/CurrencyAmount_2'
-          description: Amount and currency of the transaction.
-        transaction_information:
-          description: Description of the transaction
-          type: string
-        booking_date_time:
-          format: date-time
-          description: Date and time when the non-salary income transaction is posted to the account.
-          type: string
-        income_source:
-          $ref: '#/components/schemas/NonSalaryIncomeSource'
-          description: Type and name of the source where the income comes from.
-    employmentDetailsObject:
-      type: object
-      properties:
-        bank_employer_name:
-          type: string
-          description: The name of the employer as it appears in bank transaction descriptions. This is the raw employer name extracted directly from salary payment transaction records.
-        matched_reference_employer:
-          type:
-          - object
-          - 'null'
-          properties:
-            name:
-              type:
-              - object
-              - 'null'
-              properties:
-                en:
-                  type:
-                  - string
-                  - 'null'
-                  description: Employer name in English.
-                ar:
-                  type:
-                  - string
-                  - 'null'
-                  description: Employer name in Arabic.
-              description: Official name of the employer in English and Arabic.
-            cr_number:
-              type:
-              - integer
-              - 'null'
-              description: Employer’s Commercial Registration (CR) number.
-              format: int64
-          description: Information about the verified employer entity that matched with the bank employer name. Value will be NULL if no matching stored in our database
-          required:
-          - name
-          - cr_number
-        salary_consistent:
-          type: boolean
-          description: Boolean indicator that determines if the salary payments from this employer follow a consistent pattern. true indicates stable payment patterns, while false indicates irregularity. This is calculated by comparing both date and amount variances against predefined thresholds (typically 5 days for dates and 1000 currency units for amounts).
-        salary_date_variance:
+          format: float
+          description: The value in the denominated currency.
           type: number
-          description: A statistical measure of the variability in the timing of salary payments, expressed as the standard deviation of intervals (in days) between consecutive salary payments. Lower values indicate more consistent payment timing. A value of 0 means all payments were made at exactly the same interval.
-          format: double
-        salary_amount_variance:
-          type: number
-          description: A statistical measure of the variability in salary payment amounts, expressed as the standard deviation of payment amounts. Lower values indicate more consistent payment amounts. A value of 0 means all payments were exactly the same amount.
-          format: double
-        first_salary_date:
+        currency:
+          description: ISO 3 letter code for the currency the amount is returned in.
           type: string
-          description: The timestamp of the earliest detected salary payment from this employer. This indicates when the employment relationship began or when the earliest available transaction record starts.
-          format: date-time
-      required:
-      - bank_employer_name
-      - matched_reference_employer
-      - salary_consistent
-      - salary_date_variance
-      - salary_amount_variance
-      - first_salary_date
-    NonSalaryMonthlyAggregate:
-      type: object
-      properties:
-        month:
-          description: 'Number of month within the year (e.g.: January is represented as 1 and December is represented as 12)'
-          type: integer
-        year:
-          description: Year
-          type: integer
-        amount:
-          description: Total non-salary income for the month
-          type: number
-    NonSalaryTotal:
-      type: object
-      properties:
-        count:
-          description: Number of non-salary income payments since start_date.
-          type: integer
-        amount:
-          description: Total non-salary income since start_date.
-          type: number
-        first_date_time:
-          type:
-          - string
-          - 'null'
-          description: UTC datetime of first non-salary income payment since start_date.
-          format: date-time
-        last_date_time:
-          type:
-          - string
-          - 'null'
-          description: UTC datetime of last non-salary income payment.
-          format: date-time
-        average_monthly_count:
-          description: Average number of non-salary income payments per month since start_date.
-          type: number
-        average_monthly_amount:
-          description: Average non-salary income amount received per month since start_date.
-          type: number
-        minimum_monthly_amount:
-          $ref: '#/components/schemas/NonSalaryMonthlyAggregate'
-          description: Minimum non-salary income amount received in a month since start_date and month when this happened.
-        maximum_monthly_amount:
-          $ref: '#/components/schemas/NonSalaryMonthlyAggregate'
-          description: Maximum non-salary income amount received in a month since start_date and month when this happened.
-    NonSalaryIncomeSource:
-      type: object
-      properties:
-        type:
-          type: string
-          description: 'The type of source of the non-salary income. '
-          enum:
-          - 'GIG_ECONOMY '
-          - RETIREMENT
-          - 'HOUSING_BENEFIT '
-          - 'UNEMPLOYMENT '
-          - RENTAL
-          - CASH_DEPOSIT
-          - BONUS
-          - TRANSFER_FROM_OWN_APPLICATION
-        name:
-          description: The name of the entity that provides the income.
-          type: string
-      required:
-      - type
     SalaryFactors:
       type: object
       properties:
@@ -1418,18 +1151,94 @@ components:
       - delta_min_max
       - average_monthly_income_change
       additionalProperties: false
-    SalaryMonthlyAggregate:
+    IncomeInsights:
       type: object
       properties:
-        month:
-          description: 'Number of month within the year (e.g.: January is represented as 1 and December is represented as 12)'
-          type: integer
-        year:
-          description: Year
-          type: integer
-        amount:
-          description: Total salary for the month
+        salary:
+          $ref: '#/components/schemas/Salary'
+          description: Salary income insights.
+        non_salary:
+          $ref: '#/components/schemas/NonSalary'
+          description: Non-salary income insights.
+    NonSalaryFactors:
+      type: object
+      properties:
+        periods:
+          type: array
+          description: Array of income periods with their respective statistics
+          items:
+            type: object
+            properties:
+              period:
+                type: string
+                description: 'The time period for which the statistics are calculated. Allowed values: P3M (3 months), P6M (6 months), P9M (9 months), P12M (12 months).'
+                enum:
+                - P3M
+                - P6M
+                - P9M
+                - P12M
+                examples:
+                - P3M
+                - P6M
+                - P9M
+                - P12M
+                pattern: ^P(3|6|9|12)M$
+                default: P3M
+              income_variation:
+                type: number
+                description: The standard deviation of income amounts for the period
+                minimum: 0
+                format: double
+              average_income:
+                type: object
+                description: The average income for the period
+                properties:
+                  currency:
+                    type: string
+                    description: The currency code
+                    pattern: ^[A-Z]{3}$
+                    examples:
+                    - SAR
+                  amount:
+                    type: number
+                    description: The amount in the specified currency
+                    minimum: 0
+                    format: double
+                required:
+                - currency
+                - amount
+                additionalProperties: false
+            required:
+            - period
+            - income_variation
+            - average_income
+            additionalProperties: false
+          minItems: 1
+          maxItems: 4
+        delta_min_max:
           type: number
+          description: 'Ratio of the maximum salary amount to minimum salary amount '
+          minimum: 0
+          format: double
+        average_monthly_income_change:
+          type: number
+          description: Average of Percentage Change Month on Month over the last 12Month
+          format: double
+      required:
+      - periods
+      - delta_min_max
+      - average_monthly_income_change
+      additionalProperties: false
+    StatusDetailObject:
+      description: Status Details
+      type: object
+      properties:
+        granular_status_code:
+          description: Detailed error code
+          type: string
+        status_additional_info:
+          description: Further detail on the encountered error
+          type: string
     SalaryIncomeSource:
       type: object
       properties:
@@ -1446,35 +1255,226 @@ components:
       required:
       - name
       - type
-    Salary:
+    SalaryMonthlyAggregate:
+      type: object
+      properties:
+        month:
+          description: 'Number of month within the year (e.g.: January is represented as 1 and December is represented as 12)'
+          type: integer
+        year:
+          description: Year
+          type: integer
+        amount:
+          description: Total salary for the month
+          type: number
+    NonSalary:
       type: object
       properties:
         currency:
-          description: The 3 Letter ISO code denominating the currency that the salary is provided in. This will be local currency (SAR in KSA).
+          description: The 3 Letter ISO code denominating the currency that the non-salary income is provided in. This will be local currency (SAR in KSA).
           type: string
         total:
-          $ref: '#/components/schemas/SalaryTotal'
-          description: Insights on all salaries received since start_date.
+          $ref: '#/components/schemas/NonSalaryTotal'
+          description: Insights on non-salary income received since start_date.
         monthly_totals:
-          description: Total salary for all months from start_date until today.
+          description: Total non-salary income for all months from start_date until today.
           type: array
           items:
-            $ref: '#/components/schemas/SalaryMonthlyTotals'
+            $ref: '#/components/schemas/NonSalaryMonthlyTotals'
         transactions:
-          type: array
+          type:
+          - array
+          - 'null'
           items:
-            $ref: '#/components/schemas/SalaryTransaction'
-          description: List of transactions that correspond to a salary deposit.
-          minItems: 0
+            $ref: '#/components/schemas/NonSalaryTransaction'
+          description: List of transactions that correspond to a non-salary income deposit.
         income_factors:
-          description: Salary analysis for different time periods
-          $ref: '#/components/schemas/SalaryFactors'
+          description: Non-Salary analysis for different time periods
+          $ref: '#/components/schemas/NonSalaryFactors'
       required:
+      - income_factors
+      - transactions
+      - monthly_totals
       - currency
       - total
-      - monthly_totals
-      - transactions
-      - income_factors
+    IncomeRequest:
+      description: ''
+      required:
+      - entity_id
+      type: object
+      properties:
+        entity_id:
+          description: The `entity_id` you are querying for. The entity needs to have permissions `accounts` and `transactions`.
+          type: string
+        start_date:
+          format: date
+          description: "The start date in UTC (in the format YYYY-MM-DD) you want to query transactions for. \nIf not provided, we will default to 6 months before now."
+          type: string
+        estimated_monthly_income:
+          description: 'Monthly income for the user that you have gathered from another source (e.g.: reported by the user).'
+          type: number
+        income_type:
+          description: If you want to get salary or non-salary income or both. If you do not provide any value, it will default to ALL.
+          enum:
+          - SALARY
+          - NON_SALARY
+          - ALL
+          type: string
+    employmentDetailsObject:
+      type: object
+      properties:
+        bank_employer_name:
+          type: string
+          description: The name of the employer as it appears in bank transaction descriptions. This is the raw employer name extracted directly from salary payment transaction records.
+        matched_reference_employer:
+          type:
+          - object
+          - 'null'
+          properties:
+            name:
+              type:
+              - object
+              - 'null'
+              properties:
+                en:
+                  type:
+                  - string
+                  - 'null'
+                  description: Employer name in English.
+                ar:
+                  type:
+                  - string
+                  - 'null'
+                  description: Employer name in Arabic.
+              description: Official name of the employer in English and Arabic.
+            cr_number:
+              type:
+              - integer
+              - 'null'
+              description: Employer’s Commercial Registration (CR) number.
+              format: int64
+          description: Information about the verified employer entity that matched with the bank employer name. Value will be NULL if no matching stored in our database
+          required:
+          - name
+          - cr_number
+        salary_consistent:
+          type: boolean
+          description: Boolean indicator that determines if the salary payments from this employer follow a consistent pattern. true indicates stable payment patterns, while false indicates irregularity. This is calculated by comparing both date and amount variances against predefined thresholds (typically 5 days for dates and 1000 currency units for amounts).
+        salary_date_variance:
+          type: number
+          description: A statistical measure of the variability in the timing of salary payments, expressed as the standard deviation of intervals (in days) between consecutive salary payments. Lower values indicate more consistent payment timing. A value of 0 means all payments were made at exactly the same interval.
+          format: double
+        salary_amount_variance:
+          type: number
+          description: A statistical measure of the variability in salary payment amounts, expressed as the standard deviation of payment amounts. Lower values indicate more consistent payment amounts. A value of 0 means all payments were exactly the same amount.
+          format: double
+        first_salary_date:
+          type: string
+          description: The timestamp of the earliest detected salary payment from this employer. This indicates when the employment relationship began or when the earliest available transaction record starts.
+          format: date-time
+      required:
+      - bank_employer_name
+      - matched_reference_employer
+      - salary_consistent
+      - salary_date_variance
+      - salary_amount_variance
+      - first_salary_date
+    NonSalaryIncomeSource:
+      type: object
+      properties:
+        type:
+          type: string
+          description: 'The type of source of the non-salary income. '
+          enum:
+          - 'GIG_ECONOMY '
+          - RETIREMENT
+          - 'HOUSING_BENEFIT '
+          - 'UNEMPLOYMENT '
+          - RENTAL
+          - CASH_DEPOSIT
+          - BONUS
+          - TRANSFER_FROM_OWN_APPLICATION
+        name:
+          description: The name of the entity that provides the income.
+          type: string
+      required:
+      - type
+    NonSalaryMonthlyTotals:
+      type: object
+      properties:
+        month:
+          description: 'Number of month within the year (e.g.: January is represented as 1 and December is represented as 12)'
+          type: integer
+        year:
+          description: Year.
+          type: integer
+        amount:
+          description: Total non-salary income for the month.
+          type: number
+        count:
+          description: Number of non-salary income transaction in the month.
+          type: integer
+        is_month_complete:
+          description: Determines if Lean retrieved the data for all days for the month. This will always be `true`, except for the first and last month retrieved.
+          type: boolean
+    NonSalaryTransaction:
+      type: object
+      properties:
+        account_id:
+          description: The id of the account where the non-salary income transaction was credited into.
+          type: string
+        transaction_id:
+          description: Unique identifier for a transaction
+          type: string
+        amount:
+          $ref: '#/components/schemas/CurrencyAmount_2'
+          description: Amount and currency of the transaction.
+        transaction_information:
+          description: Description of the transaction
+          type: string
+        booking_date_time:
+          format: date-time
+          description: Date and time when the non-salary income transaction is posted to the account.
+          type: string
+        income_source:
+          $ref: '#/components/schemas/NonSalaryIncomeSource'
+          description: Type and name of the source where the income comes from.
+    NonSalaryMonthlyAggregate:
+      type: object
+      properties:
+        month:
+          description: 'Number of month within the year (e.g.: January is represented as 1 and December is represented as 12)'
+          type: integer
+        year:
+          description: Year
+          type: integer
+        amount:
+          description: Total non-salary income for the month
+          type: number
+    SalaryMonthlyTotals:
+      type: object
+      properties:
+        month:
+          description: 'Number of month within the year (e.g.: January is represented as 1 and December is represented as 12)'
+          type: integer
+        year:
+          description: Year.
+          type: integer
+        amount:
+          description: Total salary for the month.
+          type: number
+        count:
+          description: Number of salary transaction in the month.
+          type: integer
+        is_month_complete:
+          description: Determines if Lean retrieved the data for all days for the month. This will always be `true`, except for the first and last month retrieved.
+          type: boolean
+      required:
+      - month
+      - year
+      - amount
+      - count
+      - is_month_complete
     StatusDetail:
       type:
       - object
@@ -1490,19 +1490,41 @@ components:
           type:
           - string
           - 'null'
-    EmployerDetails:
+    Result:
       type: object
       properties:
-        name:
-          description: Official name of the employer in English and Arabic.
-          allOf:
-          - $ref: '#/components/schemas/Translation'
-        cr_number:
-          description: Employer’s Commercial Registration (CR) number.
+        status:
+          $ref: '#/components/schemas/ResultStatus'
+        results_id:
+          description: The unique identifier for the request
+          type: string
+          format: uuid
+        message:
+          description: A message describing the status of the request
+          type: string
+        meta:
+          description: Meta information about the request
           type:
-          - integer
+          - object
           - 'null'
-          format: int64
+          additionalProperties:
+            type: string
+        timestamp:
+          description: The datetime of when the request was made
+          type: string
+          format: date-time
+        status_detail:
+          description: Additional information about the status
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/StatusDetail'
+      required:
+      - status
+      - results_id
+      - message
+      - timestamp
     EmploymentDetails:
       type: object
       properties:
@@ -1568,41 +1590,19 @@ components:
       required:
       - en
       - ar
-    Result:
+    EmployerDetails:
       type: object
       properties:
-        status:
-          $ref: '#/components/schemas/ResultStatus'
-        results_id:
-          description: The unique identifier for the request
-          type: string
-          format: uuid
-        message:
-          description: A message describing the status of the request
-          type: string
-        meta:
-          description: Meta information about the request
-          type:
-          - object
-          - 'null'
-          additionalProperties:
-            type: string
-        timestamp:
-          description: The datetime of when the request was made
-          type: string
-          format: date-time
-        status_detail:
-          description: Additional information about the status
-          type:
-          - object
-          - 'null'
+        name:
+          description: Official name of the employer in English and Arabic.
           allOf:
-          - $ref: '#/components/schemas/StatusDetail'
-      required:
-      - status
-      - results_id
-      - message
-      - timestamp
+          - $ref: '#/components/schemas/Translation'
+        cr_number:
+          description: Employer’s Commercial Registration (CR) number.
+          type:
+          - integer
+          - 'null'
+          format: int64
     ResultStatus:
       description: The status of the request
       type: string
@@ -1621,15 +1621,6 @@ components:
             $ref: '#/components/schemas/EmploymentDetails'
       additionalProperties: false
   examples:
-    UnknownEntityExample:
-      summary: Entity not found error response
-      description: Response when the provided entity_id is not found
-      value:
-        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
-        timestamp: '2025-09-10T21:03:05.413806605Z'
-        status: UNKNOWN_ENTITY
-        message: The entity_id provided did not match an account in our records.
-        metadata: null
     AsyncProcessingV2Example:
       summary: Asynchronous processing response with async=true
       description: Response to request with async=true
@@ -1643,6 +1634,15 @@ components:
         data: null
         type: null
         refreshed_at: null
+    InvalidParametersExample:
+      summary: Invalid parameters error response
+      description: Response when required parameters are missing or invalid
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-10T21:05:59.919233187Z'
+        status: INVALID_PARAMETERS
+        message: 'The request is badly formatted or a parameter of the wrong type has been provided, field: entity_id, value: e34d8e49-9af2-4252-a53e-bd2df855134.'
+        metadata: null
     InternalServerErrorExample:
       summary: Internal server error response
       description: Response when an unexpected server error occurs
@@ -1652,14 +1652,14 @@ components:
         status: INTERNAL_SERVER_ERROR
         message: Something has gone wrong. If you continue to see this error, please get in touch with Lean.
         metadata: null
-    InvalidParametersExample:
-      summary: Invalid parameters error response
-      description: Response when required parameters are missing or invalid
+    UnknownEntityExample:
+      summary: Entity not found error response
+      description: Response when the provided entity_id is not found
       value:
         results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
-        timestamp: '2025-09-10T21:05:59.919233187Z'
-        status: INVALID_PARAMETERS
-        message: 'The request is badly formatted or a parameter of the wrong type has been provided, field: entity_id, value: e34d8e49-9af2-4252-a53e-bd2df855134.'
+        timestamp: '2025-09-10T21:03:05.413806605Z'
+        status: UNKNOWN_ENTITY
+        message: The entity_id provided did not match an account in our records.
         metadata: null
   responses:
     UnsupportedByBankResponse:

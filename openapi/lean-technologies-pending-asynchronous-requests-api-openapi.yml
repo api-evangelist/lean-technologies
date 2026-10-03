@@ -165,6 +165,13 @@ components:
         type: integer
         default: 0
         minimum: 0
+    MetaParameter:
+      name: meta
+      description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
+      in: query
+      required: false
+      schema:
+        type: string
     EntityIdParameter:
       name: entity_id
       description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
@@ -173,13 +180,6 @@ components:
       schema:
         type: string
         format: uuid
-    MetaParameter:
-      name: meta
-      description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
-      in: query
-      required: false
-      schema:
-        type: string
     AsyncParameter:
       name: async
       in: query
@@ -209,23 +209,17 @@ components:
         message: Something has gone wrong. If you continue to see this error, please get in touch with Lean.
         metadata: null
   schemas:
-    StatusDetailObject:
-      description: Status Details
-      type: object
-      properties:
-        granular_status_code:
-          description: Detailed error code
-          type: string
-        status_additional_info:
-          description: Further detail on the encountered error
-          type: string
-    AccountsResponse:
+    AccountsData:
       allOf:
       - type: object
+        properties: {}
+      - type: object
         properties:
-          data:
-            $ref: '#/components/schemas/AccountsData'
-      - $ref: '#/components/schemas/DataResponse'
+          accounts:
+            description: An array of accounts associated with the Entity
+            type: array
+            items:
+              $ref: '#/components/schemas/Account'
     AccountRegionalData:
       allOf:
       - type: object
@@ -316,6 +310,14 @@ components:
         regional_data:
           description: Region specific data response. Only provided when `verbose=true` in the originating request.
           $ref: '#/components/schemas/AccountRegionalData'
+    DirectDebitsResponse:
+      allOf:
+      - type: object
+        properties:
+          data:
+            type: object
+            properties: {}
+      - $ref: '#/components/schemas/DataResponse'
     ResultsResponse:
       anyOf:
       - $ref: '#/components/schemas/AccountsResponse'
@@ -336,6 +338,23 @@ components:
       - $ref: '#/components/schemas/DirectDebitsResponse'
       title: Results Response
       description: ''
+    AccountsResponse:
+      allOf:
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/AccountsData'
+      - $ref: '#/components/schemas/DataResponse'
+    StatusDetailObject:
+      description: Status Details
+      type: object
+      properties:
+        granular_status_code:
+          description: Detailed error code
+          type: string
+        status_additional_info:
+          description: Further detail on the encountered error
+          type: string
     DataResponse:
       type: object
       properties:
@@ -373,14 +392,6 @@ components:
       - meta
       - timestamp
       - status_detail
-    DirectDebitsResponse:
-      allOf:
-      - type: object
-        properties:
-          data:
-            type: object
-            properties: {}
-      - $ref: '#/components/schemas/DataResponse'
     StandardSau:
       type: object
       properties:
@@ -389,17 +400,6 @@ components:
           type: string
           examples:
           - SAU.SAMA.V1
-    AccountsData:
-      allOf:
-      - type: object
-        properties: {}
-      - type: object
-        properties:
-          accounts:
-            description: An array of accounts associated with the Entity
-            type: array
-            items:
-              $ref: '#/components/schemas/Account'
     AgentIdentifier:
       type: object
       properties:

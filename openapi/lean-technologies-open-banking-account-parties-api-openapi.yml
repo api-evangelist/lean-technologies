@@ -258,23 +258,6 @@ paths:
       - Open Banking Account Parties
 components:
   parameters:
-    FapiInteractionId:
-      name: x-fapi-interaction-id
-      in: header
-      description: An RFC4122 UID used as a correlation id.
-      required: false
-      schema:
-        type: string
-    OBSizeParam:
-      name: Size
-      description: The number of objects you want to return as a page size.
-      in: query
-      required: false
-      schema:
-        type: integer
-        default: 50
-        maximum: 100
-        minimum: 1
     CustomerId:
       name: CustomerId
       in: query
@@ -291,6 +274,13 @@ components:
       schema:
         type: string
         format: uuid
+    FapiInteractionId:
+      name: x-fapi-interaction-id
+      in: header
+      description: An RFC4122 UID used as a correlation id.
+      required: false
+      schema:
+        type: string
     OBPageParm:
       name: Page
       in: query
@@ -308,7 +298,329 @@ components:
       schema:
         type: string
         format: uuid
+    OBSizeParam:
+      name: Size
+      description: The number of objects you want to return as a page size.
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 50
+        maximum: 100
+        minimum: 1
   schemas:
+    OBLinks:
+      description: Links relevant to the resource for pagination navigation.
+      type: object
+      properties:
+        Self:
+          description: A link to the current resource.
+          type: string
+          format: uri
+        First:
+          description: A link to the first page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+        Prev:
+          description: A link to the previous page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+        Next:
+          description: A link to the next page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+        Last:
+          description: A link to the last page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+      required:
+      - Self
+    OBParty:
+      description: Unambiguous identification of the party.
+      type: object
+      properties:
+        EntityId:
+          description: Lean entity identifier for the connected customer.
+          type: string
+          format: uuid
+        PartyId:
+          description: Unique and unambiguous identification of the party.
+          type: string
+          maxLength: 40
+          minLength: 1
+        PartyNumber:
+          description: Number assigned by an agent to identify its customer.
+          type:
+          - string
+          - 'null'
+          maxLength: 35
+          minLength: 1
+        PartyType:
+          $ref: '#/components/schemas/OBPartyTypeCode'
+        AccountRole:
+          $ref: '#/components/schemas/OBAccountRoleCode'
+        VerifiedClaims:
+          description: List of verified identity claims for the party.
+          type: array
+          items:
+            $ref: '#/components/schemas/OBVerifiedClaim'
+      required:
+      - PartyId
+      - PartyType
+      - AccountRole
+      - VerifiedClaims
+    OBPartyIdentityCheckDetail:
+      description: Details of a check performed on PSU evidence for identity verification.
+      type: object
+      properties:
+        CheckMethod:
+          description: Method used by the PASP for checking the PSU evidence (e.g. biometric, document authenticity check).
+          type:
+          - string
+          - 'null'
+        Organization:
+          description: Legal entity that performed the check on behalf of the OP.
+          type:
+          - string
+          - 'null'
+        Txn:
+          description: Identifier referring to the identity verification transaction for audit purposes.
+          type:
+          - string
+          - 'null'
+        Time:
+          description: Date and time at which the check was performed.
+          type:
+          - string
+          - 'null'
+          format: date-time
+    OBVerifiedClaim:
+      description: Verified identity claim for a party (OpenID Connect for Identity Assurance 1.0).
+      type: object
+      properties:
+        Verification:
+          $ref: '#/components/schemas/OBVerification'
+        Claims:
+          description: Standard and identity assurance claims for the party (OpenID Connect Core 1.0).
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/OBClaims'
+      required:
+      - Verification
+      - Claims
+    OBElectronicRecordTypeCode:
+      description: The type of electronic record used for identity verification.
+      type: string
+      enum:
+      - bank_account
+      - mortgage_account
+      - loan_account
+    OBPartyIdentityEvidenceTypeElectronicRecord:
+      description: Electronic record evidence for PSU identity verification (OpenID Connect for Identity Assurance 1.0).
+      type: object
+      properties:
+        Type:
+          description: The type of evidence.
+          allOf:
+          - $ref: '#/components/schemas/OBPartyIdentityEvidenceElectronicRecordType'
+        CheckDetails:
+          description: Checks done in relation to the electronic record evidence.
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/OBPartyIdentityCheckDetail'
+        Time:
+          description: Date and time at which the electronic record evidence was verified.
+          type:
+          - string
+          - 'null'
+          format: date-time
+        Record:
+          description: The record used to perform the identity verification.
+          type:
+          - object
+          - 'null'
+          properties:
+            Type:
+              description: The type of electronic record.
+              allOf:
+              - $ref: '#/components/schemas/OBElectronicRecordTypeCode'
+            PersonalNumber:
+              description: An identifier assigned to the PSU not limited to being used in one record.
+              type:
+              - string
+              - 'null'
+            CalendarType:
+              description: The type of calendar used for dates in this record.
+              allOf:
+              - $ref: '#/components/schemas/OBPartyCalendarType'
+            CreatedAt:
+              description: The time the record was created.
+              type:
+              - string
+              - 'null'
+              format: date-time
+            DateOfExpiry:
+              description: The date the evidence will expire.
+              type:
+              - string
+              - 'null'
+              format: date-time
+            Source:
+              description: Information about the source of this record.
+              type:
+              - object
+              - 'null'
+              properties:
+                Name:
+                  description: Designation of the source of the electronic record.
+                  type:
+                  - string
+                  - 'null'
+                Address:
+                  description: Address of the record source.
+                  type:
+                  - object
+                  - 'null'
+                  allOf:
+                  - $ref: '#/components/schemas/OBPartyIdentityAddressClaim'
+                CountryCode:
+                  description: Country or supranational organization that issued the evidence (ISO 3166).
+                  type:
+                  - string
+                  - 'null'
+                Jurisdiction:
+                  description: Region(s)/state(s)/province(s) the source has jurisdiction over.
+                  type:
+                  - string
+                  - 'null'
+        Attachments:
+          description: Attachments related to the electronic record evidence.
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/OBPartyIdentityEvidenceAttachment'
+    OBPartyCalendarType:
+      description: The type of calendar used for dates in document or electronic record evidence.
+      type: string
+      enum:
+      - KSAOB.IslamicCalendar
+      - KSAOB.GregorianCalendar
+    OBVerification:
+      description: Verification details for the identity claim (OpenID Connect for Identity Assurance 1.0).
+      type: object
+      properties:
+        TrustFramework:
+          $ref: '#/components/schemas/OBTrustFramework'
+        AssuranceLevel:
+          description: Level of assurance for the verified claim (e.g. low, medium, high).
+          type:
+          - string
+          - 'null'
+        AssuranceProcess:
+          description: The assurance process that was followed to meet the trust framework requirements.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBVerificationAssuranceProcess'
+        Time:
+          description: Date and time when the identity verification process took place.
+          type:
+          - string
+          - 'null'
+          format: date-time
+        VerificationProcess:
+          description: Unique reference to the identity verification process for audit and dispute resolution.
+          type:
+          - string
+          - 'null'
+        Evidence:
+          description: Evidence used for verifying the PSU identity.
+          type:
+          - array
+          - 'null'
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/OBPartyIdentityEvidenceTypeDocument'
+            - $ref: '#/components/schemas/OBPartyIdentityEvidenceTypeElectronicRecord'
+      required:
+      - TrustFramework
+    OBVerificationAssuranceDetail:
+      description: Details about how a specific piece of evidence complies with the assurance process policy.
+      type: object
+      properties:
+        AssuranceType:
+          description: Which part of the assurance process the evidence fulfils.
+          type:
+          - string
+          - 'null'
+        AssuranceClassification:
+          description: How the evidence has been classified as required by the TrustFramework.
+          type:
+          - string
+          - 'null'
+        EvidenceRef:
+          description: References to evidence transactions.
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/OBVerificationEvidenceRef'
+    OBVerificationAssuranceProcess:
+      description: Assurance process that was followed to meet the requirements of the trust framework.
+      type: object
+      properties:
+        Policy:
+          description: Standard or policy that was followed.
+          type:
+          - string
+          - 'null'
+        Procedure:
+          description: Specific procedure from the policy that was followed.
+          type:
+          - string
+          - 'null'
+        AssuranceDetails:
+          description: Details about how the evidence complies with the policy.
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/OBVerificationAssuranceDetail'
+    OBMeta:
+      description: Metadata relevant to the resource.
+      type: object
+      properties:
+        TotalPages:
+          description: Total number of pages where a result set is paginated.
+          type:
+          - integer
+          - 'null'
+          format: int32
+          minimum: 0
+    OBPartyIdentityEvidenceElectronicRecordType:
+      description: The type of evidence provided for electronic record-based identity verification.
+      type: string
+      const: electronic_record
+    OBDocumentTypeCode:
+      description: The type of document used for evidence checking by the PASP.
+      type: string
+      enum:
+      - passport
+      - driving_permit
+      - idcard
+      - residence_permit
     OBClaims:
       description: Standard and identity assurance claims for the party (OpenID Connect Core 1.0).
       type: object
@@ -480,14 +792,6 @@ components:
           type:
           - number
           - 'null'
-    OBDocumentTypeCode:
-      description: The type of document used for evidence checking by the PASP.
-      type: string
-      enum:
-      - passport
-      - driving_permit
-      - idcard
-      - residence_permit
     OBAccountPartiesData:
       description: Container for the list of parties associated with a specific account.
       type: object
@@ -510,42 +814,109 @@ components:
       required:
       - AccountId
       - Party
-    OBPartyIdentityAddressClaim:
-      description: Address object as per OpenID Connect Core 1.0 Address Claim.
+    OBVerificationEvidenceRef:
+      description: Reference to a specific evidence transaction.
       type: object
       properties:
-        Formatted:
-          description: The PSU full address (street number, street name, city, zip code, country) claim.
+        Txn:
+          description: Identifier referring to the transaction used in CheckDetails.
+          type: string
+        EvidenceMetadata:
+          description: Metadata about how the process demonstrated by the check demonstrates compliance with the TrustFramework.
+          type:
+          - object
+          - 'null'
+          properties:
+            EvidenceClassification:
+              description: How the process is classified by the AssuranceProcess to demonstrate compliance with the TrustFramework.
+              type:
+              - string
+              - 'null'
+      required:
+      - Txn
+    OBTrustFramework:
+      description: Trust framework used to verify the party's identity claims.
+      type: string
+      enum:
+      - SA_IAM
+      - SA_AML
+      - SA_MyAddress
+      - SA_MobileTelecoms
+    OBPartyIdentityEvidenceAttachment:
+      description: Attachment related to PSU identity evidence (OpenID Connect for Identity Assurance 1.0).
+      type: object
+      properties:
+        Desc:
+          description: Description of the document (e.g. filename or explanation of content).
           type:
           - string
           - 'null'
-        StreetAddress:
-          description: The PSU address street claim verified by the PASP.
+        ContentType:
+          description: Content (MIME) type of the document.
           type:
           - string
           - 'null'
-        Locality:
-          description: The PSU address locality (village, town, city etc) claim verified by the PASP.
+        Content:
+          description: Base64 encoded representation of the document content.
           type:
           - string
           - 'null'
-        Region:
-          description: The PSU address region claim verified by the PASP.
+        Txn:
+          description: Identifier referring to the transaction.
           type:
           - string
           - 'null'
-        PostalCode:
-          description: Postal code added to the address to assist the sorting of mail.
+    OBPartyIdentityEvidenceTypeDocument:
+      description: Document evidence for PSU identity verification (OpenID Connect for Identity Assurance 1.0).
+      type: object
+      properties:
+        Type:
+          description: The type of evidence.
+          allOf:
+          - $ref: '#/components/schemas/OBPartyIdentityEvidenceDocumentType'
+        CheckDetails:
+          description: Checks done in relation to the document evidence.
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/OBPartyIdentityCheckDetail'
+        Verifier:
+          description: The legal entity that performed the identity verification on behalf of the OP.
+          type:
+          - object
+          - 'null'
+          properties:
+            Organization:
+              description: Organization which performed the verification on behalf of the OP.
+              type: string
+            Txn:
+              description: Identifier referring to the identity verification transaction for audit purposes.
+              type:
+              - string
+              - 'null'
+          required:
+          - Organization
+        Time:
+          description: Date and time at which the document evidence was verified by the PASP.
           type:
           - string
           - 'null'
-          maxLength: 5
-          minLength: 5
-        Country:
-          description: Country code (ISO 3166) for the PSU address.
+          format: date-time
+        DocumentDetails:
+          description: The document used to perform the identity verification.
           type:
-          - string
+          - object
           - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBDocumentDetails'
+        Attachments:
+          description: Attachments related to the document evidence.
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/OBPartyIdentityEvidenceAttachment'
     OBDocumentDetails:
       description: The document used to perform the identity verification.
       type: object
@@ -613,39 +984,30 @@ components:
               type:
               - string
               - 'null'
-    OBPartyIdentityCheckDetail:
-      description: Details of a check performed on PSU evidence for identity verification.
-      type: object
-      properties:
-        CheckMethod:
-          description: Method used by the PASP for checking the PSU evidence (e.g. biometric, document authenticity check).
-          type:
-          - string
-          - 'null'
-        Organization:
-          description: Legal entity that performed the check on behalf of the OP.
-          type:
-          - string
-          - 'null'
-        Txn:
-          description: Identifier referring to the identity verification transaction for audit purposes.
-          type:
-          - string
-          - 'null'
-        Time:
-          description: Date and time at which the check was performed.
-          type:
-          - string
-          - 'null'
-          format: date-time
-    OBTrustFramework:
-      description: Trust framework used to verify the party's identity claims.
+    OBPartyIdentityEvidenceDocumentType:
+      description: The type of evidence provided for document-based identity verification.
       type: string
       enum:
-      - SA_IAM
-      - SA_AML
-      - SA_MyAddress
-      - SA_MobileTelecoms
+      - document
+      - electronic_record
+    OBAccountRoleCode:
+      description: Specifies the role of the party in relation to the account.
+      type: string
+      enum:
+      - KSAOB.Administrator
+      - KSAOB.Beneficiary
+      - KSAOB.CustodianForMinor
+      - KSAOB.Granter
+      - KSAOB.LegalGuardian
+      - KSAOB.OtherParty
+      - KSAOB.PowerOfAttorney
+      - KSAOB.Principal
+      - KSAOB.Protector
+      - KSAOB.RegisteredShareholderName
+      - KSAOB.SecondaryOwner
+      - KSAOB.SeniorManagingOfficial
+      - KSAOB.Settlor
+      - KSAOB.SuccessorOnDeath
     OBGetAccountPartiesResponse:
       description: Response envelope for the Open Banking account-specific parties.
       type: object
@@ -704,144 +1066,42 @@ components:
       - Status
       - Message
       - Timestamp
-    OBPartyCalendarType:
-      description: The type of calendar used for dates in document or electronic record evidence.
-      type: string
-      enum:
-      - KSAOB.IslamicCalendar
-      - KSAOB.GregorianCalendar
-    OBPartyIdentityEvidenceAttachment:
-      description: Attachment related to PSU identity evidence (OpenID Connect for Identity Assurance 1.0).
+    OBPartyIdentityAddressClaim:
+      description: Address object as per OpenID Connect Core 1.0 Address Claim.
       type: object
       properties:
-        Desc:
-          description: Description of the document (e.g. filename or explanation of content).
+        Formatted:
+          description: The PSU full address (street number, street name, city, zip code, country) claim.
           type:
           - string
           - 'null'
-        ContentType:
-          description: Content (MIME) type of the document.
+        StreetAddress:
+          description: The PSU address street claim verified by the PASP.
           type:
           - string
           - 'null'
-        Content:
-          description: Base64 encoded representation of the document content.
+        Locality:
+          description: The PSU address locality (village, town, city etc) claim verified by the PASP.
           type:
           - string
           - 'null'
-        Txn:
-          description: Identifier referring to the transaction.
+        Region:
+          description: The PSU address region claim verified by the PASP.
           type:
           - string
           - 'null'
-    OBElectronicRecordTypeCode:
-      description: The type of electronic record used for identity verification.
-      type: string
-      enum:
-      - bank_account
-      - mortgage_account
-      - loan_account
-    OBVerifiedClaim:
-      description: Verified identity claim for a party (OpenID Connect for Identity Assurance 1.0).
-      type: object
-      properties:
-        Verification:
-          $ref: '#/components/schemas/OBVerification'
-        Claims:
-          description: Standard and identity assurance claims for the party (OpenID Connect Core 1.0).
-          type: object
-          allOf:
-          - $ref: '#/components/schemas/OBClaims'
-      required:
-      - Verification
-      - Claims
-    OBPartyIdentityEvidenceTypeElectronicRecord:
-      description: Electronic record evidence for PSU identity verification (OpenID Connect for Identity Assurance 1.0).
-      type: object
-      properties:
-        Type:
-          description: The type of evidence.
-          allOf:
-          - $ref: '#/components/schemas/OBPartyIdentityEvidenceElectronicRecordType'
-        CheckDetails:
-          description: Checks done in relation to the electronic record evidence.
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/OBPartyIdentityCheckDetail'
-        Time:
-          description: Date and time at which the electronic record evidence was verified.
+        PostalCode:
+          description: Postal code added to the address to assist the sorting of mail.
           type:
           - string
           - 'null'
-          format: date-time
-        Record:
-          description: The record used to perform the identity verification.
+          maxLength: 5
+          minLength: 5
+        Country:
+          description: Country code (ISO 3166) for the PSU address.
           type:
-          - object
+          - string
           - 'null'
-          properties:
-            Type:
-              description: The type of electronic record.
-              allOf:
-              - $ref: '#/components/schemas/OBElectronicRecordTypeCode'
-            PersonalNumber:
-              description: An identifier assigned to the PSU not limited to being used in one record.
-              type:
-              - string
-              - 'null'
-            CalendarType:
-              description: The type of calendar used for dates in this record.
-              allOf:
-              - $ref: '#/components/schemas/OBPartyCalendarType'
-            CreatedAt:
-              description: The time the record was created.
-              type:
-              - string
-              - 'null'
-              format: date-time
-            DateOfExpiry:
-              description: The date the evidence will expire.
-              type:
-              - string
-              - 'null'
-              format: date-time
-            Source:
-              description: Information about the source of this record.
-              type:
-              - object
-              - 'null'
-              properties:
-                Name:
-                  description: Designation of the source of the electronic record.
-                  type:
-                  - string
-                  - 'null'
-                Address:
-                  description: Address of the record source.
-                  type:
-                  - object
-                  - 'null'
-                  allOf:
-                  - $ref: '#/components/schemas/OBPartyIdentityAddressClaim'
-                CountryCode:
-                  description: Country or supranational organization that issued the evidence (ISO 3166).
-                  type:
-                  - string
-                  - 'null'
-                Jurisdiction:
-                  description: Region(s)/state(s)/province(s) the source has jurisdiction over.
-                  type:
-                  - string
-                  - 'null'
-        Attachments:
-          description: Attachments related to the electronic record evidence.
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/OBPartyIdentityEvidenceAttachment'
     OBPartyTypeCode:
       description: Specifies the type of party.
       type: string
@@ -849,135 +1109,6 @@ components:
       - KSAOB.Delegate
       - KSAOB.Joint
       - KSAOB.Sole
-    OBVerification:
-      description: Verification details for the identity claim (OpenID Connect for Identity Assurance 1.0).
-      type: object
-      properties:
-        TrustFramework:
-          $ref: '#/components/schemas/OBTrustFramework'
-        AssuranceLevel:
-          description: Level of assurance for the verified claim (e.g. low, medium, high).
-          type:
-          - string
-          - 'null'
-        AssuranceProcess:
-          description: The assurance process that was followed to meet the trust framework requirements.
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/OBVerificationAssuranceProcess'
-        Time:
-          description: Date and time when the identity verification process took place.
-          type:
-          - string
-          - 'null'
-          format: date-time
-        VerificationProcess:
-          description: Unique reference to the identity verification process for audit and dispute resolution.
-          type:
-          - string
-          - 'null'
-        Evidence:
-          description: Evidence used for verifying the PSU identity.
-          type:
-          - array
-          - 'null'
-          items:
-            oneOf:
-            - $ref: '#/components/schemas/OBPartyIdentityEvidenceTypeDocument'
-            - $ref: '#/components/schemas/OBPartyIdentityEvidenceTypeElectronicRecord'
-      required:
-      - TrustFramework
-    OBAccountRoleCode:
-      description: Specifies the role of the party in relation to the account.
-      type: string
-      enum:
-      - KSAOB.Administrator
-      - KSAOB.Beneficiary
-      - KSAOB.CustodianForMinor
-      - KSAOB.Granter
-      - KSAOB.LegalGuardian
-      - KSAOB.OtherParty
-      - KSAOB.PowerOfAttorney
-      - KSAOB.Principal
-      - KSAOB.Protector
-      - KSAOB.RegisteredShareholderName
-      - KSAOB.SecondaryOwner
-      - KSAOB.SeniorManagingOfficial
-      - KSAOB.Settlor
-      - KSAOB.SuccessorOnDeath
-    OBPartyIdentityEvidenceTypeDocument:
-      description: Document evidence for PSU identity verification (OpenID Connect for Identity Assurance 1.0).
-      type: object
-      properties:
-        Type:
-          description: The type of evidence.
-          allOf:
-          - $ref: '#/components/schemas/OBPartyIdentityEvidenceDocumentType'
-        CheckDetails:
-          description: Checks done in relation to the document evidence.
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/OBPartyIdentityCheckDetail'
-        Verifier:
-          description: The legal entity that performed the identity verification on behalf of the OP.
-          type:
-          - object
-          - 'null'
-          properties:
-            Organization:
-              description: Organization which performed the verification on behalf of the OP.
-              type: string
-            Txn:
-              description: Identifier referring to the identity verification transaction for audit purposes.
-              type:
-              - string
-              - 'null'
-          required:
-          - Organization
-        Time:
-          description: Date and time at which the document evidence was verified by the PASP.
-          type:
-          - string
-          - 'null'
-          format: date-time
-        DocumentDetails:
-          description: The document used to perform the identity verification.
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/OBDocumentDetails'
-        Attachments:
-          description: Attachments related to the document evidence.
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/OBPartyIdentityEvidenceAttachment'
-    OBVerificationEvidenceRef:
-      description: Reference to a specific evidence transaction.
-      type: object
-      properties:
-        Txn:
-          description: Identifier referring to the transaction used in CheckDetails.
-          type: string
-        EvidenceMetadata:
-          description: Metadata about how the process demonstrated by the check demonstrates compliance with the TrustFramework.
-          type:
-          - object
-          - 'null'
-          properties:
-            EvidenceClassification:
-              description: How the process is classified by the AssuranceProcess to demonstrate compliance with the TrustFramework.
-              type:
-              - string
-              - 'null'
-      required:
-      - Txn
     OBStatusDetail:
       type:
       - object
@@ -993,137 +1124,6 @@ components:
           type:
           - string
           - 'null'
-    OBMeta:
-      description: Metadata relevant to the resource.
-      type: object
-      properties:
-        TotalPages:
-          description: Total number of pages where a result set is paginated.
-          type:
-          - integer
-          - 'null'
-          format: int32
-          minimum: 0
-    OBVerificationAssuranceDetail:
-      description: Details about how a specific piece of evidence complies with the assurance process policy.
-      type: object
-      properties:
-        AssuranceType:
-          description: Which part of the assurance process the evidence fulfils.
-          type:
-          - string
-          - 'null'
-        AssuranceClassification:
-          description: How the evidence has been classified as required by the TrustFramework.
-          type:
-          - string
-          - 'null'
-        EvidenceRef:
-          description: References to evidence transactions.
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/OBVerificationEvidenceRef'
-    OBPartyIdentityEvidenceElectronicRecordType:
-      description: The type of evidence provided for electronic record-based identity verification.
-      type: string
-      const: electronic_record
-    OBParty:
-      description: Unambiguous identification of the party.
-      type: object
-      properties:
-        EntityId:
-          description: Lean entity identifier for the connected customer.
-          type: string
-          format: uuid
-        PartyId:
-          description: Unique and unambiguous identification of the party.
-          type: string
-          maxLength: 40
-          minLength: 1
-        PartyNumber:
-          description: Number assigned by an agent to identify its customer.
-          type:
-          - string
-          - 'null'
-          maxLength: 35
-          minLength: 1
-        PartyType:
-          $ref: '#/components/schemas/OBPartyTypeCode'
-        AccountRole:
-          $ref: '#/components/schemas/OBAccountRoleCode'
-        VerifiedClaims:
-          description: List of verified identity claims for the party.
-          type: array
-          items:
-            $ref: '#/components/schemas/OBVerifiedClaim'
-      required:
-      - PartyId
-      - PartyType
-      - AccountRole
-      - VerifiedClaims
-    OBVerificationAssuranceProcess:
-      description: Assurance process that was followed to meet the requirements of the trust framework.
-      type: object
-      properties:
-        Policy:
-          description: Standard or policy that was followed.
-          type:
-          - string
-          - 'null'
-        Procedure:
-          description: Specific procedure from the policy that was followed.
-          type:
-          - string
-          - 'null'
-        AssuranceDetails:
-          description: Details about how the evidence complies with the policy.
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/OBVerificationAssuranceDetail'
-    OBLinks:
-      description: Links relevant to the resource for pagination navigation.
-      type: object
-      properties:
-        Self:
-          description: A link to the current resource.
-          type: string
-          format: uri
-        First:
-          description: A link to the first page in a paginated result set.
-          type:
-          - string
-          - 'null'
-          format: uri
-        Prev:
-          description: A link to the previous page in a paginated result set.
-          type:
-          - string
-          - 'null'
-          format: uri
-        Next:
-          description: A link to the next page in a paginated result set.
-          type:
-          - string
-          - 'null'
-          format: uri
-        Last:
-          description: A link to the last page in a paginated result set.
-          type:
-          - string
-          - 'null'
-          format: uri
-      required:
-      - Self
-    OBPartyIdentityEvidenceDocumentType:
-      description: The type of evidence provided for document-based identity verification.
-      type: string
-      enum:
-      - document
-      - electronic_record
   securitySchemes:
     bearerAuth:
       type: http

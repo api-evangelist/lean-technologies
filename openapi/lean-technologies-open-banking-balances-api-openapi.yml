@@ -154,39 +154,6 @@ paths:
       - Open Banking Balances
 components:
   parameters:
-    FapiInteractionId:
-      name: x-fapi-interaction-id
-      in: header
-      description: An RFC4122 UID used as a correlation id.
-      required: false
-      schema:
-        type: string
-    EntityId:
-      name: EntityId
-      in: query
-      description: The entity_id of the connected customer.
-      required: false
-      schema:
-        type: string
-        format: uuid
-    AccountId:
-      name: AccountId
-      in: path
-      description: The Lean account identifier uniquely identifying the account within Lean.
-      required: true
-      schema:
-        type: string
-        format: uuid
-    OBSizeParam:
-      name: Size
-      description: The number of objects you want to return as a page size.
-      in: query
-      required: false
-      schema:
-        type: integer
-        default: 50
-        maximum: 100
-        minimum: 1
     CustomerId:
       name: CustomerId
       in: query
@@ -204,88 +171,40 @@ components:
         type: integer
         default: 0
         minimum: 0
+    OBSizeParam:
+      name: Size
+      description: The number of objects you want to return as a page size.
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 50
+        maximum: 100
+        minimum: 1
+    EntityId:
+      name: EntityId
+      in: query
+      description: The entity_id of the connected customer.
+      required: false
+      schema:
+        type: string
+        format: uuid
+    AccountId:
+      name: AccountId
+      in: path
+      description: The Lean account identifier uniquely identifying the account within Lean.
+      required: true
+      schema:
+        type: string
+        format: uuid
+    FapiInteractionId:
+      name: x-fapi-interaction-id
+      in: header
+      description: An RFC4122 UID used as a correlation id.
+      required: false
+      schema:
+        type: string
   schemas:
-    OBBalance:
-      description: Set of elements used to define the balance details of an account.
-      type: object
-      properties:
-        EntityId:
-          description: Lean entity identifier for the connected customer.
-          type: string
-          format: uuid
-        AccountId:
-          description: Lean account identifier, uniquely identifying the account within Lean.
-          type: string
-          format: uuid
-        CreditDebitIndicator:
-          $ref: '#/components/schemas/OBCreditDebitCode'
-        Type:
-          $ref: '#/components/schemas/OBBalanceTypeCode'
-        DateTime:
-          description: Indicates the date and time of the balance. ISO 8601 format.
-          type: string
-          format: date-time
-        Amount:
-          description: Amount of money of the cash balance.
-          type: object
-          allOf:
-          - $ref: '#/components/schemas/OBAmount'
-        CreditLine:
-          description: Set of elements used to provide details on the credit line.
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/OBCreditLine'
-      required:
-      - AccountId
-      - CreditDebitIndicator
-      - Type
-      - DateTime
-      - Amount
-    OBBalancesData:
-      description: Container for the list of Open Banking account balances.
-      type: object
-      properties:
-        CustomerId:
-          description: Lean provided customer ID
-          type:
-          - string
-          - 'null'
-          format: uuid
-        Balance:
-          description: List of balances for the account.
-          type: array
-          items:
-            $ref: '#/components/schemas/OBBalance'
-      required:
-      - Balance
-    OBAmount:
-      description: Active or historic currency and amount.
-      type: object
-      properties:
-        Amount:
-          description: A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.
-          type: string
-          pattern: ^\d{1,13}$|^\d{1,13}\.\d{1,5}$
-        Currency:
-          description: ISO 4217 currency code in which the amount is expressed.
-          type: string
-          examples:
-          - SAR
-          pattern: ^[A-Z]{3,3}$
-      required:
-      - Amount
-      - Currency
-    OBCreditLineTypeCode:
-      description: Limit type, in a coded form.
-      type: string
-      enum:
-      - KSAOB.Available
-      - KSAOB.Credit
-      - KSAOB.Emergency
-      - KSAOB.Pre-Agreed
-      - KSAOB.Temporary
     OBLinks:
       description: Links relevant to the resource for pagination navigation.
       type: object
@@ -320,12 +239,6 @@ components:
           format: uri
       required:
       - Self
-    OBCreditDebitCode:
-      description: Indicates whether the transaction is a credit or a debit.
-      type: string
-      enum:
-      - KSAOB.Credit
-      - KSAOB.Debit
     OBBalanceTypeCode:
       description: 'Balance type, in a coded form:
 
@@ -382,46 +295,93 @@ components:
           - 'null'
           format: int32
           minimum: 0
-    OBStatusDetail:
-      type:
-      - object
-      - 'null'
-      properties:
-        GranularStatusCode:
-          description: Granular status code providing additional information on the request status.
-          type:
-          - string
-          - 'null'
-        StatusAdditionalInfo:
-          description: Additional human-readable information about the status.
-          type:
-          - string
-          - 'null'
-    OBCreditLine:
-      description: Set of elements used to provide details on the credit line.
+    OBBalancesData:
+      description: Container for the list of Open Banking account balances.
       type: object
       properties:
-        Included:
-          description: Indicates whether or not the credit line is included in the balance of the account.
-          type: boolean
-        Type:
-          description: Limit type, in a coded form.
+        CustomerId:
+          description: Lean provided customer ID
           type:
           - string
           - 'null'
-          allOf:
-          - $ref: '#/components/schemas/OBCreditLineTypeCode'
+          format: uuid
+        Balance:
+          description: List of balances for the account.
+          type: array
+          items:
+            $ref: '#/components/schemas/OBBalance'
+      required:
+      - Balance
+    OBAmount:
+      description: Active or historic currency and amount.
+      type: object
+      properties:
         Amount:
-          description: Amount of money of the credit line.
-          type:
-          - object
-          - 'null'
+          description: A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.
+          type: string
+          pattern: ^\d{1,13}$|^\d{1,13}\.\d{1,5}$
+        Currency:
+          description: ISO 4217 currency code in which the amount is expressed.
+          type: string
+          examples:
+          - SAR
+          pattern: ^[A-Z]{3,3}$
+      required:
+      - Amount
+      - Currency
+    OBCreditDebitCode:
+      description: Indicates whether the transaction is a credit or a debit.
+      type: string
+      enum:
+      - KSAOB.Credit
+      - KSAOB.Debit
+    OBBalance:
+      description: Set of elements used to define the balance details of an account.
+      type: object
+      properties:
+        EntityId:
+          description: Lean entity identifier for the connected customer.
+          type: string
+          format: uuid
+        AccountId:
+          description: Lean account identifier, uniquely identifying the account within Lean.
+          type: string
+          format: uuid
+        CreditDebitIndicator:
+          $ref: '#/components/schemas/OBCreditDebitCode'
+        Type:
+          $ref: '#/components/schemas/OBBalanceTypeCode'
+        DateTime:
+          description: Indicates the date and time of the balance. ISO 8601 format.
+          type: string
+          format: date-time
+        Amount:
+          description: Amount of money of the cash balance.
+          type: object
           allOf:
           - $ref: '#/components/schemas/OBAmount'
+        CreditLine:
+          description: Set of elements used to provide details on the credit line.
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/OBCreditLine'
       required:
-      - Included
+      - AccountId
+      - CreditDebitIndicator
       - Type
+      - DateTime
       - Amount
+    OBCreditLineTypeCode:
+      description: Limit type, in a coded form.
+      type: string
+      enum:
+      - KSAOB.Available
+      - KSAOB.Credit
+      - KSAOB.Emergency
+      - KSAOB.Pre-Agreed
+      - KSAOB.Temporary
     OBGetBalancesResponse:
       description: Response envelope for the Open Banking account balances.
       type: object
@@ -480,6 +440,46 @@ components:
       - Status
       - Message
       - Timestamp
+    OBStatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        GranularStatusCode:
+          description: Granular status code providing additional information on the request status.
+          type:
+          - string
+          - 'null'
+        StatusAdditionalInfo:
+          description: Additional human-readable information about the status.
+          type:
+          - string
+          - 'null'
+    OBCreditLine:
+      description: Set of elements used to provide details on the credit line.
+      type: object
+      properties:
+        Included:
+          description: Indicates whether or not the credit line is included in the balance of the account.
+          type: boolean
+        Type:
+          description: Limit type, in a coded form.
+          type:
+          - string
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBCreditLineTypeCode'
+        Amount:
+          description: Amount of money of the credit line.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBAmount'
+      required:
+      - Included
+      - Type
+      - Amount
   securitySchemes:
     bearerAuth:
       type: http

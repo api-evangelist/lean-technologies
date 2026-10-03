@@ -49,25 +49,6 @@ paths:
       - Entity Verification
 components:
   schemas:
-    EntityVerificationResponsePayload:
-      type: object
-      properties:
-        entity_ownership_verified:
-          description: Whether the entity ownership is verified
-          type: boolean
-        verification_method:
-          description: The verification method used to verify the entity's ownership
-          type: string
-          enum:
-          - CONFIRMATION_OF_PAYEE_SERVICE
-          - OPEN_BANKING
-          - SARIE
-          - SARIE_AND_CONFIRMATION_OF_PAYEE_SERVICE
-        ibans:
-          description: List of verified IBANs for the entity
-          type: array
-          items:
-            $ref: '#/components/schemas/EntityVerificationResponseIban'
     Result:
       type: object
       properties:
@@ -103,6 +84,45 @@ components:
       - results_id
       - message
       - timestamp
+    VerificationResponseEntityVerificationResponsePayload:
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          verifications:
+            $ref: '#/components/schemas/EntityVerificationResponsePayload'
+    EntityIdentificationType:
+      description: "`NATIONAL_ID`: National identification number \n`COMMERCIAL_REGISTRATION`: Commercial registration number \n`UNIFIED_NUMBER`: Unified number \n`FREELANCER_NUMBER`: Freelancer number\n"
+      type: string
+      enum:
+      - NATIONAL_ID
+      - COMMERCIAL_REGISTRATION
+      - UNIFIED_NUMBER
+      - FREELANCER_NUMBER
+    ResultStatus:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - PROCESSING_STARTED
+    StatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        granular_status_code:
+          description: Granular status code
+          type:
+          - string
+          - 'null'
+        status_additional_info:
+          description: Additional information about the status
+          type:
+          - string
+          - 'null'
     EntityVerificationApiRequest:
       type: object
       properties:
@@ -119,14 +139,6 @@ components:
       required:
       - entity_id
       x-class-extra-annotation: '@me.leantech.api.validation.ValidEntityVerificationRequest'
-    EntityIdentificationType:
-      description: "`NATIONAL_ID`: National identification number \n`COMMERCIAL_REGISTRATION`: Commercial registration number \n`UNIFIED_NUMBER`: Unified number \n`FREELANCER_NUMBER`: Freelancer number\n"
-      type: string
-      enum:
-      - NATIONAL_ID
-      - COMMERCIAL_REGISTRATION
-      - UNIFIED_NUMBER
-      - FREELANCER_NUMBER
     EntityVerificationResponseIban:
       type: object
       properties:
@@ -145,37 +157,25 @@ components:
           description: Identification value
           type: string
           minLength: 1
-    VerificationResponseEntityVerificationResponsePayload:
-      allOf:
-      - $ref: '#/components/schemas/Result'
-      - type: object
-        properties:
-          verifications:
-            $ref: '#/components/schemas/EntityVerificationResponsePayload'
-    StatusDetail:
-      type:
-      - object
-      - 'null'
+    EntityVerificationResponsePayload:
+      type: object
       properties:
-        granular_status_code:
-          description: Granular status code
-          type:
-          - string
-          - 'null'
-        status_additional_info:
-          description: Additional information about the status
-          type:
-          - string
-          - 'null'
-    ResultStatus:
-      description: The status of the request
-      type: string
-      enum:
-      - OK
-      - PENDING
-      - FAILED
-      - CONSENT_EXPIRED
-      - PROCESSING_STARTED
+        entity_ownership_verified:
+          description: Whether the entity ownership is verified
+          type: boolean
+        verification_method:
+          description: The verification method used to verify the entity's ownership
+          type: string
+          enum:
+          - CONFIRMATION_OF_PAYEE_SERVICE
+          - OPEN_BANKING
+          - SARIE
+          - SARIE_AND_CONFIRMATION_OF_PAYEE_SERVICE
+        ibans:
+          description: List of verified IBANs for the entity
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityVerificationResponseIban'
   securitySchemes:
     bearerAuth:
       type: http

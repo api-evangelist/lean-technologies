@@ -127,66 +127,15 @@ paths:
       - Balance Raw Data
 components:
   schemas:
-    PageMetadata:
-      description: Metadata about the current page of results
+    FetchBalancesV2Result:
       type: object
-      properties:
-        number:
-          description: The current page being returned by the API
-          type: integer
-          format: int32
-        size:
-          description: The page size requested
-          type: integer
-          format: int32
-        total_elements:
-          description: The total number of elements in all pages
-          type: integer
-          format: int64
-        total_pages:
-          description: The total number of pages retrievable
-          type: integer
-          format: int32
-        sort:
-          description: Sort parameters applied to the results
-          type: array
-          items:
-            type: string
-      required:
-      - number
-      - size
-      - total_elements
-      - total_pages
-    Balance:
-      type: object
-      properties:
-        entity_id:
-          description: The unique identifier for the entity. Provided as a UUID.
-          type: string
-          format: uuid
-        account_id:
-          description: The account_id this balance is related to.
-          type: string
-          format: uuid
-        credit_debit_indicator:
-          $ref: '#/components/schemas/CreditDebitIndicator'
-        type:
-          $ref: '#/components/schemas/BalanceType'
-        amount:
-          $ref: '#/components/schemas/CurrencyAmount'
-        date_time:
-          description: The date and time that this balance object was checked.
-          type:
-          - string
-          - 'null'
-          format: date-time
-        credit_line:
-          description: Represents the credit limits associated with the account. Each object defines a specific credit facility and its assigned limit
-          type: array
-          items:
-            $ref: '#/components/schemas/CreditLine'
-      required:
-      - amount
+      allOf:
+      - $ref: '#/components/schemas/DataResult'
+      - properties:
+          data:
+            $ref: '#/components/schemas/BalancesData'
+        type: object
+      x-toBuilder: true
     StatusDetail:
       type:
       - object
@@ -202,41 +151,6 @@ components:
           type:
           - string
           - 'null'
-    CurrencyAmount:
-      type: object
-      properties:
-        currency:
-          $ref: '#/components/schemas/Currency'
-        amount:
-          description: The amount of money in the currency specified.
-          type: number
-      required:
-      - currency
-      - amount
-    DataResult:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Result'
-      - type: object
-        properties:
-          refreshed_at:
-            description: The datetime of when the data was refreshed
-            type:
-            - string
-            - 'null'
-            format: date-time
-          type:
-            description: The endpoint the original request was made to.
-            type:
-            - string
-            - 'null'
-    CreditDebitIndicator:
-      description: Indicates whether the balance is a credit or debit balance
-      type: string
-      enum:
-      - CREDIT
-      - DEBIT
-      - UNSUPPORTED
     Result:
       type: object
       properties:
@@ -272,15 +186,6 @@ components:
       - results_id
       - message
       - timestamp
-    FetchBalancesV2Result:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/DataResult'
-      - properties:
-          data:
-            $ref: '#/components/schemas/BalancesData'
-        type: object
-      x-toBuilder: true
     BalanceType:
       description: 'The type of balance for the account. Note: Banks support different types for presenting account balance.'
       type: string
@@ -299,16 +204,47 @@ components:
       - OPENING_CLEARED
       - PREVIOUSLY_CLOSED_BOOKED
       - UNSUPPORTED
-    ResultStatus:
-      description: The status of the request
+    CurrencyAmount:
+      type: object
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          description: The amount of money in the currency specified.
+          type: number
+      required:
+      - currency
+      - amount
+    Currency:
+      description: The ISO 3 letter currency code
+      type: string
+      examples:
+      - AED
+      pattern: ^[A-Z]{3}$
+    DataResult:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          refreshed_at:
+            description: The datetime of when the data was refreshed
+            type:
+            - string
+            - 'null'
+            format: date-time
+          type:
+            description: The endpoint the original request was made to.
+            type:
+            - string
+            - 'null'
+    CreditDebitIndicator:
+      description: Indicates whether the balance is a credit or debit balance
       type: string
       enum:
-      - OK
-      - PENDING
-      - FAILED
-      - CONSENT_EXPIRED
-      - RECONNECT_REQUIRED
-      - PROCESSING_STARTED
+      - CREDIT
+      - DEBIT
+      - UNSUPPORTED
     BalancesData:
       type: object
       properties:
@@ -327,22 +263,6 @@ components:
       - page
       - balances
       x-toBuilder: true
-    CreditLineType:
-      description: The type of credit line
-      type: string
-      enum:
-      - AVAILABLE
-      - CREDIT
-      - EMERGENCY
-      - PRE_AGREED
-      - TEMPORARY
-      - UNSUPPORTED
-    Currency:
-      description: The ISO 3 letter currency code
-      type: string
-      examples:
-      - AED
-      pattern: ^[A-Z]{3}$
     CreditLine:
       type: object
       properties:
@@ -354,16 +274,87 @@ components:
           $ref: '#/components/schemas/CurrencyAmount'
         type:
           $ref: '#/components/schemas/CreditLineType'
+    CreditLineType:
+      description: The type of credit line
+      type: string
+      enum:
+      - AVAILABLE
+      - CREDIT
+      - EMERGENCY
+      - PRE_AGREED
+      - TEMPORARY
+      - UNSUPPORTED
+    Balance:
+      type: object
+      properties:
+        entity_id:
+          description: The unique identifier for the entity. Provided as a UUID.
+          type: string
+          format: uuid
+        account_id:
+          description: The account_id this balance is related to.
+          type: string
+          format: uuid
+        credit_debit_indicator:
+          $ref: '#/components/schemas/CreditDebitIndicator'
+        type:
+          $ref: '#/components/schemas/BalanceType'
+        amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+        date_time:
+          description: The date and time that this balance object was checked.
+          type:
+          - string
+          - 'null'
+          format: date-time
+        credit_line:
+          description: Represents the credit limits associated with the account. Each object defines a specific credit facility and its assigned limit
+          type: array
+          items:
+            $ref: '#/components/schemas/CreditLine'
+      required:
+      - amount
+    ResultStatus:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - RECONNECT_REQUIRED
+      - PROCESSING_STARTED
+    PageMetadata:
+      description: Metadata about the current page of results
+      type: object
+      properties:
+        number:
+          description: The current page being returned by the API
+          type: integer
+          format: int32
+        size:
+          description: The page size requested
+          type: integer
+          format: int32
+        total_elements:
+          description: The total number of elements in all pages
+          type: integer
+          format: int64
+        total_pages:
+          description: The total number of pages retrievable
+          type: integer
+          format: int32
+        sort:
+          description: Sort parameters applied to the results
+          type: array
+          items:
+            type: string
+      required:
+      - number
+      - size
+      - total_elements
+      - total_pages
   examples:
-    UnknownEntityExample:
-      summary: Entity not found error response
-      description: Response when the provided entity_id is not found
-      value:
-        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
-        timestamp: '2025-09-10T21:03:05.413806605Z'
-        status: UNKNOWN_ENTITY
-        message: The entity_id provided did not match an account in our records.
-        metadata: null
     AsyncProcessingV2Example:
       summary: Asynchronous processing response with async=true
       description: Response to request with async=true
@@ -377,6 +368,15 @@ components:
         data: null
         type: null
         refreshed_at: null
+    InvalidParametersExample:
+      summary: Invalid parameters error response
+      description: Response when required parameters are missing or invalid
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-10T21:05:59.919233187Z'
+        status: INVALID_PARAMETERS
+        message: 'The request is badly formatted or a parameter of the wrong type has been provided, field: entity_id, value: e34d8e49-9af2-4252-a53e-bd2df855134.'
+        metadata: null
     InternalServerErrorExample:
       summary: Internal server error response
       description: Response when an unexpected server error occurs
@@ -386,14 +386,14 @@ components:
         status: INTERNAL_SERVER_ERROR
         message: Something has gone wrong. If you continue to see this error, please get in touch with Lean.
         metadata: null
-    InvalidParametersExample:
-      summary: Invalid parameters error response
-      description: Response when required parameters are missing or invalid
+    UnknownEntityExample:
+      summary: Entity not found error response
+      description: Response when the provided entity_id is not found
       value:
         results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
-        timestamp: '2025-09-10T21:05:59.919233187Z'
-        status: INVALID_PARAMETERS
-        message: 'The request is badly formatted or a parameter of the wrong type has been provided, field: entity_id, value: e34d8e49-9af2-4252-a53e-bd2df855134.'
+        timestamp: '2025-09-10T21:03:05.413806605Z'
+        status: UNKNOWN_ENTITY
+        message: The entity_id provided did not match an account in our records.
         metadata: null
     UnknownAccountExample:
       summary: Account not found error response
@@ -413,6 +413,23 @@ components:
       schema:
         type: string
         format: uuid
+    EntityIdParameter:
+      name: entity_id
+      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
+      in: query
+      required: false
+      schema:
+        type: string
+        format: uuid
+    PageParameter:
+      name: page
+      in: query
+      description: The page you're requesting - returns page 0 of a response if not specified.
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
     AsyncParameter:
       name: async
       in: query
@@ -439,23 +456,6 @@ components:
       required: false
       schema:
         type: string
-    PageParameter:
-      name: page
-      in: query
-      description: The page you're requesting - returns page 0 of a response if not specified.
-      required: false
-      schema:
-        type: integer
-        default: 0
-        minimum: 0
-    EntityIdParameter:
-      name: entity_id
-      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
-      in: query
-      required: false
-      schema:
-        type: string
-        format: uuid
   securitySchemes:
     bearerAuth:
       type: http

@@ -172,36 +172,6 @@ paths:
       - Standing Orders Raw Data
 components:
   schemas:
-    PageMetadata:
-      description: Metadata about the current page of results
-      type: object
-      properties:
-        number:
-          description: The current page being returned by the API
-          type: integer
-          format: int32
-        size:
-          description: The page size requested
-          type: integer
-          format: int32
-        total_elements:
-          description: The total number of elements in all pages
-          type: integer
-          format: int64
-        total_pages:
-          description: The total number of pages retrievable
-          type: integer
-          format: int32
-        sort:
-          description: Sort parameters applied to the results
-          type: array
-          items:
-            type: string
-      required:
-      - number
-      - size
-      - total_elements
-      - total_pages
     StatusDetail:
       type:
       - object
@@ -217,6 +187,178 @@ components:
           type:
           - string
           - 'null'
+    Result:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ResultStatus'
+        results_id:
+          description: The unique identifier for the request
+          type: string
+          format: uuid
+        message:
+          description: A message describing the status of the request
+          type: string
+        meta:
+          description: Meta information about the request
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: string
+        timestamp:
+          description: The datetime of when the request was made
+          type: string
+          format: date-time
+        status_detail:
+          description: Additional information about the status
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/StatusDetail'
+      required:
+      - status
+      - results_id
+      - message
+      - timestamp
+    StandingOrdersResponse:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/DataResult'
+      - type: object
+        properties:
+          data:
+            description: The standing orders data
+            allOf:
+            - $ref: '#/components/schemas/StandingOrdersData'
+    CurrencyAmount:
+      type: object
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          description: The amount of money in the currency specified.
+          type: number
+      required:
+      - currency
+      - amount
+    StandingOrderFrequency:
+      type: object
+      properties:
+        frequency_type:
+          description: Type of frequency
+          type: string
+          enum:
+          - DAILY
+          - WEEKLY
+          - FORTNIGHTLY
+          - MONTHLY
+          - QUARTERLY
+          - HALF_YEARLY
+          - YEARLY
+          - OTHER
+        interval:
+          description: Interval value when frequency_type is OTHER
+          type:
+          - string
+          - 'null'
+    Currency:
+      description: The ISO 3 letter currency code
+      type: string
+      examples:
+      - AED
+      pattern: ^[A-Z]{3}$
+    StandingOrdersData:
+      type: object
+      properties:
+        standing_orders:
+          description: List of standing orders for the account
+          type: array
+          items:
+            $ref: '#/components/schemas/StandingOrder'
+        page:
+          description: Pagination information
+          allOf:
+          - $ref: '#/components/schemas/PageMetadata'
+      required:
+      - standing_orders
+      - page
+    DataResult:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          refreshed_at:
+            description: The datetime of when the data was refreshed
+            type:
+            - string
+            - 'null'
+            format: date-time
+          type:
+            description: The endpoint the original request was made to.
+            type:
+            - string
+            - 'null'
+    PostalAddressSau:
+      type: object
+      properties:
+        address_type:
+          description: Identifies the nature of the postal address.
+          type: string
+        short_address:
+          description: Abbreviated form of the address.
+          type: string
+        building_number:
+          description: Number that identifies the position of a building on a street.
+          type: string
+        unit_number:
+          description: Number identifying a specific unit within a building.
+          type: string
+        street_name:
+          description: Name of a street or thoroughfare.
+          type: string
+        secondary_number:
+          description: Additional number used to identify a location.
+          type: string
+        district:
+          description: District or neighborhood name within a city.
+          type: string
+        postal_code:
+          description: Identifier consisting of a group of letters and/or numbers that is added to a postal address.
+          type: string
+        city:
+          description: Name of the city.
+          type: string
+        country:
+          description: Nation with its own government.
+          type: string
+    SchemeName:
+      description: The scheme name of the account identification value
+      type: string
+      enum:
+      - PAN
+      - IBAN
+      - BBAN
+      - COMMERCIAL_REGISTRATION_NUMBER
+      - EMAIL
+      - MOBILE_NUMBER
+      - NATIONAL_ID
+      - IQAMA_NUMBER
+      - PASSPORT_NUMBER
+      - OTHER
+      - UNSUPPORTED
+    ResultStatus:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - RECONNECT_REQUIRED
+      - PROCESSING_STARTED
     StandingOrder:
       type: object
       properties:
@@ -316,183 +458,6 @@ components:
       required:
       - account_id
       - standing_order_id
-    AccountIdentification:
-      type: object
-      properties:
-        scheme_name:
-          $ref: '#/components/schemas/SchemeName'
-        identification:
-          description: The identification value for the account assigned by the Bank based on the Account Scheme Name.
-          type: string
-        name:
-          description: Account name
-          type: string
-    CurrencyAmount:
-      type: object
-      properties:
-        currency:
-          $ref: '#/components/schemas/Currency'
-        amount:
-          description: The amount of money in the currency specified.
-          type: number
-      required:
-      - currency
-      - amount
-    SchemeName:
-      description: The scheme name of the account identification value
-      type: string
-      enum:
-      - PAN
-      - IBAN
-      - BBAN
-      - COMMERCIAL_REGISTRATION_NUMBER
-      - EMAIL
-      - MOBILE_NUMBER
-      - NATIONAL_ID
-      - IQAMA_NUMBER
-      - PASSPORT_NUMBER
-      - OTHER
-      - UNSUPPORTED
-    DataResult:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Result'
-      - type: object
-        properties:
-          refreshed_at:
-            description: The datetime of when the data was refreshed
-            type:
-            - string
-            - 'null'
-            format: date-time
-          type:
-            description: The endpoint the original request was made to.
-            type:
-            - string
-            - 'null'
-    StandingOrdersResponse:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/DataResult'
-      - type: object
-        properties:
-          data:
-            description: The standing orders data
-            allOf:
-            - $ref: '#/components/schemas/StandingOrdersData'
-    StandingOrdersData:
-      type: object
-      properties:
-        standing_orders:
-          description: List of standing orders for the account
-          type: array
-          items:
-            $ref: '#/components/schemas/StandingOrder'
-        page:
-          description: Pagination information
-          allOf:
-          - $ref: '#/components/schemas/PageMetadata'
-      required:
-      - standing_orders
-      - page
-    Result:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/ResultStatus'
-        results_id:
-          description: The unique identifier for the request
-          type: string
-          format: uuid
-        message:
-          description: A message describing the status of the request
-          type: string
-        meta:
-          description: Meta information about the request
-          type:
-          - object
-          - 'null'
-          additionalProperties:
-            type: string
-        timestamp:
-          description: The datetime of when the request was made
-          type: string
-          format: date-time
-        status_detail:
-          description: Additional information about the status
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/StatusDetail'
-      required:
-      - status
-      - results_id
-      - message
-      - timestamp
-    ResultStatus:
-      description: The status of the request
-      type: string
-      enum:
-      - OK
-      - PENDING
-      - FAILED
-      - CONSENT_EXPIRED
-      - RECONNECT_REQUIRED
-      - PROCESSING_STARTED
-    PostalAddressSau:
-      type: object
-      properties:
-        address_type:
-          description: Identifies the nature of the postal address.
-          type: string
-        short_address:
-          description: Abbreviated form of the address.
-          type: string
-        building_number:
-          description: Number that identifies the position of a building on a street.
-          type: string
-        unit_number:
-          description: Number identifying a specific unit within a building.
-          type: string
-        street_name:
-          description: Name of a street or thoroughfare.
-          type: string
-        secondary_number:
-          description: Additional number used to identify a location.
-          type: string
-        district:
-          description: District or neighborhood name within a city.
-          type: string
-        postal_code:
-          description: Identifier consisting of a group of letters and/or numbers that is added to a postal address.
-          type: string
-        city:
-          description: Name of the city.
-          type: string
-        country:
-          description: Nation with its own government.
-          type: string
-    StandingOrderFrequency:
-      type: object
-      properties:
-        frequency_type:
-          description: Type of frequency
-          type: string
-          enum:
-          - DAILY
-          - WEEKLY
-          - FORTNIGHTLY
-          - MONTHLY
-          - QUARTERLY
-          - HALF_YEARLY
-          - YEARLY
-          - OTHER
-        interval:
-          description: Interval value when frequency_type is OTHER
-          type:
-          - string
-          - 'null'
     CreditorAgent:
       type: object
       properties:
@@ -508,22 +473,48 @@ components:
         postal_address:
           $ref: '#/components/schemas/PostalAddressSau'
       x-toBuilder: true
-    Currency:
-      description: The ISO 3 letter currency code
-      type: string
-      examples:
-      - AED
-      pattern: ^[A-Z]{3}$
+    AccountIdentification:
+      type: object
+      properties:
+        scheme_name:
+          $ref: '#/components/schemas/SchemeName'
+        identification:
+          description: The identification value for the account assigned by the Bank based on the Account Scheme Name.
+          type: string
+        name:
+          description: Account name
+          type: string
+    PageMetadata:
+      description: Metadata about the current page of results
+      type: object
+      properties:
+        number:
+          description: The current page being returned by the API
+          type: integer
+          format: int32
+        size:
+          description: The page size requested
+          type: integer
+          format: int32
+        total_elements:
+          description: The total number of elements in all pages
+          type: integer
+          format: int64
+        total_pages:
+          description: The total number of pages retrievable
+          type: integer
+          format: int32
+        sort:
+          description: Sort parameters applied to the results
+          type: array
+          items:
+            type: string
+      required:
+      - number
+      - size
+      - total_elements
+      - total_pages
   examples:
-    UnknownEntityExample:
-      summary: Entity not found error response
-      description: Response when the provided entity_id is not found
-      value:
-        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
-        timestamp: '2025-09-10T21:03:05.413806605Z'
-        status: UNKNOWN_ENTITY
-        message: The entity_id provided did not match an account in our records.
-        metadata: null
     AsyncProcessingV2Example:
       summary: Asynchronous processing response with async=true
       description: Response to request with async=true
@@ -537,6 +528,15 @@ components:
         data: null
         type: null
         refreshed_at: null
+    InvalidParametersExample:
+      summary: Invalid parameters error response
+      description: Response when required parameters are missing or invalid
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-10T21:05:59.919233187Z'
+        status: INVALID_PARAMETERS
+        message: 'The request is badly formatted or a parameter of the wrong type has been provided, field: entity_id, value: e34d8e49-9af2-4252-a53e-bd2df855134.'
+        metadata: null
     InternalServerErrorExample:
       summary: Internal server error response
       description: Response when an unexpected server error occurs
@@ -546,14 +546,14 @@ components:
         status: INTERNAL_SERVER_ERROR
         message: Something has gone wrong. If you continue to see this error, please get in touch with Lean.
         metadata: null
-    InvalidParametersExample:
-      summary: Invalid parameters error response
-      description: Response when required parameters are missing or invalid
+    UnknownEntityExample:
+      summary: Entity not found error response
+      description: Response when the provided entity_id is not found
       value:
         results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
-        timestamp: '2025-09-10T21:05:59.919233187Z'
-        status: INVALID_PARAMETERS
-        message: 'The request is badly formatted or a parameter of the wrong type has been provided, field: entity_id, value: e34d8e49-9af2-4252-a53e-bd2df855134.'
+        timestamp: '2025-09-10T21:03:05.413806605Z'
+        status: UNKNOWN_ENTITY
+        message: The entity_id provided did not match an account in our records.
         metadata: null
     UnknownAccountExample:
       summary: Account not found error response
@@ -573,6 +573,23 @@ components:
       schema:
         type: string
         format: uuid
+    EntityIdParameter:
+      name: entity_id
+      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
+      in: query
+      required: false
+      schema:
+        type: string
+        format: uuid
+    PageParameter:
+      name: page
+      in: query
+      description: The page you're requesting - returns page 0 of a response if not specified.
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
     AsyncParameter:
       name: async
       in: query
@@ -599,23 +616,6 @@ components:
       required: false
       schema:
         type: string
-    PageParameter:
-      name: page
-      in: query
-      description: The page you're requesting - returns page 0 of a response if not specified.
-      required: false
-      schema:
-        type: integer
-        default: 0
-        minimum: 0
-    EntityIdParameter:
-      name: entity_id
-      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
-      in: query
-      required: false
-      schema:
-        type: string
-        format: uuid
   securitySchemes:
     bearerAuth:
       type: http

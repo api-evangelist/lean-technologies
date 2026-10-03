@@ -354,36 +354,182 @@ paths:
       - Transactions Raw Data
 components:
   schemas:
-    PageMetadata:
-      description: Metadata about the current page of results
+    TransactionAccountIdentifier:
       type: object
       properties:
-        number:
-          description: The current page being returned by the API
-          type: integer
-          format: int32
-        size:
-          description: The page size requested
-          type: integer
-          format: int32
-        total_elements:
-          description: The total number of elements in all pages
-          type: integer
-          format: int64
-        total_pages:
-          description: The total number of pages retrievable
-          type: integer
-          format: int32
-        sort:
-          description: Sort parameters applied to the results
-          type: array
-          items:
+        name:
+          description: Name of the account, as assigned by the account servicing institution.
+          type: string
+        scheme_name:
+          description: Name of the identification scheme, in a coded form as published in an external list.
+          type: string
+        identification:
+          description: Identification assigned by an institution to identify an account.
+          type: string
+    CardInstrument:
+      type: object
+      properties:
+        authorization_type:
+          description: Type of card authorization performed for the transaction.
+          type: string
+        card_scheme_name:
+          description: Name of the card scheme.
+          type: string
+        identification:
+          description: Identification assigned by an institution to identify the card instrument.
+          type: string
+        name:
+          description: Name of the cardholder using the card.
+          type: string
+    StatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        granular_status_code:
+          description: Granular status code
+          type:
+          - string
+          - 'null'
+        status_additional_info:
+          description: Additional information about the status
+          type:
+          - string
+          - 'null'
+    TransactionMutability:
+      description: Specifies whether the transaction details may change after posting (e.g., pending transactions can update upon settlement).
+      type: string
+      enum:
+      - IMMUTABLE
+      - MUTABLE
+      - UNSUPPORTED
+    Result:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ResultStatus'
+        results_id:
+          description: The unique identifier for the request
+          type: string
+          format: uuid
+        message:
+          description: A message describing the status of the request
+          type: string
+        meta:
+          description: Meta information about the request
+          type:
+          - object
+          - 'null'
+          additionalProperties:
             type: string
+        timestamp:
+          description: The datetime of when the request was made
+          type: string
+          format: date-time
+        status_detail:
+          description: Additional information about the status
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/StatusDetail'
       required:
-      - number
-      - size
-      - total_elements
-      - total_pages
+      - status
+      - results_id
+      - message
+      - timestamp
+    ProprietaryBankTransactionCode:
+      type: object
+      properties:
+        code:
+          description: Proprietary bank transaction code to identify the underlying transaction.
+          type: string
+        issuer:
+          description: Identification of the issuer of the proprietary bank transaction code.
+          type: string
+    MerchantDetails:
+      type: object
+      properties:
+        merchant_category_code:
+          description: Category code conform to ISO 18245, related to the type of services or goods the merchant provides for the transaction.
+          type: string
+        merchant_name:
+          description: Name by which the merchant is known and which is usually used to identify that merchant.
+          type: string
+    CurrencyAmount:
+      type: object
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          description: The amount of money in the currency specified.
+          type: number
+      required:
+      - currency
+      - amount
+    Currency:
+      description: The ISO 3 letter currency code
+      type: string
+      examples:
+      - AED
+      pattern: ^[A-Z]{3}$
+    FetchTransactionsResultV2:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/DataResult'
+      - properties:
+          data:
+            $ref: '#/components/schemas/TransactionsData'
+        type: object
+      x-toBuilder: true
+    Categorisation:
+      description: Category enriched information when insights parameter is set to true.
+      type: object
+      properties:
+        description_cleansed:
+          description: A cleaned and standardized version of the transaction description.
+          type: string
+        category:
+          description: High-level classification of the transaction including BANK_FEES_AND_CHARGES CHARITY EDUCATION ENTERTAINMENT GOVERNMENT GROCERIES HEALTH_AND_WELLBEING LOANS_AND_INVESTMENT RENT_AND_SERVICES RESTAURANTS_DINING RETAIL SALARY_AND_REVENUE TRANSFER TRANSPORT TRAVEL OTHER
+          type: string
+        category_confidence:
+          description: Confidence of category expressed as a percentage between 0 and 1.
+          type: number
+          format: decimal
+    DataResult:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          refreshed_at:
+            description: The datetime of when the data was refreshed
+            type:
+            - string
+            - 'null'
+            format: date-time
+          type:
+            description: The endpoint the original request was made to.
+            type:
+            - string
+            - 'null'
+    CreditDebitIndicator:
+      description: Indicates whether the balance is a credit or debit balance
+      type: string
+      enum:
+      - CREDIT
+      - DEBIT
+      - UNSUPPORTED
+    ResultStatus:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - RECONNECT_REQUIRED
+      - PROCESSING_STARTED
     TransactionsData:
       type: object
       properties:
@@ -401,6 +547,19 @@ components:
       required:
       - type
       - page
+    TransactionChargeAmount:
+      type: object
+      properties:
+        amount:
+          description: Amount of money charged for the transaction.
+          type: number
+          format: decimal
+        currency:
+          description: Currency in which the charge amount is expressed.
+          type: string
+        charge_included:
+          description: Indicates whether the charge is included in the transaction amount or is a separate charge.
+          type: boolean
     CurrencyExchange:
       type: object
       properties:
@@ -426,35 +585,40 @@ components:
           format: date-time
         instructed_amount:
           $ref: '#/components/schemas/CurrencyAmount'
-    TransactionChargeAmount:
-      type: object
-      properties:
-        amount:
-          description: Amount of money charged for the transaction.
-          type: number
-          format: decimal
-        currency:
-          description: Currency in which the charge amount is expressed.
-          type: string
-        charge_included:
-          description: Indicates whether the charge is included in the transaction amount or is a separate charge.
-          type: boolean
-    ProprietaryBankTransactionCode:
+    BankTransactionCode:
       type: object
       properties:
         code:
-          description: Proprietary bank transaction code to identify the underlying transaction.
+          description: Bank transaction code used by the bank to categorize the transaction.
           type: string
-        issuer:
-          description: Identification of the issuer of the proprietary bank transaction code.
+        sub_code:
+          description: Sub-category of the bank transaction code providing further details.
           type: string
-    TransactionMutability:
-      description: Specifies whether the transaction details may change after posting (e.g., pending transactions can update upon settlement).
-      type: string
-      enum:
-      - IMMUTABLE
-      - MUTABLE
-      - UNSUPPORTED
+    Agent:
+      type: object
+      properties:
+        scheme_name:
+          description: Name of the identification scheme, in a coded form as published in an external list.
+          type: string
+        identification:
+          description: Unique and unambiguous identification of the agent.
+          type: string
+        name:
+          description: Name by which the agent is known and which is usually used to identify that agent.
+          type: string
+        postal_address:
+          $ref: '#/components/schemas/PostalAddress'
+    TransactionBalance:
+      type: object
+      properties:
+        type:
+          description: The type of balance for the transaction
+          type: string
+        credit_debit_indicator:
+          $ref: '#/components/schemas/CreditDebitIndicator'
+        amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+      x-toBuilder: true
     Transaction:
       type: object
       properties:
@@ -584,194 +748,36 @@ components:
       - amount
       - status
       x-toBuilder: true
-    TransactionAccountIdentifier:
+    PageMetadata:
+      description: Metadata about the current page of results
       type: object
       properties:
-        name:
-          description: Name of the account, as assigned by the account servicing institution.
-          type: string
-        scheme_name:
-          description: Name of the identification scheme, in a coded form as published in an external list.
-          type: string
-        identification:
-          description: Identification assigned by an institution to identify an account.
-          type: string
-    Categorisation:
-      description: Category enriched information when insights parameter is set to true.
-      type: object
-      properties:
-        description_cleansed:
-          description: A cleaned and standardized version of the transaction description.
-          type: string
-        category:
-          description: High-level classification of the transaction including BANK_FEES_AND_CHARGES CHARITY EDUCATION ENTERTAINMENT GOVERNMENT GROCERIES HEALTH_AND_WELLBEING LOANS_AND_INVESTMENT RENT_AND_SERVICES RESTAURANTS_DINING RETAIL SALARY_AND_REVENUE TRANSFER TRANSPORT TRAVEL OTHER
-          type: string
-        category_confidence:
-          description: Confidence of category expressed as a percentage between 0 and 1.
-          type: number
-          format: decimal
-    StatusDetail:
-      type:
-      - object
-      - 'null'
-      properties:
-        granular_status_code:
-          description: Granular status code
-          type:
-          - string
-          - 'null'
-        status_additional_info:
-          description: Additional information about the status
-          type:
-          - string
-          - 'null'
-    CardInstrument:
-      type: object
-      properties:
-        authorization_type:
-          description: Type of card authorization performed for the transaction.
-          type: string
-        card_scheme_name:
-          description: Name of the card scheme.
-          type: string
-        identification:
-          description: Identification assigned by an institution to identify the card instrument.
-          type: string
-        name:
-          description: Name of the cardholder using the card.
-          type: string
-    CurrencyAmount:
-      type: object
-      properties:
-        currency:
-          $ref: '#/components/schemas/Currency'
-        amount:
-          description: The amount of money in the currency specified.
-          type: number
-      required:
-      - currency
-      - amount
-    Agent:
-      type: object
-      properties:
-        scheme_name:
-          description: Name of the identification scheme, in a coded form as published in an external list.
-          type: string
-        identification:
-          description: Unique and unambiguous identification of the agent.
-          type: string
-        name:
-          description: Name by which the agent is known and which is usually used to identify that agent.
-          type: string
-        postal_address:
-          $ref: '#/components/schemas/PostalAddress'
-    MerchantDetails:
-      type: object
-      properties:
-        merchant_category_code:
-          description: Category code conform to ISO 18245, related to the type of services or goods the merchant provides for the transaction.
-          type: string
-        merchant_name:
-          description: Name by which the merchant is known and which is usually used to identify that merchant.
-          type: string
-    DataResult:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Result'
-      - type: object
-        properties:
-          refreshed_at:
-            description: The datetime of when the data was refreshed
-            type:
-            - string
-            - 'null'
-            format: date-time
-          type:
-            description: The endpoint the original request was made to.
-            type:
-            - string
-            - 'null'
-    TransactionBalance:
-      type: object
-      properties:
-        type:
-          description: The type of balance for the transaction
-          type: string
-        credit_debit_indicator:
-          $ref: '#/components/schemas/CreditDebitIndicator'
-        amount:
-          $ref: '#/components/schemas/CurrencyAmount'
-      x-toBuilder: true
-    CreditDebitIndicator:
-      description: Indicates whether the balance is a credit or debit balance
-      type: string
-      enum:
-      - CREDIT
-      - DEBIT
-      - UNSUPPORTED
-    Result:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/ResultStatus'
-        results_id:
-          description: The unique identifier for the request
-          type: string
-          format: uuid
-        message:
-          description: A message describing the status of the request
-          type: string
-        meta:
-          description: Meta information about the request
-          type:
-          - object
-          - 'null'
-          additionalProperties:
+        number:
+          description: The current page being returned by the API
+          type: integer
+          format: int32
+        size:
+          description: The page size requested
+          type: integer
+          format: int32
+        total_elements:
+          description: The total number of elements in all pages
+          type: integer
+          format: int64
+        total_pages:
+          description: The total number of pages retrievable
+          type: integer
+          format: int32
+        sort:
+          description: Sort parameters applied to the results
+          type: array
+          items:
             type: string
-        timestamp:
-          description: The datetime of when the request was made
-          type: string
-          format: date-time
-        status_detail:
-          description: Additional information about the status
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/StatusDetail'
       required:
-      - status
-      - results_id
-      - message
-      - timestamp
-    BankTransactionCode:
-      type: object
-      properties:
-        code:
-          description: Bank transaction code used by the bank to categorize the transaction.
-          type: string
-        sub_code:
-          description: Sub-category of the bank transaction code providing further details.
-          type: string
-    FetchTransactionsResultV2:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/DataResult'
-      - properties:
-          data:
-            $ref: '#/components/schemas/TransactionsData'
-        type: object
-      x-toBuilder: true
-    ResultStatus:
-      description: The status of the request
-      type: string
-      enum:
-      - OK
-      - PENDING
-      - FAILED
-      - CONSENT_EXPIRED
-      - RECONNECT_REQUIRED
-      - PROCESSING_STARTED
+      - number
+      - size
+      - total_elements
+      - total_pages
     PostalAddress:
       type: object
       properties:
@@ -799,22 +805,7 @@ components:
         town_name:
           description: Name of a built-up area, with defined boundaries, and a local government.
           type: string
-    Currency:
-      description: The ISO 3 letter currency code
-      type: string
-      examples:
-      - AED
-      pattern: ^[A-Z]{3}$
   examples:
-    UnknownEntityExample:
-      summary: Entity not found error response
-      description: Response when the provided entity_id is not found
-      value:
-        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
-        timestamp: '2025-09-10T21:03:05.413806605Z'
-        status: UNKNOWN_ENTITY
-        message: The entity_id provided did not match an account in our records.
-        metadata: null
     AsyncProcessingV2Example:
       summary: Asynchronous processing response with async=true
       description: Response to request with async=true
@@ -828,6 +819,15 @@ components:
         data: null
         type: null
         refreshed_at: null
+    InvalidParametersExample:
+      summary: Invalid parameters error response
+      description: Response when required parameters are missing or invalid
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-10T21:05:59.919233187Z'
+        status: INVALID_PARAMETERS
+        message: 'The request is badly formatted or a parameter of the wrong type has been provided, field: entity_id, value: e34d8e49-9af2-4252-a53e-bd2df855134.'
+        metadata: null
     InternalServerErrorExample:
       summary: Internal server error response
       description: Response when an unexpected server error occurs
@@ -837,14 +837,14 @@ components:
         status: INTERNAL_SERVER_ERROR
         message: Something has gone wrong. If you continue to see this error, please get in touch with Lean.
         metadata: null
-    InvalidParametersExample:
-      summary: Invalid parameters error response
-      description: Response when required parameters are missing or invalid
+    UnknownEntityExample:
+      summary: Entity not found error response
+      description: Response when the provided entity_id is not found
       value:
         results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
-        timestamp: '2025-09-10T21:05:59.919233187Z'
-        status: INVALID_PARAMETERS
-        message: 'The request is badly formatted or a parameter of the wrong type has been provided, field: entity_id, value: e34d8e49-9af2-4252-a53e-bd2df855134.'
+        timestamp: '2025-09-10T21:03:05.413806605Z'
+        status: UNKNOWN_ENTITY
+        message: The entity_id provided did not match an account in our records.
         metadata: null
     UnknownAccountExample:
       summary: Account not found error response
@@ -864,6 +864,23 @@ components:
       schema:
         type: string
         format: uuid
+    EntityIdParameter:
+      name: entity_id
+      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
+      in: query
+      required: false
+      schema:
+        type: string
+        format: uuid
+    PageParameter:
+      name: page
+      in: query
+      description: The page you're requesting - returns page 0 of a response if not specified.
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
     AsyncParameter:
       name: async
       in: query
@@ -890,23 +907,6 @@ components:
       required: false
       schema:
         type: string
-    PageParameter:
-      name: page
-      in: query
-      description: The page you're requesting - returns page 0 of a response if not specified.
-      required: false
-      schema:
-        type: integer
-        default: 0
-        minimum: 0
-    EntityIdParameter:
-      name: entity_id
-      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
-      in: query
-      required: false
-      schema:
-        type: string
-        format: uuid
   securitySchemes:
     bearerAuth:
       type: http

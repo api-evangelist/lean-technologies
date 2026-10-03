@@ -388,6 +388,26 @@ components:
       - initiation_timestamp
       - status
       - bank_transaction_reference
+    Pagination:
+      type: object
+      properties:
+        number:
+          type: integer
+          description: The current page being returned by the API
+        size:
+          type: integer
+          description: The page size requested
+        total_elements:
+          type: integer
+          description: The total number of elements in all pages
+        total_pages:
+          type: integer
+          description: The total number of pages retrievable
+      required:
+      - number
+      - size
+      - total_elements
+      - total_pages
     PaymentIntent:
       type: object
       properties:
@@ -487,26 +507,6 @@ components:
       - description
       - payments
       - payment_destination
-    Pagination:
-      type: object
-      properties:
-        number:
-          type: integer
-          description: The current page being returned by the API
-        size:
-          type: integer
-          description: The page size requested
-        total_elements:
-          type: integer
-          description: The total number of elements in all pages
-        total_pages:
-          type: integer
-          description: The total number of pages retrievable
-      required:
-      - number
-      - size
-      - total_elements
-      - total_pages
   securitySchemes:
     bearer:
       type: http

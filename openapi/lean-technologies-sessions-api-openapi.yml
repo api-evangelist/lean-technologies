@@ -103,6 +103,17 @@ components:
       description: "The type of flow this session guides the customer through.\n\n- PAY: Starts a Lean-hosted Single Instant Payment session. The customer reviews\n  the payment details and authorizes the transaction directly through their bank.\n  `payment_intent_id` in the flow payload is required and determines the amount,\n  destination, and customer for the payment."
       type: string
       const: PAY
+    Flow:
+      description: Defines the session flow type and its associated configuration payload.
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/SessionType'
+        payload:
+          $ref: '#/components/schemas/FlowPayload'
+      required:
+      - type
+      - payload
     CreateSessionResponse:
       description: The created session, including the session URL to redirect your customer to and the session's expiry time.
       type: object
@@ -142,29 +153,14 @@ components:
       - redirect_url
       - expires_at
       - flow
-    Flow:
-      description: Defines the session flow type and its associated configuration payload.
+    FlowInfo:
+      description: A summary of the flow associated with this session.
       type: object
       properties:
         type:
           $ref: '#/components/schemas/SessionType'
-        payload:
-          $ref: '#/components/schemas/FlowPayload'
       required:
       - type
-      - payload
-    FlowPayload:
-      description: Additional parameters for the selected flow type.
-      type: object
-      properties:
-        payment_intent_id:
-          description: The identifier of the payment intent to process. Required for `PAY` flow.
-          type:
-          - string
-          - 'null'
-          format: uuid
-          examples:
-          - 7d4e2c19-8f2a-4b3c-9d1e-6f8a2b4c6d8e
     CreateSessionRequest:
       description: Configuration for a new session. Provide a customer, a flow type, and a redirect URL to receive the customer after the flow completes.
       type: object
@@ -189,6 +185,38 @@ components:
       - customer_id
       - flow
       - redirect_url
+    FlowPayload:
+      description: Additional parameters for the selected flow type.
+      type: object
+      properties:
+        payment_intent_id:
+          description: The identifier of the payment intent to process. Required for `PAY` flow.
+          type:
+          - string
+          - 'null'
+          format: uuid
+          examples:
+          - 7d4e2c19-8f2a-4b3c-9d1e-6f8a2b4c6d8e
+    SessionState:
+      description: 'The lifecycle state of the session.
+
+
+        - CREATED: The session has been created but the customer has not yet opened the redirect URL.
+
+        - ACTIVE: The customer has opened the session and is in the middle of the flow.
+
+        - AUTHORIZED: The customer has authorized the payment. Processing may still be in progress.
+
+        - COMPLETED: The flow finished successfully. The customer has been redirected back to your `redirect_url`.
+
+        - EXPIRED: The session was not completed within its validity window and can no longer be used.'
+      type: string
+      enum:
+      - CREATED
+      - ACTIVE
+      - AUTHORIZED
+      - EXPIRED
+      - COMPLETED
     GetPublicSessionResponse:
       description: The current state of a session, including its lifecycle state, associated customer, and flow type.
       type: object
@@ -228,34 +256,6 @@ components:
       - type
       - session_url
       - redirect_url
-    SessionState:
-      description: 'The lifecycle state of the session.
-
-
-        - CREATED: The session has been created but the customer has not yet opened the redirect URL.
-
-        - ACTIVE: The customer has opened the session and is in the middle of the flow.
-
-        - AUTHORIZED: The customer has authorized the payment. Processing may still be in progress.
-
-        - COMPLETED: The flow finished successfully. The customer has been redirected back to your `redirect_url`.
-
-        - EXPIRED: The session was not completed within its validity window and can no longer be used.'
-      type: string
-      enum:
-      - CREATED
-      - ACTIVE
-      - AUTHORIZED
-      - EXPIRED
-      - COMPLETED
-    FlowInfo:
-      description: A summary of the flow associated with this session.
-      type: object
-      properties:
-        type:
-          $ref: '#/components/schemas/SessionType'
-      required:
-      - type
   securitySchemes:
     OAuth2:
       type: oauth2

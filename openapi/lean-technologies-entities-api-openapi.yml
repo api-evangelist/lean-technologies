@@ -375,116 +375,6 @@ paths:
       - bearer: []
 components:
   schemas:
-    EntityResponse:
-      title: EntityResponse
-      description: ''
-      type: object
-      properties:
-        id:
-          description: The unique entity identifier
-          type: string
-        customer_id:
-          description: The Customer object that owns the entity
-          type: string
-        bank_identifier:
-          description: The identifier signifies which bank the user's entity is linked with.
-          type: string
-        permissions:
-          $ref: '#/components/schemas/Permissions'
-          description: Indicates which permissions have been granted by the user, this corresponds with the Data API calls you can make using the entity.
-        bank_type:
-          description: The bank type of the connected entity
-          enum:
-          - RETAIL
-          type: string
-        created_at:
-          type: string
-          format: date-time
-          description: When the entity was created
-        consents:
-          description: Record of all historical consents. Note that only 1 consent can be ACTIVE at the same time
-          type: array
-          items:
-            $ref: '#/components/schemas/EntityConsent'
-    Permissions:
-      title: PermissionsObject
-      description: ''
-      type: object
-      properties:
-        identity:
-          description: Indicates access to read identity data
-          type: boolean
-        accounts:
-          description: Indicates access to read accounts data
-          type: boolean
-        balance:
-          description: Indicates access to read balance data
-          type: boolean
-        transactions:
-          description: Indicates access to read transactions data
-          type: boolean
-        identities:
-          description: Indicates access to read identities data. Only relevant in KSA.
-          type: boolean
-        scheduled_payments:
-          description: Indicates access to read scheduled payments data. Only relevant in KSA.
-          type: boolean
-        standing_orders:
-          description: Indicates access to read standing orders data. Only relevant in KSA.
-          type: boolean
-        direct_debits:
-          description: Indicates access to read direct debits data. Only relevant in KSA.
-          type: boolean
-        beneficiaries:
-          description: Indicates access to read beneficiares data. Only relevant in KSA.
-          type: boolean
-      examples:
-      - identity: true
-        accounts: true
-        balance: true
-        transactions: true
-        identities: true
-        scheduled_payments: true
-        standing_orders: true
-        direct_debits: true
-        beneficiaries: true
-    ListEntityResponse:
-      title: ''
-      description: ''
-      type: object
-      properties:
-        id:
-          description: The unique entity identifier
-          type: string
-        customer_id:
-          description: The Customer object that owns the entity
-          type: string
-        bank_identifier:
-          description: The identifier signifies which bank the user's entity is linked with.
-          type: string
-        permissions:
-          $ref: '#/components/schemas/Permissions'
-          description: Indicates which permissions have been granted by the user, this corresponds with the Data API calls you can make using the entity.
-        bank_type:
-          description: The bank type of the connected entity
-          enum:
-          - RETAIL
-          type: string
-        created_at:
-          type: string
-          format: date-time
-          description: When the entity was created
-        consents:
-          description: Record of all historical consents. Note that only 1 consent can be ACTIVE at the same time
-          type: array
-          items:
-            $ref: '#/components/schemas/EntityConsent'
-        status:
-          type: string
-          description: Entity status
-        updated_at:
-          type: string
-          description: When the entity was last updated
     EntityConsent:
       type: object
       properties:
@@ -538,25 +428,130 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AccountIdentifierWithSecondarySau'
-    Page:
+    EntityResponse:
+      title: EntityResponse
+      description: ''
       type: object
       properties:
-        number:
-          format: int32
-          description: The page number of the current response.
-          type: integer
-        size:
-          format: int32
-          description: The number of objects in the response.
-          type: integer
-        total_elements:
-          format: int32
-          description: The total number of objects available.
-          type: integer
-        total_pages:
-          format: int32
-          description: The total number of pages to consume all of the elements.
-          type: integer
+        id:
+          description: The unique entity identifier
+          type: string
+        customer_id:
+          description: The Customer object that owns the entity
+          type: string
+        bank_identifier:
+          description: The identifier signifies which bank the user's entity is linked with.
+          type: string
+        permissions:
+          $ref: '#/components/schemas/Permissions'
+          description: Indicates which permissions have been granted by the user, this corresponds with the Data API calls you can make using the entity.
+        bank_type:
+          description: The bank type of the connected entity
+          enum:
+          - RETAIL
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          description: When the entity was created
+        consents:
+          description: Record of all historical consents. Note that only 1 consent can be ACTIVE at the same time
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityConsent'
+    ListEntityResponse:
+      title: ''
+      description: ''
+      type: object
+      properties:
+        id:
+          description: The unique entity identifier
+          type: string
+        customer_id:
+          description: The Customer object that owns the entity
+          type: string
+        bank_identifier:
+          description: The identifier signifies which bank the user's entity is linked with.
+          type: string
+        permissions:
+          $ref: '#/components/schemas/Permissions'
+          description: Indicates which permissions have been granted by the user, this corresponds with the Data API calls you can make using the entity.
+        bank_type:
+          description: The bank type of the connected entity
+          enum:
+          - RETAIL
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          description: When the entity was created
+        consents:
+          description: Record of all historical consents. Note that only 1 consent can be ACTIVE at the same time
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityConsent'
+        status:
+          type: string
+          description: Entity status
+        updated_at:
+          type: string
+          description: When the entity was last updated
+    EntityDeleteRequest:
+      title: EntityDeleteRequest
+      description: ''
+      required:
+      - reason
+      type: object
+      properties:
+        reason:
+          description: Please always pass in the value `USER_REQUESTED`.
+          type: string
+          examples:
+          - USER_REQUESTED
+      examples:
+      - reason: USER_REQUESTED
+    Permissions:
+      title: PermissionsObject
+      description: ''
+      type: object
+      properties:
+        identity:
+          description: Indicates access to read identity data
+          type: boolean
+        accounts:
+          description: Indicates access to read accounts data
+          type: boolean
+        balance:
+          description: Indicates access to read balance data
+          type: boolean
+        transactions:
+          description: Indicates access to read transactions data
+          type: boolean
+        identities:
+          description: Indicates access to read identities data. Only relevant in KSA.
+          type: boolean
+        scheduled_payments:
+          description: Indicates access to read scheduled payments data. Only relevant in KSA.
+          type: boolean
+        standing_orders:
+          description: Indicates access to read standing orders data. Only relevant in KSA.
+          type: boolean
+        direct_debits:
+          description: Indicates access to read direct debits data. Only relevant in KSA.
+          type: boolean
+        beneficiaries:
+          description: Indicates access to read beneficiares data. Only relevant in KSA.
+          type: boolean
+      examples:
+      - identity: true
+        accounts: true
+        balance: true
+        transactions: true
+        identities: true
+        scheduled_payments: true
+        standing_orders: true
+        direct_debits: true
+        beneficiaries: true
     AccountIdentifierWithSecondarySau:
       type: object
       properties:
@@ -586,20 +581,25 @@ components:
         secondary_identification:
           description: Additional form of identification for the account
           type: string
-    EntityDeleteRequest:
-      title: EntityDeleteRequest
-      description: ''
-      required:
-      - reason
+    Page:
       type: object
       properties:
-        reason:
-          description: Please always pass in the value `USER_REQUESTED`.
-          type: string
-          examples:
-          - USER_REQUESTED
-      examples:
-      - reason: USER_REQUESTED
+        number:
+          format: int32
+          description: The page number of the current response.
+          type: integer
+        size:
+          format: int32
+          description: The number of objects in the response.
+          type: integer
+        total_elements:
+          format: int32
+          description: The total number of objects available.
+          type: integer
+        total_pages:
+          format: int32
+          description: The total number of pages to consume all of the elements.
+          type: integer
   securitySchemes:
     bearer:
       type: http

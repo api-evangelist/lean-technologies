@@ -47,13 +47,6 @@ paths:
       - Name Verification
 components:
   schemas:
-    StatusAdditionalDetail:
-      type: object
-      properties:
-        granular_status_code:
-          type: string
-        status_additional_info:
-          type: string
     DataRequestResultNameVerificationDto:
       type: object
       properties:
@@ -102,6 +95,23 @@ components:
         confidence:
           description: Between 0 and 1
           type: number
+    ResultStatus:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - RECONNECT_REQUIRED
+      - PROCESSING_STARTED
+    StatusAdditionalDetail:
+      type: object
+      properties:
+        granular_status_code:
+          type: string
+        status_additional_info:
+          type: string
     NameVerificationRequestDto:
       type: object
       properties:
@@ -119,16 +129,6 @@ components:
       required:
       - entity_id
       - full_name
-    ResultStatus:
-      description: The status of the request
-      type: string
-      enum:
-      - OK
-      - PENDING
-      - FAILED
-      - CONSENT_EXPIRED
-      - RECONNECT_REQUIRED
-      - PROCESSING_STARTED
   securitySchemes:
     bearerAuth:
       type: http

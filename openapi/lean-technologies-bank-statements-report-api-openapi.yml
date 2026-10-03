@@ -83,39 +83,6 @@ paths:
       - bearer: []
 components:
   schemas:
-    CreateBankStatementsReportRequestBody:
-      type: object
-      properties:
-        start_date:
-          type: string
-          format: date
-          description: Start date for transactions range
-        end_date:
-          type: string
-          format: date
-          description: End date for transactions range
-        account_sub_types:
-          type:
-          - array
-          - 'null'
-          items:
-            type:
-            - string
-            - 'null'
-            enum:
-            - CHARGE_CARD
-            - CREDIT
-            - CURRENT
-            - EMONEY
-            - LOAN
-            - MORTGAGE
-            - PREPAID
-            - SAVINGS
-            - CALL
-          description: Account sub types to include in the statements, if undefined all sub types will be included
-      required:
-      - start_date
-      - end_date
     GetBankStatementsReportResponseBody:
       allOf:
       - $ref: '#/components/schemas/GetReportResponseBody'
@@ -125,6 +92,19 @@ components:
             allOf:
             - $ref: '#/components/schemas/BankStatementsReport'
             type: 'null'
+    CreateReportResponseBody:
+      type: object
+      properties:
+        report_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum:
+          - PENDING
+      required:
+      - report_id
+      - status
     GetReportResponseBody:
       type: object
       properties:
@@ -144,19 +124,6 @@ components:
       - report_id
       - status
       - created_at
-    CreateReportResponseBody:
-      type: object
-      properties:
-        report_id:
-          type: string
-          format: uuid
-        status:
-          type: string
-          enum:
-          - PENDING
-      required:
-      - report_id
-      - status
     BankStatementsReport:
       type: object
       properties:
@@ -195,6 +162,39 @@ components:
       - OK
       - PENDING
       - FAILED
+    CreateBankStatementsReportRequestBody:
+      type: object
+      properties:
+        start_date:
+          type: string
+          format: date
+          description: Start date for transactions range
+        end_date:
+          type: string
+          format: date
+          description: End date for transactions range
+        account_sub_types:
+          type:
+          - array
+          - 'null'
+          items:
+            type:
+            - string
+            - 'null'
+            enum:
+            - CHARGE_CARD
+            - CREDIT
+            - CURRENT
+            - EMONEY
+            - LOAN
+            - MORTGAGE
+            - PREPAID
+            - SAVINGS
+            - CALL
+          description: Account sub types to include in the statements, if undefined all sub types will be included
+      required:
+      - start_date
+      - end_date
   securitySchemes:
     bearer:
       type: http

@@ -383,6 +383,22 @@ paths:
       description: Production / Pre-live
 components:
   schemas:
+    Pagination:
+      type: object
+      properties:
+        page_number:
+          description: Page number
+          type: integer
+        results_per_page:
+          description: Page size
+          type: integer
+        total_results:
+          description: Total number of results
+          type: integer
+      required:
+      - page_number
+      - results_per_page
+      - total_results
     PaymentReconciliation:
       type: object
       properties:
@@ -416,37 +432,6 @@ components:
       - status
       - status_update_timestamp
       - amount
-    DateRequest:
-      type: object
-      properties:
-        from:
-          description: Min datetime in ISO format yyyy-MM-dd
-          type: string
-          format: date
-          examples:
-          - '2025-09-15'
-        to:
-          description: Max datetime in ISO format yyyy-MM-dd
-          type: string
-          format: date
-          examples:
-          - '2025-10-01'
-      required:
-      - from
-      - to
-    AmountRequest:
-      type: object
-      properties:
-        minimum:
-          description: Minimum amount (inclusive)
-          type:
-          - number
-          - 'null'
-        maximum:
-          description: Maximum amount (inclusive)
-          type:
-          - number
-          - 'null'
     PaymentQuery:
       type: object
       properties:
@@ -519,44 +504,6 @@ components:
           - 'null'
       required:
       - payment_initiation_date
-    Payment:
-      type: object
-      properties:
-        id:
-          description: Payment Id
-          type: string
-          format: uuid
-        customer_id:
-          description: Customer Id
-          type: string
-          format: uuid
-        payment_initiation_timestamp:
-          description: Timestamp the payment was initiated.
-          type: string
-          format: date-time
-        reconciliation:
-          $ref: '#/components/schemas/PaymentReconciliation'
-      required:
-      - id
-      - customer_id
-      - payment_initiation_timestamp
-      - reconciliation
-    Pagination:
-      type: object
-      properties:
-        page_number:
-          description: Page number
-          type: integer
-        results_per_page:
-          description: Page size
-          type: integer
-        total_results:
-          description: Total number of results
-          type: integer
-      required:
-      - page_number
-      - results_per_page
-      - total_results
     PaymentsSummary:
       type: object
       properties:
@@ -595,6 +542,59 @@ components:
       - timestamp
       - amount
       - currency_code
+    AmountRequest:
+      type: object
+      properties:
+        minimum:
+          description: Minimum amount (inclusive)
+          type:
+          - number
+          - 'null'
+        maximum:
+          description: Maximum amount (inclusive)
+          type:
+          - number
+          - 'null'
+    Payment:
+      type: object
+      properties:
+        id:
+          description: Payment Id
+          type: string
+          format: uuid
+        customer_id:
+          description: Customer Id
+          type: string
+          format: uuid
+        payment_initiation_timestamp:
+          description: Timestamp the payment was initiated.
+          type: string
+          format: date-time
+        reconciliation:
+          $ref: '#/components/schemas/PaymentReconciliation'
+      required:
+      - id
+      - customer_id
+      - payment_initiation_timestamp
+      - reconciliation
+    DateRequest:
+      type: object
+      properties:
+        from:
+          description: Min datetime in ISO format yyyy-MM-dd
+          type: string
+          format: date
+          examples:
+          - '2025-09-15'
+        to:
+          description: Max datetime in ISO format yyyy-MM-dd
+          type: string
+          format: date
+          examples:
+          - '2025-10-01'
+      required:
+      - from
+      - to
   securitySchemes:
     bearerAuth:
       type: http

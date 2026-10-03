@@ -2223,36 +2223,64 @@ paths:
       description: Production / Pre-Live
 components:
   schemas:
-    PageMetadata:
-      description: Metadata about the current page of results
+    StatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        granular_status_code:
+          description: Granular status code
+          type:
+          - string
+          - 'null'
+        status_additional_info:
+          description: Additional information about the status
+          type:
+          - string
+          - 'null'
+    IdentitiesResult:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/DataResult'
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/IdentitiesData'
+    Result:
       type: object
       properties:
-        number:
-          description: The current page being returned by the API
-          type: integer
-          format: int32
-        size:
-          description: The page size requested
-          type: integer
-          format: int32
-        total_elements:
-          description: The total number of elements in all pages
-          type: integer
-          format: int64
-        total_pages:
-          description: The total number of pages retrievable
-          type: integer
-          format: int32
-        sort:
-          description: Sort parameters applied to the results
-          type: array
-          items:
+        status:
+          $ref: '#/components/schemas/ResultStatus'
+        results_id:
+          description: The unique identifier for the request
+          type: string
+          format: uuid
+        message:
+          description: A message describing the status of the request
+          type: string
+        meta:
+          description: Meta information about the request
+          type:
+          - object
+          - 'null'
+          additionalProperties:
             type: string
+        timestamp:
+          description: The datetime of when the request was made
+          type: string
+          format: date-time
+        status_detail:
+          description: Additional information about the status
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/StatusDetail'
       required:
-      - number
-      - size
-      - total_elements
-      - total_pages
+      - status
+      - results_id
+      - message
+      - timestamp
     Address:
       description: The full address details
       type: object
@@ -2297,6 +2325,23 @@ components:
           description: The country where the address is located.
           type: string
       x-toBuilder: true
+    DataResult:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          refreshed_at:
+            description: The datetime of when the data was refreshed
+            type:
+            - string
+            - 'null'
+            format: date-time
+          type:
+            description: The endpoint the original request was made to.
+            type:
+            - string
+            - 'null'
     IdentitiesData:
       type: object
       properties:
@@ -2319,81 +2364,6 @@ components:
       required:
       - type
       x-toBuilder: true
-    StatusDetail:
-      type:
-      - object
-      - 'null'
-      properties:
-        granular_status_code:
-          description: Granular status code
-          type:
-          - string
-          - 'null'
-        status_additional_info:
-          description: Additional information about the status
-          type:
-          - string
-          - 'null'
-    DataResult:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Result'
-      - type: object
-        properties:
-          refreshed_at:
-            description: The datetime of when the data was refreshed
-            type:
-            - string
-            - 'null'
-            format: date-time
-          type:
-            description: The endpoint the original request was made to.
-            type:
-            - string
-            - 'null'
-    IdentitiesResult:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/DataResult'
-      - type: object
-        properties:
-          data:
-            $ref: '#/components/schemas/IdentitiesData'
-    Result:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/ResultStatus'
-        results_id:
-          description: The unique identifier for the request
-          type: string
-          format: uuid
-        message:
-          description: A message describing the status of the request
-          type: string
-        meta:
-          description: Meta information about the request
-          type:
-          - object
-          - 'null'
-          additionalProperties:
-            type: string
-        timestamp:
-          description: The datetime of when the request was made
-          type: string
-          format: date-time
-        status_detail:
-          description: Additional information about the status
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/StatusDetail'
-      required:
-      - status
-      - results_id
-      - message
-      - timestamp
     ResultStatus:
       description: The status of the request
       type: string
@@ -2459,156 +2429,294 @@ components:
           description: Party number assigned by the institution
           type: string
       x-toBuilder: true
-    StandingOrderSau:
+    PageMetadata:
+      description: Metadata about the current page of results
+      type: object
+      properties:
+        number:
+          description: The current page being returned by the API
+          type: integer
+          format: int32
+        size:
+          description: The page size requested
+          type: integer
+          format: int32
+        total_elements:
+          description: The total number of elements in all pages
+          type: integer
+          format: int64
+        total_pages:
+          description: The total number of pages retrievable
+          type: integer
+          format: int32
+        sort:
+          description: Sort parameters applied to the results
+          type: array
+          items:
+            type: string
       required:
+      - number
+      - size
+      - total_elements
+      - total_pages
+    ScheduledPaymentSau:
+      required:
+      - scheduled_payment_id
+      - scheduled_type
+      - instructed_amount
+      - scheduled_payment_date_time
       - account_id
-      - frequency
-      - final_payment_date_time
-      - first_payment_date_time
-      - number_of_payments
-      - first_payment_amount
-      - final_payment_amount
-      - standing_order_id
       type: object
       properties:
         account_id:
           type: string
         account_holder_name:
-          description: Name of the account holder
           type: string
-        account_holder_short_name:
-          description: Short form of the name of the account holder
+        account_holder_shortname:
           type: string
-        standing_order_id:
-          description: Unique identifier for a standing order
+        scheduled_payment_id:
           type: string
-        standing_order_type:
+        scheduled_type:
           type: string
-        standing_order_status_code:
-          type: string
-        first_payment_date_time:
+        scheduled_payment_date_time:
           format: date-time
           type: string
-        last_payment_date_time:
-          format: date-time
-          type: string
-        next_payment_date_time:
-          format: date-time
-          type: string
-        final_payment_date_time:
-          format: date-time
-          type: string
-        frequency:
-          $ref: '#/components/schemas/FrequencySau'
-        number_of_payments:
-          format: int32
-          type: integer
         creditor_reference:
           type: string
-        first_payment_amount:
-          $ref: '#/components/schemas/CurrencyAmountSau'
-        last_payment_amount:
-          $ref: '#/components/schemas/CurrencyAmountSau'
-        next_payment_amount:
-          $ref: '#/components/schemas/CurrencyAmountSau'
-        final_payment_amount:
+        debtor_reference:
+          type: string
+        instructed_amount:
           $ref: '#/components/schemas/CurrencyAmountSau'
         creditor_agent:
           $ref: '#/components/schemas/AgentIdentifierSau'
         creditor_account:
-          type: array
-          items:
-            $ref: '#/components/schemas/AccountIdentifierSau'
-        purpose:
-          description: ''
-          type: string
-        supplementary_data:
-          description: ''
-    Address_2:
+          $ref: '#/components/schemas/AccountIdentifierSau'
+    IdentityEvidenceSau:
+      anyOf:
+      - $ref: '#/components/schemas/IdentityEvidenceDocumentSau'
+      - $ref: '#/components/schemas/IdentityEvidenceElectronicRecordSau'
+    BeneficiariesData:
+      allOf:
+      - $ref: '#/components/schemas/PageAndType'
+      - type: object
+        properties:
+          beneficiaries:
+            type: array
+            items:
+              $ref: '#/components/schemas/Beneficiary'
+    ScheduledPayment:
+      required:
+      - account_id
+      - scheduled_payment_id
+      - scheduled_type
+      - scheduled_payment_date_time
+      - instructed_amount
       type: object
       properties:
-        address_line:
+        account_id:
           type: string
-          description: Full address as retrieved from bank
-        address_type:
+        scheduled_payment_id:
+          type: string
+        scheduled_type:
           enum:
-          - BUSINESS
-          - DELIVERY_TO
-          - MAIL_TO
-          - PO_BOX
-          - RESIDENTIAL
-          - CORRESPONDENCE
-          - STATEMENT
+          - ARRIVAL
+          - EXECUTION
           - UNSUPPORTED
           type: string
-          description: The type of address
-        street_address:
+        scheduled_payment_date_time:
+          format: date-time
           type: string
-          description: 'Street address which may include house number, street name and PO Box '
-        post_code:
+        debtor_reference:
           type: string
-          description: Zip or postal code
-        town_name:
+        reference:
           type: string
-          description: City or locality
-        region:
-          type: string
-          description: State, province, prefecture, or region
-        country:
-          type: string
-          description: Coutry name
-      required:
-      - street_address
-      - region
-    TransactionRegionalData:
+        instructed_amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+        creditor_agent:
+          $ref: '#/components/schemas/AgentIdentifier'
+        creditor_account:
+          $ref: '#/components/schemas/AccountIdentifier'
+        regional_data:
+          $ref: '#/components/schemas/ScheduledPaymentRegionalData'
+          description: Region specific data response. Only provided when `verbose=true` in the originating request.
+    StandingOrdersResponse:
       allOf:
       - type: object
         properties:
           data:
-            $ref: '#/components/schemas/TransactionSau'
-      - $ref: '#/components/schemas/StandardSau'
-    FrequencySau:
-      required:
-      - frequency_type
+            $ref: '#/components/schemas/StandingOrdersData'
+      - $ref: '#/components/schemas/DataResponse'
+    IssuerSau:
       type: object
       properties:
-        frequency_type:
+        name:
+          type: string
+        address:
+          $ref: '#/components/schemas/AddressShortSau'
+        country_code:
+          type: string
+        jurisdiction:
+          type: string
+    ScheduledPaymentsData:
+      allOf:
+      - $ref: '#/components/schemas/PageAndType'
+      - type: object
+        properties:
+          scheduled_payments:
+            type: array
+            items:
+              $ref: '#/components/schemas/ScheduledPayment'
+    Identity:
+      required:
+      - party_id
+      - party_type
+      - account_role
+      type: object
+      properties:
+        full_legal_name:
+          type: string
+        name:
+          type: string
+        phone:
+          type: string
+        email_address:
+          type: string
+        legal_structure:
+          type: string
+        mobile_number:
+          type: string
+        address:
+          $ref: '#/components/schemas/Address_2'
+        account_role:
           enum:
-          - NOT_KNOWN
-          - EVERY_DAY
-          - EVERY_WORKING_DAY
-          - INTERVAL_DAY
-          - INTERVAL_WEEK_DAY
-          - WEEK_IN_MONTH_DAY
-          - INTERVAL_MONTH_DAY
-          - QUARTER_DAY
-          - BI_ANNUAL
-          - ANNUAL
+          - ADMINISTRATOR
+          - BENEFICIARY
+          - CUSTODIAN_FOR_MINOR
+          - GRANTER
+          - LEGAL_GUARDIAN
+          - OTHER_PARTY
+          - POWER_OF_ATTORNEY
+          - PRINCIPAL
+          - PROTECTOR
+          - REGISTERED_SHAREHOLDER
+          - SECONDARY_OWNER
+          - SENIOR_MANAGING_OFFICIAL
+          - SETTLOR
+          - SUCCESSOR_ON_DEATH
           - UNSUPPORTED
           type: string
-        interval:
+        party_type:
+          enum:
+          - DELEGATE
+          - JOINT
+          - SOLE
+          - UNSUPPORTED
           type: string
-    TransactionBankTransactionCodeSau:
+        party_id:
+          type: string
+        party_number:
+          type: string
+        regional_data:
+          $ref: '#/components/schemas/IdentityRegionalData'
+    IdentityRecordDetailsSau:
       type: object
       properties:
-        domain:
+        type:
+          enum:
+          - BANK_ACCOUNT
+          - MORTGAGE_ACCOUNT
+          - LOAN_ACCOUNT
+          - UNSUPPORTED
           type: string
-        domain_code:
+        personal_number:
           type: string
-        family:
+        calendar_type:
+          enum:
+          - ISLAMIC_CALENDAR
+          - GREGORIAN_CALENDAR
+          - UNSUPPORTED
           type: string
-        family_code:
+        created_at:
+          format: date-time
           type: string
-        sub_family:
+        date_of_expiry:
+          format: date-time
           type: string
-        sub_family_code:
+        source:
+          $ref: '#/components/schemas/IssuerSau'
+    TransactionBillDetailsSau:
+      type: object
+      properties:
+        biller_id:
+          type: number
+        bill_number:
           type: string
-    BeneficiariesResponse:
+        bill_payment_type:
+          enum:
+          - POST_PAID
+          - ADVANCE_PAYMENT_FOR_ROAMING
+          - RECHARGE
+          - RENEWAL
+          - ROAMING_DEPOSIT
+          - ONE_OFF
+          - RECURRING_PAYMENT
+          - UNSUPPORTED
+          type: string
+    CurrencyAmountSau:
+      required:
+      - amount
+      - currency
+      type: object
+      properties:
+        amount:
+          type: number
+        currency:
+          type: string
+    ScheduledPaymentsResponse:
       allOf:
       - type: object
         properties:
           data:
-            $ref: '#/components/schemas/BeneficiariesData'
+            $ref: '#/components/schemas/ScheduledPaymentsData'
+      - $ref: '#/components/schemas/DataResponse'
+    TransactionBalance:
+      required:
+      - credit_debit_indicator
+      - amount
+      - type
+      type: object
+      properties:
+        type:
+          enum:
+          - CLOSING_AVAILABLE
+          - CLOSING_BOOKED
+          - CLOSING_CLEARED
+          - EXPECTED
+          - FORWARD_AVAILABLE
+          - INFORMATION
+          - INTERIM_AVAILABLE
+          - INTERIM_BOOKED
+          - INTERIM_CLEARED
+          - OPENING_AVAILABLE
+          - OPENING_BOOKED
+          - OPENING_CLEARED
+          - PREVIOUSLY_CLOSED_BOOKED
+          - UNSUPPORTED
+          type: string
+        credit_debit_indicator:
+          enum:
+          - CREDIT
+          - DEBIT
+          - UNSUPPORTED
+          type: string
+        amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+    DirectDebitsResponse:
+      allOf:
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/DirectDebitsData'
       - $ref: '#/components/schemas/DataResponse'
     Transaction:
       required:
@@ -2696,111 +2804,395 @@ components:
           - $ref: '#/components/schemas/TransactionRegionalData'
             description: Region specific data response. Only provided when `verbose=true` in the originating request.
           - type: 'null'
-    TransactionMerchantDetailsSau:
+    DataResponse:
       type: object
       properties:
-        merchant_id:
-          format: int32
-          type: integer
-        merchant_name:
-          type: string
-        merchant_category_code:
-          type: string
-    DirectDebit:
-      required:
-      - account_id
-      - direct_debit_id
-      - frequency
-      - mandate_identification
-      - name
-      - status_code
-      type: object
-      properties:
-        account_id:
-          type: string
-        direct_debit_id:
-          type: string
-        status_code:
+        status:
+          description: The status of the results. For async requests, initially returns PENDING.
           enum:
-          - ACTIVE
-          - INACTIVE
-          - UNSUPPORTED
+          - OK
+          - FAILED
+          - PENDING
+          - CONSENT_EXPIRED
           type: string
-        frequency:
-          enum:
-          - MONTHLY
-          - QUARTERLY
-          - BI_ANNUAL
-          - ANNUAL
-          - FORTNIGHT
-          - DAILY
-          - WEEKLY
-          - NOT_KNOWN
-          - UNSUPPORTED
+        results_id:
           type: string
-        mandate_identification:
+          description: The ID for this result, this is used when retrieving results from the `/results` endpoint.
+          format: uuid
+        message:
+          description: A message describing the status of the request.
           type: string
-        name:
-          type: string
-        previous_payment_date_time:
+        meta:
+          type:
+          - string
+          - 'null'
+          description: Optional metadata associated with the result.
+        timestamp:
           format: date-time
+          description: The timestamp with timezone offset indicating when the response was generated.
           type: string
-        previous_payment_amount:
-          $ref: '#/components/schemas/CurrencyAmount'
-        regional_data:
-          $ref: '#/components/schemas/DirectDebitRegionalData'
-          description: Region specific data response. Only provided when `verbose=true` in the originating request.
-    DirectDebitSau:
+        status_detail:
+          description: Further detail on the error if status=FAILED
+          $ref: '#/components/schemas/StatusDetailObject'
       required:
-      - frequency
-      - direct_debit_status_code
-      - direct_debit_id
-      - account_id
-      - mandate_identification
-      - name
+      - status
+      - results_id
+      - message
+      - meta
+      - timestamp
+      - status_detail
+    StandardSau:
       type: object
       properties:
-        account_id:
+        standard:
+          description: A description of the standard the regional data is returned in formatted as `"{ISO 3 Letter Country Code}.{Standard}.{Version}"`. In the KSA V2 API this will always return as `"SAU.SAMA.V1"`
           type: string
-        direct_debit_id:
-          type: string
-        direct_debit_status_code:
-          type: string
-        frequency:
-          type: string
-        mandate_identification:
-          type: string
-        name:
-          type: string
-        previous_payment_date_time:
-          format: date-time
-          type: string
-        previous_payment_amount:
-          $ref: '#/components/schemas/CurrencyAmountSau'
-    AgentIdentifier:
+          examples:
+          - SAU.SAMA.V1
+    AgentIdentifierWithAddressRequiredSau:
+      required:
+      - identification
+      - identification_type
       type: object
       properties:
-        scheme_name:
-          type: string
-          description: The name of the identification scheme for the Bank
+        identification_type:
           enum:
           - BICFI
           - OTHER
           - UNSUPPORTED
-          examples:
-          - BICFI
+          type: string
         identification:
           type: string
-          description: Unique and unambiguous identification of the Bank
-    StatusDetailObject:
-      description: Status Details
+        name:
+          type: string
+        postal_address:
+          $ref: '#/components/schemas/AddressLongSau'
+    StandingOrderSau:
+      required:
+      - account_id
+      - frequency
+      - final_payment_date_time
+      - first_payment_date_time
+      - number_of_payments
+      - first_payment_amount
+      - final_payment_amount
+      - standing_order_id
       type: object
       properties:
-        granular_status_code:
-          description: Detailed error code
+        account_id:
           type: string
-        status_additional_info:
-          description: Further detail on the encountered error
+        account_holder_name:
+          description: Name of the account holder
+          type: string
+        account_holder_short_name:
+          description: Short form of the name of the account holder
+          type: string
+        standing_order_id:
+          description: Unique identifier for a standing order
+          type: string
+        standing_order_type:
+          type: string
+        standing_order_status_code:
+          type: string
+        first_payment_date_time:
+          format: date-time
+          type: string
+        last_payment_date_time:
+          format: date-time
+          type: string
+        next_payment_date_time:
+          format: date-time
+          type: string
+        final_payment_date_time:
+          format: date-time
+          type: string
+        frequency:
+          $ref: '#/components/schemas/FrequencySau'
+        number_of_payments:
+          format: int32
+          type: integer
+        creditor_reference:
+          type: string
+        first_payment_amount:
+          $ref: '#/components/schemas/CurrencyAmountSau'
+        last_payment_amount:
+          $ref: '#/components/schemas/CurrencyAmountSau'
+        next_payment_amount:
+          $ref: '#/components/schemas/CurrencyAmountSau'
+        final_payment_amount:
+          $ref: '#/components/schemas/CurrencyAmountSau'
+        creditor_agent:
+          $ref: '#/components/schemas/AgentIdentifierSau'
+        creditor_account:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountIdentifierSau'
+        purpose:
+          description: ''
+          type: string
+        supplementary_data:
+          description: ''
+    CurrencyExchangeSau:
+      required:
+      - instructed_amount
+      - source_currency
+      - target_currency
+      - unit_currency
+      - exchange_rate
+      type: object
+      properties:
+        source_currency:
+          type: string
+        target_currency:
+          type: string
+        unit_currency:
+          type: string
+        exchange_rate:
+          type: number
+        contract_identification:
+          type: string
+        quotation_date:
+          format: date-time
+          type: string
+        instructed_amount:
+          $ref: '#/components/schemas/CurrencyAmountSau'
+    TransactionBankTransactionCodeSau:
+      type: object
+      properties:
+        domain:
+          type: string
+        domain_code:
+          type: string
+        family:
+          type: string
+        family_code:
+          type: string
+        sub_family:
+          type: string
+        sub_family_code:
+          type: string
+    IdentityEvidenceElectronicRecordSau:
+      type: object
+      properties:
+        type:
+          enum:
+          - ELECTRONIC_RECORD
+          - UNSUPPORTED
+          type: string
+        time:
+          format: date-time
+          type: string
+        record:
+          $ref: '#/components/schemas/IdentityRecordDetailsSau'
+        check_details:
+          type: array
+          items:
+            $ref: '#/components/schemas/IdentityCheckDetailsSau'
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttachmentSau'
+    IdentityDocumentDetailsSau:
+      type: object
+      properties:
+        type:
+          enum:
+          - PASSPORT
+          - DRIVING_PERMIT
+          - ID_CARD
+          - RESIDENCE_PERMIT
+          - UNSUPPORTED
+          type: string
+        document_number:
+          type: string
+        personal_number:
+          type: string
+        serial_number:
+          type: string
+        calendar_type:
+          enum:
+          - ISLAMIC_CALENDAR
+          - GREGORIAN_CALENDAR
+          - UNSUPPORTED
+          type: string
+        date_of_issuance:
+          format: date
+          type: string
+        date_of_expiry:
+          format: date
+          type: string
+        issuer:
+          $ref: '#/components/schemas/IssuerSau'
+    IdentityClaimsSau:
+      type: object
+      properties:
+        sub:
+          type: string
+        name:
+          type: string
+        given_name:
+          type: string
+        family_name:
+          type: string
+        middle_name:
+          type: string
+        nickname:
+          type: string
+        preferred_username:
+          type: string
+        profile:
+          type: string
+        picture:
+          type: string
+        website:
+          type: string
+        email:
+          type: string
+        email_verified:
+          type: boolean
+        gender:
+          type: string
+        birth_date:
+          format: date
+          type: string
+        zone_info:
+          type: string
+        locale:
+          type: string
+        phone_number:
+          type: string
+        phone_number_verified:
+          type: boolean
+        salutation:
+          type: string
+        title:
+          type: string
+        msisdn:
+          type: string
+        birth_family_name:
+          type: string
+        birth_given_name:
+          type: string
+        birth_middle_name:
+          type: string
+        also_known_as:
+          type: string
+        place_of_birth:
+          $ref: '#/components/schemas/PlaceOfBirthSau'
+        nationalities:
+          type: array
+          items:
+            type: string
+        address:
+          $ref: '#/components/schemas/AddressShortSau'
+        updated_at:
+          format: int64
+          type: integer
+    CurrencyAmount:
+      type: object
+      properties:
+        amount:
+          format: float
+          description: The value in the denominated currency.
+          type: number
+        currency:
+          description: ISO 3 letter code for the currency the amount is returned in.
+          type: string
+    AgentIdentifierSau:
+      type: object
+      properties:
+        identification_type:
+          description: 'The type of identifier being provided.
+
+
+            | Value | Description |
+
+            |-|-|
+
+            | BICFI | The BIC/SWIFT code for the Financial Institution |
+
+            | OTHER | A combination of country code and 4 letter identifier for a financial institution |'
+          enum:
+          - BICFI
+          - OTHER
+          - UNSUPPORTED
+          type: string
+        identification:
+          description: 'Provides either the BIC/SWIFT code for the Financial Institution or a value from a coded list.
+
+
+            | Identifier | Institution |
+
+            |-|-|
+
+            | SAINMA | Alinma Bank |
+
+            | SARJHI | Al Rajhi Bank |
+
+            | SAARNB | Arab National Bank |
+
+            | SAALBI | Bank Al Bilad |
+
+            | SABJAZ | Bank Al-Jazira |
+
+            | SABMUS | Bank Muscat |
+
+            | SABSFR | Banque Saudi Fransi |
+
+            | SABNPA | BNP Paribas Saudi Arabia |
+
+            | SACRES | Credit Suisse Saudi Arabia |
+
+            | SADEUT | Deutsche Bank AG, Riyadh Branch |
+
+            | SAEBIL | Emirates NBD PJSC |
+
+            | SAGULF | Gulf International Bank B.S.C., Riyadh |
+
+            | SAICBK | Industrial and Commercial Bank of China, Riyadh Branch |
+
+            | SAISLD | Islamic Development Bank |
+
+            | SAJPMG | J.P. Morgan Saudi Arabia Ltd. |
+
+            | SACHAS | J.P. Morgan Chase Bank, N.A Riyadh |
+
+            | SAMLSA | Merill Lynch Kingdom of Saudi Arabia |
+
+            | SANBOB | National Bank of Bahrain |
+
+            | SANBOK | National Bank of Kuwait |
+
+            | SANBPA | National Bank of Pakistan |
+
+            | SANCBK | Saudi National Bank |
+
+            | SARIBL | Riyad Bank |
+
+            | SASAMA | Saudi Arabian Monetary Authority |
+
+            | SASABB | Saudi British Bank |
+
+            | SASIBC | Saudi Investment Bank |
+
+            | SASCBL | Standard Chartered Capital (Saudi Arabia) |
+
+            | SATCZB | T.C. Ziraat Bankasi A.S. |
+
+            | SASTCP | STC Pay |
+
+            | SANEOL | Neoleap |'
+          type: string
+    AttachmentSau:
+      type: object
+      properties:
+        desc:
+          type: string
+        content_type:
+          type: string
+        content:
+          type: string
+        txn:
           type: string
     TransactionBalanceSau:
       required:
@@ -2834,6 +3226,106 @@ components:
           type: string
         amount:
           $ref: '#/components/schemas/CurrencyAmountSau'
+    IdentityAssuranceProcessSau:
+      type: object
+      properties:
+        policy:
+          type: string
+        procedure:
+          type: string
+        assurance_details:
+          type: array
+          items:
+            $ref: '#/components/schemas/IdentityAssuranceDetailsSau'
+    DirectDebitsData:
+      allOf:
+      - $ref: '#/components/schemas/PageAndType'
+      - type: object
+        properties:
+          direct_debits:
+            type: array
+            items:
+              $ref: '#/components/schemas/DirectDebit'
+    TransactionRegionalData:
+      allOf:
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/TransactionSau'
+      - $ref: '#/components/schemas/StandardSau'
+    DirectDebitSau:
+      required:
+      - frequency
+      - direct_debit_status_code
+      - direct_debit_id
+      - account_id
+      - mandate_identification
+      - name
+      type: object
+      properties:
+        account_id:
+          type: string
+        direct_debit_id:
+          type: string
+        direct_debit_status_code:
+          type: string
+        frequency:
+          type: string
+        mandate_identification:
+          type: string
+        name:
+          type: string
+        previous_payment_date_time:
+          format: date-time
+          type: string
+        previous_payment_amount:
+          $ref: '#/components/schemas/CurrencyAmountSau'
+    Beneficiary:
+      required:
+      - account_id
+      - beneficiary_id
+      - beneficiary_type
+      type: object
+      properties:
+        account_id:
+          type: string
+        beneficiary_id:
+          type: string
+        beneficiary_type:
+          enum:
+          - TRUSTED
+          - ORDINARY
+          - OTHER
+          - UNSUPPORTED
+          type: string
+        creditor_agent:
+          $ref: '#/components/schemas/BeneficiaryCreditorAgent'
+        creditor_account:
+          $ref: '#/components/schemas/AccountIdentifier'
+        supplementary_data:
+          type: object
+          additionalProperties:
+            type: string
+          properties: {}
+        regional_data:
+          $ref: '#/components/schemas/BeneficiaryRegionalData'
+          description: Region specific data response. Only provided when `verbose=true` in the originating request.
+    IdentityRegionalData:
+      allOf:
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/IdentitySau'
+      - $ref: '#/components/schemas/StandardSau'
+    PlaceOfBirthSau:
+      type: object
+      properties:
+        region:
+          type: string
+        locality:
+          type: string
+        country:
+          type: string
     PageAndType:
       title: Data Object
       description: ''
@@ -2844,219 +3336,61 @@ components:
           type: string
         page:
           $ref: '#/components/schemas/Page'
-    CurrencyAmount:
-      type: object
-      properties:
-        amount:
-          format: float
-          description: The value in the denominated currency.
-          type: number
-        currency:
-          description: ISO 3 letter code for the currency the amount is returned in.
-          type: string
-    AccountIdentifierWithNameSau:
-      type: object
-      properties:
-        identification_type:
-          description: Indicates the type of identification being provided.
-          enum:
-          - IBAN
-          - MASKED_PAN
-          - ACCOUNT_NUMBER
-          - COMMERCIAL_REGISTRATION_NUMBER
-          - EMAIL
-          - MOBILE_NUMBER
-          - NATIONAL_ID
-          - IQAMA_NUMBER
-          - PASSPORT_NUMBER
-          - UNSUPPORTED
-          type: string
-        identification:
-          description: Returns a value based on the `identification_type`.
-          type: string
-        name:
-          description: 'The account name is the name or names of the account owner(s) represented at an account level. Note: The account name is not the product name or the nickname of the account.'
-          type: string
-    StandingOrdersResponse:
-      allOf:
-      - type: object
-        properties:
-          data:
-            $ref: '#/components/schemas/StandingOrdersData'
-      - $ref: '#/components/schemas/DataResponse'
-    Identity:
+    StandingOrder:
       required:
-      - party_id
-      - party_type
-      - account_role
+      - account_id
+      - standing_order_id
+      - final_payment_date_time
+      - first_payment_date_time
+      - number_of_payments
+      - first_payment_amount
+      - final_payment_amount
       type: object
       properties:
-        full_legal_name:
+        account_id:
           type: string
-        name:
+        standing_order_id:
+          description: Unique identifier for a standing order
           type: string
-        phone:
-          type: string
-        email_address:
-          type: string
-        legal_structure:
-          type: string
-        mobile_number:
-          type: string
-        address:
-          $ref: '#/components/schemas/Address_2'
-        account_role:
+        standing_order_status_code:
           enum:
-          - ADMINISTRATOR
-          - BENEFICIARY
-          - CUSTODIAN_FOR_MINOR
-          - GRANTER
-          - LEGAL_GUARDIAN
-          - OTHER_PARTY
-          - POWER_OF_ATTORNEY
-          - PRINCIPAL
-          - PROTECTOR
-          - REGISTERED_SHAREHOLDER
-          - SECONDARY_OWNER
-          - SENIOR_MANAGING_OFFICIAL
-          - SETTLOR
-          - SUCCESSOR_ON_DEATH
-          - UNSUPPORTED
+          - ACTIVE
+          - INACTIVE
           type: string
-        party_type:
-          enum:
-          - DELEGATE
-          - JOINT
-          - SOLE
-          - UNSUPPORTED
+        first_payment_date_time:
+          format: date-time
           type: string
-        party_id:
+        last_payment_date_time:
+          format: date-time
           type: string
-        party_number:
+        next_payment_date_time:
+          format: date-time
           type: string
-        regional_data:
-          $ref: '#/components/schemas/IdentityRegionalData'
-    IdentityVerifiedClaimsSau:
-      required:
-      - claims
-      - verification
-      type: object
-      properties:
-        verification:
-          $ref: '#/components/schemas/IdentityVerificationSau'
-        claims:
-          $ref: '#/components/schemas/IdentityClaimsSau'
-    ScheduledPaymentsData:
-      allOf:
-      - $ref: '#/components/schemas/PageAndType'
-      - type: object
-        properties:
-          scheduled_payments:
-            type: array
-            items:
-              $ref: '#/components/schemas/ScheduledPayment'
-    TransactionBalance:
-      required:
-      - credit_debit_indicator
-      - amount
-      - type
-      type: object
-      properties:
-        type:
-          enum:
-          - CLOSING_AVAILABLE
-          - CLOSING_BOOKED
-          - CLOSING_CLEARED
-          - EXPECTED
-          - FORWARD_AVAILABLE
-          - INFORMATION
-          - INTERIM_AVAILABLE
-          - INTERIM_BOOKED
-          - INTERIM_CLEARED
-          - OPENING_AVAILABLE
-          - OPENING_BOOKED
-          - OPENING_CLEARED
-          - PREVIOUSLY_CLOSED_BOOKED
-          - UNSUPPORTED
+        final_payment_date_time:
+          format: date-time
           type: string
-        credit_debit_indicator:
-          enum:
-          - CREDIT
-          - DEBIT
-          - UNSUPPORTED
+        frequency:
+          $ref: '#/components/schemas/Frequency'
+        number_of_payments:
+          format: int32
+          type: integer
+        reference:
           type: string
-        amount:
+        first_payment_amount:
           $ref: '#/components/schemas/CurrencyAmount'
-    IdentityCheckDetailsSau:
-      type: object
-      properties:
-        check_method:
-          type: string
-        organization:
-          type: string
-        txn:
-          type: string
-        time:
-          format: date-time
-          type: string
-    IdentityRegionalData:
-      allOf:
-      - type: object
-        properties:
-          data:
-            $ref: '#/components/schemas/IdentitySau'
-      - $ref: '#/components/schemas/StandardSau'
-    IdentityEvidenceElectronicRecordSau:
-      type: object
-      properties:
-        type:
-          enum:
-          - ELECTRONIC_RECORD
-          - UNSUPPORTED
-          type: string
-        time:
-          format: date-time
-          type: string
-        record:
-          $ref: '#/components/schemas/IdentityRecordDetailsSau'
-        check_details:
-          type: array
-          items:
-            $ref: '#/components/schemas/IdentityCheckDetailsSau'
-        attachments:
-          type: array
-          items:
-            $ref: '#/components/schemas/AttachmentSau'
-    ScheduledPaymentRegionalData:
-      allOf:
-      - type: object
-        properties:
-          data:
-            $ref: '#/components/schemas/ScheduledPaymentSau'
-      - $ref: '#/components/schemas/StandardSau'
-    IdentityEvidenceDocumentSau:
-      type: object
-      properties:
-        type:
-          enum:
-          - DOCUMENT
-          - UNSUPPORTED
-          type: string
-        verifier:
-          $ref: '#/components/schemas/VerifierSau'
-        time:
-          format: date-time
-          type: string
-        document_details:
-          $ref: '#/components/schemas/IdentityDocumentDetailsSau'
-        check_details:
-          type: array
-          items:
-            $ref: '#/components/schemas/IdentityCheckDetailsSau'
-        attachments:
-          type: array
-          items:
-            $ref: '#/components/schemas/AttachmentSau'
+        last_payment_amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+        next_payment_amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+        final_payment_amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+        creditor_agent:
+          $ref: '#/components/schemas/AgentIdentifier'
+        creditor_account:
+          $ref: '#/components/schemas/AccountIdentifier'
+        regional_data:
+          $ref: '#/components/schemas/StandingOrderRegionalData'
+          description: Region specific data response. Only provided when `verbose=true` in the originating request.
     AccountIdentifierSau:
       required:
       - identification
@@ -3078,30 +3412,116 @@ components:
           type: string
         identification:
           type: string
-    CurrencyExchangeSau:
+    BeneficiaryRegionalData:
+      allOf:
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/BeneficiarySau'
+      - $ref: '#/components/schemas/StandardSau'
+    FrequencySau:
       required:
-      - instructed_amount
-      - source_currency
-      - target_currency
-      - unit_currency
-      - exchange_rate
+      - frequency_type
       type: object
       properties:
-        source_currency:
+        frequency_type:
+          enum:
+          - NOT_KNOWN
+          - EVERY_DAY
+          - EVERY_WORKING_DAY
+          - INTERVAL_DAY
+          - INTERVAL_WEEK_DAY
+          - WEEK_IN_MONTH_DAY
+          - INTERVAL_MONTH_DAY
+          - QUARTER_DAY
+          - BI_ANNUAL
+          - ANNUAL
+          - UNSUPPORTED
           type: string
-        target_currency:
+        interval:
           type: string
-        unit_currency:
+    IdentitiesResponse:
+      allOf:
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/IdentitiesData_2'
+      - $ref: '#/components/schemas/DataResponse'
+    PostalAddress:
+      type: object
+      properties:
+        address_line:
           type: string
-        exchange_rate:
-          type: number
-        contract_identification:
+        address_type:
+          enum:
+          - BUSINESS
+          - CORRESPONDENCE
+          - DELIVERY_TO
+          - MAIL_TO
+          - PO_BOX
+          - POSTAL
+          - RESIDENTIAL
+          - STATEMENT
+          - UNSUPPORTED
           type: string
-        quotation_date:
-          format: date-time
+        building_number:
           type: string
-        instructed_amount:
-          $ref: '#/components/schemas/CurrencyAmountSau'
+        country:
+          type: string
+        department:
+          type: string
+        post_code:
+          type: string
+        street_name:
+          type: string
+        sub_department:
+          type: string
+        town_name:
+          type: string
+        country_sub_division:
+          type: string
+    ScheduledPaymentRegionalData:
+      allOf:
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/ScheduledPaymentSau'
+      - $ref: '#/components/schemas/StandardSau'
+    IdentityAssuranceDetailsSau:
+      type: object
+      properties:
+        assurance_type:
+          type: string
+        assurance_classification:
+          type: string
+        evidence_ref:
+          type: array
+          items:
+            $ref: '#/components/schemas/IdentityEvidenceRefSau'
+    IdentityEvidenceRefSau:
+      required:
+      - txn
+      type: object
+      properties:
+        txn:
+          type: string
+        evidence_metadata:
+          $ref: '#/components/schemas/IdentityEvidenceMetadataSau'
+    AddressShortSau:
+      type: object
+      properties:
+        formatted:
+          type: string
+        street_address:
+          type: string
+        locality:
+          type: string
+        region:
+          type: string
+        postal_code:
+          type: string
+        country:
+          type: string
     TransactionSau:
       required:
       - account_id
@@ -3238,54 +3658,6 @@ components:
           additionalProperties:
             type: string
           properties: {}
-    IdentityEvidenceSau:
-      anyOf:
-      - $ref: '#/components/schemas/IdentityEvidenceDocumentSau'
-      - $ref: '#/components/schemas/IdentityEvidenceElectronicRecordSau'
-    IssuerSau:
-      type: object
-      properties:
-        name:
-          type: string
-        address:
-          $ref: '#/components/schemas/AddressShortSau'
-        country_code:
-          type: string
-        jurisdiction:
-          type: string
-    VerifierSau:
-      type: object
-      properties:
-        organization:
-          type: string
-        txn:
-          type: string
-    IdentityRecordDetailsSau:
-      type: object
-      properties:
-        type:
-          enum:
-          - BANK_ACCOUNT
-          - MORTGAGE_ACCOUNT
-          - LOAN_ACCOUNT
-          - UNSUPPORTED
-          type: string
-        personal_number:
-          type: string
-        calendar_type:
-          enum:
-          - ISLAMIC_CALENDAR
-          - GREGORIAN_CALENDAR
-          - UNSUPPORTED
-          type: string
-        created_at:
-          format: date-time
-          type: string
-        date_of_expiry:
-          format: date-time
-          type: string
-        source:
-          $ref: '#/components/schemas/IssuerSau'
     TransactionProprietaryBankTransactionCodeStructureSau:
       required:
       - code
@@ -3295,213 +3667,108 @@ components:
           type: string
         issuer:
           type: string
-    StandingOrder:
-      required:
-      - account_id
-      - standing_order_id
-      - final_payment_date_time
-      - first_payment_date_time
-      - number_of_payments
-      - first_payment_amount
-      - final_payment_amount
-      type: object
-      properties:
-        account_id:
-          type: string
-        standing_order_id:
-          description: Unique identifier for a standing order
-          type: string
-        standing_order_status_code:
-          enum:
-          - ACTIVE
-          - INACTIVE
-          type: string
-        first_payment_date_time:
-          format: date-time
-          type: string
-        last_payment_date_time:
-          format: date-time
-          type: string
-        next_payment_date_time:
-          format: date-time
-          type: string
-        final_payment_date_time:
-          format: date-time
-          type: string
-        frequency:
-          $ref: '#/components/schemas/Frequency'
-        number_of_payments:
-          format: int32
-          type: integer
-        reference:
-          type: string
-        first_payment_amount:
-          $ref: '#/components/schemas/CurrencyAmount'
-        last_payment_amount:
-          $ref: '#/components/schemas/CurrencyAmount'
-        next_payment_amount:
-          $ref: '#/components/schemas/CurrencyAmount'
-        final_payment_amount:
-          $ref: '#/components/schemas/CurrencyAmount'
-        creditor_agent:
-          $ref: '#/components/schemas/AgentIdentifier'
-        creditor_account:
-          $ref: '#/components/schemas/AccountIdentifier'
-        regional_data:
-          $ref: '#/components/schemas/StandingOrderRegionalData'
-          description: Region specific data response. Only provided when `verbose=true` in the originating request.
-    AddressShortSau:
-      type: object
-      properties:
-        formatted:
-          type: string
-        street_address:
-          type: string
-        locality:
-          type: string
-        region:
-          type: string
-        postal_code:
-          type: string
-        country:
-          type: string
-    BeneficiarySau:
-      required:
-      - account_id
-      - beneficiary_id
-      - beneficiary_type
-      type: object
-      properties:
-        account_id:
-          type: string
-        account_holder_name:
-          description: Name of the account holder
-          type: string
-        account_holder_short_name:
-          description: Short form of the name of the account holder
-          type: string
-        beneficiary_id:
-          type: string
-        beneficiary_type:
-          enum:
-          - ACTIVATED
-          - NOT_ACTIVATED
-          - UNSUPPORTED
-          type: string
-        reference:
-          type: string
-        creditor_agent:
-          $ref: '#/components/schemas/AgentIdentifierWithAddressRequiredSau'
-        creditor_account:
-          type: array
-          items:
-            $ref: '#/components/schemas/AccountIdentifierSau'
-        supplementary_data:
-          type: object
-          additionalProperties:
-            type: string
-          properties: {}
-    IdentityEvidenceRefSau:
-      required:
-      - txn
-      type: object
-      properties:
-        txn:
-          type: string
-        evidence_metadata:
-          $ref: '#/components/schemas/IdentityEvidenceMetadataSau'
-    ScheduledPaymentsResponse:
+    DirectDebitRegionalData:
       allOf:
       - type: object
         properties:
           data:
-            $ref: '#/components/schemas/ScheduledPaymentsData'
-      - $ref: '#/components/schemas/DataResponse'
-    IdentityClaimsSau:
+            $ref: '#/components/schemas/DirectDebitSau'
+      - $ref: '#/components/schemas/StandardSau'
+    TransactionCardInstrumentSau:
+      required:
+      - instrument_type
+      - card_scheme_name
       type: object
       properties:
-        sub:
+        card_scheme_name:
+          enum:
+          - AMERICAN_EXPRESS
+          - MASTER_CARD
+          - VISA
+          - DINERS
+          - MADA
+          - GCC
+          - UPI
+          - UNSUPPORTED
+          type: string
+        instrument_type:
+          enum:
+          - APPLE_PAY
+          - MADA_PAY
+          - CONTACTLESS
+          - CHIP
+          - MAG_STRIPE
+          - OTHER
+          - UNSUPPORTED
+          type: string
+        identification:
           type: string
         name:
           type: string
-        given_name:
+    VerifierSau:
+      type: object
+      properties:
+        organization:
           type: string
-        family_name:
+        txn:
           type: string
-        middle_name:
+    AccountIdentifier:
+      type: object
+      properties:
+        scheme_name:
           type: string
-        nickname:
+          description: Name of the identification scheme for the account.
+          enum:
+          - IBAN
+          - BBAN
+          - PAN
+          - OTHER
+          - UNSUPPORTED
+        identification:
           type: string
-        preferred_username:
+          description: Identification value for the account assigned by the bank based on the Account Scheme Name
+        name:
+          type:
+          - string
+          - 'null'
+          description: The name of the account owner(s) represented at an account level
+    Address_2:
+      type: object
+      properties:
+        address_line:
           type: string
-        profile:
+          description: Full address as retrieved from bank
+        address_type:
+          enum:
+          - BUSINESS
+          - DELIVERY_TO
+          - MAIL_TO
+          - PO_BOX
+          - RESIDENTIAL
+          - CORRESPONDENCE
+          - STATEMENT
+          - UNSUPPORTED
           type: string
-        picture:
+          description: The type of address
+        street_address:
           type: string
-        website:
+          description: 'Street address which may include house number, street name and PO Box '
+        post_code:
           type: string
-        email:
+          description: Zip or postal code
+        town_name:
           type: string
-        email_verified:
-          type: boolean
-        gender:
+          description: City or locality
+        region:
           type: string
-        birth_date:
-          format: date
+          description: State, province, prefecture, or region
+        country:
           type: string
-        zone_info:
-          type: string
-        locale:
-          type: string
-        phone_number:
-          type: string
-        phone_number_verified:
-          type: boolean
-        salutation:
-          type: string
-        title:
-          type: string
-        msisdn:
-          type: string
-        birth_family_name:
-          type: string
-        birth_given_name:
-          type: string
-        birth_middle_name:
-          type: string
-        also_known_as:
-          type: string
-        place_of_birth:
-          $ref: '#/components/schemas/PlaceOfBirthSau'
-        nationalities:
-          type: array
-          items:
-            type: string
-        address:
-          $ref: '#/components/schemas/AddressShortSau'
-        updated_at:
-          format: int64
-          type: integer
-    BeneficiaryRegionalData:
-      allOf:
-      - type: object
-        properties:
-          data:
-            $ref: '#/components/schemas/BeneficiarySau'
-      - $ref: '#/components/schemas/StandardSau'
-    StandingOrdersData:
-      allOf:
-      - $ref: '#/components/schemas/PageAndType'
-      - type: object
-        properties:
-          standing_orders:
-            type: array
-            items:
-              $ref: '#/components/schemas/StandingOrder'
-    AgentIdentifierWithAddressRequiredSau:
+          description: Coutry name
       required:
-      - identification
-      - identification_type
+      - street_address
+      - region
+    AgentIdentifierWithAddressSau:
       type: object
       properties:
         identification_type:
@@ -3516,43 +3783,6 @@ components:
           type: string
         postal_address:
           $ref: '#/components/schemas/AddressLongSau'
-    DataResponse:
-      type: object
-      properties:
-        status:
-          description: The status of the results. For async requests, initially returns PENDING.
-          enum:
-          - OK
-          - FAILED
-          - PENDING
-          - CONSENT_EXPIRED
-          type: string
-        results_id:
-          type: string
-          description: The ID for this result, this is used when retrieving results from the `/results` endpoint.
-          format: uuid
-        message:
-          description: A message describing the status of the request.
-          type: string
-        meta:
-          type:
-          - string
-          - 'null'
-          description: Optional metadata associated with the result.
-        timestamp:
-          format: date-time
-          description: The timestamp with timezone offset indicating when the response was generated.
-          type: string
-        status_detail:
-          description: Further detail on the error if status=FAILED
-          $ref: '#/components/schemas/StatusDetailObject'
-      required:
-      - status
-      - results_id
-      - message
-      - meta
-      - timestamp
-      - status_detail
     Frequency:
       type: object
       properties:
@@ -3571,6 +3801,32 @@ components:
           type: string
         interval:
           type: string
+    StandingOrdersData:
+      allOf:
+      - $ref: '#/components/schemas/PageAndType'
+      - type: object
+        properties:
+          standing_orders:
+            type: array
+            items:
+              $ref: '#/components/schemas/StandingOrder'
+    StatusDetailObject:
+      description: Status Details
+      type: object
+      properties:
+        granular_status_code:
+          description: Detailed error code
+          type: string
+        status_additional_info:
+          description: Further detail on the encountered error
+          type: string
+    BeneficiariesResponse:
+      allOf:
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/BeneficiariesData'
+      - $ref: '#/components/schemas/DataResponse'
     IdentityVerificationSau:
       required:
       - trust_framework
@@ -3591,167 +3847,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/IdentityEvidenceSau'
-    AgentIdentifierSau:
-      type: object
-      properties:
-        identification_type:
-          description: 'The type of identifier being provided.
-
-
-            | Value | Description |
-
-            |-|-|
-
-            | BICFI | The BIC/SWIFT code for the Financial Institution |
-
-            | OTHER | A combination of country code and 4 letter identifier for a financial institution |'
-          enum:
-          - BICFI
-          - OTHER
-          - UNSUPPORTED
-          type: string
-        identification:
-          description: 'Provides either the BIC/SWIFT code for the Financial Institution or a value from a coded list.
-
-
-            | Identifier | Institution |
-
-            |-|-|
-
-            | SAINMA | Alinma Bank |
-
-            | SARJHI | Al Rajhi Bank |
-
-            | SAARNB | Arab National Bank |
-
-            | SAALBI | Bank Al Bilad |
-
-            | SABJAZ | Bank Al-Jazira |
-
-            | SABMUS | Bank Muscat |
-
-            | SABSFR | Banque Saudi Fransi |
-
-            | SABNPA | BNP Paribas Saudi Arabia |
-
-            | SACRES | Credit Suisse Saudi Arabia |
-
-            | SADEUT | Deutsche Bank AG, Riyadh Branch |
-
-            | SAEBIL | Emirates NBD PJSC |
-
-            | SAGULF | Gulf International Bank B.S.C., Riyadh |
-
-            | SAICBK | Industrial and Commercial Bank of China, Riyadh Branch |
-
-            | SAISLD | Islamic Development Bank |
-
-            | SAJPMG | J.P. Morgan Saudi Arabia Ltd. |
-
-            | SACHAS | J.P. Morgan Chase Bank, N.A Riyadh |
-
-            | SAMLSA | Merill Lynch Kingdom of Saudi Arabia |
-
-            | SANBOB | National Bank of Bahrain |
-
-            | SANBOK | National Bank of Kuwait |
-
-            | SANBPA | National Bank of Pakistan |
-
-            | SANCBK | Saudi National Bank |
-
-            | SARIBL | Riyad Bank |
-
-            | SASAMA | Saudi Arabian Monetary Authority |
-
-            | SASABB | Saudi British Bank |
-
-            | SASIBC | Saudi Investment Bank |
-
-            | SASCBL | Standard Chartered Capital (Saudi Arabia) |
-
-            | SATCZB | T.C. Ziraat Bankasi A.S. |
-
-            | SASTCP | STC Pay |
-
-            | SANEOL | Neoleap |'
-          type: string
-    IdentityData:
-      allOf:
-      - $ref: '#/components/schemas/PageAndType'
-      - type: object
-        properties:
-          identities:
-            type: array
-            items:
-              $ref: '#/components/schemas/Identity'
-    ScheduledPayment:
-      required:
-      - account_id
-      - scheduled_payment_id
-      - scheduled_type
-      - scheduled_payment_date_time
-      - instructed_amount
-      type: object
-      properties:
-        account_id:
-          type: string
-        scheduled_payment_id:
-          type: string
-        scheduled_type:
-          enum:
-          - ARRIVAL
-          - EXECUTION
-          - UNSUPPORTED
-          type: string
-        scheduled_payment_date_time:
-          format: date-time
-          type: string
-        debtor_reference:
-          type: string
-        reference:
-          type: string
-        instructed_amount:
-          $ref: '#/components/schemas/CurrencyAmount'
-        creditor_agent:
-          $ref: '#/components/schemas/AgentIdentifier'
-        creditor_account:
-          $ref: '#/components/schemas/AccountIdentifier'
-        regional_data:
-          $ref: '#/components/schemas/ScheduledPaymentRegionalData'
-          description: Region specific data response. Only provided when `verbose=true` in the originating request.
-    ScheduledPaymentSau:
-      required:
-      - scheduled_payment_id
-      - scheduled_type
-      - instructed_amount
-      - scheduled_payment_date_time
-      - account_id
-      type: object
-      properties:
-        account_id:
-          type: string
-        account_holder_name:
-          type: string
-        account_holder_shortname:
-          type: string
-        scheduled_payment_id:
-          type: string
-        scheduled_type:
-          type: string
-        scheduled_payment_date_time:
-          format: date-time
-          type: string
-        creditor_reference:
-          type: string
-        debtor_reference:
-          type: string
-        instructed_amount:
-          $ref: '#/components/schemas/CurrencyAmountSau'
-        creditor_agent:
-          $ref: '#/components/schemas/AgentIdentifierSau'
-        creditor_account:
-          $ref: '#/components/schemas/AccountIdentifierSau'
     IdentitiesData_2:
       allOf:
       - $ref: '#/components/schemas/PageAndType'
@@ -3763,42 +3858,44 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/Identity'
-    TransactionBillDetailsSau:
-      type: object
-      properties:
-        biller_id:
-          type: number
-        bill_number:
-          type: string
-        bill_payment_type:
-          enum:
-          - POST_PAID
-          - ADVANCE_PAYMENT_FOR_ROAMING
-          - RECHARGE
-          - RENEWAL
-          - ROAMING_DEPOSIT
-          - ONE_OFF
-          - RECURRING_PAYMENT
-          - UNSUPPORTED
-          type: string
-    PlaceOfBirthSau:
-      type: object
-      properties:
-        region:
-          type: string
-        locality:
-          type: string
-        country:
-          type: string
-    CurrencyAmountSau:
+    IdentityVerifiedClaimsSau:
       required:
-      - amount
-      - currency
+      - claims
+      - verification
       type: object
       properties:
-        amount:
-          type: number
-        currency:
+        verification:
+          $ref: '#/components/schemas/IdentityVerificationSau'
+        claims:
+          $ref: '#/components/schemas/IdentityClaimsSau'
+    Page:
+      type: object
+      properties:
+        number:
+          format: int32
+          description: The page number of the current response.
+          type: integer
+        size:
+          format: int32
+          description: The number of objects in the response.
+          type: integer
+        total_elements:
+          format: int32
+          description: The total number of objects available.
+          type: integer
+        total_pages:
+          format: int32
+          description: The total number of pages to consume all of the elements.
+          type: integer
+    TransactionMerchantDetailsSau:
+      type: object
+      properties:
+        merchant_id:
+          format: int32
+          type: integer
+        merchant_name:
+          type: string
+        merchant_category_code:
           type: string
     AddressLongSau:
       type: object
@@ -3832,131 +3929,145 @@ components:
           type: string
         country:
           type: string
-    Beneficiary:
+    DirectDebit:
       required:
       - account_id
-      - beneficiary_id
-      - beneficiary_type
+      - direct_debit_id
+      - frequency
+      - mandate_identification
+      - name
+      - status_code
       type: object
       properties:
         account_id:
           type: string
-        beneficiary_id:
+        direct_debit_id:
           type: string
-        beneficiary_type:
+        status_code:
           enum:
-          - TRUSTED
-          - ORDINARY
+          - ACTIVE
+          - INACTIVE
+          - UNSUPPORTED
+          type: string
+        frequency:
+          enum:
+          - MONTHLY
+          - QUARTERLY
+          - BI_ANNUAL
+          - ANNUAL
+          - FORTNIGHT
+          - DAILY
+          - WEEKLY
+          - NOT_KNOWN
+          - UNSUPPORTED
+          type: string
+        mandate_identification:
+          type: string
+        name:
+          type: string
+        previous_payment_date_time:
+          format: date-time
+          type: string
+        previous_payment_amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+        regional_data:
+          $ref: '#/components/schemas/DirectDebitRegionalData'
+          description: Region specific data response. Only provided when `verbose=true` in the originating request.
+    BeneficiaryCreditorAgent:
+      required:
+      - identification
+      - scheme_name
+      type: object
+      properties:
+        scheme_name:
+          enum:
+          - BICFI
           - OTHER
           - UNSUPPORTED
           type: string
-        creditor_agent:
-          $ref: '#/components/schemas/BeneficiaryCreditorAgent'
-        creditor_account:
-          $ref: '#/components/schemas/AccountIdentifier'
-        supplementary_data:
-          type: object
-          additionalProperties:
-            type: string
-          properties: {}
-        regional_data:
-          $ref: '#/components/schemas/BeneficiaryRegionalData'
-          description: Region specific data response. Only provided when `verbose=true` in the originating request.
-    PostalAddress:
+        identification:
+          type: string
+        name:
+          type: string
+        postal_address:
+          $ref: '#/components/schemas/PostalAddress'
+    ChargeCurrencyAmountSau:
+      required:
+      - amount
+      - currency
       type: object
       properties:
-        address_line:
+        amount:
+          type: number
+        currency:
           type: string
-        address_type:
-          enum:
-          - BUSINESS
-          - CORRESPONDENCE
-          - DELIVERY_TO
-          - MAIL_TO
-          - PO_BOX
-          - POSTAL
-          - RESIDENTIAL
-          - STATEMENT
-          - UNSUPPORTED
-          type: string
-        building_number:
-          type: string
-        country:
-          type: string
-        department:
-          type: string
-        post_code:
-          type: string
-        street_name:
-          type: string
-        sub_department:
-          type: string
-        town_name:
-          type: string
-        country_sub_division:
-          type: string
-    AttachmentSau:
+        charge_included:
+          type: boolean
+    StandingOrderRegionalData:
+      allOf:
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/StandingOrderSau'
+      - $ref: '#/components/schemas/StandardSau'
+    IdentityCheckDetailsSau:
       type: object
       properties:
-        desc:
+        check_method:
           type: string
-        content_type:
-          type: string
-        content:
+        organization:
           type: string
         txn:
           type: string
-    BeneficiariesData:
-      allOf:
-      - $ref: '#/components/schemas/PageAndType'
-      - type: object
-        properties:
-          beneficiaries:
-            type: array
-            items:
-              $ref: '#/components/schemas/Beneficiary'
-    IdentityAssuranceDetailsSau:
-      type: object
-      properties:
-        assurance_type:
+        time:
+          format: date-time
           type: string
-        assurance_classification:
-          type: string
-        evidence_ref:
-          type: array
-          items:
-            $ref: '#/components/schemas/IdentityEvidenceRefSau'
-    IdentityDocumentDetailsSau:
+    IdentityEvidenceDocumentSau:
       type: object
       properties:
         type:
           enum:
-          - PASSPORT
-          - DRIVING_PERMIT
-          - ID_CARD
-          - RESIDENCE_PERMIT
+          - DOCUMENT
           - UNSUPPORTED
           type: string
-        document_number:
+        verifier:
+          $ref: '#/components/schemas/VerifierSau'
+        time:
+          format: date-time
           type: string
-        personal_number:
-          type: string
-        serial_number:
-          type: string
-        calendar_type:
+        document_details:
+          $ref: '#/components/schemas/IdentityDocumentDetailsSau'
+        check_details:
+          type: array
+          items:
+            $ref: '#/components/schemas/IdentityCheckDetailsSau'
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttachmentSau'
+    AccountIdentifierWithNameSau:
+      type: object
+      properties:
+        identification_type:
+          description: Indicates the type of identification being provided.
           enum:
-          - ISLAMIC_CALENDAR
-          - GREGORIAN_CALENDAR
+          - IBAN
+          - MASKED_PAN
+          - ACCOUNT_NUMBER
+          - COMMERCIAL_REGISTRATION_NUMBER
+          - EMAIL
+          - MOBILE_NUMBER
+          - NATIONAL_ID
+          - IQAMA_NUMBER
+          - PASSPORT_NUMBER
           - UNSUPPORTED
           type: string
-        date_of_issuance:
-          format: date
+        identification:
+          description: Returns a value based on the `identification_type`.
           type: string
-        date_of_expiry:
-          format: date
+        name:
+          description: 'The account name is the name or names of the account owner(s) represented at an account level. Note: The account name is not the product name or the nickname of the account.'
           type: string
-        issuer:
-          $ref: '#/components/schemas/IssuerSau'
     IdentitySau:
       required:
       - party_id
@@ -3998,152 +4109,20 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/IdentityVerifiedClaimsSau'
-    DirectDebitsData:
-      allOf:
-      - $ref: '#/components/schemas/PageAndType'
-      - type: object
-        properties:
-          direct_debits:
-            type: array
-            items:
-              $ref: '#/components/schemas/DirectDebit'
     IdentityEvidenceMetadataSau:
       type: object
       properties:
         evidence_classification:
           type: string
-    Page:
-      type: object
-      properties:
-        number:
-          format: int32
-          description: The page number of the current response.
-          type: integer
-        size:
-          format: int32
-          description: The number of objects in the response.
-          type: integer
-        total_elements:
-          format: int32
-          description: The total number of objects available.
-          type: integer
-        total_pages:
-          format: int32
-          description: The total number of pages to consume all of the elements.
-          type: integer
-    TransactionCardInstrumentSau:
-      required:
-      - instrument_type
-      - card_scheme_name
-      type: object
-      properties:
-        card_scheme_name:
-          enum:
-          - AMERICAN_EXPRESS
-          - MASTER_CARD
-          - VISA
-          - DINERS
-          - MADA
-          - GCC
-          - UPI
-          - UNSUPPORTED
-          type: string
-        instrument_type:
-          enum:
-          - APPLE_PAY
-          - MADA_PAY
-          - CONTACTLESS
-          - CHIP
-          - MAG_STRIPE
-          - OTHER
-          - UNSUPPORTED
-          type: string
-        identification:
-          type: string
-        name:
-          type: string
-    StandingOrderRegionalData:
+    IdentityData:
       allOf:
+      - $ref: '#/components/schemas/PageAndType'
       - type: object
         properties:
-          data:
-            $ref: '#/components/schemas/StandingOrderSau'
-      - $ref: '#/components/schemas/StandardSau'
-    BeneficiaryCreditorAgent:
-      required:
-      - identification
-      - scheme_name
-      type: object
-      properties:
-        scheme_name:
-          enum:
-          - BICFI
-          - OTHER
-          - UNSUPPORTED
-          type: string
-        identification:
-          type: string
-        name:
-          type: string
-        postal_address:
-          $ref: '#/components/schemas/PostalAddress'
-    IdentityAssuranceProcessSau:
-      type: object
-      properties:
-        policy:
-          type: string
-        procedure:
-          type: string
-        assurance_details:
-          type: array
-          items:
-            $ref: '#/components/schemas/IdentityAssuranceDetailsSau'
-    DirectDebitsResponse:
-      allOf:
-      - type: object
-        properties:
-          data:
-            $ref: '#/components/schemas/DirectDebitsData'
-      - $ref: '#/components/schemas/DataResponse'
-    AccountIdentifier:
-      type: object
-      properties:
-        scheme_name:
-          type: string
-          description: Name of the identification scheme for the account.
-          enum:
-          - IBAN
-          - BBAN
-          - PAN
-          - OTHER
-          - UNSUPPORTED
-        identification:
-          type: string
-          description: Identification value for the account assigned by the bank based on the Account Scheme Name
-        name:
-          type:
-          - string
-          - 'null'
-          description: The name of the account owner(s) represented at an account level
-    IdentitiesResponse:
-      allOf:
-      - type: object
-        properties:
-          data:
-            $ref: '#/components/schemas/IdentitiesData_2'
-      - $ref: '#/components/schemas/DataResponse'
-    ChargeCurrencyAmountSau:
-      required:
-      - amount
-      - currency
-      type: object
-      properties:
-        amount:
-          type: number
-        currency:
-          type: string
-        charge_included:
-          type: boolean
+          identities:
+            type: array
+            items:
+              $ref: '#/components/schemas/Identity'
     IdentityResponse:
       allOf:
       - type: object
@@ -4151,46 +4130,58 @@ components:
           data:
             $ref: '#/components/schemas/IdentityData'
       - $ref: '#/components/schemas/DataResponse'
-    DirectDebitRegionalData:
-      allOf:
-      - type: object
-        properties:
-          data:
-            $ref: '#/components/schemas/DirectDebitSau'
-      - $ref: '#/components/schemas/StandardSau'
-    StandardSau:
+    BeneficiarySau:
+      required:
+      - account_id
+      - beneficiary_id
+      - beneficiary_type
       type: object
       properties:
-        standard:
-          description: A description of the standard the regional data is returned in formatted as `"{ISO 3 Letter Country Code}.{Standard}.{Version}"`. In the KSA V2 API this will always return as `"SAU.SAMA.V1"`
+        account_id:
           type: string
-          examples:
-          - SAU.SAMA.V1
-    AgentIdentifierWithAddressSau:
+        account_holder_name:
+          description: Name of the account holder
+          type: string
+        account_holder_short_name:
+          description: Short form of the name of the account holder
+          type: string
+        beneficiary_id:
+          type: string
+        beneficiary_type:
+          enum:
+          - ACTIVATED
+          - NOT_ACTIVATED
+          - UNSUPPORTED
+          type: string
+        reference:
+          type: string
+        creditor_agent:
+          $ref: '#/components/schemas/AgentIdentifierWithAddressRequiredSau'
+        creditor_account:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountIdentifierSau'
+        supplementary_data:
+          type: object
+          additionalProperties:
+            type: string
+          properties: {}
+    AgentIdentifier:
       type: object
       properties:
-        identification_type:
+        scheme_name:
+          type: string
+          description: The name of the identification scheme for the Bank
           enum:
           - BICFI
           - OTHER
           - UNSUPPORTED
-          type: string
+          examples:
+          - BICFI
         identification:
           type: string
-        name:
-          type: string
-        postal_address:
-          $ref: '#/components/schemas/AddressLongSau'
+          description: Unique and unambiguous identification of the Bank
   examples:
-    UnknownEntityExample:
-      summary: Entity not found error response
-      description: Response when the provided entity_id is not found
-      value:
-        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
-        timestamp: '2025-09-10T21:03:05.413806605Z'
-        status: UNKNOWN_ENTITY
-        message: The entity_id provided did not match an account in our records.
-        metadata: null
     AsyncProcessingV2Example:
       summary: Asynchronous processing response with async=true
       description: Response to request with async=true
@@ -4204,6 +4195,15 @@ components:
         data: null
         type: null
         refreshed_at: null
+    InvalidParametersExample:
+      summary: Invalid parameters error response
+      description: Response when required parameters are missing or invalid
+      value:
+        results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
+        timestamp: '2025-09-10T21:05:59.919233187Z'
+        status: INVALID_PARAMETERS
+        message: 'The request is badly formatted or a parameter of the wrong type has been provided, field: entity_id, value: e34d8e49-9af2-4252-a53e-bd2df855134.'
+        metadata: null
     InternalServerErrorExample:
       summary: Internal server error response
       description: Response when an unexpected server error occurs
@@ -4213,14 +4213,14 @@ components:
         status: INTERNAL_SERVER_ERROR
         message: Something has gone wrong. If you continue to see this error, please get in touch with Lean.
         metadata: null
-    InvalidParametersExample:
-      summary: Invalid parameters error response
-      description: Response when required parameters are missing or invalid
+    UnknownEntityExample:
+      summary: Entity not found error response
+      description: Response when the provided entity_id is not found
       value:
         results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
-        timestamp: '2025-09-10T21:05:59.919233187Z'
-        status: INVALID_PARAMETERS
-        message: 'The request is badly formatted or a parameter of the wrong type has been provided, field: entity_id, value: e34d8e49-9af2-4252-a53e-bd2df855134.'
+        timestamp: '2025-09-10T21:03:05.413806605Z'
+        status: UNKNOWN_ENTITY
+        message: The entity_id provided did not match an account in our records.
         metadata: null
     UnknownAccountExample:
       summary: Account not found error response
@@ -4240,6 +4240,23 @@ components:
       schema:
         type: string
         format: uuid
+    EntityIdParameter:
+      name: entity_id
+      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
+      in: query
+      required: false
+      schema:
+        type: string
+        format: uuid
+    PageParameter:
+      name: page
+      in: query
+      description: The page you're requesting - returns page 0 of a response if not specified.
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
     AsyncParameter:
       name: async
       in: query
@@ -4266,23 +4283,6 @@ components:
       required: false
       schema:
         type: string
-    PageParameter:
-      name: page
-      in: query
-      description: The page you're requesting - returns page 0 of a response if not specified.
-      required: false
-      schema:
-        type: integer
-        default: 0
-        minimum: 0
-    EntityIdParameter:
-      name: entity_id
-      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
-      in: query
-      required: false
-      schema:
-        type: string
-        format: uuid
   securitySchemes:
     bearerAuth:
       type: http
