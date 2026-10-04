@@ -109,6 +109,28 @@ paths:
       - Beneficiary Name Verification
 components:
   schemas:
+    StatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        granular_status_code:
+          description: Granular status code
+          type:
+          - string
+          - 'null'
+        status_additional_info:
+          description: Additional information about the status
+          type:
+          - string
+          - 'null'
+    VerificationResponseBeneficiaryNamePayload:
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          verifications:
+            $ref: '#/components/schemas/BeneficiaryNamePayload'
     Result:
       type: object
       properties:
@@ -144,37 +166,14 @@ components:
       - results_id
       - message
       - timestamp
-    VerificationResponseBeneficiaryNamePayload:
-      allOf:
-      - $ref: '#/components/schemas/Result'
-      - type: object
-        properties:
-          verifications:
-            $ref: '#/components/schemas/BeneficiaryNamePayload'
-    ResultStatus:
-      description: The status of the request
-      type: string
-      enum:
-      - OK
-      - PENDING
-      - FAILED
-      - CONSENT_EXPIRED
-      - PROCESSING_STARTED
-    StatusDetail:
-      type:
-      - object
-      - 'null'
+    BeneficiaryNameRequest:
+      type: object
       properties:
-        granular_status_code:
-          description: Granular status code
-          type:
-          - string
-          - 'null'
-        status_additional_info:
-          description: Additional information about the status
-          type:
-          - string
-          - 'null'
+        iban:
+          description: International Bank Account Number to retrieve beneficiary name for
+          type: string
+      required:
+      - iban
     BeneficiaryNamePayload:
       description: Beneficiary name and account status retrieved from the bank
       type: object
@@ -188,14 +187,15 @@ components:
       required:
       - beneficiary_name
       - account_status
-    BeneficiaryNameRequest:
-      type: object
-      properties:
-        iban:
-          description: International Bank Account Number to retrieve beneficiary name for
-          type: string
-      required:
-      - iban
+    ResultStatus:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - PROCESSING_STARTED
   securitySchemes:
     bearerAuth:
       type: http

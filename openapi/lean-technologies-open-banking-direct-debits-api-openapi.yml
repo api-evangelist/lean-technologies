@@ -142,6 +142,13 @@ paths:
       - Open Banking Direct Debits
 components:
   parameters:
+    FapiInteractionId:
+      name: x-fapi-interaction-id
+      in: header
+      description: An RFC4122 UID used as a correlation id.
+      required: false
+      schema:
+        type: string
     CustomerId:
       name: CustomerId
       in: query
@@ -150,15 +157,14 @@ components:
       schema:
         type: string
         format: uuid
-    OBPageParm:
-      name: Page
+    EntityId:
+      name: EntityId
       in: query
-      description: The page you're requesting - returns page 0 of a response if not specified.
+      description: The entity_id of the connected customer.
       required: false
       schema:
-        type: integer
-        default: 0
-        minimum: 0
+        type: string
+        format: uuid
     OBSizeParam:
       name: Size
       description: The number of objects you want to return as a page size.
@@ -169,21 +175,15 @@ components:
         default: 50
         maximum: 100
         minimum: 1
-    EntityId:
-      name: EntityId
+    OBPageParm:
+      name: Page
       in: query
-      description: The entity_id of the connected customer.
+      description: The page you're requesting - returns page 0 of a response if not specified.
       required: false
       schema:
-        type: string
-        format: uuid
-    FapiInteractionId:
-      name: x-fapi-interaction-id
-      in: header
-      description: An RFC4122 UID used as a correlation id.
-      required: false
-      schema:
-        type: string
+        type: integer
+        default: 0
+        minimum: 0
     AccountId:
       name: AccountId
       in: path
@@ -193,99 +193,6 @@ components:
         type: string
         format: uuid
   schemas:
-    OBLinks:
-      description: Links relevant to the resource for pagination navigation.
-      type: object
-      properties:
-        Self:
-          description: A link to the current resource.
-          type: string
-          format: uri
-        First:
-          description: A link to the first page in a paginated result set.
-          type:
-          - string
-          - 'null'
-          format: uri
-        Prev:
-          description: A link to the previous page in a paginated result set.
-          type:
-          - string
-          - 'null'
-          format: uri
-        Next:
-          description: A link to the next page in a paginated result set.
-          type:
-          - string
-          - 'null'
-          format: uri
-        Last:
-          description: A link to the last page in a paginated result set.
-          type:
-          - string
-          - 'null'
-          format: uri
-      required:
-      - Self
-    OBDirectDebitsData:
-      description: Container for the list of Open Banking account direct debits.
-      type: object
-      properties:
-        CustomerId:
-          description: Lean provided customer ID
-          type:
-          - string
-          - 'null'
-          format: uuid
-        DirectDebit:
-          description: List of direct debits for the account.
-          type: array
-          items:
-            $ref: '#/components/schemas/OBDirectDebit'
-      required:
-      - DirectDebit
-    OBDirectDebit:
-      description: Account to or from which a cash entry is made.
-      type: object
-      properties:
-        DirectDebitId:
-          description: Unique and unambiguous identification for a direct debit mandate.
-          type: string
-          maxLength: 256
-          minLength: 1
-        MandateIdentification:
-          description: Unique and unambiguous identification of a financial institution or a branch of a financial institution.
-          type: string
-          maxLength: 35
-          minLength: 1
-        DirectDebitStatusCode:
-          $ref: '#/components/schemas/OBDirectDebitStatusCode'
-        Name:
-          description: Name of the direct debit mandate.
-          type: string
-          maxLength: 70
-          minLength: 1
-        Frequency:
-          $ref: '#/components/schemas/OBDirectDebitFrequency'
-        PreviousPaymentDateTime:
-          description: Date of the most recent direct debit collection for the account. ISO 8601 format.
-          type:
-          - string
-          - 'null'
-          format: date-time
-        PreviousPaymentAmount:
-          description: Amount of the most recent direct debit collection.
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/OBAmount'
-      required:
-      - DirectDebitId
-      - MandateIdentification
-      - DirectDebitStatusCode
-      - Name
-      - Frequency
     OBGetDirectDebitsResponse:
       description: Response envelope for the Open Banking account direct debits.
       type: object
@@ -344,6 +251,71 @@ components:
       - Status
       - Message
       - Timestamp
+    OBDirectDebitStatusCode:
+      description: Indicates the status of the direct debit in code form.
+      type: string
+      enum:
+      - Active
+      - Inactive
+    OBDirectDebit:
+      description: Account to or from which a cash entry is made.
+      type: object
+      properties:
+        DirectDebitId:
+          description: Unique and unambiguous identification for a direct debit mandate.
+          type: string
+          maxLength: 256
+          minLength: 1
+        MandateIdentification:
+          description: Unique and unambiguous identification of a financial institution or a branch of a financial institution.
+          type: string
+          maxLength: 35
+          minLength: 1
+        DirectDebitStatusCode:
+          $ref: '#/components/schemas/OBDirectDebitStatusCode'
+        Name:
+          description: Name of the direct debit mandate.
+          type: string
+          maxLength: 70
+          minLength: 1
+        Frequency:
+          $ref: '#/components/schemas/OBDirectDebitFrequency'
+        PreviousPaymentDateTime:
+          description: Date of the most recent direct debit collection for the account. ISO 8601 format.
+          type:
+          - string
+          - 'null'
+          format: date-time
+        PreviousPaymentAmount:
+          description: Amount of the most recent direct debit collection.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBAmount'
+      required:
+      - DirectDebitId
+      - MandateIdentification
+      - DirectDebitStatusCode
+      - Name
+      - Frequency
+    OBDirectDebitsData:
+      description: Container for the list of Open Banking account direct debits.
+      type: object
+      properties:
+        CustomerId:
+          description: Lean provided customer ID
+          type:
+          - string
+          - 'null'
+          format: uuid
+        DirectDebit:
+          description: List of direct debits for the account.
+          type: array
+          items:
+            $ref: '#/components/schemas/OBDirectDebit'
+      required:
+      - DirectDebit
     OBMeta:
       description: Metadata relevant to the resource.
       type: object
@@ -355,6 +327,21 @@ components:
           - 'null'
           format: int32
           minimum: 0
+    OBStatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        GranularStatusCode:
+          description: Granular status code providing additional information on the request status.
+          type:
+          - string
+          - 'null'
+        StatusAdditionalInfo:
+          description: Additional human-readable information about the status.
+          type:
+          - string
+          - 'null'
     OBDirectDebitFrequency:
       description: Regularity with which direct debit instructions are to be created and processed.
       type: string
@@ -367,6 +354,40 @@ components:
       - KSAOB.NotKnown
       - KSAOB.Quarterly
       - KSAOB.Weekly
+    OBLinks:
+      description: Links relevant to the resource for pagination navigation.
+      type: object
+      properties:
+        Self:
+          description: A link to the current resource.
+          type: string
+          format: uri
+        First:
+          description: A link to the first page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+        Prev:
+          description: A link to the previous page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+        Next:
+          description: A link to the next page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+        Last:
+          description: A link to the last page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+      required:
+      - Self
     OBAmount:
       description: Active or historic currency and amount.
       type: object
@@ -384,27 +405,6 @@ components:
       required:
       - Amount
       - Currency
-    OBDirectDebitStatusCode:
-      description: Indicates the status of the direct debit in code form.
-      type: string
-      enum:
-      - Active
-      - Inactive
-    OBStatusDetail:
-      type:
-      - object
-      - 'null'
-      properties:
-        GranularStatusCode:
-          description: Granular status code providing additional information on the request status.
-          type:
-          - string
-          - 'null'
-        StatusAdditionalInfo:
-          description: Additional human-readable information about the status.
-          type:
-          - string
-          - 'null'
   securitySchemes:
     bearerAuth:
       type: http

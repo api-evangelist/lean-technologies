@@ -341,6 +341,47 @@ paths:
       - Iban Verification
 components:
   schemas:
+    IbanVerificationMatchAvailability:
+      description: Availability status for match and no-match scenarios
+      type: object
+      properties:
+        match:
+          $ref: '#/components/schemas/IbanVerificationEnablement'
+        no_match:
+          $ref: '#/components/schemas/IbanVerificationEnablement'
+      required:
+      - match
+      - no_match
+    IbanVerificationResponsePayload:
+      type: object
+      properties:
+        iban_ownership_verified:
+          description: Verifying whether the account holder name provided owns the IBAN checked. Allowed values true and false
+          type: boolean
+        matching:
+          $ref: '#/components/schemas/MatchingResult'
+        swift_code:
+          description: Swift code that identifies the bank for international transfers
+          type: string
+        bank_name:
+          $ref: '#/components/schemas/Translation'
+        bank_code:
+          description: Bank code identifier
+          type: string
+        account_status:
+          description: Status of the bank account
+          type: string
+        account_holder_name:
+          description: Name of the account holder
+          type: string
+        verification_method:
+          description: The verification method used to verify the entity's ownership
+          type: string
+          enum:
+          - CONFIRMATION_OF_PAYEE_SERVICE
+          - OPEN_BANKING
+          - SARIE
+          - SARIE_AND_CONFIRMATION_OF_PAYEE_SERVICE
     AvsIdentificationDto:
       type: object
       properties:
@@ -350,6 +391,95 @@ components:
           description: Identification value
           type: string
           minLength: 1
+    IbanVerificationRequest:
+      type: object
+      properties:
+        type:
+          description: 'Will take the value PERSONAL for retail accounts, BUSINESS for corporate accounts and FREELANCER for freelancer accounts.
+
+            '
+          type: string
+        iban:
+          description: 'A valid Saudi IBAN.
+
+            '
+          type: string
+        identifications:
+          description: 'List of identifiers for your customers. You can use full name or an ID. Where using ID, if type is PERSONAL, provide a valid Saudi NID/Iqama for NATIONAL_ID.
+
+
+            If type is BUSINESS, provide either a COMMERCIAL_REGISTRATION or UNIFIED_NUMBER (which starts with ‘7’) or you can provide both identifiers where available.
+
+
+            If type is FREELANCER, provide both the FREELANCER_NUMBER (starting with ‘FL-‘) and a valid Saudi NID/Iqama for NATIONAL_ID.
+
+            '
+          type: array
+          items:
+            $ref: '#/components/schemas/AvsIdentificationDto'
+    IbanVerificationEnablement:
+      description: Enablement status indicating whether a feature is enabled or disabled
+      type: string
+      enum:
+      - ENABLED
+      - DISABLED
+    IbanVerificationAccountTypeAvailability:
+      description: Availability status per account type for IBAN verification
+      type: object
+      properties:
+        personal:
+          $ref: '#/components/schemas/IbanVerificationMatchAvailability'
+        freelancer:
+          $ref: '#/components/schemas/IbanVerificationMatchAvailability'
+        business:
+          $ref: '#/components/schemas/IbanVerificationMatchAvailability'
+      required:
+      - personal
+      - freelancer
+      - business
+    StatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        granular_status_code:
+          description: Granular status code
+          type:
+          - string
+          - 'null'
+        status_additional_info:
+          description: Additional information about the status
+          type:
+          - string
+          - 'null'
+    AvsIdentificationType:
+      description: "`NATIONAL_ID`: Saudi ID or Iqama \n`FULL_NAME`: Full name \n`COMMERCIAL_REGISTRATION`: Commercial registration number\n`UNIFIED_NUMBER`: Unified number\n`FREELANCER_NUMBER`: Freelancer certificate number\n"
+      type: string
+    VerificationResponseIbanVerificationResponsePayload:
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          verifications:
+            $ref: '#/components/schemas/IbanVerificationResponsePayload'
+    MatchingResult:
+      description: Where `iban_ownership_verified` is false the matching attribute will identify whether there is a 'partial' or 'no match'
+      type:
+      - object
+      - 'null'
+      properties:
+        type:
+          description: Identifies whether there is a partial match or no match
+          type: string
+          enum:
+          - PARTIAL
+          - NO_MATCH
+        score:
+          description: Similarity score on a scale of 0 to 1, with 0 being no similarity and 1 being high similarity.
+          type: number
+          format: double
+          maximum: 1
+          minimum: 0
     Result:
       type: object
       properties:
@@ -385,62 +515,19 @@ components:
       - results_id
       - message
       - timestamp
-    IbanVerificationRequest:
+    Translation:
       type: object
       properties:
-        type:
-          description: 'Will take the value PERSONAL for retail accounts, BUSINESS for corporate accounts and FREELANCER for freelancer accounts.
-
-            '
+        en:
+          description: English translation
           type: string
-        iban:
-          description: 'A valid Saudi IBAN.
-
-            '
-          type: string
-        identifications:
-          description: 'List of identifiers for your customers. You can use full name or an ID. Where using ID, if type is PERSONAL, provide a valid Saudi NID/Iqama for NATIONAL_ID.
-
-
-            If type is BUSINESS, provide either a COMMERCIAL_REGISTRATION or UNIFIED_NUMBER (which starts with ‘7’) or you can provide both identifiers where available.
-
-
-            If type is FREELANCER, provide both the FREELANCER_NUMBER (starting with ‘FL-‘) and a valid Saudi NID/Iqama for NATIONAL_ID.
-
-            '
-          type: array
-          items:
-            $ref: '#/components/schemas/AvsIdentificationDto'
-    IbanVerificationResponsePayload:
-      type: object
-      properties:
-        iban_ownership_verified:
-          description: Verifying whether the account holder name provided owns the IBAN checked. Allowed values true and false
-          type: boolean
-        matching:
-          $ref: '#/components/schemas/MatchingResult'
-        swift_code:
-          description: Swift code that identifies the bank for international transfers
-          type: string
-        bank_name:
-          $ref: '#/components/schemas/Translation'
-        bank_code:
-          description: Bank code identifier
-          type: string
-        account_status:
-          description: Status of the bank account
-          type: string
-        account_holder_name:
-          description: Name of the account holder
-          type: string
-        verification_method:
-          description: The verification method used to verify the entity's ownership
-          type: string
-          enum:
-          - CONFIRMATION_OF_PAYEE_SERVICE
-          - OPEN_BANKING
-          - SARIE
-          - SARIE_AND_CONFIRMATION_OF_PAYEE_SERVICE
+        ar:
+          description: Arabic translation
+          type:
+          - string
+          - 'null'
+      required:
+      - en
     ApplicationBankAvailability:
       description: Application-level bank enablement configuration
       type: object
@@ -457,77 +544,17 @@ components:
       - country_code
       - bank_code
       - enablement
-    IbanVerificationEnablement:
-      description: Enablement status indicating whether a feature is enabled or disabled
-      type: string
-      enum:
-      - ENABLED
-      - DISABLED
-    ResultStatus:
-      description: The status of the request
-      type: string
-      enum:
-      - OK
-      - PENDING
-      - FAILED
-      - CONSENT_EXPIRED
-      - PROCESSING_STARTED
-    IbanVerificationAccountTypeAvailability:
-      description: Availability status per account type for IBAN verification
+    IbanVerificationBankAvailability:
+      description: Availability status of the bank for IBAN verification
       type: object
       properties:
-        personal:
-          $ref: '#/components/schemas/IbanVerificationMatchAvailability'
-        freelancer:
-          $ref: '#/components/schemas/IbanVerificationMatchAvailability'
-        business:
-          $ref: '#/components/schemas/IbanVerificationMatchAvailability'
+        global:
+          $ref: '#/components/schemas/IbanVerificationEnablement'
+        account_type:
+          $ref: '#/components/schemas/IbanVerificationAccountTypeAvailability'
       required:
-      - personal
-      - freelancer
-      - business
-    Translation:
-      type: object
-      properties:
-        en:
-          description: English translation
-          type: string
-        ar:
-          description: Arabic translation
-          type:
-          - string
-          - 'null'
-      required:
-      - en
-    StatusDetail:
-      type:
-      - object
-      - 'null'
-      properties:
-        granular_status_code:
-          description: Granular status code
-          type:
-          - string
-          - 'null'
-        status_additional_info:
-          description: Additional information about the status
-          type:
-          - string
-          - 'null'
-    UpdateIbanVerificationBankConfigurationRequest:
-      description: Request body for updating application-level bank configurations
-      type: object
-      properties:
-        availabilities:
-          description: List of bank availability configurations to update
-          type: array
-          items:
-            $ref: '#/components/schemas/ApplicationBankAvailability'
-      required:
-      - availabilities
-    AvsIdentificationType:
-      description: "`NATIONAL_ID`: Saudi ID or Iqama \n`FULL_NAME`: Full name \n`COMMERCIAL_REGISTRATION`: Commercial registration number\n`UNIFIED_NUMBER`: Unified number\n`FREELANCER_NUMBER`: Freelancer certificate number\n"
-      type: string
+      - global
+      - account_type
     IbanVerificationBankConfiguration:
       description: Bank configuration for IBAN verification including availability and enablement status
       type: object
@@ -550,53 +577,26 @@ components:
       - bank_name
       - availability
       - application_enablement
-    VerificationResponseIbanVerificationResponsePayload:
-      allOf:
-      - $ref: '#/components/schemas/Result'
-      - type: object
-        properties:
-          verifications:
-            $ref: '#/components/schemas/IbanVerificationResponsePayload'
-    IbanVerificationBankAvailability:
-      description: Availability status of the bank for IBAN verification
+    ResultStatus:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - PROCESSING_STARTED
+    UpdateIbanVerificationBankConfigurationRequest:
+      description: Request body for updating application-level bank configurations
       type: object
       properties:
-        global:
-          $ref: '#/components/schemas/IbanVerificationEnablement'
-        account_type:
-          $ref: '#/components/schemas/IbanVerificationAccountTypeAvailability'
+        availabilities:
+          description: List of bank availability configurations to update
+          type: array
+          items:
+            $ref: '#/components/schemas/ApplicationBankAvailability'
       required:
-      - global
-      - account_type
-    IbanVerificationMatchAvailability:
-      description: Availability status for match and no-match scenarios
-      type: object
-      properties:
-        match:
-          $ref: '#/components/schemas/IbanVerificationEnablement'
-        no_match:
-          $ref: '#/components/schemas/IbanVerificationEnablement'
-      required:
-      - match
-      - no_match
-    MatchingResult:
-      description: Where `iban_ownership_verified` is false the matching attribute will identify whether there is a 'partial' or 'no match'
-      type:
-      - object
-      - 'null'
-      properties:
-        type:
-          description: Identifies whether there is a partial match or no match
-          type: string
-          enum:
-          - PARTIAL
-          - NO_MATCH
-        score:
-          description: Similarity score on a scale of 0 to 1, with 0 being no similarity and 1 being high similarity.
-          type: number
-          format: double
-          maximum: 1
-          minimum: 0
+      - availabilities
   securitySchemes:
     bearerAuth:
       type: http

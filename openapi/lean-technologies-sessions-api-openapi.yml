@@ -153,14 +153,45 @@ components:
       - redirect_url
       - expires_at
       - flow
-    FlowInfo:
-      description: A summary of the flow associated with this session.
+    GetPublicSessionResponse:
+      description: The current state of a session, including its lifecycle state, associated customer, and flow type.
       type: object
       properties:
+        id:
+          description: The unique identifier of this session.
+          type: string
+          format: uuid
+          examples:
+          - 9a1b3c5d-7e8f-4a2b-8c6d-0e1f2a3b4c5d
+        state:
+          $ref: '#/components/schemas/SessionState'
+        customer_id:
+          description: The identifier of the customer this session belongs to.
+          type: string
+          format: uuid
+          examples:
+          - 3fa85f64-5717-4562-b3fc-2c963f66afa6
         type:
           $ref: '#/components/schemas/SessionType'
+        session_url:
+          description: The Lean-hosted URL used to begin this session flow.
+          type: string
+          format: uri
+          examples:
+          - https://secure.leantech.me/9a1b3c5d-7e8f-4a2b-8c6d-0e1f2a3b4c5d
+        redirect_url:
+          description: The URL your customer is redirected to after completing or cancelling the session flow.
+          type: string
+          format: uri
+          examples:
+          - https://example.com/checkout/complete?order_id=ord_1234
       required:
+      - id
+      - state
+      - customer_id
       - type
+      - session_url
+      - redirect_url
     CreateSessionRequest:
       description: Configuration for a new session. Provide a customer, a flow type, and a redirect URL to receive the customer after the flow completes.
       type: object
@@ -217,45 +248,14 @@ components:
       - AUTHORIZED
       - EXPIRED
       - COMPLETED
-    GetPublicSessionResponse:
-      description: The current state of a session, including its lifecycle state, associated customer, and flow type.
+    FlowInfo:
+      description: A summary of the flow associated with this session.
       type: object
       properties:
-        id:
-          description: The unique identifier of this session.
-          type: string
-          format: uuid
-          examples:
-          - 9a1b3c5d-7e8f-4a2b-8c6d-0e1f2a3b4c5d
-        state:
-          $ref: '#/components/schemas/SessionState'
-        customer_id:
-          description: The identifier of the customer this session belongs to.
-          type: string
-          format: uuid
-          examples:
-          - 3fa85f64-5717-4562-b3fc-2c963f66afa6
         type:
           $ref: '#/components/schemas/SessionType'
-        session_url:
-          description: The Lean-hosted URL used to begin this session flow.
-          type: string
-          format: uri
-          examples:
-          - https://secure.leantech.me/9a1b3c5d-7e8f-4a2b-8c6d-0e1f2a3b4c5d
-        redirect_url:
-          description: The URL your customer is redirected to after completing or cancelling the session flow.
-          type: string
-          format: uri
-          examples:
-          - https://example.com/checkout/complete?order_id=ord_1234
       required:
-      - id
-      - state
-      - customer_id
       - type
-      - session_url
-      - redirect_url
   securitySchemes:
     OAuth2:
       type: oauth2

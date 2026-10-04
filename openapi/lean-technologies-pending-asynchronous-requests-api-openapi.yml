@@ -137,6 +137,39 @@ paths:
       - bearerAuth: []
 components:
   parameters:
+    PageParameter:
+      name: page
+      in: query
+      description: The page you're requesting - returns page 0 of a response if not specified.
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+    MetaParameter:
+      name: meta
+      description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
+      in: query
+      required: false
+      schema:
+        type: string
+    AsyncParameter:
+      name: async
+      in: query
+      description: 'When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. **Note: it''s recommended to use the sync flow (async=false) for all requests by adapting the [data workflow](https://docs.leantech.me/docs/data-workflow) for connected entities.**'
+      required: false
+      schema:
+        type: boolean
+        default: false
+      deprecated: true
+    EntityIdParameter:
+      name: entity_id
+      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
+      in: query
+      required: false
+      schema:
+        type: string
+        format: uuid
     SizeParameter:
       name: size
       description: The number of objects you want to return as a page size.
@@ -156,39 +189,6 @@ components:
       schema:
         type: string
         format: uuid
-    PageParameter:
-      name: page
-      in: query
-      description: The page you're requesting - returns page 0 of a response if not specified.
-      required: false
-      schema:
-        type: integer
-        default: 0
-        minimum: 0
-    MetaParameter:
-      name: meta
-      description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
-      in: query
-      required: false
-      schema:
-        type: string
-    EntityIdParameter:
-      name: entity_id
-      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
-      in: query
-      required: false
-      schema:
-        type: string
-        format: uuid
-    AsyncParameter:
-      name: async
-      in: query
-      description: 'When true the API will return a results_id which can be fetched from the /data/v2/results endpoint when ready. **Note: it''s recommended to use the sync flow (async=false) for all requests by adapting the [data workflow](https://docs.leantech.me/docs/data-workflow) for connected entities.**'
-      required: false
-      schema:
-        type: boolean
-        default: false
-      deprecated: true
   examples:
     UnknownResultExample:
       summary: Result not found error response
@@ -209,25 +209,6 @@ components:
         message: Something has gone wrong. If you continue to see this error, please get in touch with Lean.
         metadata: null
   schemas:
-    AccountsData:
-      allOf:
-      - type: object
-        properties: {}
-      - type: object
-        properties:
-          accounts:
-            description: An array of accounts associated with the Entity
-            type: array
-            items:
-              $ref: '#/components/schemas/Account'
-    AccountRegionalData:
-      allOf:
-      - type: object
-        properties:
-          data:
-            type: object
-            properties: {}
-      - $ref: '#/components/schemas/StandardSau'
     Account:
       type: object
       properties:
@@ -318,26 +299,6 @@ components:
             type: object
             properties: {}
       - $ref: '#/components/schemas/DataResponse'
-    ResultsResponse:
-      anyOf:
-      - $ref: '#/components/schemas/AccountsResponse'
-      - type: object
-        properties: {}
-      - type: object
-        properties: {}
-      - type: object
-        properties: {}
-      - type: object
-        properties: {}
-      - type: object
-        properties: {}
-      - type: object
-        properties: {}
-      - type: object
-        properties: {}
-      - $ref: '#/components/schemas/DirectDebitsResponse'
-      title: Results Response
-      description: ''
     AccountsResponse:
       allOf:
       - type: object
@@ -345,16 +306,6 @@ components:
           data:
             $ref: '#/components/schemas/AccountsData'
       - $ref: '#/components/schemas/DataResponse'
-    StatusDetailObject:
-      description: Status Details
-      type: object
-      properties:
-        granular_status_code:
-          description: Detailed error code
-          type: string
-        status_additional_info:
-          description: Further detail on the encountered error
-          type: string
     DataResponse:
       type: object
       properties:
@@ -392,6 +343,27 @@ components:
       - meta
       - timestamp
       - status_detail
+    StatusDetailObject:
+      description: Status Details
+      type: object
+      properties:
+        granular_status_code:
+          description: Detailed error code
+          type: string
+        status_additional_info:
+          description: Further detail on the encountered error
+          type: string
+    AccountsData:
+      allOf:
+      - type: object
+        properties: {}
+      - type: object
+        properties:
+          accounts:
+            description: An array of accounts associated with the Entity
+            type: array
+            items:
+              $ref: '#/components/schemas/Account'
     StandardSau:
       type: object
       properties:
@@ -400,6 +372,34 @@ components:
           type: string
           examples:
           - SAU.SAMA.V1
+    ResultsResponse:
+      anyOf:
+      - $ref: '#/components/schemas/AccountsResponse'
+      - type: object
+        properties: {}
+      - type: object
+        properties: {}
+      - type: object
+        properties: {}
+      - type: object
+        properties: {}
+      - type: object
+        properties: {}
+      - type: object
+        properties: {}
+      - type: object
+        properties: {}
+      - $ref: '#/components/schemas/DirectDebitsResponse'
+      title: Results Response
+      description: ''
+    AccountRegionalData:
+      allOf:
+      - type: object
+        properties:
+          data:
+            type: object
+            properties: {}
+      - $ref: '#/components/schemas/StandardSau'
     AgentIdentifier:
       type: object
       properties:

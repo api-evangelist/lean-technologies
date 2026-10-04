@@ -176,175 +176,7 @@ paths:
       tags:
       - Open Banking Accounts
 components:
-  parameters:
-    CustomerId:
-      name: CustomerId
-      in: query
-      description: The customer_id of the connected customer.
-      required: false
-      schema:
-        type: string
-        format: uuid
-    OBPageParm:
-      name: Page
-      in: query
-      description: The page you're requesting - returns page 0 of a response if not specified.
-      required: false
-      schema:
-        type: integer
-        default: 0
-        minimum: 0
-    OBSizeParam:
-      name: Size
-      description: The number of objects you want to return as a page size.
-      in: query
-      required: false
-      schema:
-        type: integer
-        default: 50
-        maximum: 100
-        minimum: 1
-    EntityId:
-      name: EntityId
-      in: query
-      description: The entity_id of the connected customer.
-      required: false
-      schema:
-        type: string
-        format: uuid
-    FapiInteractionId:
-      name: x-fapi-interaction-id
-      in: header
-      description: An RFC4122 UID used as a correlation id.
-      required: false
-      schema:
-        type: string
   schemas:
-    OBAccountServicer:
-      description: Party that manages the account on behalf of the account owner, managing registration and booking of entries.
-      type: object
-      properties:
-        IdentificationType:
-          $ref: '#/components/schemas/OBServicerIdentificationType'
-        Identification:
-          description: Unique identification of the servicing institution.
-          type: string
-          maxLength: 35
-          minLength: 1
-      required:
-      - IdentificationType
-      - Identification
-    OBLinks:
-      description: Links relevant to the resource for pagination navigation.
-      type: object
-      properties:
-        Self:
-          description: A link to the current resource.
-          type: string
-          format: uri
-        First:
-          description: A link to the first page in a paginated result set.
-          type:
-          - string
-          - 'null'
-          format: uri
-        Prev:
-          description: A link to the previous page in a paginated result set.
-          type:
-          - string
-          - 'null'
-          format: uri
-        Next:
-          description: A link to the next page in a paginated result set.
-          type:
-          - string
-          - 'null'
-          format: uri
-        Last:
-          description: A link to the last page in a paginated result set.
-          type:
-          - string
-          - 'null'
-          format: uri
-      required:
-      - Self
-    OBAccountIdentificationType:
-      description: Name of the identification scheme for the account.
-      type: string
-      enum:
-      - KSAOB.IBAN
-      - KSAOB.MaskedPAN
-      - KSAOB.AccountNumber
-      - KSAOB.CommercialRegistrationNumber
-      - KSAOB.Email
-      - KSAOB.MobileNumber
-      - KSAOB.NationalID
-      - KSAOB.IqamaNumber
-      - KSAOB.PassportNumber
-    OBServicerIdentificationType:
-      description: Name of the identification scheme for the servicing institution.
-      type: string
-      enum:
-      - KSAOB.BICFI
-      - KSAOB.OTHER
-    OBGetAccountsResponse:
-      description: Response envelope for the Open Banking accounts list.
-      type: object
-      properties:
-        Data:
-          description: Container for the list of Open Banking accounts. Null when the request fails.
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/OBAccountsData'
-        Status:
-          description: Status of the request.
-          type: string
-          enum:
-          - OK
-          - PENDING
-          - FAILED
-          - CONSENT_EXPIRED
-        Message:
-          description: Human-readable message describing the status of the request.
-          type: string
-        Timestamp:
-          description: Date and time when the response was generated.
-          type: string
-          format: date-time
-        RefreshedAt:
-          description: Date and time when the data was last refreshed from the bank.
-          type:
-          - string
-          - 'null'
-          format: date-time
-        StatusDetail:
-          description: Additional details about the request status.
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/OBStatusDetail'
-        Meta:
-          description: Metadata relevant to the resource, including pagination information.
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/OBMeta'
-        Links:
-          description: Links relevant to the resource for pagination navigation.
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/OBLinks'
-      required:
-      - Data
-      - Status
-      - Message
-      - Timestamp
     OBAccountsData:
       description: Container for the list of Open Banking accounts.
       type: object
@@ -362,55 +194,6 @@ components:
             $ref: '#/components/schemas/OBAccount'
       required:
       - Account
-    OBMeta:
-      description: Metadata relevant to the resource.
-      type: object
-      properties:
-        TotalPages:
-          description: Total number of pages where a result set is paginated.
-          type:
-          - integer
-          - 'null'
-          format: int32
-          minimum: 0
-    OBAccountSubType:
-      description: Specifies the sub-type of account (product family group).
-      type: string
-      enum:
-      - CurrentAccount
-      - Savings
-      - CreditCard
-      - PrePaidCard
-      - EMoney
-      - ChargeCard
-      - Other
-    OBAccountStatus:
-      description: 'Status of the account:
-
-        * Active — account exists and is active
-
-        * NotActive — inactive for 6 to 12 months
-
-        * Dormant — inactive for 1 to 5 years
-
-        * Unclaimed — inactive for more than 5 years
-
-        * Deceased — account holder has passed away
-
-        * Suspended — account suspended (e.g. for security reasons)
-
-        * Closed — account is closed
-
-        '
-      type: string
-      enum:
-      - Active
-      - NotActive
-      - Dormant
-      - Unclaimed
-      - Deceased
-      - Suspended
-      - Closed
     OBAccountIdentifier:
       description: Details to identify an account using a specific identification scheme.
       type: object
@@ -432,6 +215,65 @@ components:
       required:
       - IdentificationType
       - Identification
+    OBAccountIdentificationType:
+      description: Name of the identification scheme for the account.
+      type: string
+      enum:
+      - KSAOB.IBAN
+      - KSAOB.MaskedPAN
+      - KSAOB.AccountNumber
+      - KSAOB.CommercialRegistrationNumber
+      - KSAOB.Email
+      - KSAOB.MobileNumber
+      - KSAOB.NationalID
+      - KSAOB.IqamaNumber
+      - KSAOB.PassportNumber
+    OBMeta:
+      description: Metadata relevant to the resource.
+      type: object
+      properties:
+        TotalPages:
+          description: Total number of pages where a result set is paginated.
+          type:
+          - integer
+          - 'null'
+          format: int32
+          minimum: 0
+    OBServicerIdentificationType:
+      description: Name of the identification scheme for the servicing institution.
+      type: string
+      enum:
+      - KSAOB.BICFI
+      - KSAOB.OTHER
+    OBAccountServicer:
+      description: Party that manages the account on behalf of the account owner, managing registration and booking of entries.
+      type: object
+      properties:
+        IdentificationType:
+          $ref: '#/components/schemas/OBServicerIdentificationType'
+        Identification:
+          description: Unique identification of the servicing institution.
+          type: string
+          maxLength: 35
+          minLength: 1
+      required:
+      - IdentificationType
+      - Identification
+    OBStatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        GranularStatusCode:
+          description: Granular status code providing additional information on the request status.
+          type:
+          - string
+          - 'null'
+        StatusAdditionalInfo:
+          description: Additional human-readable information about the status.
+          type:
+          - string
+          - 'null'
     OBAccount:
       description: Unambiguous identification of the account to which credit and debit entries are made.
       type: object
@@ -527,21 +369,179 @@ components:
       enum:
       - KSAOB.Retail
       - KSAOB.Corporate
-    OBStatusDetail:
-      type:
-      - object
-      - 'null'
+    OBGetAccountsResponse:
+      description: Response envelope for the Open Banking accounts list.
+      type: object
       properties:
-        GranularStatusCode:
-          description: Granular status code providing additional information on the request status.
+        Data:
+          description: Container for the list of Open Banking accounts. Null when the request fails.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBAccountsData'
+        Status:
+          description: Status of the request.
+          type: string
+          enum:
+          - OK
+          - PENDING
+          - FAILED
+          - CONSENT_EXPIRED
+        Message:
+          description: Human-readable message describing the status of the request.
+          type: string
+        Timestamp:
+          description: Date and time when the response was generated.
+          type: string
+          format: date-time
+        RefreshedAt:
+          description: Date and time when the data was last refreshed from the bank.
           type:
           - string
           - 'null'
-        StatusAdditionalInfo:
-          description: Additional human-readable information about the status.
+          format: date-time
+        StatusDetail:
+          description: Additional details about the request status.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBStatusDetail'
+        Meta:
+          description: Metadata relevant to the resource, including pagination information.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBMeta'
+        Links:
+          description: Links relevant to the resource for pagination navigation.
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/OBLinks'
+      required:
+      - Data
+      - Status
+      - Message
+      - Timestamp
+    OBAccountSubType:
+      description: Specifies the sub-type of account (product family group).
+      type: string
+      enum:
+      - CurrentAccount
+      - Savings
+      - CreditCard
+      - PrePaidCard
+      - EMoney
+      - ChargeCard
+      - Other
+    OBAccountStatus:
+      description: 'Status of the account:
+
+        * Active — account exists and is active
+
+        * NotActive — inactive for 6 to 12 months
+
+        * Dormant — inactive for 1 to 5 years
+
+        * Unclaimed — inactive for more than 5 years
+
+        * Deceased — account holder has passed away
+
+        * Suspended — account suspended (e.g. for security reasons)
+
+        * Closed — account is closed
+
+        '
+      type: string
+      enum:
+      - Active
+      - NotActive
+      - Dormant
+      - Unclaimed
+      - Deceased
+      - Suspended
+      - Closed
+    OBLinks:
+      description: Links relevant to the resource for pagination navigation.
+      type: object
+      properties:
+        Self:
+          description: A link to the current resource.
+          type: string
+          format: uri
+        First:
+          description: A link to the first page in a paginated result set.
           type:
           - string
           - 'null'
+          format: uri
+        Prev:
+          description: A link to the previous page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+        Next:
+          description: A link to the next page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+        Last:
+          description: A link to the last page in a paginated result set.
+          type:
+          - string
+          - 'null'
+          format: uri
+      required:
+      - Self
+  parameters:
+    FapiInteractionId:
+      name: x-fapi-interaction-id
+      in: header
+      description: An RFC4122 UID used as a correlation id.
+      required: false
+      schema:
+        type: string
+    CustomerId:
+      name: CustomerId
+      in: query
+      description: The customer_id of the connected customer.
+      required: false
+      schema:
+        type: string
+        format: uuid
+    EntityId:
+      name: EntityId
+      in: query
+      description: The entity_id of the connected customer.
+      required: false
+      schema:
+        type: string
+        format: uuid
+    OBSizeParam:
+      name: Size
+      description: The number of objects you want to return as a page size.
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 50
+        maximum: 100
+        minimum: 1
+    OBPageParm:
+      name: Page
+      in: query
+      description: The page you're requesting - returns page 0 of a response if not specified.
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
   securitySchemes:
     bearerAuth:
       type: http

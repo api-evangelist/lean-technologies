@@ -131,22 +131,15 @@ paths:
       - bearer: []
 components:
   schemas:
-    ReportsCustomerIdentifier:
-      description: ''
-      required:
-      - type
-      - value
+    Report:
       type: object
       properties:
-        type:
-          description: the type of the identifier for the end user
-          enum:
-          - NATIONAL_ID
-          - COMMERCIAL_REGISTRATION
-          - UNIFIED_NUMBER
-          type: string
-        value:
-          description: the identifier for the end user
+        id:
+          description: ID of the report.
+          type: integer
+        timestamp:
+          format: date-time
+          description: Created date time.
           type: string
     ReportsCustomersRequest:
       required:
@@ -164,31 +157,29 @@ components:
           - PERSONAL
           - BUSINESS
           type: string
-    Report:
-      type: object
-      properties:
-        id:
-          description: ID of the report.
-          type: integer
-        timestamp:
-          format: date-time
-          description: Created date time.
-          type: string
-    ReportsCustomersResponse:
-      type: object
-      properties:
-        customer_id:
-          description: The id that Lean assigns to the customer that you can use to identify the customer across the Lean platform.
-          type: string
-        hyperlink:
-          description: URL that you can share with your customer so they can connect their bank account.
-          type: string
     ReportsReponse:
       type: object
       properties:
         reports:
           $ref: '#/components/schemas/Reports'
           description: Reports for customer
+    ReportsCustomerIdentifier:
+      description: ''
+      required:
+      - type
+      - value
+      type: object
+      properties:
+        type:
+          description: the type of the identifier for the end user
+          enum:
+          - NATIONAL_ID
+          - COMMERCIAL_REGISTRATION
+          - UNIFIED_NUMBER
+          type: string
+        value:
+          description: the identifier for the end user
+          type: string
     Reports:
       type: object
       properties:
@@ -203,6 +194,15 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Report'
+    ReportsCustomersResponse:
+      type: object
+      properties:
+        customer_id:
+          description: The id that Lean assigns to the customer that you can use to identify the customer across the Lean platform.
+          type: string
+        hyperlink:
+          description: URL that you can share with your customer so they can connect their bank account.
+          type: string
   securitySchemes:
     bearer:
       type: http

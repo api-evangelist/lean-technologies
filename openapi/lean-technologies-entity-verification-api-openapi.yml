@@ -49,6 +49,73 @@ paths:
       - Entity Verification
 components:
   schemas:
+    EntityIdentificationType:
+      description: "`NATIONAL_ID`: National identification number \n`COMMERCIAL_REGISTRATION`: Commercial registration number \n`UNIFIED_NUMBER`: Unified number \n`FREELANCER_NUMBER`: Freelancer number\n"
+      type: string
+      enum:
+      - NATIONAL_ID
+      - COMMERCIAL_REGISTRATION
+      - UNIFIED_NUMBER
+      - FREELANCER_NUMBER
+    StatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        granular_status_code:
+          description: Granular status code
+          type:
+          - string
+          - 'null'
+        status_additional_info:
+          description: Additional information about the status
+          type:
+          - string
+          - 'null'
+    EntityVerificationResponsePayload:
+      type: object
+      properties:
+        entity_ownership_verified:
+          description: Whether the entity ownership is verified
+          type: boolean
+        verification_method:
+          description: The verification method used to verify the entity's ownership
+          type: string
+          enum:
+          - CONFIRMATION_OF_PAYEE_SERVICE
+          - OPEN_BANKING
+          - SARIE
+          - SARIE_AND_CONFIRMATION_OF_PAYEE_SERVICE
+        ibans:
+          description: List of verified IBANs for the entity
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityVerificationResponseIban'
+    EntityVerificationApiRequest:
+      type: object
+      properties:
+        identifications:
+          description: Entity identifications for verification
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityIdentificationDto'
+          x-field-extra-annotation: '@me.leantech.api.validation.ValidEntityIdentifications'
+        entity_id:
+          description: Entity ID as in the Lean's records
+          type: string
+          format: uuid
+      required:
+      - entity_id
+      x-class-extra-annotation: '@me.leantech.api.validation.ValidEntityVerificationRequest'
+    EntityVerificationResponseIban:
+      type: object
+      properties:
+        iban:
+          description: Account IBAN
+          type: string
+        iban_ownership_verified:
+          description: Whether the IBAN is owned by the entity
+          type: boolean
     Result:
       type: object
       properties:
@@ -91,14 +158,6 @@ components:
         properties:
           verifications:
             $ref: '#/components/schemas/EntityVerificationResponsePayload'
-    EntityIdentificationType:
-      description: "`NATIONAL_ID`: National identification number \n`COMMERCIAL_REGISTRATION`: Commercial registration number \n`UNIFIED_NUMBER`: Unified number \n`FREELANCER_NUMBER`: Freelancer number\n"
-      type: string
-      enum:
-      - NATIONAL_ID
-      - COMMERCIAL_REGISTRATION
-      - UNIFIED_NUMBER
-      - FREELANCER_NUMBER
     ResultStatus:
       description: The status of the request
       type: string
@@ -108,46 +167,6 @@ components:
       - FAILED
       - CONSENT_EXPIRED
       - PROCESSING_STARTED
-    StatusDetail:
-      type:
-      - object
-      - 'null'
-      properties:
-        granular_status_code:
-          description: Granular status code
-          type:
-          - string
-          - 'null'
-        status_additional_info:
-          description: Additional information about the status
-          type:
-          - string
-          - 'null'
-    EntityVerificationApiRequest:
-      type: object
-      properties:
-        identifications:
-          description: Entity identifications for verification
-          type: array
-          items:
-            $ref: '#/components/schemas/EntityIdentificationDto'
-          x-field-extra-annotation: '@me.leantech.api.validation.ValidEntityIdentifications'
-        entity_id:
-          description: Entity ID as in the Lean's records
-          type: string
-          format: uuid
-      required:
-      - entity_id
-      x-class-extra-annotation: '@me.leantech.api.validation.ValidEntityVerificationRequest'
-    EntityVerificationResponseIban:
-      type: object
-      properties:
-        iban:
-          description: Account IBAN
-          type: string
-        iban_ownership_verified:
-          description: Whether the IBAN is owned by the entity
-          type: boolean
     EntityIdentificationDto:
       type: object
       properties:
@@ -157,25 +176,6 @@ components:
           description: Identification value
           type: string
           minLength: 1
-    EntityVerificationResponsePayload:
-      type: object
-      properties:
-        entity_ownership_verified:
-          description: Whether the entity ownership is verified
-          type: boolean
-        verification_method:
-          description: The verification method used to verify the entity's ownership
-          type: string
-          enum:
-          - CONFIRMATION_OF_PAYEE_SERVICE
-          - OPEN_BANKING
-          - SARIE
-          - SARIE_AND_CONFIRMATION_OF_PAYEE_SERVICE
-        ibans:
-          description: List of verified IBANs for the entity
-          type: array
-          items:
-            $ref: '#/components/schemas/EntityVerificationResponseIban'
   securitySchemes:
     bearerAuth:
       type: http

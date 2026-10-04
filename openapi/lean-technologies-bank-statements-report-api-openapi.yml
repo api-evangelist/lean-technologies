@@ -83,15 +83,6 @@ paths:
       - bearer: []
 components:
   schemas:
-    GetBankStatementsReportResponseBody:
-      allOf:
-      - $ref: '#/components/schemas/GetReportResponseBody'
-      - type: object
-        properties:
-          report:
-            allOf:
-            - $ref: '#/components/schemas/BankStatementsReport'
-            type: 'null'
     CreateReportResponseBody:
       type: object
       properties:
@@ -124,6 +115,15 @@ components:
       - report_id
       - status
       - created_at
+    GetBankStatementsReportResponseBody:
+      allOf:
+      - $ref: '#/components/schemas/GetReportResponseBody'
+      - type: object
+        properties:
+          report:
+            allOf:
+            - $ref: '#/components/schemas/BankStatementsReport'
+            type: 'null'
     BankStatementsReport:
       type: object
       properties:
@@ -156,12 +156,6 @@ components:
       required:
       - properties
       - banks
-    ReportStatus:
-      type: string
-      enum:
-      - OK
-      - PENDING
-      - FAILED
     CreateBankStatementsReportRequestBody:
       type: object
       properties:
@@ -195,6 +189,12 @@ components:
       required:
       - start_date
       - end_date
+    ReportStatus:
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
   securitySchemes:
     bearer:
       type: http

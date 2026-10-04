@@ -1808,6 +1808,139 @@ paths:
       - International AVS
 components:
   schemas:
+    InternationalAvsAccountDetailsType:
+      description: 'Type of account identification.
+
+
+        IBAN:International Bank Account Number - used for Pakistan and some European countries
+
+        ACCOUNT_ID: Local account identifier - used for most countries
+
+        '
+      type: string
+      enum:
+      - IBAN
+      - ACCOUNT_ID
+    InternationalAvsIdentificationDto:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/InternationalAvsIdentificationType'
+        value:
+          description: Identification value
+          type: string
+          maxLength: 256
+          minLength: 1
+      required:
+      - type
+      - value
+    InternationalAvsAccountType:
+      description: Type of account
+      type: string
+      enum:
+      - PERSONAL
+      - BUSINESS
+    Result:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ResultStatus'
+        results_id:
+          description: The unique identifier for the request
+          type: string
+          format: uuid
+        message:
+          description: A message describing the status of the request
+          type: string
+        meta:
+          description: Meta information about the request
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: string
+        timestamp:
+          description: The datetime of when the request was made
+          type: string
+          format: date-time
+        status_detail:
+          description: Additional information about the status
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/StatusDetail'
+      required:
+      - status
+      - results_id
+      - message
+      - timestamp
+    Translation:
+      type: object
+      properties:
+        en:
+          description: English translation
+          type: string
+        ar:
+          description: Arabic translation
+          type:
+          - string
+          - 'null'
+      required:
+      - en
+    InternationalAvsRequestBankIdentifierType:
+      description: 'Types of bank identifiers.
+
+
+        BIC: Bank Identifier Code (SWIFT code) - used for most countries
+
+        CLEARING_ID: Bank clearing system identifier
+
+        '
+      type: string
+      enum:
+      - BIC
+      - CLEARING_ID
+    InternationalAvsErrorResponse:
+      type: object
+      properties:
+        status:
+          description: Status of the response
+          type: string
+        message:
+          description: Message of the response
+          type: string
+        timestamp:
+          description: Timestamp of the response
+          type: string
+          format: date-time
+        status_detail:
+          $ref: '#/components/schemas/StatusDetail'
+      required:
+      - status
+      - message
+      - timestamp
+    InternationalAvsRequestBankIdentifier:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/InternationalAvsRequestBankIdentifierType'
+        value:
+          description: Bank identifier value
+          type: string
+          minLength: 1
+      required:
+      - type
+      - value
+    ResultStatus:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - PROCESSING_STARTED
     InternationalAvsVerificationPayload:
       type:
       - object
@@ -1855,6 +1988,71 @@ components:
           type:
           - string
           - 'null'
+    InternationalAvsResponse:
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          verifications:
+            $ref: '#/components/schemas/InternationalAvsVerificationPayload'
+    InternationalAvsIdentificationType:
+      description: 'Identification type.
+
+
+        FULL_NAME: Full name of the account holder
+
+        REGISTRATION_ID: Business registration identifier
+
+        GIVEN_NAME: First name of the account holder
+
+        SURNAME: Last name of the account holder
+
+        NATIONAL_ID: National identification number
+
+        EMIRATES_ID: UAE Emirates ID
+
+        TRADE_LICENCE: Trade license number
+
+        UNIFIED_NUMBER: Unified number identifier
+
+        COMMERCIAL_REGISTRATION: Commercial registration number
+
+        CC: Colombia personal ID
+
+        NIT: Colombia business tax ID
+
+        '
+      type: string
+      enum:
+      - FULL_NAME
+      - REGISTRATION_ID
+      - GIVEN_NAME
+      - SURNAME
+      - NATIONAL_ID
+      - EMIRATES_ID
+      - TRADE_LICENCE
+      - UNIFIED_NUMBER
+      - COMMERCIAL_REGISTRATION
+      - CC
+      - NIT
+    MatchingResult:
+      description: Where `iban_ownership_verified` is false the matching attribute will identify whether there is a 'partial' or 'no match'
+      type:
+      - object
+      - 'null'
+      properties:
+        type:
+          description: Identifies whether there is a partial match or no match
+          type: string
+          enum:
+          - PARTIAL
+          - NO_MATCH
+        score:
+          description: Similarity score on a scale of 0 to 1, with 0 being no similarity and 1 being high similarity.
+          type: number
+          format: double
+          maximum: 1
+          minimum: 0
     InternationalAvsRequest:
       type: object
       properties:
@@ -1980,230 +2178,6 @@ components:
       - type
       - account_details
       - identifications
-    MatchingResult:
-      description: Where `iban_ownership_verified` is false the matching attribute will identify whether there is a 'partial' or 'no match'
-      type:
-      - object
-      - 'null'
-      properties:
-        type:
-          description: Identifies whether there is a partial match or no match
-          type: string
-          enum:
-          - PARTIAL
-          - NO_MATCH
-        score:
-          description: Similarity score on a scale of 0 to 1, with 0 being no similarity and 1 being high similarity.
-          type: number
-          format: double
-          maximum: 1
-          minimum: 0
-    Result:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/ResultStatus'
-        results_id:
-          description: The unique identifier for the request
-          type: string
-          format: uuid
-        message:
-          description: A message describing the status of the request
-          type: string
-        meta:
-          description: Meta information about the request
-          type:
-          - object
-          - 'null'
-          additionalProperties:
-            type: string
-        timestamp:
-          description: The datetime of when the request was made
-          type: string
-          format: date-time
-        status_detail:
-          description: Additional information about the status
-          type:
-          - object
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/StatusDetail'
-      required:
-      - status
-      - results_id
-      - message
-      - timestamp
-    InternationalAvsBankAccountType:
-      description: 'Type of bank account. Required for specific countries (e.g., Colombia).
-
-
-        SAVINGS: Savings account
-
-        CHECKING: Checking/Current account
-
-        '
-      type: string
-      enum:
-      - SAVINGS
-      - CHECKING
-    InternationalAvsResponse:
-      allOf:
-      - $ref: '#/components/schemas/Result'
-      - type: object
-        properties:
-          verifications:
-            $ref: '#/components/schemas/InternationalAvsVerificationPayload'
-    InternationalAvsErrorResponse:
-      type: object
-      properties:
-        status:
-          description: Status of the response
-          type: string
-        message:
-          description: Message of the response
-          type: string
-        timestamp:
-          description: Timestamp of the response
-          type: string
-          format: date-time
-        status_detail:
-          $ref: '#/components/schemas/StatusDetail'
-      required:
-      - status
-      - message
-      - timestamp
-    InternationalAvsResponseBankIdentifierType:
-      description: 'BIC: Bank Identifier Code (SWIFT code) - used for most countries
-
-        CLEARING_ID: Bank clearing system identifier
-
-        BANK_CODE/SWIFT_CODE: Bank code identifier - used for AVS API
-
-        '
-      type: string
-      enum:
-      - BIC
-      - CLEARING_ID
-      - BANK_CODE
-      - SWIFT_CODE
-    Translation:
-      type: object
-      properties:
-        en:
-          description: English translation
-          type: string
-        ar:
-          description: Arabic translation
-          type:
-          - string
-          - 'null'
-      required:
-      - en
-    InternationalAvsRequestBankIdentifierType:
-      description: 'Types of bank identifiers.
-
-
-        BIC: Bank Identifier Code (SWIFT code) - used for most countries
-
-        CLEARING_ID: Bank clearing system identifier
-
-        '
-      type: string
-      enum:
-      - BIC
-      - CLEARING_ID
-    InternationalAvsAccountType:
-      description: Type of account
-      type: string
-      enum:
-      - PERSONAL
-      - BUSINESS
-    InternationalAvsAccountDetailsType:
-      description: 'Type of account identification.
-
-
-        IBAN:International Bank Account Number - used for Pakistan and some European countries
-
-        ACCOUNT_ID: Local account identifier - used for most countries
-
-        '
-      type: string
-      enum:
-      - IBAN
-      - ACCOUNT_ID
-    InternationalAvsResponseBankDetails:
-      type:
-      - object
-      - 'null'
-      properties:
-        bank_name:
-          $ref: '#/components/schemas/Translation'
-        bank_identifiers:
-          description: Bank identification codes
-          type: array
-          items:
-            $ref: '#/components/schemas/InternationalAvsResponseBankIdentifier'
-    ResultStatus:
-      description: The status of the request
-      type: string
-      enum:
-      - OK
-      - PENDING
-      - FAILED
-      - CONSENT_EXPIRED
-      - PROCESSING_STARTED
-    InternationalAvsIdentificationType:
-      description: 'Identification type.
-
-
-        FULL_NAME: Full name of the account holder
-
-        REGISTRATION_ID: Business registration identifier
-
-        GIVEN_NAME: First name of the account holder
-
-        SURNAME: Last name of the account holder
-
-        NATIONAL_ID: National identification number
-
-        EMIRATES_ID: UAE Emirates ID
-
-        TRADE_LICENCE: Trade license number
-
-        UNIFIED_NUMBER: Unified number identifier
-
-        COMMERCIAL_REGISTRATION: Commercial registration number
-
-        CC: Colombia personal ID
-
-        NIT: Colombia business tax ID
-
-        '
-      type: string
-      enum:
-      - FULL_NAME
-      - REGISTRATION_ID
-      - GIVEN_NAME
-      - SURNAME
-      - NATIONAL_ID
-      - EMIRATES_ID
-      - TRADE_LICENCE
-      - UNIFIED_NUMBER
-      - COMMERCIAL_REGISTRATION
-      - CC
-      - NIT
-    InternationalAvsRequestBankIdentifier:
-      type: object
-      properties:
-        type:
-          $ref: '#/components/schemas/InternationalAvsRequestBankIdentifierType'
-        value:
-          description: Bank identifier value
-          type: string
-          minLength: 1
-      required:
-      - type
-      - value
     InternationalAvsAccountDetails:
       type: object
       properties:
@@ -2218,6 +2192,20 @@ components:
       required:
       - type
       - value
+    InternationalAvsResponseBankIdentifierType:
+      description: 'BIC: Bank Identifier Code (SWIFT code) - used for most countries
+
+        CLEARING_ID: Bank clearing system identifier
+
+        BANK_CODE/SWIFT_CODE: Bank code identifier - used for AVS API
+
+        '
+      type: string
+      enum:
+      - BIC
+      - CLEARING_ID
+      - BANK_CODE
+      - SWIFT_CODE
     InternationalAvsResponseBankIdentifier:
       type: object
       properties:
@@ -2230,19 +2218,31 @@ components:
       required:
       - type
       - value
-    InternationalAvsIdentificationDto:
-      type: object
+    InternationalAvsResponseBankDetails:
+      type:
+      - object
+      - 'null'
       properties:
-        type:
-          $ref: '#/components/schemas/InternationalAvsIdentificationType'
-        value:
-          description: Identification value
-          type: string
-          maxLength: 256
-          minLength: 1
-      required:
-      - type
-      - value
+        bank_name:
+          $ref: '#/components/schemas/Translation'
+        bank_identifiers:
+          description: Bank identification codes
+          type: array
+          items:
+            $ref: '#/components/schemas/InternationalAvsResponseBankIdentifier'
+    InternationalAvsBankAccountType:
+      description: 'Type of bank account. Required for specific countries (e.g., Colombia).
+
+
+        SAVINGS: Savings account
+
+        CHECKING: Checking/Current account
+
+        '
+      type: string
+      enum:
+      - SAVINGS
+      - CHECKING
   securitySchemes:
     bearerAuth:
       type: http

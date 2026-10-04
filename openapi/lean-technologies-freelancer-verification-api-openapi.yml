@@ -331,37 +331,28 @@ paths:
       - Freelancer Verification
 components:
   schemas:
+    FreelancerVerificationRequest:
+      type: object
+      properties:
+        type:
+          description: Type of freelancer verification. If not provided, defaults based on app configuration.
+          anyOf:
+          - $ref: '#/components/schemas/FreelancerVerificationType'
+        identifications:
+          description: Array of identification documents. FULL_LIST type requires NATIONAL_ID only. FULL type requires both NATIONAL_ID and FREELANCER_NUMBER. BASIC type requires both NATIONAL_ID and FREELANCER_NUMBER.
+          type: array
+          items:
+            $ref: '#/components/schemas/Identification'
+          maxItems: 2
+          minItems: 1
+      required:
+      - identifications
     FreelancerIdentificationType:
       description: Types of identification documents accepted for freelancer verification
       type: string
       enum:
       - NATIONAL_ID
       - FREELANCER_NUMBER
-    Category:
-      type: object
-      properties:
-        name:
-          description: Category name in Arabic and English
-          allOf:
-          - $ref: '#/components/schemas/Name'
-        code:
-          description: Category code
-          type: string
-      required:
-      - name
-      - code
-    Name:
-      type: object
-      properties:
-        ar:
-          description: Name in Arabic
-          type: string
-        en:
-          description: Name in English
-          type: string
-      required:
-      - ar
-      - en
     FreelancerVerificationResult:
       type: object
       properties:
@@ -407,43 +398,6 @@ components:
       required:
       - certificate_ownership_verified
       - certificate
-    CertificateStatus:
-      description: Possible statuses of a freelancer certificate
-      type: string
-      enum:
-      - ACTIVE
-      - EXPIRED
-      - CANCELED
-      - REVOKED
-      - REJECTED
-      - PENDING
-      - CANCELED_BEFORE_ACTIVE
-      - EDITED
-      - SEND_IT_BACK
-      - UNKNOWN
-    FreelancerVerificationRequest:
-      type: object
-      properties:
-        type:
-          description: Type of freelancer verification. If not provided, defaults based on app configuration.
-          anyOf:
-          - $ref: '#/components/schemas/FreelancerVerificationType'
-        identifications:
-          description: Array of identification documents. FULL_LIST type requires NATIONAL_ID only. FULL type requires both NATIONAL_ID and FREELANCER_NUMBER. BASIC type requires both NATIONAL_ID and FREELANCER_NUMBER.
-          type: array
-          items:
-            $ref: '#/components/schemas/Identification'
-          maxItems: 2
-          minItems: 1
-      required:
-      - identifications
-    FreelancerVerificationType:
-      description: 'Type of freelancer verification request. Determines pricing and data visibility. FULL_LIST: retrieve all certificates by National ID only. FULL: verify certificate ownership with National ID and Freelancer Number. BASIC: basic verification with National ID and Freelancer Number (reduced data).'
-      type: string
-      enum:
-      - FULL_LIST
-      - FULL
-      - BASIC
     Identification:
       type: object
       properties:
@@ -551,6 +505,52 @@ components:
       - message
       - timestamp
       - verifications
+    FreelancerVerificationType:
+      description: 'Type of freelancer verification request. Determines pricing and data visibility. FULL_LIST: retrieve all certificates by National ID only. FULL: verify certificate ownership with National ID and Freelancer Number. BASIC: basic verification with National ID and Freelancer Number (reduced data).'
+      type: string
+      enum:
+      - FULL_LIST
+      - FULL
+      - BASIC
+    Name:
+      type: object
+      properties:
+        ar:
+          description: Name in Arabic
+          type: string
+        en:
+          description: Name in English
+          type: string
+      required:
+      - ar
+      - en
+    CertificateStatus:
+      description: Possible statuses of a freelancer certificate
+      type: string
+      enum:
+      - ACTIVE
+      - EXPIRED
+      - CANCELED
+      - REVOKED
+      - REJECTED
+      - PENDING
+      - CANCELED_BEFORE_ACTIVE
+      - EDITED
+      - SEND_IT_BACK
+      - UNKNOWN
+    Category:
+      type: object
+      properties:
+        name:
+          description: Category name in Arabic and English
+          allOf:
+          - $ref: '#/components/schemas/Name'
+        code:
+          description: Category code
+          type: string
+      required:
+      - name
+      - code
   securitySchemes:
     bearerAuth:
       type: http

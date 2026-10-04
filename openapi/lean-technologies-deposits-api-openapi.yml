@@ -70,55 +70,20 @@ components:
       required:
       - account_id
       - iban
-    DepositResponse:
+    SenderAccount:
+      description: The account that the deposit was made from.
       type: object
       properties:
-        id:
-          description: The unique identifier for the deposit.
+        account_number:
+          description: The account ID referencing the account number.
           type: string
-          format: uuid
-        bank_deposit_reference:
-          description: The reference number provided by the bank.
+        iban:
+          description: The International Bank Account Number (IBAN) of the account.
           type: string
-        amount:
-          description: The amount of the deposit.
-          type: number
-        currency:
-          description: The currency of the deposit.
-          type: string
-        description:
-          description: The description of the deposit as found in the bank statement.
-          type:
-          - string
-          - 'null'
-        timestamp:
-          description: The transaction timestamp.
-          type: string
-          format: date-time
-        local_timestamp:
-          description: The transaction timestamp adjusted to the timezone specified in the 'timeZone' query parameter.
-          type: string
-          format: date-time
-        beneficiary_account:
-          $ref: '#/components/schemas/BeneficiaryAccount'
-        reconciliation:
-          $ref: '#/components/schemas/Reconciliation'
-        deposit_source_id:
-          description: The unique identifier for the deposit source - ie the corporate bank account where the deposit was made.
-          type: string
-          format: uuid
-        sender_account:
-          $ref: '#/components/schemas/SenderAccount'
       required:
-      - id
-      - bank_deposit_reference
-      - amount
-      - currency
-      - timestamp
-      - local_timestamp
-      - beneficiary_account
-      - reconciliation
-      - deposit_source_id
+      - account_number
+      - iban
+      x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)'
     DepositsQuery:
       type: object
       properties:
@@ -172,30 +137,55 @@ components:
       x-explicit-constructor: true
       x-implements:
       - me.leantech.api.validation.LocalDateRange
-    SenderAccount:
-      description: The account that the deposit was made from.
+    DepositResponse:
       type: object
       properties:
-        account_number:
-          description: The account ID referencing the account number.
+        id:
+          description: The unique identifier for the deposit.
           type: string
-        iban:
-          description: The International Bank Account Number (IBAN) of the account.
+          format: uuid
+        bank_deposit_reference:
+          description: The reference number provided by the bank.
           type: string
+        amount:
+          description: The amount of the deposit.
+          type: number
+        currency:
+          description: The currency of the deposit.
+          type: string
+        description:
+          description: The description of the deposit as found in the bank statement.
+          type:
+          - string
+          - 'null'
+        timestamp:
+          description: The transaction timestamp.
+          type: string
+          format: date-time
+        local_timestamp:
+          description: The transaction timestamp adjusted to the timezone specified in the 'timeZone' query parameter.
+          type: string
+          format: date-time
+        beneficiary_account:
+          $ref: '#/components/schemas/BeneficiaryAccount'
+        reconciliation:
+          $ref: '#/components/schemas/Reconciliation'
+        deposit_source_id:
+          description: The unique identifier for the deposit source - ie the corporate bank account where the deposit was made.
+          type: string
+          format: uuid
+        sender_account:
+          $ref: '#/components/schemas/SenderAccount'
       required:
-      - account_number
-      - iban
-      x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)'
-    PageableResponse:
-      type: object
-      properties:
-        data:
-          description: The list of deposits.
-          type: array
-          items:
-            $ref: '#/components/schemas/DepositResponse'
-        page:
-          $ref: '#/components/schemas/PageMetadata'
+      - id
+      - bank_deposit_reference
+      - amount
+      - currency
+      - timestamp
+      - local_timestamp
+      - beneficiary_account
+      - reconciliation
+      - deposit_source_id
     Reconciliation:
       description: The reconciliation status of the deposit.
       type: object
@@ -213,6 +203,16 @@ components:
       required:
       - status
       - payment_id
+    PageableResponse:
+      type: object
+      properties:
+        data:
+          description: The list of deposits.
+          type: array
+          items:
+            $ref: '#/components/schemas/DepositResponse'
+        page:
+          $ref: '#/components/schemas/PageMetadata'
     PageMetadata:
       description: Metadata about the current page of results
       type: object

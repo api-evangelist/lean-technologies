@@ -74,31 +74,17 @@ paths:
       - Consents Account On File
 components:
   schemas:
-    GovernmentIdentifierRequest:
-      type: object
-      properties:
-        value:
-          description: The identifier value
-          type: string
-          minLength: 1
-          pattern: ^(?!\s*$).+
-        type:
-          description: The type of Government ID
-          type: string
-          enum:
-          - EMIRATES_ID
-          - TRADE_LICENSE_NUMBER
-      required:
-      - type
-      - value
-    ControlParameters:
-      type: object
-      discriminator:
-        propertyName: type
-        mapping:
-          VariableOnDemand: '#/components/schemas/AccountOnFileControlParameters'
-      oneOf:
-      - $ref: '#/components/schemas/AccountOnFileControlParameters'
+    ConsentStatus:
+      description: Current status of this consent.
+      type: string
+      enum:
+      - AWAITING_AUTHORISATION
+      - AUTHORISED
+      - REVOKED
+      - REJECTED
+      - EXPIRED
+      - CONSUMED
+      - SUSPENDED
     CreateAccountOnFileResponse:
       type: object
       properties:
@@ -159,23 +145,13 @@ components:
       - Month
       - Year
       title: PeriodType
-    Currency:
-      description: The ISO 3 letter currency code
+    Reference:
+      description: A reason or reference in relation to a payment. Maximum 64 chars
       type: string
       examples:
-      - AED
-      pattern: ^[A-Z]{3}$
-    ConsentStatus:
-      description: Current status of this consent.
-      type: string
-      enum:
-      - AWAITING_AUTHORISATION
-      - AUTHORISED
-      - REVOKED
-      - REJECTED
-      - EXPIRED
-      - CONSUMED
-      - SUSPENDED
+      - 'Invoice #12345'
+      maxLength: 64
+      title: Reference
     PaymentPurposeCode:
       description: "A category code that relates to the type of services or goods that corresponds to the underlying purpose of the payment.  \nThe code must conform to the payment purpose code list.  \n**Supported values:**  \n- `FIS` – Financial services\n- `TCS` – Telecommunication services\n- `MWP` – Mobile wallet card payments\n- `OAT` – Own account transfer\n- `IFS` – Information services\n- `RNT` – Rent payments\n- `LNC` – Loan charges\n- `PIN` – Personal investments\n- `GDS` – Goods bought or sold"
       type: string
@@ -190,13 +166,14 @@ components:
       - PIN
       - GDS
       title: PaymentPurposeCode
-    Reference:
-      description: A reason or reference in relation to a payment. Maximum 64 chars
-      type: string
-      examples:
-      - 'Invoice #12345'
-      maxLength: 64
-      title: Reference
+    ControlParameters:
+      type: object
+      discriminator:
+        propertyName: type
+        mapping:
+          VariableOnDemand: '#/components/schemas/AccountOnFileControlParameters'
+      oneOf:
+      - $ref: '#/components/schemas/AccountOnFileControlParameters'
     AccountOnFileControlParameters:
       description: 'Defines the control parameters for a Account On File (AoF) consent.
 
@@ -235,6 +212,29 @@ components:
       - period_type
       title: AccountOnFileControlParameters
       x-class-extra-annotation: '@me.leantech.api.validation.AtLeastOneControlParameter @me.leantech.api.validation.WithinMaxIndividualAmountLimit'
+    GovernmentIdentifierRequest:
+      type: object
+      properties:
+        value:
+          description: The identifier value
+          type: string
+          minLength: 1
+          pattern: ^(?!\s*$).+
+        type:
+          description: The type of Government ID
+          type: string
+          enum:
+          - EMIRATES_ID
+          - TRADE_LICENSE_NUMBER
+      required:
+      - type
+      - value
+    Currency:
+      description: The ISO 3 letter currency code
+      type: string
+      examples:
+      - AED
+      pattern: ^[A-Z]{3}$
     ImmediatePayment:
       description: 'Details of a payment that will be executed immediately after the user successfully authorizes the consent. If present, the payment is initiated automatically as part of the consent authorization flow.
 

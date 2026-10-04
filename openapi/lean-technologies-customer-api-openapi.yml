@@ -234,24 +234,6 @@ components:
           enum:
           - EMIRATES_ID
           - TRADE_LICENSE_NUMBER
-    Customer:
-      type: object
-      properties:
-        customer_id:
-          type: string
-          format: uuid
-          description: Customer ID
-        app_user_id:
-          type: string
-        government_identifiers:
-          type: array
-          description: "A government‑issued identifier for the debtor (the account holder making the payment).  \nThis is **required by the UAE Open Finance specification** to uniquely identify the customer."
-          items:
-            allOf:
-            - $ref: '#/components/schemas/GovernmentIdentifierRequest'
-      required:
-      - customer_id
-      - app_user_id
     Pagination:
       type: object
       properties:
@@ -272,6 +254,24 @@ components:
       - size
       - total_elements
       - total_pages
+    Customer:
+      type: object
+      properties:
+        customer_id:
+          type: string
+          format: uuid
+          description: Customer ID
+        app_user_id:
+          type: string
+        government_identifiers:
+          type: array
+          description: "A government‑issued identifier for the debtor (the account holder making the payment).  \nThis is **required by the UAE Open Finance specification** to uniquely identify the customer."
+          items:
+            allOf:
+            - $ref: '#/components/schemas/GovernmentIdentifierRequest'
+      required:
+      - customer_id
+      - app_user_id
   securitySchemes:
     bearer:
       type: http

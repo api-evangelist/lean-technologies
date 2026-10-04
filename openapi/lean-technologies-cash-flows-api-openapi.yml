@@ -681,16 +681,6 @@ paths:
       - bearer: []
 components:
   schemas:
-    StatusDetailObject:
-      description: Status Details
-      type: object
-      properties:
-        granular_status_code:
-          description: Detailed error code
-          type: string
-        status_additional_info:
-          description: Further detail on the encountered error
-          type: string
     AmountObject:
       type: object
       properties:
@@ -701,6 +691,16 @@ components:
           type: number
           description: The decimal amount for the transaction
       description: The total amount for the category.
+    StatusDetailObject:
+      description: Status Details
+      type: object
+      properties:
+        granular_status_code:
+          description: Detailed error code
+          type: string
+        status_additional_info:
+          description: Further detail on the encountered error
+          type: string
   securitySchemes:
     bearer:
       type: http

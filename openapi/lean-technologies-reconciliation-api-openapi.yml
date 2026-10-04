@@ -399,6 +399,45 @@ components:
       - page_number
       - results_per_page
       - total_results
+    Deposit:
+      type: object
+      properties:
+        id:
+          description: Deposit Id
+          type: string
+          format: uuid
+        description:
+          description: Description of the deposit
+          type: string
+        timestamp:
+          description: Deposit timestamp
+          type: string
+          format: date-time
+        amount:
+          description: Deposit amount
+          type: number
+        currency_code:
+          description: Deposit currency
+          type: string
+      required:
+      - id
+      - description
+      - timestamp
+      - amount
+      - currency_code
+    AmountRequest:
+      type: object
+      properties:
+        minimum:
+          description: Minimum amount (inclusive)
+          type:
+          - number
+          - 'null'
+        maximum:
+          description: Maximum amount (inclusive)
+          type:
+          - number
+          - 'null'
     PaymentReconciliation:
       type: object
       properties:
@@ -504,57 +543,24 @@ components:
           - 'null'
       required:
       - payment_initiation_date
-    PaymentsSummary:
+    DateRequest:
       type: object
       properties:
-        payments:
-          description: List of payments
-          type: array
-          items:
-            $ref: '#/components/schemas/Payment'
-        pagination:
-          $ref: '#/components/schemas/Pagination'
+        from:
+          description: Min datetime in ISO format yyyy-MM-dd
+          type: string
+          format: date
+          examples:
+          - '2025-09-15'
+        to:
+          description: Max datetime in ISO format yyyy-MM-dd
+          type: string
+          format: date
+          examples:
+          - '2025-10-01'
       required:
-      - payments
-    Deposit:
-      type: object
-      properties:
-        id:
-          description: Deposit Id
-          type: string
-          format: uuid
-        description:
-          description: Description of the deposit
-          type: string
-        timestamp:
-          description: Deposit timestamp
-          type: string
-          format: date-time
-        amount:
-          description: Deposit amount
-          type: number
-        currency_code:
-          description: Deposit currency
-          type: string
-      required:
-      - id
-      - description
-      - timestamp
-      - amount
-      - currency_code
-    AmountRequest:
-      type: object
-      properties:
-        minimum:
-          description: Minimum amount (inclusive)
-          type:
-          - number
-          - 'null'
-        maximum:
-          description: Maximum amount (inclusive)
-          type:
-          - number
-          - 'null'
+      - from
+      - to
     Payment:
       type: object
       properties:
@@ -577,24 +583,18 @@ components:
       - customer_id
       - payment_initiation_timestamp
       - reconciliation
-    DateRequest:
+    PaymentsSummary:
       type: object
       properties:
-        from:
-          description: Min datetime in ISO format yyyy-MM-dd
-          type: string
-          format: date
-          examples:
-          - '2025-09-15'
-        to:
-          description: Max datetime in ISO format yyyy-MM-dd
-          type: string
-          format: date
-          examples:
-          - '2025-10-01'
+        payments:
+          description: List of payments
+          type: array
+          items:
+            $ref: '#/components/schemas/Payment'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
       required:
-      - from
-      - to
+      - payments
   securitySchemes:
     bearerAuth:
       type: http
