@@ -141,57 +141,6 @@ paths:
       tags:
       - Open Banking Direct Debits
 components:
-  parameters:
-    FapiInteractionId:
-      name: x-fapi-interaction-id
-      in: header
-      description: An RFC4122 UID used as a correlation id.
-      required: false
-      schema:
-        type: string
-    CustomerId:
-      name: CustomerId
-      in: query
-      description: The customer_id of the connected customer.
-      required: false
-      schema:
-        type: string
-        format: uuid
-    EntityId:
-      name: EntityId
-      in: query
-      description: The entity_id of the connected customer.
-      required: false
-      schema:
-        type: string
-        format: uuid
-    OBSizeParam:
-      name: Size
-      description: The number of objects you want to return as a page size.
-      in: query
-      required: false
-      schema:
-        type: integer
-        default: 50
-        maximum: 100
-        minimum: 1
-    OBPageParm:
-      name: Page
-      in: query
-      description: The page you're requesting - returns page 0 of a response if not specified.
-      required: false
-      schema:
-        type: integer
-        default: 0
-        minimum: 0
-    AccountId:
-      name: AccountId
-      in: path
-      description: The Lean account identifier uniquely identifying the account within Lean.
-      required: true
-      schema:
-        type: string
-        format: uuid
   schemas:
     OBGetDirectDebitsResponse:
       description: Response envelope for the Open Banking account direct debits.
@@ -251,12 +200,38 @@ components:
       - Status
       - Message
       - Timestamp
-    OBDirectDebitStatusCode:
-      description: Indicates the status of the direct debit in code form.
-      type: string
-      enum:
-      - Active
-      - Inactive
+    OBDirectDebitsData:
+      description: Container for the list of Open Banking account direct debits.
+      type: object
+      properties:
+        CustomerId:
+          description: Lean provided customer ID
+          type:
+          - string
+          - 'null'
+          format: uuid
+        DirectDebit:
+          description: List of direct debits for the account.
+          type: array
+          items:
+            $ref: '#/components/schemas/OBDirectDebit'
+      required:
+      - DirectDebit
+    OBStatusDetail:
+      type:
+      - object
+      - 'null'
+      properties:
+        GranularStatusCode:
+          description: Granular status code providing additional information on the request status.
+          type:
+          - string
+          - 'null'
+        StatusAdditionalInfo:
+          description: Additional human-readable information about the status.
+          type:
+          - string
+          - 'null'
     OBDirectDebit:
       description: Account to or from which a cash entry is made.
       type: object
@@ -299,23 +274,29 @@ components:
       - DirectDebitStatusCode
       - Name
       - Frequency
-    OBDirectDebitsData:
-      description: Container for the list of Open Banking account direct debits.
+    OBDirectDebitStatusCode:
+      description: Indicates the status of the direct debit in code form.
+      type: string
+      enum:
+      - Active
+      - Inactive
+    OBAmount:
+      description: Active or historic currency and amount.
       type: object
       properties:
-        CustomerId:
-          description: Lean provided customer ID
-          type:
-          - string
-          - 'null'
-          format: uuid
-        DirectDebit:
-          description: List of direct debits for the account.
-          type: array
-          items:
-            $ref: '#/components/schemas/OBDirectDebit'
+        Amount:
+          description: A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.
+          type: string
+          pattern: ^\d{1,13}$|^\d{1,13}\.\d{1,5}$
+        Currency:
+          description: ISO 4217 currency code in which the amount is expressed.
+          type: string
+          examples:
+          - SAR
+          pattern: ^[A-Z]{3,3}$
       required:
-      - DirectDebit
+      - Amount
+      - Currency
     OBMeta:
       description: Metadata relevant to the resource.
       type: object
@@ -327,33 +308,6 @@ components:
           - 'null'
           format: int32
           minimum: 0
-    OBStatusDetail:
-      type:
-      - object
-      - 'null'
-      properties:
-        GranularStatusCode:
-          description: Granular status code providing additional information on the request status.
-          type:
-          - string
-          - 'null'
-        StatusAdditionalInfo:
-          description: Additional human-readable information about the status.
-          type:
-          - string
-          - 'null'
-    OBDirectDebitFrequency:
-      description: Regularity with which direct debit instructions are to be created and processed.
-      type: string
-      enum:
-      - KSAOB.Annual
-      - KSAOB.Daily
-      - KSAOB.Fortnightly
-      - KSAOB.HalfYearly
-      - KSAOB.Monthly
-      - KSAOB.NotKnown
-      - KSAOB.Quarterly
-      - KSAOB.Weekly
     OBLinks:
       description: Links relevant to the resource for pagination navigation.
       type: object
@@ -388,23 +342,69 @@ components:
           format: uri
       required:
       - Self
-    OBAmount:
-      description: Active or historic currency and amount.
-      type: object
-      properties:
-        Amount:
-          description: A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.
-          type: string
-          pattern: ^\d{1,13}$|^\d{1,13}\.\d{1,5}$
-        Currency:
-          description: ISO 4217 currency code in which the amount is expressed.
-          type: string
-          examples:
-          - SAR
-          pattern: ^[A-Z]{3,3}$
-      required:
-      - Amount
-      - Currency
+    OBDirectDebitFrequency:
+      description: Regularity with which direct debit instructions are to be created and processed.
+      type: string
+      enum:
+      - KSAOB.Annual
+      - KSAOB.Daily
+      - KSAOB.Fortnightly
+      - KSAOB.HalfYearly
+      - KSAOB.Monthly
+      - KSAOB.NotKnown
+      - KSAOB.Quarterly
+      - KSAOB.Weekly
+  parameters:
+    OBPageParm:
+      name: Page
+      in: query
+      description: The page you're requesting - returns page 0 of a response if not specified.
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+    OBSizeParam:
+      name: Size
+      description: The number of objects you want to return as a page size.
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 50
+        maximum: 100
+        minimum: 1
+    AccountId:
+      name: AccountId
+      in: path
+      description: The Lean account identifier uniquely identifying the account within Lean.
+      required: true
+      schema:
+        type: string
+        format: uuid
+    EntityId:
+      name: EntityId
+      in: query
+      description: The entity_id of the connected customer.
+      required: false
+      schema:
+        type: string
+        format: uuid
+    FapiInteractionId:
+      name: x-fapi-interaction-id
+      in: header
+      description: An RFC4122 UID used as a correlation id.
+      required: false
+      schema:
+        type: string
+    CustomerId:
+      name: CustomerId
+      in: query
+      description: The customer_id of the connected customer.
+      required: false
+      schema:
+        type: string
+        format: uuid
   securitySchemes:
     bearerAuth:
       type: http

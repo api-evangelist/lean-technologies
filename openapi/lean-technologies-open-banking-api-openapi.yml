@@ -306,161 +306,6 @@ paths:
                   $ref: '#/components/examples/InternalServerErrorExample'
 components:
   schemas:
-    ErrorResponse:
-      type: object
-      properties:
-        status_code:
-          type: integer
-          examples:
-          - 401
-        message:
-          type: string
-          examples:
-          - Authentication failed
-    TriggerDataRefreshRequestBody:
-      type: object
-      properties:
-        entity_id:
-          type: string
-          format: uuid
-        data_types:
-          type: array
-          description: List of data types to refresh.
-          items:
-            $ref: '#/components/schemas/Permissions'
-      required:
-      - entity_id
-    DataAccountIdentifier:
-      type: object
-      description: Account identifier associated with the consent.
-      properties:
-        scheme_name:
-          type: string
-          description: The identification scheme used for the account (e.g. IBAN, ACCOUNT_NUMBER).
-          examples:
-          - IBAN
-        identification:
-          type: string
-          description: The primary account identifier value (encrypted at rest).
-          examples:
-          - SA0380000000608010167519
-        secondary_identification:
-          type: string
-          description: Optional secondary identifier (e.g. account suffix).
-          examples:
-          - '001'
-        name:
-          type: string
-          description: Account holder name as reported by the bank.
-          examples:
-          - John Doe
-    Permissions:
-      type: string
-      enum:
-      - identity
-      - accounts
-      - balance
-      - transactions
-      - identities
-      - scheduled_payments
-      - standing_orders
-      - direct_debits
-      - beneficiaries
-    ConsentStatus:
-      type: string
-      description: Internal consent lifecycle status.
-      enum:
-      - ACTIVE
-      - REVOKED
-      - REJECTED
-    PageableConsentsResponse:
-      type: object
-      description: Paginated response of customer consents.
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/EntityConsent'
-        page:
-          $ref: '#/components/schemas/PageMetadata'
-    StandardConsentStatus:
-      type: string
-      description: Standardised consent status across banks and providers.
-      enum:
-      - AWAITING_AUTHORISATION
-      - AUTHORISED
-      - REVOKED
-      - REJECTED
-      - EXPIRED
-      - CONSUMED
-      - SUSPENDED
-    RedirectResponse:
-      type: object
-      properties:
-        redirect_url:
-          type: string
-          format: uri
-          description: The URL to redirect the user to the bank.
-          examples:
-          - https://m.alinma.com/landing/auth?request_uri=urn:ietf:params:oauth:request_uri:d8b574e3-417f-4571-b6b9-06b013fc7ade&response_type=code id_token&client_id=422c1444-8d98-4d81-b7cb-5120d21101f4&scope=openid accounts:urn:INMASARI:kac-62ae9d98-f075-49da-9c13-fc4284e9d8a2&redirect_uri=https://obksabank.leantech.me/data/callback/ALINMA_SAU
-        bank_consent_id:
-          type: string
-          format: uuid
-          description: The unique identifier for the created consent on the bank side.
-          examples:
-          - 092c7001-bf84-439d-b3ef-a3014812c1b8
-        customer_id:
-          type: string
-          format: uuid
-          description: The Lean unique identifier for the customer.
-          examples:
-          - af06c326-9006-47f6-aac8-7a497dcc2408
-        app_user_id:
-          type: string
-          format: uuid
-          description: A unique identifier from your database, can be the corresponding User ID in your system, or any other string.
-          examples:
-          - YOUR_IDENTIFIER_FOR_CUSTOMER
-    ConsentPermissions:
-      type: object
-      description: Permissions granted for the consent. Each flag indicates whether the corresponding scope is included.
-      properties:
-        identity:
-          type: boolean
-          examples:
-          - true
-        accounts:
-          type: boolean
-          examples:
-          - true
-        balance:
-          type: boolean
-          examples:
-          - true
-        transactions:
-          type: boolean
-          examples:
-          - true
-        identities:
-          type: boolean
-          examples:
-          - false
-        scheduled_payments:
-          type: boolean
-          examples:
-          - false
-        standing_orders:
-          type: boolean
-          examples:
-          - false
-        direct_debits:
-          type: boolean
-          examples:
-          - false
-        beneficiaries:
-          type: boolean
-          examples:
-          - false
     EntityConsent:
       type: object
       description: Consent granted by a customer on a connected bank entity.
@@ -522,6 +367,65 @@ components:
           description: The identifier for the bank the consent belongs to.
           examples:
           - ALINMA_SAU
+    StandardConsentStatus:
+      type: string
+      description: Standardised consent status across banks and providers.
+      enum:
+      - AWAITING_AUTHORISATION
+      - AUTHORISED
+      - REVOKED
+      - REJECTED
+      - EXPIRED
+      - CONSUMED
+      - SUSPENDED
+    DataAccountIdentifier:
+      type: object
+      description: Account identifier associated with the consent.
+      properties:
+        scheme_name:
+          type: string
+          description: The identification scheme used for the account (e.g. IBAN, ACCOUNT_NUMBER).
+          examples:
+          - IBAN
+        identification:
+          type: string
+          description: The primary account identifier value (encrypted at rest).
+          examples:
+          - SA0380000000608010167519
+        secondary_identification:
+          type: string
+          description: Optional secondary identifier (e.g. account suffix).
+          examples:
+          - '001'
+        name:
+          type: string
+          description: Account holder name as reported by the bank.
+          examples:
+          - John Doe
+    TriggerDataRefreshRequestBody:
+      type: object
+      properties:
+        entity_id:
+          type: string
+          format: uuid
+        data_types:
+          type: array
+          description: List of data types to refresh.
+          items:
+            $ref: '#/components/schemas/Permissions'
+      required:
+      - entity_id
+    ErrorResponse:
+      type: object
+      properties:
+        status_code:
+          type: integer
+          examples:
+          - 401
+        message:
+          type: string
+          examples:
+          - Authentication failed
     TriggerDataRefreshResponseBody:
       type: object
       properties:
@@ -540,6 +444,46 @@ components:
       - status
       - message
       - timestamp
+    ConsentPermissions:
+      type: object
+      description: Permissions granted for the consent. Each flag indicates whether the corresponding scope is included.
+      properties:
+        identity:
+          type: boolean
+          examples:
+          - true
+        accounts:
+          type: boolean
+          examples:
+          - true
+        balance:
+          type: boolean
+          examples:
+          - true
+        transactions:
+          type: boolean
+          examples:
+          - true
+        identities:
+          type: boolean
+          examples:
+          - false
+        scheduled_payments:
+          type: boolean
+          examples:
+          - false
+        standing_orders:
+          type: boolean
+          examples:
+          - false
+        direct_debits:
+          type: boolean
+          examples:
+          - false
+        beneficiaries:
+          type: boolean
+          examples:
+          - false
     PageMetadata:
       type: object
       description: Pagination metadata for a paginated response.
@@ -565,6 +509,13 @@ components:
           description: Total number of pages.
           examples:
           - 3
+    ConsentStatus:
+      type: string
+      description: Internal consent lifecycle status.
+      enum:
+      - ACTIVE
+      - REVOKED
+      - REJECTED
     RedirectRequest:
       type: object
       properties:
@@ -618,6 +569,55 @@ components:
       - success_redirect_url
       - failure_redirect_url
       - permissions
+    PageableConsentsResponse:
+      type: object
+      description: Paginated response of customer consents.
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityConsent'
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+    RedirectResponse:
+      type: object
+      properties:
+        redirect_url:
+          type: string
+          format: uri
+          description: The URL to redirect the user to the bank.
+          examples:
+          - https://m.alinma.com/landing/auth?request_uri=urn:ietf:params:oauth:request_uri:d8b574e3-417f-4571-b6b9-06b013fc7ade&response_type=code id_token&client_id=422c1444-8d98-4d81-b7cb-5120d21101f4&scope=openid accounts:urn:INMASARI:kac-62ae9d98-f075-49da-9c13-fc4284e9d8a2&redirect_uri=https://obksabank.leantech.me/data/callback/ALINMA_SAU
+        bank_consent_id:
+          type: string
+          format: uuid
+          description: The unique identifier for the created consent on the bank side.
+          examples:
+          - 092c7001-bf84-439d-b3ef-a3014812c1b8
+        customer_id:
+          type: string
+          format: uuid
+          description: The Lean unique identifier for the customer.
+          examples:
+          - af06c326-9006-47f6-aac8-7a497dcc2408
+        app_user_id:
+          type: string
+          format: uuid
+          description: A unique identifier from your database, can be the corresponding User ID in your system, or any other string.
+          examples:
+          - YOUR_IDENTIFIER_FOR_CUSTOMER
+    Permissions:
+      type: string
+      enum:
+      - identity
+      - accounts
+      - balance
+      - transactions
+      - identities
+      - scheduled_payments
+      - standing_orders
+      - direct_debits
+      - beneficiaries
   examples:
     InvalidParametersExample:
       summary: Invalid parameters error response

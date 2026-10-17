@@ -331,86 +331,6 @@ paths:
       - Freelancer Verification
 components:
   schemas:
-    FreelancerVerificationRequest:
-      type: object
-      properties:
-        type:
-          description: Type of freelancer verification. If not provided, defaults based on app configuration.
-          anyOf:
-          - $ref: '#/components/schemas/FreelancerVerificationType'
-        identifications:
-          description: Array of identification documents. FULL_LIST type requires NATIONAL_ID only. FULL type requires both NATIONAL_ID and FREELANCER_NUMBER. BASIC type requires both NATIONAL_ID and FREELANCER_NUMBER.
-          type: array
-          items:
-            $ref: '#/components/schemas/Identification'
-          maxItems: 2
-          minItems: 1
-      required:
-      - identifications
-    FreelancerIdentificationType:
-      description: Types of identification documents accepted for freelancer verification
-      type: string
-      enum:
-      - NATIONAL_ID
-      - FREELANCER_NUMBER
-    FreelancerVerificationResult:
-      type: object
-      properties:
-        certificate_ownership_verified:
-          description: Status of certificate ownership verification
-          type: string
-          enum:
-          - VERIFIED
-          - NOT_VERIFIED
-          - NOT_CHECKED
-        national_id:
-          description: National ID of the freelancer (null if not provided)
-          type:
-          - string
-          - 'null'
-        national_id_expiry_date:
-          description: Date in Hijri calendar format
-          type:
-          - string
-          - 'null'
-        name:
-          description: Name of the freelancer in Arabic and English (null if not available)
-          type:
-          - object
-          - 'null'
-          properties:
-            ar:
-              description: Name in Arabic
-              type: string
-            en:
-              description: Name in English
-              type: string
-        gender:
-          description: Gender of the freelancer (null if not available)
-          type:
-          - string
-          - 'null'
-        certificate:
-          description: Array of freelancer certificates
-          type: array
-          items:
-            $ref: '#/components/schemas/FreelancerCertificate'
-      required:
-      - certificate_ownership_verified
-      - certificate
-    Identification:
-      type: object
-      properties:
-        type:
-          description: Type of identification document
-          anyOf:
-          - $ref: '#/components/schemas/FreelancerIdentificationType'
-        value:
-          description: Value of the identification document
-          type: string
-      required:
-      - type
-      - value
     FreelancerCertificate:
       type: object
       properties:
@@ -505,13 +425,25 @@ components:
       - message
       - timestamp
       - verifications
-    FreelancerVerificationType:
-      description: 'Type of freelancer verification request. Determines pricing and data visibility. FULL_LIST: retrieve all certificates by National ID only. FULL: verify certificate ownership with National ID and Freelancer Number. BASIC: basic verification with National ID and Freelancer Number (reduced data).'
+    FreelancerIdentificationType:
+      description: Types of identification documents accepted for freelancer verification
       type: string
       enum:
-      - FULL_LIST
-      - FULL
-      - BASIC
+      - NATIONAL_ID
+      - FREELANCER_NUMBER
+    Identification:
+      type: object
+      properties:
+        type:
+          description: Type of identification document
+          anyOf:
+          - $ref: '#/components/schemas/FreelancerIdentificationType'
+        value:
+          description: Value of the identification document
+          type: string
+      required:
+      - type
+      - value
     Name:
       type: object
       properties:
@@ -524,6 +456,80 @@ components:
       required:
       - ar
       - en
+    FreelancerVerificationRequest:
+      type: object
+      properties:
+        type:
+          description: Type of freelancer verification. If not provided, defaults based on app configuration.
+          anyOf:
+          - $ref: '#/components/schemas/FreelancerVerificationType'
+        identifications:
+          description: Array of identification documents. FULL_LIST type requires NATIONAL_ID only. FULL type requires both NATIONAL_ID and FREELANCER_NUMBER. BASIC type requires both NATIONAL_ID and FREELANCER_NUMBER.
+          type: array
+          items:
+            $ref: '#/components/schemas/Identification'
+          maxItems: 2
+          minItems: 1
+      required:
+      - identifications
+    Category:
+      type: object
+      properties:
+        name:
+          description: Category name in Arabic and English
+          allOf:
+          - $ref: '#/components/schemas/Name'
+        code:
+          description: Category code
+          type: string
+      required:
+      - name
+      - code
+    FreelancerVerificationResult:
+      type: object
+      properties:
+        certificate_ownership_verified:
+          description: Status of certificate ownership verification
+          type: string
+          enum:
+          - VERIFIED
+          - NOT_VERIFIED
+          - NOT_CHECKED
+        national_id:
+          description: National ID of the freelancer (null if not provided)
+          type:
+          - string
+          - 'null'
+        national_id_expiry_date:
+          description: Date in Hijri calendar format
+          type:
+          - string
+          - 'null'
+        name:
+          description: Name of the freelancer in Arabic and English (null if not available)
+          type:
+          - object
+          - 'null'
+          properties:
+            ar:
+              description: Name in Arabic
+              type: string
+            en:
+              description: Name in English
+              type: string
+        gender:
+          description: Gender of the freelancer (null if not available)
+          type:
+          - string
+          - 'null'
+        certificate:
+          description: Array of freelancer certificates
+          type: array
+          items:
+            $ref: '#/components/schemas/FreelancerCertificate'
+      required:
+      - certificate_ownership_verified
+      - certificate
     CertificateStatus:
       description: Possible statuses of a freelancer certificate
       type: string
@@ -538,19 +544,13 @@ components:
       - EDITED
       - SEND_IT_BACK
       - UNKNOWN
-    Category:
-      type: object
-      properties:
-        name:
-          description: Category name in Arabic and English
-          allOf:
-          - $ref: '#/components/schemas/Name'
-        code:
-          description: Category code
-          type: string
-      required:
-      - name
-      - code
+    FreelancerVerificationType:
+      description: 'Type of freelancer verification request. Determines pricing and data visibility. FULL_LIST: retrieve all certificates by National ID only. FULL: verify certificate ownership with National ID and Freelancer Number. BASIC: basic verification with National ID and Freelancer Number (reduced data).'
+      type: string
+      enum:
+      - FULL_LIST
+      - FULL
+      - BASIC
   securitySchemes:
     bearerAuth:
       type: http

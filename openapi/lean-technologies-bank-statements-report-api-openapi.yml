@@ -83,47 +83,6 @@ paths:
       - bearer: []
 components:
   schemas:
-    CreateReportResponseBody:
-      type: object
-      properties:
-        report_id:
-          type: string
-          format: uuid
-        status:
-          type: string
-          enum:
-          - PENDING
-      required:
-      - report_id
-      - status
-    GetReportResponseBody:
-      type: object
-      properties:
-        report_id:
-          type: string
-          format: uuid
-        status:
-          $ref: '#/components/schemas/ReportStatus'
-        status_detail:
-          allOf:
-          - type: object
-            properties: {}
-        created_at:
-          type: string
-          format: date-time
-      required:
-      - report_id
-      - status
-      - created_at
-    GetBankStatementsReportResponseBody:
-      allOf:
-      - $ref: '#/components/schemas/GetReportResponseBody'
-      - type: object
-        properties:
-          report:
-            allOf:
-            - $ref: '#/components/schemas/BankStatementsReport'
-            type: 'null'
     BankStatementsReport:
       type: object
       properties:
@@ -156,6 +115,44 @@ components:
       required:
       - properties
       - banks
+    CreateReportResponseBody:
+      type: object
+      properties:
+        report_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum:
+          - PENDING
+      required:
+      - report_id
+      - status
+    ReportStatus:
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+    GetReportResponseBody:
+      type: object
+      properties:
+        report_id:
+          type: string
+          format: uuid
+        status:
+          $ref: '#/components/schemas/ReportStatus'
+        status_detail:
+          allOf:
+          - type: object
+            properties: {}
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - report_id
+      - status
+      - created_at
     CreateBankStatementsReportRequestBody:
       type: object
       properties:
@@ -189,12 +186,15 @@ components:
       required:
       - start_date
       - end_date
-    ReportStatus:
-      type: string
-      enum:
-      - OK
-      - PENDING
-      - FAILED
+    GetBankStatementsReportResponseBody:
+      allOf:
+      - $ref: '#/components/schemas/GetReportResponseBody'
+      - type: object
+        properties:
+          report:
+            allOf:
+            - $ref: '#/components/schemas/BankStatementsReport'
+            type: 'null'
   securitySchemes:
     bearer:
       type: http

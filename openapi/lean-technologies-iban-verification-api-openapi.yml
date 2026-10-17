@@ -341,17 +341,20 @@ paths:
       - Iban Verification
 components:
   schemas:
-    IbanVerificationMatchAvailability:
-      description: Availability status for match and no-match scenarios
+    IbanVerificationAccountTypeAvailability:
+      description: Availability status per account type for IBAN verification
       type: object
       properties:
-        match:
-          $ref: '#/components/schemas/IbanVerificationEnablement'
-        no_match:
-          $ref: '#/components/schemas/IbanVerificationEnablement'
+        personal:
+          $ref: '#/components/schemas/IbanVerificationMatchAvailability'
+        freelancer:
+          $ref: '#/components/schemas/IbanVerificationMatchAvailability'
+        business:
+          $ref: '#/components/schemas/IbanVerificationMatchAvailability'
       required:
-      - match
-      - no_match
+      - personal
+      - freelancer
+      - business
     IbanVerificationResponsePayload:
       type: object
       properties:
@@ -382,15 +385,15 @@ components:
           - OPEN_BANKING
           - SARIE
           - SARIE_AND_CONFIRMATION_OF_PAYEE_SERVICE
-    AvsIdentificationDto:
-      type: object
-      properties:
-        type:
-          $ref: '#/components/schemas/AvsIdentificationType'
-        value:
-          description: Identification value
-          type: string
-          minLength: 1
+    ResultStatus:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - PROCESSING_STARTED
     IbanVerificationRequest:
       type: object
       properties:
@@ -417,26 +420,53 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AvsIdentificationDto'
+    Translation:
+      type: object
+      properties:
+        en:
+          description: English translation
+          type: string
+        ar:
+          description: Arabic translation
+          type:
+          - string
+          - 'null'
+      required:
+      - en
+    ApplicationBankAvailability:
+      description: Application-level bank enablement configuration
+      type: object
+      properties:
+        country_code:
+          description: ISO 3166-1 alpha-2 country code where the bank is located
+          type: string
+        bank_code:
+          description: Unique identifier code for the bank
+          type: string
+        enablement:
+          $ref: '#/components/schemas/IbanVerificationEnablement'
+      required:
+      - country_code
+      - bank_code
+      - enablement
+    AvsIdentificationType:
+      description: "`NATIONAL_ID`: Saudi ID or Iqama \n`FULL_NAME`: Full name \n`COMMERCIAL_REGISTRATION`: Commercial registration number\n`UNIFIED_NUMBER`: Unified number\n`FREELANCER_NUMBER`: Freelancer certificate number\n"
+      type: string
+    AvsIdentificationDto:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/AvsIdentificationType'
+        value:
+          description: Identification value
+          type: string
+          minLength: 1
     IbanVerificationEnablement:
       description: Enablement status indicating whether a feature is enabled or disabled
       type: string
       enum:
       - ENABLED
       - DISABLED
-    IbanVerificationAccountTypeAvailability:
-      description: Availability status per account type for IBAN verification
-      type: object
-      properties:
-        personal:
-          $ref: '#/components/schemas/IbanVerificationMatchAvailability'
-        freelancer:
-          $ref: '#/components/schemas/IbanVerificationMatchAvailability'
-        business:
-          $ref: '#/components/schemas/IbanVerificationMatchAvailability'
-      required:
-      - personal
-      - freelancer
-      - business
     StatusDetail:
       type:
       - object
@@ -452,16 +482,28 @@ components:
           type:
           - string
           - 'null'
-    AvsIdentificationType:
-      description: "`NATIONAL_ID`: Saudi ID or Iqama \n`FULL_NAME`: Full name \n`COMMERCIAL_REGISTRATION`: Commercial registration number\n`UNIFIED_NUMBER`: Unified number\n`FREELANCER_NUMBER`: Freelancer certificate number\n"
-      type: string
-    VerificationResponseIbanVerificationResponsePayload:
-      allOf:
-      - $ref: '#/components/schemas/Result'
-      - type: object
-        properties:
-          verifications:
-            $ref: '#/components/schemas/IbanVerificationResponsePayload'
+    IbanVerificationBankAvailability:
+      description: Availability status of the bank for IBAN verification
+      type: object
+      properties:
+        global:
+          $ref: '#/components/schemas/IbanVerificationEnablement'
+        account_type:
+          $ref: '#/components/schemas/IbanVerificationAccountTypeAvailability'
+      required:
+      - global
+      - account_type
+    IbanVerificationMatchAvailability:
+      description: Availability status for match and no-match scenarios
+      type: object
+      properties:
+        match:
+          $ref: '#/components/schemas/IbanVerificationEnablement'
+        no_match:
+          $ref: '#/components/schemas/IbanVerificationEnablement'
+      required:
+      - match
+      - no_match
     MatchingResult:
       description: Where `iban_ownership_verified` is false the matching attribute will identify whether there is a 'partial' or 'no match'
       type:
@@ -515,46 +557,24 @@ components:
       - results_id
       - message
       - timestamp
-    Translation:
+    UpdateIbanVerificationBankConfigurationRequest:
+      description: Request body for updating application-level bank configurations
       type: object
       properties:
-        en:
-          description: English translation
-          type: string
-        ar:
-          description: Arabic translation
-          type:
-          - string
-          - 'null'
+        availabilities:
+          description: List of bank availability configurations to update
+          type: array
+          items:
+            $ref: '#/components/schemas/ApplicationBankAvailability'
       required:
-      - en
-    ApplicationBankAvailability:
-      description: Application-level bank enablement configuration
-      type: object
-      properties:
-        country_code:
-          description: ISO 3166-1 alpha-2 country code where the bank is located
-          type: string
-        bank_code:
-          description: Unique identifier code for the bank
-          type: string
-        enablement:
-          $ref: '#/components/schemas/IbanVerificationEnablement'
-      required:
-      - country_code
-      - bank_code
-      - enablement
-    IbanVerificationBankAvailability:
-      description: Availability status of the bank for IBAN verification
-      type: object
-      properties:
-        global:
-          $ref: '#/components/schemas/IbanVerificationEnablement'
-        account_type:
-          $ref: '#/components/schemas/IbanVerificationAccountTypeAvailability'
-      required:
-      - global
-      - account_type
+      - availabilities
+    VerificationResponseIbanVerificationResponsePayload:
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          verifications:
+            $ref: '#/components/schemas/IbanVerificationResponsePayload'
     IbanVerificationBankConfiguration:
       description: Bank configuration for IBAN verification including availability and enablement status
       type: object
@@ -577,26 +597,6 @@ components:
       - bank_name
       - availability
       - application_enablement
-    ResultStatus:
-      description: The status of the request
-      type: string
-      enum:
-      - OK
-      - PENDING
-      - FAILED
-      - CONSENT_EXPIRED
-      - PROCESSING_STARTED
-    UpdateIbanVerificationBankConfigurationRequest:
-      description: Request body for updating application-level bank configurations
-      type: object
-      properties:
-        availabilities:
-          description: List of bank availability configurations to update
-          type: array
-          items:
-            $ref: '#/components/schemas/ApplicationBankAvailability'
-      required:
-      - availabilities
   securitySchemes:
     bearerAuth:
       type: http

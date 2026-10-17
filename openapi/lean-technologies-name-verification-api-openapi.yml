@@ -47,6 +47,16 @@ paths:
       - Name Verification
 components:
   schemas:
+    ResultStatus:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - RECONNECT_REQUIRED
+      - PROCESSING_STARTED
     NameVerificationRequestDto:
       type: object
       properties:
@@ -64,28 +74,6 @@ components:
       required:
       - entity_id
       - full_name
-    NameVerificationDto:
-      description: An end user's name verification based on data held by a financial institution
-      type: object
-      properties:
-        type:
-          type: string
-        full_name_provided:
-          description: Full name provided in request
-          type: string
-        full_name_retrieved:
-          description: Full name retrieved from financial institution
-          type: string
-        match_type:
-          description: Match type
-          type: string
-          enum:
-          - PERFECT_MATCH
-          - NO_MATCH
-          - PARTIAL_MATCH
-        confidence:
-          description: Between 0 and 1
-          type: number
     DataRequestResultNameVerificationDto:
       type: object
       properties:
@@ -112,6 +100,28 @@ components:
         refreshed_at:
           type: string
           format: date-time
+    NameVerificationDto:
+      description: An end user's name verification based on data held by a financial institution
+      type: object
+      properties:
+        type:
+          type: string
+        full_name_provided:
+          description: Full name provided in request
+          type: string
+        full_name_retrieved:
+          description: Full name retrieved from financial institution
+          type: string
+        match_type:
+          description: Match type
+          type: string
+          enum:
+          - PERFECT_MATCH
+          - NO_MATCH
+          - PARTIAL_MATCH
+        confidence:
+          description: Between 0 and 1
+          type: number
     StatusAdditionalDetail:
       type: object
       properties:
@@ -119,16 +129,6 @@ components:
           type: string
         status_additional_info:
           type: string
-    ResultStatus:
-      description: The status of the request
-      type: string
-      enum:
-      - OK
-      - PENDING
-      - FAILED
-      - CONSENT_EXPIRED
-      - RECONNECT_REQUIRED
-      - PROCESSING_STARTED
   securitySchemes:
     bearerAuth:
       type: http

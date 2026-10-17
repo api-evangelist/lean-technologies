@@ -131,6 +131,43 @@ paths:
       - bearer: []
 components:
   schemas:
+    ReportsReponse:
+      type: object
+      properties:
+        reports:
+          $ref: '#/components/schemas/Reports'
+          description: Reports for customer
+    Reports:
+      type: object
+      properties:
+        total_pages:
+          description: Number of pages for this request.
+          type: integer
+        total_elements:
+          description: Number of reports available for this customer.
+          type: integer
+        content:
+          description: List of reports.
+          type: array
+          items:
+            $ref: '#/components/schemas/Report'
+    ReportsCustomerIdentifier:
+      description: ''
+      required:
+      - type
+      - value
+      type: object
+      properties:
+        type:
+          description: the type of the identifier for the end user
+          enum:
+          - NATIONAL_ID
+          - COMMERCIAL_REGISTRATION
+          - UNIFIED_NUMBER
+          type: string
+        value:
+          description: the identifier for the end user
+          type: string
     Report:
       type: object
       properties:
@@ -157,43 +194,6 @@ components:
           - PERSONAL
           - BUSINESS
           type: string
-    ReportsReponse:
-      type: object
-      properties:
-        reports:
-          $ref: '#/components/schemas/Reports'
-          description: Reports for customer
-    ReportsCustomerIdentifier:
-      description: ''
-      required:
-      - type
-      - value
-      type: object
-      properties:
-        type:
-          description: the type of the identifier for the end user
-          enum:
-          - NATIONAL_ID
-          - COMMERCIAL_REGISTRATION
-          - UNIFIED_NUMBER
-          type: string
-        value:
-          description: the identifier for the end user
-          type: string
-    Reports:
-      type: object
-      properties:
-        total_pages:
-          description: Number of pages for this request.
-          type: integer
-        total_elements:
-          description: Number of reports available for this customer.
-          type: integer
-        content:
-          description: List of reports.
-          type: array
-          items:
-            $ref: '#/components/schemas/Report'
     ReportsCustomersResponse:
       type: object
       properties:

@@ -681,16 +681,6 @@ paths:
       - bearer: []
 components:
   schemas:
-    AmountObject:
-      type: object
-      properties:
-        currency:
-          type: string
-          description: The currency in which the amount is represented.
-        amount:
-          type: number
-          description: The decimal amount for the transaction
-      description: The total amount for the category.
     StatusDetailObject:
       description: Status Details
       type: object
@@ -701,6 +691,16 @@ components:
         status_additional_info:
           description: Further detail on the encountered error
           type: string
+    AmountObject:
+      type: object
+      properties:
+        currency:
+          type: string
+          description: The currency in which the amount is represented.
+        amount:
+          type: number
+          description: The decimal amount for the transaction
+      description: The total amount for the category.
   securitySchemes:
     bearer:
       type: http

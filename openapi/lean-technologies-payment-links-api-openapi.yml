@@ -309,26 +309,6 @@ paths:
       tags:
       - Payment Links
 components:
-  parameters:
-    PageParameter:
-      name: page
-      in: query
-      description: The page you're requesting - returns page 0 of a response if not specified.
-      required: false
-      schema:
-        type: integer
-        default: 0
-        minimum: 0
-    SizeParameter:
-      name: size
-      description: The number of objects you want to return as a page size.
-      in: query
-      required: false
-      schema:
-        type: integer
-        default: 50
-        maximum: 100
-        minimum: 1
   schemas:
     PaymentLinkStatus:
       description: 'The lifecycle state of a payment link.
@@ -347,98 +327,137 @@ components:
       - EXPIRED
       - USED
       - DISABLED
-    PaymentLinkListResponse:
-      description: A single page of payment links. Use the page object for total counts and paginate with the page and size query parameters.
+    PaymentDetailsRequest:
+      description: "The payment parameters that apply to every transaction made through this link. \nFixed at creation time and cannot be changed afterwards."
       type: object
       properties:
-        content:
-          description: List of payment links for the current page
-          items:
-            $ref: '#/components/schemas/PaymentLinkResponse'
-          type: array
-        page:
-          $ref: '#/components/schemas/PageMetadata'
-      required:
-      - content
-      - page
-    PageMetadata:
-      description: Metadata about the current page of results
-      type: object
-      properties:
-        number:
-          description: The current page being returned by the API
-          type: integer
-          format: int32
-        size:
-          description: The page size requested
-          type: integer
-          format: int32
-        total_elements:
-          description: The total number of elements in all pages
-          type: integer
-          format: int64
-        total_pages:
-          description: The total number of pages retrievable
-          type: integer
-          format: int32
-        sort:
-          description: Sort parameters applied to the results
-          type: array
-          items:
-            type: string
-      required:
-      - number
-      - size
-      - total_elements
-      - total_pages
-    CollectedIdentifier:
-      description: A single identifier value collected from the payer.
-      type: object
-      properties:
-        type:
-          $ref: '#/components/schemas/IdentifierType'
-        display_label:
-          description: Human-readable label shown to the payer when collecting this identifier.
+        destination_id:
+          description: 'The ID of the bank account that will receive the funds.
+
+            If omitted, the payment is routed to your application''s default destination account.'
+          type:
+          - string
+          - 'null'
+          format: uuid
+        reference:
+          description: A reference string that appears on the bank statement for both sender and recipient.
           type: string
-          examples:
-          - Email address
-        value:
-          description: The value entered by the payer.
-          type: string
-          examples:
-          - payer@example.com
+        currency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          description: The exact amount to charge, in the currency specified by the currency field. Must be greater than zero.
+          type: number
+          format: double
+          exclusiveMinimum: 0
+          x-java-type: java.math.BigDecimal
+        payment_purpose:
+          description: A standardized code that classifies the reason for this payment.
+          type:
+          - string
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/PaymentPurposeCode'
       required:
-      - type
-      - display_label
-      - value
-    PaymentLinkUsageList:
-      description: "A single page of payment link usages. \nUse the page object for total counts and paginate with the page and size query parameters."
+      - reference
+      - currency
+      - amount
+      x-field-extra-annotation: '@Valid'
+    PaymentLinkUsageDetails:
+      description: Details of a payment link usage, including payer-provided identifiers and payment outcome.
       type: object
       properties:
-        content:
-          description: List of payment link usages for the current page
-          items:
-            $ref: '#/components/schemas/PaymentLinkUsageDetails'
+        usage_id:
+          description: Unique identifier of this usage.
+          type: string
+          format: uuid
+          examples:
+          - 3fa85f64-5717-4562-b3fc-2c963f66afa6
+        payment_link_id:
+          description: Identifier of the payment link that was used.
+          type: string
+          format: uuid
+          examples:
+          - d290f1ee-6c54-4b01-90e6-d701748f0851
+        usage_status:
+          $ref: '#/components/schemas/UsageStatus'
+        customer_id:
+          description: Identifier of the customer record created or matched for this payer.
+          type:
+          - string
+          - 'null'
+          format: uuid
+          examples:
+          - a3bb189e-8bf9-3888-9912-ace4e6543002
+        payment_id:
+          description: 'Identifier of the payment created for this usage.
+
+            `null` until the bank has confirmed or rejected the payment submission.'
+          type:
+          - string
+          - 'null'
+          format: uuid
+          examples:
+          - 7c9e6679-7425-40de-944b-e07fc1f90ae7
+        payment_status:
+          description: 'Status of the underlying payment as last reported by the bank.
+
+            `null` until the payment has been created. Refer to the Lean Payments
+
+            API documentation for the full list of payment status values.'
+          type:
+          - string
+          - 'null'
+          examples:
+          - PENDING
+        identifiers:
+          description: 'Identifiers collected from the payer during the payment flow, in the order
+
+            they were defined on the payment link. Empty when no identifiers were configured.'
           type: array
-        page:
-          $ref: '#/components/schemas/PageMetadata'
+          items:
+            $ref: '#/components/schemas/CollectedIdentifier'
       required:
-      - content
-      - page
-    PaymentPurposeCode:
-      description: "A category code that relates to the type of services or goods that corresponds to the underlying purpose of the payment.  \nThe code must conform to the payment purpose code list.  \n**Supported values:**  \n- `FIS` – Financial services\n- `TCS` – Telecommunication services\n- `MWP` – Mobile wallet card payments\n- `OAT` – Own account transfer\n- `IFS` – Information services\n- `RNT` – Rent payments\n- `LNC` – Loan charges\n- `PIN` – Personal investments\n- `GDS` – Goods bought or sold"
+      - usage_id
+      - payment_link_id
+      - usage_status
+      - identifiers
+    PaymentDetailsResponse:
+      description: The payment parameters attached to this link. These values are fixed for the lifetime of the link.
+      type: object
+      properties:
+        destination_id:
+          description: Identifier of the destination account for the payment
+          type:
+          - string
+          - 'null'
+          format: uuid
+        reference:
+          description: A reference string that appears on the bank statement for both sender and recipient.
+          type: string
+        currency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          description: The amount charged through this link, in the specified currency.
+          type: number
+          format: double
+          x-java-type: java.math.BigDecimal
+        payment_purpose:
+          description: The standardized code classifying the reason for this payment.
+          type:
+          - string
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/PaymentPurposeCode'
+      required:
+      - reference
+      - currency
+      - amount
+    Currency:
+      description: The ISO 3 letter currency code
       type: string
-      enum:
-      - FIS
-      - TCS
-      - MWP
-      - OAT
-      - IFS
-      - RNT
-      - LNC
-      - PIN
-      - GDS
-      title: PaymentPurposeCode
+      examples:
+      - AED
+      pattern: ^[A-Z]{3}$
     IdentifierRequest:
       description: An additional field to collect from the payer at payment time, such as an email address, phone number or a custom reference.
       type: object
@@ -471,37 +490,44 @@ components:
         required: true
       required:
       - type
-    PaymentDetailsResponse:
-      description: The payment parameters attached to this link. These values are fixed for the lifetime of the link.
+    UpdatePaymentLinkRequest:
+      description: Request payload for updating a payment link
       type: object
       properties:
-        destination_id:
-          description: Identifier of the destination account for the payment
-          type:
-          - string
-          - 'null'
-          format: uuid
-        reference:
-          description: A reference string that appears on the bank statement for both sender and recipient.
-          type: string
-        currency:
-          $ref: '#/components/schemas/Currency'
-        amount:
-          description: The amount charged through this link, in the specified currency.
-          type: number
-          format: double
-          x-java-type: java.math.BigDecimal
-        payment_purpose:
-          description: The standardized code classifying the reason for this payment.
-          type:
-          - string
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/PaymentPurposeCode'
+        status:
+          $ref: '#/components/schemas/UpdatePaymentLinkStatus'
       required:
-      - reference
-      - currency
-      - amount
+      - status
+    PageMetadata:
+      description: Metadata about the current page of results
+      type: object
+      properties:
+        number:
+          description: The current page being returned by the API
+          type: integer
+          format: int32
+        size:
+          description: The page size requested
+          type: integer
+          format: int32
+        total_elements:
+          description: The total number of elements in all pages
+          type: integer
+          format: int64
+        total_pages:
+          description: The total number of pages retrievable
+          type: integer
+          format: int32
+        sort:
+          description: Sort parameters applied to the results
+          type: array
+          items:
+            type: string
+      required:
+      - number
+      - size
+      - total_elements
+      - total_pages
     PaymentLinkResponse:
       description: The full state of a payment link, including its shareable URL, current status, usage counts, and configuration.
       type: object
@@ -620,6 +646,34 @@ components:
             $ref: '#/components/schemas/IdentifierRequest'
       required:
       - payment_details
+    PaymentLinkListResponse:
+      description: A single page of payment links. Use the page object for total counts and paginate with the page and size query parameters.
+      type: object
+      properties:
+        content:
+          description: List of payment links for the current page
+          items:
+            $ref: '#/components/schemas/PaymentLinkResponse'
+          type: array
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+      required:
+      - content
+      - page
+    PaymentPurposeCode:
+      description: "A category code that relates to the type of services or goods that corresponds to the underlying purpose of the payment.  \nThe code must conform to the payment purpose code list.  \n**Supported values:**  \n- `FIS` – Financial services\n- `TCS` – Telecommunication services\n- `MWP` – Mobile wallet card payments\n- `OAT` – Own account transfer\n- `IFS` – Information services\n- `RNT` – Rent payments\n- `LNC` – Loan charges\n- `PIN` – Personal investments\n- `GDS` – Goods bought or sold"
+      type: string
+      enum:
+      - FIS
+      - TCS
+      - MWP
+      - OAT
+      - IFS
+      - RNT
+      - LNC
+      - PIN
+      - GDS
+      title: PaymentPurposeCode
     UpdatePaymentLinkStatus:
       description: 'The target status to set on a payment link. Only ACTIVE and DISABLED transitions are permitted via the update endpoint.
 
@@ -631,6 +685,40 @@ components:
       enum:
       - ACTIVE
       - DISABLED
+    IdentifierType:
+      description: 'The type of information to collect from the payer. Controls input validation and formatting in the payment UI.
+
+
+        - EMAIL: Collects an email address. Input is validated against standard email format.
+
+        - MOBILE_PHONE: Collects a mobile phone number. Input is validated as a valid phone number.
+
+        - TEXT: Collects a free-form text value. Use the limit field to constrain length.'
+      type: string
+      enum:
+      - EMAIL
+      - MOBILE_PHONE
+      - TEXT
+    CollectedIdentifier:
+      description: A single identifier value collected from the payer.
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/IdentifierType'
+        display_label:
+          description: Human-readable label shown to the payer when collecting this identifier.
+          type: string
+          examples:
+          - Email address
+        value:
+          description: The value entered by the payer.
+          type: string
+          examples:
+          - payer@example.com
+      required:
+      - type
+      - display_label
+      - value
     UsageStatus:
       description: 'Lifecycle status of the payment link usage.
 
@@ -650,87 +738,20 @@ components:
       - PAYMENT_CREATED
       - FAILED
       - EXPIRED
-    PaymentLinkUsageDetails:
-      description: Details of a payment link usage, including payer-provided identifiers and payment outcome.
+    PaymentLinkUsageList:
+      description: "A single page of payment link usages. \nUse the page object for total counts and paginate with the page and size query parameters."
       type: object
       properties:
-        usage_id:
-          description: Unique identifier of this usage.
-          type: string
-          format: uuid
-          examples:
-          - 3fa85f64-5717-4562-b3fc-2c963f66afa6
-        payment_link_id:
-          description: Identifier of the payment link that was used.
-          type: string
-          format: uuid
-          examples:
-          - d290f1ee-6c54-4b01-90e6-d701748f0851
-        usage_status:
-          $ref: '#/components/schemas/UsageStatus'
-        customer_id:
-          description: Identifier of the customer record created or matched for this payer.
-          type:
-          - string
-          - 'null'
-          format: uuid
-          examples:
-          - a3bb189e-8bf9-3888-9912-ace4e6543002
-        payment_id:
-          description: 'Identifier of the payment created for this usage.
-
-            `null` until the bank has confirmed or rejected the payment submission.'
-          type:
-          - string
-          - 'null'
-          format: uuid
-          examples:
-          - 7c9e6679-7425-40de-944b-e07fc1f90ae7
-        payment_status:
-          description: 'Status of the underlying payment as last reported by the bank.
-
-            `null` until the payment has been created. Refer to the Lean Payments
-
-            API documentation for the full list of payment status values.'
-          type:
-          - string
-          - 'null'
-          examples:
-          - PENDING
-        identifiers:
-          description: 'Identifiers collected from the payer during the payment flow, in the order
-
-            they were defined on the payment link. Empty when no identifiers were configured.'
-          type: array
+        content:
+          description: List of payment link usages for the current page
           items:
-            $ref: '#/components/schemas/CollectedIdentifier'
+            $ref: '#/components/schemas/PaymentLinkUsageDetails'
+          type: array
+        page:
+          $ref: '#/components/schemas/PageMetadata'
       required:
-      - usage_id
-      - payment_link_id
-      - usage_status
-      - identifiers
-    UpdatePaymentLinkRequest:
-      description: Request payload for updating a payment link
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/UpdatePaymentLinkStatus'
-      required:
-      - status
-    IdentifierType:
-      description: 'The type of information to collect from the payer. Controls input validation and formatting in the payment UI.
-
-
-        - EMAIL: Collects an email address. Input is validated against standard email format.
-
-        - MOBILE_PHONE: Collects a mobile phone number. Input is validated as a valid phone number.
-
-        - TEXT: Collects a free-form text value. Use the limit field to constrain length.'
-      type: string
-      enum:
-      - EMAIL
-      - MOBILE_PHONE
-      - TEXT
+      - content
+      - page
     IdentifierResponse:
       description: An additional field configured to be collected from payers at payment time.
       type: object
@@ -755,47 +776,26 @@ components:
           format: int32
       required:
       - type
-    PaymentDetailsRequest:
-      description: "The payment parameters that apply to every transaction made through this link. \nFixed at creation time and cannot be changed afterwards."
-      type: object
-      properties:
-        destination_id:
-          description: 'The ID of the bank account that will receive the funds.
-
-            If omitted, the payment is routed to your application''s default destination account.'
-          type:
-          - string
-          - 'null'
-          format: uuid
-        reference:
-          description: A reference string that appears on the bank statement for both sender and recipient.
-          type: string
-        currency:
-          $ref: '#/components/schemas/Currency'
-        amount:
-          description: The exact amount to charge, in the currency specified by the currency field. Must be greater than zero.
-          type: number
-          format: double
-          exclusiveMinimum: 0
-          x-java-type: java.math.BigDecimal
-        payment_purpose:
-          description: A standardized code that classifies the reason for this payment.
-          type:
-          - string
-          - 'null'
-          allOf:
-          - $ref: '#/components/schemas/PaymentPurposeCode'
-      required:
-      - reference
-      - currency
-      - amount
-      x-field-extra-annotation: '@Valid'
-    Currency:
-      description: The ISO 3 letter currency code
-      type: string
-      examples:
-      - AED
-      pattern: ^[A-Z]{3}$
+  parameters:
+    PageParameter:
+      name: page
+      in: query
+      description: The page you're requesting - returns page 0 of a response if not specified.
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+    SizeParameter:
+      name: size
+      description: The number of objects you want to return as a page size.
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 50
+        maximum: 100
+        minimum: 1
   securitySchemes:
     OAuth2:
       type: oauth2

@@ -136,6 +136,24 @@ components:
         type: integer
         default: 0
         minimum: 0
+    EntityIdParameter:
+      name: entity_id
+      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
+      in: query
+      required: false
+      schema:
+        type: string
+        format: uuid
+    SizeParameter:
+      name: size
+      description: The number of objects you want to return as a page size.
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 50
+        maximum: 100
+        minimum: 1
     AsyncParameter:
       name: async
       in: query
@@ -153,16 +171,6 @@ components:
       schema:
         type: string
         format: uuid
-    SizeParameter:
-      name: size
-      description: The number of objects you want to return as a page size.
-      in: query
-      required: false
-      schema:
-        type: integer
-        default: 50
-        maximum: 100
-        minimum: 1
     MetaParameter:
       name: meta
       description: 'Additional data you would like to store against the request. Example: {"foo": "val"}'
@@ -170,48 +178,48 @@ components:
       required: false
       schema:
         type: string
-    EntityIdParameter:
-      name: entity_id
-      description: The entity_id you're querying for, which is created by LinkSDK `.connect()` function.
-      in: query
-      required: false
-      schema:
-        type: string
-        format: uuid
   schemas:
-    DirectDebit:
+    DataResult:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Result'
+      - type: object
+        properties:
+          refreshed_at:
+            description: The datetime of when the data was refreshed
+            type:
+            - string
+            - 'null'
+            format: date-time
+          type:
+            description: The endpoint the original request was made to.
+            type:
+            - string
+            - 'null'
+    Frequency:
+      description: Regularity with which direct debit instructions are to be created and processed.
+      type: string
+      enum:
+      - MONTHLY
+      - QUARTERLY
+      - HALF_YEARLY
+      - ANNUAL
+      - FORTNIGHTLY
+      - DAILY
+      - WEEKLY
+      - NOT_KNOWN
+      - UNSUPPORTED
+    CurrencyAmount:
       type: object
       properties:
-        entity_id:
-          description: The unique identifier for the entity. Provided as a UUID.
-          type: string
-          format: uuid
-        account_id:
-          description: The account_id this direct debit is related to.
-          type: string
-        direct_debit_id:
-          description: A unique identifier of the direct debit resource. This identifier has no meaning to the account owner.
-          type: string
-        name:
-          description: This is the name of the regulated beneficiary entity that initiates the Direct Debit collection.
-          type: string
-        status_code:
-          $ref: '#/components/schemas/StatusCode'
-        frequency:
-          $ref: '#/components/schemas/Frequency'
-        mandate_identification:
-          description: Direct Debit reference. For AUDDIS service users provide Core Reference. For non AUDDIS service users provide Core reference if possible or last used reference.
-          type: string
-        previous_payment_date_time:
-          description: Date of most recent direct debit collection.
-          type: string
-          format: date-time
-        previous_payment_amount:
-          description: The amount of the most recent direct debit collection.
-          type: object
-          allOf:
-          - $ref: '#/components/schemas/CurrencyAmount'
-      x-builder: true
+        currency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          description: The amount of money in the currency specified.
+          type: number
+      required:
+      - currency
+      - amount
     Result:
       type: object
       properties:
@@ -247,6 +255,48 @@ components:
       - results_id
       - message
       - timestamp
+    StatusCode:
+      description: Specifies the status of the direct debit in code form.
+      type: string
+      enum:
+      - ACTIVE
+      - INACTIVE
+      - UNSUPPORTED
+    Currency:
+      description: The ISO 3 letter currency code
+      type: string
+      examples:
+      - AED
+      pattern: ^[A-Z]{3}$
+    ResultStatus:
+      description: The status of the request
+      type: string
+      enum:
+      - OK
+      - PENDING
+      - FAILED
+      - CONSENT_EXPIRED
+      - RECONNECT_REQUIRED
+      - PROCESSING_STARTED
+    DirectDebitsData:
+      type:
+      - object
+      - 'null'
+      properties:
+        type:
+          description: The endpoint the original request was made to.
+          type: string
+          const: direct-debits
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+        direct_debits:
+          description: List of direct debits for an Account
+          type: array
+          items:
+            $ref: '#/components/schemas/DirectDebit'
+      required:
+      - type
+      x-toBuilder: true
     PageMetadata:
       description: Metadata about the current page of results
       type: object
@@ -277,59 +327,6 @@ components:
       - size
       - total_elements
       - total_pages
-    DirectDebitsData:
-      type:
-      - object
-      - 'null'
-      properties:
-        type:
-          description: The endpoint the original request was made to.
-          type: string
-          const: direct-debits
-        page:
-          $ref: '#/components/schemas/PageMetadata'
-        direct_debits:
-          description: List of direct debits for an Account
-          type: array
-          items:
-            $ref: '#/components/schemas/DirectDebit'
-      required:
-      - type
-      x-toBuilder: true
-    CurrencyAmount:
-      type: object
-      properties:
-        currency:
-          $ref: '#/components/schemas/Currency'
-        amount:
-          description: The amount of money in the currency specified.
-          type: number
-      required:
-      - currency
-      - amount
-    ResultStatus:
-      description: The status of the request
-      type: string
-      enum:
-      - OK
-      - PENDING
-      - FAILED
-      - CONSENT_EXPIRED
-      - RECONNECT_REQUIRED
-      - PROCESSING_STARTED
-    Frequency:
-      description: Regularity with which direct debit instructions are to be created and processed.
-      type: string
-      enum:
-      - MONTHLY
-      - QUARTERLY
-      - HALF_YEARLY
-      - ANNUAL
-      - FORTNIGHTLY
-      - DAILY
-      - WEEKLY
-      - NOT_KNOWN
-      - UNSUPPORTED
     StatusDetail:
       type:
       - object
@@ -345,30 +342,6 @@ components:
           type:
           - string
           - 'null'
-    DataResult:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/Result'
-      - type: object
-        properties:
-          refreshed_at:
-            description: The datetime of when the data was refreshed
-            type:
-            - string
-            - 'null'
-            format: date-time
-          type:
-            description: The endpoint the original request was made to.
-            type:
-            - string
-            - 'null'
-    StatusCode:
-      description: Specifies the status of the direct debit in code form.
-      type: string
-      enum:
-      - ACTIVE
-      - INACTIVE
-      - UNSUPPORTED
     DirectDebitsResult:
       type: object
       allOf:
@@ -377,21 +350,48 @@ components:
         properties:
           data:
             $ref: '#/components/schemas/DirectDebitsData'
-    Currency:
-      description: The ISO 3 letter currency code
-      type: string
-      examples:
-      - AED
-      pattern: ^[A-Z]{3}$
+    DirectDebit:
+      type: object
+      properties:
+        entity_id:
+          description: The unique identifier for the entity. Provided as a UUID.
+          type: string
+          format: uuid
+        account_id:
+          description: The account_id this direct debit is related to.
+          type: string
+        direct_debit_id:
+          description: A unique identifier of the direct debit resource. This identifier has no meaning to the account owner.
+          type: string
+        name:
+          description: This is the name of the regulated beneficiary entity that initiates the Direct Debit collection.
+          type: string
+        status_code:
+          $ref: '#/components/schemas/StatusCode'
+        frequency:
+          $ref: '#/components/schemas/Frequency'
+        mandate_identification:
+          description: Direct Debit reference. For AUDDIS service users provide Core Reference. For non AUDDIS service users provide Core reference if possible or last used reference.
+          type: string
+        previous_payment_date_time:
+          description: Date of most recent direct debit collection.
+          type: string
+          format: date-time
+        previous_payment_amount:
+          description: The amount of the most recent direct debit collection.
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/CurrencyAmount'
+      x-builder: true
   examples:
-    UnknownEntityExample:
-      summary: Entity not found error response
-      description: Response when the provided entity_id is not found
+    InternalServerErrorExample:
+      summary: Internal server error response
+      description: Response when an unexpected server error occurs
       value:
         results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
-        timestamp: '2025-09-10T21:03:05.413806605Z'
-        status: UNKNOWN_ENTITY
-        message: The entity_id provided did not match an account in our records.
+        timestamp: '2025-08-07T13:07:38.834977945Z'
+        status: INTERNAL_SERVER_ERROR
+        message: Something has gone wrong. If you continue to see this error, please get in touch with Lean.
         metadata: null
     UnknownAccountExample:
       summary: Account not found error response
@@ -424,14 +424,14 @@ components:
         status: INVALID_PARAMETERS
         message: 'The request is badly formatted or a parameter of the wrong type has been provided, field: entity_id, value: e34d8e49-9af2-4252-a53e-bd2df855134.'
         metadata: null
-    InternalServerErrorExample:
-      summary: Internal server error response
-      description: Response when an unexpected server error occurs
+    UnknownEntityExample:
+      summary: Entity not found error response
+      description: Response when the provided entity_id is not found
       value:
         results_id: 516adc40-af36-4284-bfba-46ec69dfe6d3
-        timestamp: '2025-08-07T13:07:38.834977945Z'
-        status: INTERNAL_SERVER_ERROR
-        message: Something has gone wrong. If you continue to see this error, please get in touch with Lean.
+        timestamp: '2025-09-10T21:03:05.413806605Z'
+        status: UNKNOWN_ENTITY
+        message: The entity_id provided did not match an account in our records.
         metadata: null
   securitySchemes:
     bearerAuth:

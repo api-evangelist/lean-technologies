@@ -383,61 +383,18 @@ paths:
       description: Production / Pre-live
 components:
   schemas:
-    Pagination:
+    PaymentsSummary:
       type: object
       properties:
-        page_number:
-          description: Page number
-          type: integer
-        results_per_page:
-          description: Page size
-          type: integer
-        total_results:
-          description: Total number of results
-          type: integer
+        payments:
+          description: List of payments
+          type: array
+          items:
+            $ref: '#/components/schemas/Payment'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
       required:
-      - page_number
-      - results_per_page
-      - total_results
-    Deposit:
-      type: object
-      properties:
-        id:
-          description: Deposit Id
-          type: string
-          format: uuid
-        description:
-          description: Description of the deposit
-          type: string
-        timestamp:
-          description: Deposit timestamp
-          type: string
-          format: date-time
-        amount:
-          description: Deposit amount
-          type: number
-        currency_code:
-          description: Deposit currency
-          type: string
-      required:
-      - id
-      - description
-      - timestamp
-      - amount
-      - currency_code
-    AmountRequest:
-      type: object
-      properties:
-        minimum:
-          description: Minimum amount (inclusive)
-          type:
-          - number
-          - 'null'
-        maximum:
-          description: Maximum amount (inclusive)
-          type:
-          - number
-          - 'null'
+      - payments
     PaymentReconciliation:
       type: object
       properties:
@@ -471,6 +428,53 @@ components:
       - status
       - status_update_timestamp
       - amount
+    Pagination:
+      type: object
+      properties:
+        page_number:
+          description: Page number
+          type: integer
+        results_per_page:
+          description: Page size
+          type: integer
+        total_results:
+          description: Total number of results
+          type: integer
+      required:
+      - page_number
+      - results_per_page
+      - total_results
+    AmountRequest:
+      type: object
+      properties:
+        minimum:
+          description: Minimum amount (inclusive)
+          type:
+          - number
+          - 'null'
+        maximum:
+          description: Maximum amount (inclusive)
+          type:
+          - number
+          - 'null'
+    DateRequest:
+      type: object
+      properties:
+        from:
+          description: Min datetime in ISO format yyyy-MM-dd
+          type: string
+          format: date
+          examples:
+          - '2025-09-15'
+        to:
+          description: Max datetime in ISO format yyyy-MM-dd
+          type: string
+          format: date
+          examples:
+          - '2025-10-01'
+      required:
+      - from
+      - to
     PaymentQuery:
       type: object
       properties:
@@ -543,24 +547,6 @@ components:
           - 'null'
       required:
       - payment_initiation_date
-    DateRequest:
-      type: object
-      properties:
-        from:
-          description: Min datetime in ISO format yyyy-MM-dd
-          type: string
-          format: date
-          examples:
-          - '2025-09-15'
-        to:
-          description: Max datetime in ISO format yyyy-MM-dd
-          type: string
-          format: date
-          examples:
-          - '2025-10-01'
-      required:
-      - from
-      - to
     Payment:
       type: object
       properties:
@@ -583,18 +569,32 @@ components:
       - customer_id
       - payment_initiation_timestamp
       - reconciliation
-    PaymentsSummary:
+    Deposit:
       type: object
       properties:
-        payments:
-          description: List of payments
-          type: array
-          items:
-            $ref: '#/components/schemas/Payment'
-        pagination:
-          $ref: '#/components/schemas/Pagination'
+        id:
+          description: Deposit Id
+          type: string
+          format: uuid
+        description:
+          description: Description of the deposit
+          type: string
+        timestamp:
+          description: Deposit timestamp
+          type: string
+          format: date-time
+        amount:
+          description: Deposit amount
+          type: number
+        currency_code:
+          description: Deposit currency
+          type: string
       required:
-      - payments
+      - id
+      - description
+      - timestamp
+      - amount
+      - currency_code
   securitySchemes:
     bearerAuth:
       type: http
